@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -63,20 +64,24 @@ public class VideoReactionProgressView extends FrameLayout {
 
     public VideoReactionProgressView(@NonNull Context context) {
         super(context);
-        init();
+        init(null, 0);
     }
 
     public VideoReactionProgressView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs, 0);
     }
 
     public VideoReactionProgressView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs, defStyleAttr);
     }
 
-    private void init() {
+    private void init(@Nullable AttributeSet attrs, int defStyleAttr) {
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VideoReactionProgressView, defStyleAttr, 0);
+        rotateAngle = a.getInt(R.styleable.VideoReactionProgressView_vrpvRotation, OVAL_ROTATE_DEG);
+        a.recycle();
+
         setWillNotDraw(false);
 
         strokeWidth = getContext().getResources().getDimensionPixelSize(R.dimen.video_reaction_stroke_width);

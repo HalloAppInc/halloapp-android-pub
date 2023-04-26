@@ -77,7 +77,7 @@
 
         <activity
             android:name=".katchup.ViewKatchupCommentsActivity"
-            android:theme="@style/AppTheme.Black.NoActionBar"
+            android:theme="@style/AppTheme.ViewKatchupComments"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
 

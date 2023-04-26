@@ -3,4 +3,8 @@
         <attr name="jcvRotation" format="integer"/>
         <attr name="jcvOutlineWidth" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="VideoReactionProgressView">
+        <attr name="vrpvRotation" format="integer"/>
+    </declare-styleable>
 </resources>

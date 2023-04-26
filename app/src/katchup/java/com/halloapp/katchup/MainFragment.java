@@ -14,18 +14,26 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.transition.Transition;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.view.PreviewView;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
@@ -43,6 +51,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
@@ -52,6 +61,7 @@ import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
+import com.halloapp.content.Media;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
@@ -59,17 +69,22 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
+import com.halloapp.katchup.media.MediaTranscoderTask;
+import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.katchup.ui.KatchupShareExternallyView;
+import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
@@ -77,6 +92,7 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
 import com.halloapp.xmpp.util.Observable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,13 +111,18 @@ import pub.devrel.easypermissions.PermissionRequest;
 
 public class MainFragment extends HalloFragment implements EasyPermissions.PermissionCallbacks {
     private static final int REQUEST_LOCATION_PERMISSION = 0;
-    private static final int REQUEST_POST_COMPOSER = 1;
+    private static final int REQUEST_CAMERA_AND_AUDIO_PERMISSION = 1;
+    private static final int REQUEST_POST_COMPOSER = 2;
 
     public static final String COMPOSER_VIEW_TRANSITION_NAME = "composer-view-transition-name";
 
     // TODO(vasil): tune distance and time interval if needed
     private static final float DISTANCE_THRESHOLD_METERS = 50;
     private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
+
+    public interface SlidableActivity {
+        void setSlideEnabled(boolean enabled);
+    }
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
@@ -111,6 +132,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private final GeotagLoader geotagLoader = new GeotagLoader();
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
     private final Set<UserId> followedUsers = new HashSet<>();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
@@ -138,6 +160,18 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View updatedFeedView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ShareBannerPopupWindow shareBannerPopupWindow;
+
+    private Chronometer videoDurationChronometer;
+    private View videoRecordIndicator;
+    private View videoPreviewBlock;
+    private View videoPreviewContainer;
+    private PreviewView videoPreviewView;
+    private VideoReactionProgressView videoProgressContainer;
+    private VideoReactionRecordControlView videoReactionRecordControlView;
+    private View recordProtection;
+
+    private boolean recordingCanceled = false;
+    private HalloCamera camera;
 
     private final ContactsDb.Observer contactsDbObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -470,6 +504,46 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         ContactsDb.getInstance().addObserver(contactsDbObserver);
 
+        recordProtection = root.findViewById(R.id.record_protection);
+        videoDurationChronometer = root.findViewById(R.id.recording_time);
+        videoRecordIndicator = root.findViewById(R.id.recording_indicator);
+        videoPreviewBlock = root.findViewById(R.id.preview_block);
+        videoReactionRecordControlView = root.findViewById(R.id.reaction_control_view);
+        videoProgressContainer = root.findViewById(R.id.video_reaction_progress);
+        videoPreviewContainer = root.findViewById(R.id.video_preview_container);
+        videoPreviewView = root.findViewById(R.id.video_preview);
+
+        videoReactionRecordControlView.setRecordingListener(new VideoReactionRecordControlView.RecordingListener() {
+            @Override
+            public void onCancel() {
+                recordingCanceled = true;
+                onStopRecording();
+            }
+
+            @Override
+            public void onSend() {
+                recordingCanceled = false;
+                onStopRecording();
+            }
+        });
+        videoReactionRecordControlView.setPositionReferenceView(videoDurationChronometer);
+        initializeCamera();
+        videoPreviewView.getPreviewStreamState().observe(getViewLifecycleOwner(), state -> {
+            if (state == PreviewView.StreamState.STREAMING) {
+                videoPreviewBlock.setVisibility(View.GONE);
+                startRecordingReaction();
+            } else {
+                videoPreviewBlock.setVisibility(View.VISIBLE);
+            }
+        });
+        videoDurationChronometer.setOnChronometerTickListener(chronometer -> {
+            long dT = SystemClock.elapsedRealtime() - chronometer.getBase();
+            if (dT / 1_000 >= Constants.MAX_REACTION_RECORD_TIME_SECONDS) {
+                recordingCanceled = false;
+                onStopRecording();
+            }
+        });
+
         return root;
     }
 
@@ -483,6 +557,16 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     public void onDestroy() {
         super.onDestroy();
         ContactsDb.getInstance().removeObserver(contactsDbObserver);
+    }
+
+    private void setEnableParentTouchHandling(boolean touchHandlingEnabled) {
+        final Activity activity = getActivity();
+        if (activity instanceof SlidableActivity) {
+            ((SlidableActivity) activity).setSlideEnabled(touchHandlingEnabled);
+        }
+        swipeRefreshLayout.setEnabled(touchHandlingEnabled);
+        publicListView.requestDisallowInterceptTouchEvent(!touchHandlingEnabled);
+        followingListView.requestDisallowInterceptTouchEvent(!touchHandlingEnabled);
     }
 
     private void notifyPostsSeen(@NonNull LinearLayoutManager layoutManager, @NonNull RecyclerView recyclerView, boolean publicFeed) {
@@ -718,9 +802,95 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         }
     }
 
+    private void possiblyShowReactionTooltip() {
+        final Post post = viewModel.getReactedToPost();
+        if (post != null && !camera.isRecordingVideo() && !recordingCanceled) {
+            final RecyclerView parentListView = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue()) ? followingListView : publicListView;
+            final RecyclerView.ViewHolder holder = parentListView.findViewHolderForItemId(post.rowId);
+            if (holder instanceof KatchupPostViewHolder) {
+                ((KatchupPostViewHolder) holder).showReactionTooltip();
+            }
+        }
+    }
+
     private void stopLocationUpdates() {
         final LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
+    }
+
+    private void onStopRecording() {
+        possiblyShowReactionTooltip();
+
+        camera.stopRecordingVideo();
+        setEnableParentTouchHandling(true);
+        videoPreviewContainer.setVisibility(View.GONE);
+        videoProgressContainer.setVisibility(View.GONE);
+        videoReactionRecordControlView.setVisibility(View.GONE);
+        camera.unbind();
+        recordProtection.setVisibility(View.INVISIBLE);
+        videoRecordIndicator.setVisibility(View.GONE);
+        videoDurationChronometer.setVisibility(View.GONE);
+        videoDurationChronometer.stop();
+        videoProgressContainer.stopProgress();
+    }
+
+    private void startRecordingReaction() {
+        camera.startRecordingVideo();
+        videoDurationChronometer.setBase(SystemClock.elapsedRealtime());
+        videoDurationChronometer.start();
+        videoRecordIndicator.setVisibility(View.VISIBLE);
+        videoDurationChronometer.setVisibility(View.VISIBLE);
+        videoProgressContainer.startProgress(Constants.MAX_REACTION_RECORD_TIME_SECONDS);
+    }
+
+    private void initializeCamera() {
+        camera = new HalloCamera(this, videoPreviewView, true, false, Surface.ROTATION_0, new HalloCamera.DefaultListener() {
+            @Override
+            public void onCaptureSuccess(File file, int type) {
+                mainHandler.post(() -> {
+                    viewModel.onVideoReaction(file, recordingCanceled).observe(MainFragment.this.getViewLifecycleOwner(), sent -> {
+                        // TODO(vasil): Add jellybean with the reaction and fade it out
+                    });
+                });
+            }
+
+            @Override
+            public void onCameraPermissionsMissing() {
+                mainHandler.post(MainFragment.this::requestCameraAndAudioPermission);
+            }
+        });
+    }
+
+    private boolean hasCameraAndAudioPermission() {
+        final String[] permissions = { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        final Context context = getContext();
+        return context != null && EasyPermissions.hasPermissions(context, permissions);
+    }
+
+    private void requestCameraAndAudioPermission() {
+        final String[] permissions = { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        final Activity activity = getActivity();
+        if (activity != null && !EasyPermissions.hasPermissions(activity, permissions)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.camera_record_audio_permission_rationale),
+                    REQUEST_CAMERA_AND_AUDIO_PERMISSION, permissions);
+        }
+    }
+
+    private void setRecordingUiPosition(int screenYPosition) {
+        final Activity activity = getActivity();
+        if (activity != null) {
+            final DisplayMetrics displayMetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            final int recordingYOffset = screenYPosition - displayMetrics.heightPixels;
+            videoRecordIndicator.setTranslationY(recordingYOffset);
+            videoDurationChronometer.setTranslationY(recordingYOffset);
+            videoReactionRecordControlView.setUiContainerYOffset(recordingYOffset);
+            final int previewYOffset = screenYPosition > displayMetrics.heightPixels / 2 ?
+                    (screenYPosition - displayMetrics.heightPixels) / 2 :
+                    screenYPosition / 2;
+            videoPreviewContainer.setTranslationY(previewYOffset);
+            videoProgressContainer.setTranslationY(previewYOffset);
+        }
     }
 
     public static class MainViewModel extends AndroidViewModel {
@@ -897,6 +1067,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private Location location;
         private long lastPublicFeedFetchTimestamp;
         private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
+
+        private Post reactedToPost;
+        private boolean reactedToPostIsPublic;
 
         public MainViewModel(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
             super(application);
@@ -1092,6 +1265,79 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             connectionObservers.removeObserver(connectionObserver);
         }
 
+        public void setReactedToPost(@Nullable Post post, boolean isPublic) {
+            reactedToPost = post;
+            reactedToPostIsPublic = isPublic;
+        }
+
+        @Nullable
+        public Post getReactedToPost() {
+            return reactedToPost;
+        }
+
+        public LiveData<Boolean> onVideoReaction(@NonNull File file, boolean canceled) {
+            MutableLiveData<Boolean> sendSuccess = new MutableLiveData<>();
+            final Post post = reactedToPost;
+            final boolean isPublic = reactedToPostIsPublic;
+            setReactedToPost(null, false);
+            final BgWorkers bgWorkers = BgWorkers.getInstance();
+            if (canceled || post == null) {
+                bgWorkers.execute(file::delete);
+                sendSuccess.postValue(false);
+            } else {
+                final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_VIDEO));
+                MediaTranscoderTask transcoderTask = new MediaTranscoderTask(new PrepareVideoReactionTask(file.getAbsolutePath(), targetFile.getAbsolutePath()));
+                transcoderTask.setListener(new MediaTranscoderTask.DefaultListener() {
+
+                    @Override
+                    public void onSuccess() {
+                        bgWorkers.execute(() -> {
+                            Analytics.getInstance().commented(post, "reaction");
+                        });
+                        final Comment comment = new Comment(
+                                0,
+                                post.id,
+                                UserId.ME,
+                                RandomId.create(),
+                                null,
+                                System.currentTimeMillis(),
+                                Comment.TRANSFERRED_NO,
+                                true,
+                                null);
+                        comment.type = Comment.TYPE_VIDEO_REACTION;
+                        final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_VIDEO, targetFile);
+                        comment.media.add(sendMedia);
+                        contentDb.addComment(comment);
+                        if (isPublic) {
+                            publicContentCache.addComment(post.id, comment);
+                            dataSourceFactory.invalidateLatestDataSource();
+                            momentList.invalidate();
+                        }
+                        file.delete();
+                        sendSuccess.postValue(true);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("MainViewModel/onVideoReaction failed to transcode", e);
+                        file.delete();
+                        targetFile.delete();
+                        sendSuccess.postValue(false);
+                    }
+
+                    @Override
+                    public void onCanceled() {
+                        Log.i("MainViewModel/onVideoReaction transcode canceled");
+                        file.delete();
+                        targetFile.delete();
+                        sendSuccess.postValue(false);
+                    }
+                });
+                transcoderTask.start();
+            }
+            return sendSuccess;
+        }
+
         public static class MainViewModelFactory implements ViewModelProvider.Factory {
 
             private final Application application;
@@ -1174,6 +1420,29 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             @Override
             public boolean wasUserFollowed(UserId userId) {
                 return followedUsers.contains(userId);
+            }
+
+            @Override
+            public boolean videoReactionTouchCallback(int screenYPosition, View view, MotionEvent event, Post post, boolean isPublic) {
+                final int action = event.getActionMasked();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    if (!hasCameraAndAudioPermission()) {
+                        requestCameraAndAudioPermission();
+                        return false;
+                    }
+                    setRecordingUiPosition(screenYPosition);
+
+                    recordingCanceled = false;
+                    viewModel.setReactedToPost(post, isPublic);
+                    videoReactionRecordControlView.setVisibility(View.VISIBLE);
+                    setEnableParentTouchHandling(false);
+                    camera.bindCameraUseCases();
+                    videoPreviewContainer.setVisibility(View.VISIBLE);
+                    videoProgressContainer.setVisibility(View.VISIBLE);
+                    recordProtection.setVisibility(View.VISIBLE);
+                }
+                videoReactionRecordControlView.onTouch(event);
+                return true;
             }
         };
 

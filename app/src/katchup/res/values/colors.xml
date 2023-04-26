@@ -14,6 +14,7 @@
     <color name="black_5">#0D000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_87">#DFFFFFFF</color>
+    <color name="white_85">#D9FFFFFF</color>
     <color name="white_80">#CCFFFFFF</color>
     <color name="white_70">#B2FFFFFF</color>
     <color name="white_60">#99FFFFFF</color>
@@ -53,6 +54,8 @@
     <color name="onboarding_info_text">@color/black_40</color>
     <color name="onboarding_logo_background">#FEE5E5</color>
     <color name="profile_bottom_sheet_background">#141414</color>
+    <color name="reaction_entry_background_dark">#191919</color>
+    <color name="reaction_entry_button_background">#18720000</color>
 
     <color name="text_composer_color_1">#C2D69B</color>
     <color name="text_composer_color_2">#0073FA</color>

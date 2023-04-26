@@ -12,9 +12,9 @@
             android:pivotX="50%"
             android:pivotY="50%">
             <shape android:shape="oval">
-                <solid android:color="@color/reaction_entry_background_dark"/>
+                <solid android:color="@color/reaction_entry_button_background"/>
                 <stroke
-                    android:color="@color/white_40"
+                    android:color="@color/white"
                     android:width="1dp"/>
                 <size
                     android:height="43dp"

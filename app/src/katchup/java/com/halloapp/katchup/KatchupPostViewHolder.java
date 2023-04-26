@@ -3,12 +3,13 @@ package com.halloapp.katchup;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.TypedValue;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -17,7 +18,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
 import com.google.android.exoplayer2.Player;
@@ -36,6 +36,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
+import com.halloapp.katchup.ui.ReactionTooltipPopupWindow;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -72,6 +73,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final TextView serverScoreView;
     private final MaterialCardView cardView;
     private final View cardContent;
+    private final View entryContainer;
+    private final View entryEmoticon;
+    private final View entryText;
 
     private View uploadingProgressView;
     private View contentLoadingView;
@@ -89,6 +93,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private boolean unlocking;
 
     private KatchupViewHolderParent parent;
+
+    private final View recordVideoReaction;
+    private ReactionTooltipPopupWindow reactionTooltipPopupWindow;
 
     // This is a workaround for the content bleeding out past the edges of the card view. It is a known open issue:
     // https://github.com/material-components/material-components-android/issues/881
@@ -117,6 +124,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         public abstract void startComposerActivity();
         public abstract Observable<Boolean> followUser(UserId userId);
         public abstract boolean wasUserFollowed(UserId userId);
+        public abstract boolean videoReactionTouchCallback(int screenYPosition, View view, MotionEvent motionEvent, Post post, boolean isPublic);
     }
 
     public KatchupPostViewHolder(@NonNull View itemView, KatchupViewHolderParent parent) {
@@ -145,6 +153,11 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         uploadingProgressView = itemView.findViewById(R.id.uploading_progress);
         contentLoadingView = itemView.findViewById(R.id.content_loading);
         selfieLoadingView = itemView.findViewById(R.id.selfie_loading);
+        entryContainer = itemView.findViewById(R.id.entry_container);
+        entryEmoticon = itemView.findViewById(R.id.kb_toggle);
+        entryText = itemView.findViewById(R.id.entry_card);
+
+        recordVideoReaction = itemView.findViewById(R.id.video_reaction_record_button);
 
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
@@ -172,20 +185,21 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                 Analytics.getInstance().tappedLockedPost();
                 parent.startComposerActivity();
             } else if (!unlocking) {
-                parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post.id, isPublic, false, inStack));
+                parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post.id, isPublic, false, inStack, v.equals(entryEmoticon) || v.equals(entryText)));
             }
         };
 
         commentView.setOnClickListener(listener);
         unlockButton.setOnClickListener(listener);
         cardView.setOnClickListener(listener);
+        entryEmoticon.setOnClickListener(listener);
+        entryText.setOnClickListener(listener);
 
         cardContent.setClipToOutline(true);
         cardContent.setOutlineProvider(insetRoundedOutlineProvider);
 
         headerView.setOnClickListener(v -> parent.startActivity(ViewKatchupProfileActivity.viewProfile(headerView.getContext(), post.senderUserId)));
 
-        Drawable lockedIcon = ContextCompat.getDrawable(unlockButton.getContext(), R.drawable.ic_eye_slash);
         unlockedObserver = unlockStatus -> {
             unlocked = unlockStatus.isUnlocked();
             unlocking = unlockStatus.isUnlocking();
@@ -196,6 +210,27 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                 bindTo(post, inStack, isPublic);
             }
         };
+
+        final GestureDetector recordVideoReactionLockedDetector = new GestureDetector(recordVideoReaction.getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(@NonNull MotionEvent e) {
+                Analytics.getInstance().tappedLockedPost();
+                parent.startComposerActivity();
+                return true;
+            }
+        });
+        recordVideoReaction.setOnTouchListener((view, event) -> {
+            if (!unlocked && !unlocking) {
+                recordVideoReactionLockedDetector.onTouchEvent(event);
+                return true;
+            } else if (!unlocking) {
+                final int screenLocation[] = new int[2];
+                recordVideoReaction.getLocationOnScreen(screenLocation);
+                return parent.videoReactionTouchCallback(screenLocation[1], view, event, post, isPublic);
+            } else {
+                return false;
+            }
+        });
     }
 
     private void unbindSelfie() {
@@ -292,6 +327,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                                     bindSelfie(result);
                                     selfiePreview.setVisibility(View.GONE);
                                     selfieView.setVisibility(View.VISIBLE);
+                                    entryContainer.setVisibility(View.VISIBLE);
+                                    recordVideoReaction.setVisibility(View.VISIBLE);
                                 }
                             }
 
@@ -304,12 +341,16 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                         bindSelfie(selfieMedia);
                         selfiePreview.setVisibility(View.GONE);
                         selfieView.setVisibility(View.VISIBLE);
+                        entryContainer.setVisibility(View.VISIBLE);
+                        recordVideoReaction.setVisibility(View.VISIBLE);
                     }
                 } else {
                     showSelfieLoading();
                     mediaThumbnailLoader.load(selfiePreview, selfieMedia, this::hideSelfieLoading);
                     selfiePreview.setVisibility(View.VISIBLE);
                     selfieView.setVisibility(View.GONE);
+                    entryContainer.setVisibility(View.GONE);
+                    recordVideoReaction.setVisibility(View.GONE);
                 }
             }
             serverScoreView.setText(((KatchupPost) post).serverScore);
@@ -346,5 +387,14 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         if (selfiePlayer != null) {
             selfiePlayer.pause();
         }
+    }
+
+    public void showReactionTooltip() {
+        if (reactionTooltipPopupWindow != null) {
+            reactionTooltipPopupWindow.dismiss();
+        }
+
+        reactionTooltipPopupWindow = new ReactionTooltipPopupWindow(recordVideoReaction.getContext());
+        reactionTooltipPopupWindow.show(recordVideoReaction);
     }
 }

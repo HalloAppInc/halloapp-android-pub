@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -49,6 +51,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.camera.view.PreviewView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.emoji2.text.EmojiSpan;
 import androidx.lifecycle.ViewModelProvider;
@@ -88,6 +91,7 @@ import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.Colors;
 import com.halloapp.katchup.ui.KatchupShareExternallyView;
+import com.halloapp.katchup.ui.ReactionTooltipPopupWindow;
 import com.halloapp.katchup.ui.TextStickerView;
 import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.katchup.vm.CommentsViewModel;
@@ -133,11 +137,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack) {
+        return viewPost(context, postId, isPublic, disableComments, fromStack, false);
+    }
+
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack, boolean entryFocused) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, postId);
         i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
         i.putExtra(EXTRA_DISABLE_COMMENTS, disableComments);
         i.putExtra(EXTRA_FROM_STACK, fromStack);
+        i.putExtra(EXTRA_ENTRY_FOCUSED, entryFocused);
 
         return i;
     }
@@ -150,10 +159,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
     private static final String EXTRA_FROM_STACK = "from_stack";
 
+    private static final float CONTENT_ASPECT_RATIO = 0.75f;
     private static final int MAX_RECORD_TIME_SECONDS = 15;
     private static final int MAX_STICKER_LENGTH = 20;
 
     private static final String ON_TIME_SUFFIX = " \uD83E\uDD0D";
+    private static final String EXTRA_ENTRY_FOCUSED = "entry_focused";
 
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
@@ -180,10 +191,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private KatchupExoPlayer contentPlayer;
     private KatchupExoPlayer selfiePlayer;
 
+    private View coordinator;
     private View contentContainer;
-    private View contentProtection;
+    private View scalableContainer;
     private View recordProtection;
     private EmojiKeyboardLayout emojiKeyboardLayout;
+
+    private int screenWidth;
 
     private boolean protectionFromBottomsheet;
     private boolean protectionFromKeyboard;
@@ -191,6 +205,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private float bottomsheetSlide;
 
+    private View bottomSheetView;
     private BottomSheetBehavior bottomSheetBehavior;
 
     private int selfieMargin;
@@ -220,7 +235,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private View videoPreviewContainer;
     private VideoReactionProgressView videoProgressContainer;
 
-    private View entryDisclaimer;
     private View entryContainer;
 
     private View totalEntry;
@@ -281,7 +295,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         videoDurationChronometer = findViewById(R.id.recording_time);
         videoRecordIndicator = findViewById(R.id.recording_indicator);
         entryContainer = findViewById(R.id.entry_container);
-        entryDisclaimer = findViewById(R.id.entry_disclaimer);
         videoPreviewBlock = findViewById(R.id.preview_block);
         videoReactionRecordControlView = findViewById(R.id.reaction_control_view);
         videoProgressContainer = findViewById(R.id.video_reaction_progress);
@@ -297,7 +310,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         selfieContainer = findViewById(R.id.selfie_container);
         postVideoView = findViewById(R.id.content_video);
         postPhotoView = findViewById(R.id.content_photo);
-        contentProtection = findViewById(R.id.content_protection);
         recordProtection = findViewById(R.id.record_protection);
         selfieView = findViewById(R.id.selfie_player);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
@@ -313,6 +325,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             public void onKeyboardOpened() {
                 protectionFromKeyboard = true;
                 updateContentProtection();
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 keyboardOpened = true;
                 emojiKeyboardLayout.post(ViewKatchupCommentsActivity.this::updateStickerSendPreview);
             }
@@ -326,23 +339,59 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         });
 
+        coordinator = findViewById(R.id.coordinator_view);
+        coordinator.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                final int coordinatorWidth = coordinator.getWidth();
+                final int coordinatorHeight = coordinator.getHeight();
+
+                if (coordinatorWidth > 0 && coordinatorHeight > 0) {
+                    coordinator.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    final int bottomSheetMinPeekHeight = getResources().getDimensionPixelSize(R.dimen.view_katchup_bottom_sheet_min_peek_height);
+                    final int preferredConstraintHeight = (int) (coordinatorWidth / CONTENT_ASPECT_RATIO);
+                    final int bottomSheetPeekHeight = Math.max(bottomSheetMinPeekHeight, coordinatorHeight - preferredConstraintHeight);
+
+                    bottomSheetBehavior.setPeekHeight(bottomSheetPeekHeight);
+                    rescaleContent(coordinatorHeight - bottomSheetPeekHeight);
+                }
+            }
+        });
+
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenWidth = displayMetrics.widthPixels;
+
+        scalableContainer = findViewById(R.id.scalable_container);
+        final CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(scalableContainer.getLayoutParams());
+        params.height = (int) (screenWidth / CONTENT_ASPECT_RATIO);
+        scalableContainer.setLayoutParams(params);
+
         contentContainer = findViewById(R.id.content_container);
         GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             private static final float FLING_THRESHOLD = 200;
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                if (e.getX() > contentContainer.getWidth() / 3f) {
-                    viewModel.moveToNextPost();
+                if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 } else {
-                    viewModel.moveToPreviousPost();
+                    if (e.getX() > contentContainer.getWidth() / 3f) {
+                        viewModel.moveToNextPost();
+                    } else {
+                        viewModel.moveToPreviousPost();
+                    }
                 }
                 return true;
             }
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    return true;
+                } else if (Math.abs(velocityX) > Math.abs(velocityY)) {
                     if (velocityX > FLING_THRESHOLD) {
                         viewModel.moveToPreviousPost();
                         return true;
@@ -383,8 +432,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         });
 
+
         boolean isPublic = getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false);
         boolean fromStack = getIntent().getBooleanExtra(EXTRA_FROM_STACK, false);
+
+        if (getIntent().getBooleanExtra(EXTRA_ENTRY_FOCUSED, false)) {
+            KeyboardUtils.showSoftKeyboard(textEntry);
+        }
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -397,7 +451,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             bindPost(post, isPublic);
         });
 
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        bottomSheetView = findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -409,12 +464,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     }
                 }
                 updateContentProtection();
+                rescaleContent(bottomSheet.getTop());
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 bottomsheetSlide = slideOffset;
                 updateContentProtection();
+                rescaleContent(bottomSheet.getTop());
             }
         });
 
@@ -545,7 +602,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 videoPreviewContainer.setVisibility(View.VISIBLE);
                 videoProgressContainer.setVisibility(View.VISIBLE);
                 entryContainer.setVisibility(View.INVISIBLE);
-                entryDisclaimer.setVisibility(View.INVISIBLE);
                 protectionFromRecording = true;
                 updateContentProtection();
             }
@@ -574,14 +630,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 videoPreviewBlock.setVisibility(View.VISIBLE);
             }
         });
-        videoDurationChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                long dT = SystemClock.elapsedRealtime() - chronometer.getBase();
-                if (dT / 1_000 >= MAX_RECORD_TIME_SECONDS) {
-                    canceled = false;
-                    onStopRecording();
-                }
+        videoDurationChronometer.setOnChronometerTickListener(chronometer -> {
+            long dT = SystemClock.elapsedRealtime() - chronometer.getBase();
+            if (dT / 1_000 >= Constants.MAX_REACTION_RECORD_TIME_SECONDS) {
+                canceled = false;
+                onStopRecording();
             }
         });
 
@@ -602,6 +655,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         moveSelfieToCorner();
 
         randomizeTextStickerColor();
+
+        final View prev = findViewById(R.id.prev);
+        prev.setOnClickListener(v -> finish());
     }
 
     @Override
@@ -746,6 +802,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
+    private void rescaleContent(int height) {
+        final float scale = Math.min(1f, height * CONTENT_ASPECT_RATIO / screenWidth);
+        final float offsetY = (1 - scale) * screenWidth / CONTENT_ASPECT_RATIO / 2;
+        scalableContainer.setScaleX(scale);
+        scalableContainer.setScaleY(scale);
+        scalableContainer.setTranslationY(-offsetY);
+    }
+
     private void makeSelfieDraggable() {
         selfieVerticalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_vertical_margin);
         selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
@@ -761,8 +825,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     startY = event.getRawY();
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    selfieContainer.setTranslationX(selfieTranslationX + (event.getRawX() - startX));
-                    selfieContainer.setTranslationY(selfieTranslationY + (event.getRawY() - startY));
+                    final float containerScale = scalableContainer.getScaleX();
+                    selfieContainer.setTranslationX(selfieTranslationX + (event.getRawX() - startX) / containerScale);
+                    selfieContainer.setTranslationY(selfieTranslationY + (event.getRawY() - startY) / containerScale);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     selfieTranslationX = selfieContainer.getTranslationX();
@@ -773,24 +838,23 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
 
             private void forceWithinBounds() {
-                float posX = selfieContainer.getX();
-                float posY = selfieContainer.getY();
+                final float posX = selfieContainer.getX();
+                final float posY = selfieContainer.getY();
+                final int scaledHorizontalMargin = selfieHorizontalMargin;
+                final int scaledVerticalMargin = selfieVerticalMargin;
 
-                int width = selfieContainer.getWidth();
-                int height = selfieContainer.getHeight();
-
-                if (selfieContainer.getX() + width > contentContainer.getRight() - selfieHorizontalMargin) {
-                    selfieTranslationX = (contentContainer.getRight() - selfieHorizontalMargin) - selfieContainer.getRight();
+                if (posX < scaledHorizontalMargin) {
+                    selfieTranslationX = scaledHorizontalMargin - selfieContainer.getLeft();
                 }
-                if (posX < selfieHorizontalMargin) {
-                    selfieTranslationX = selfieHorizontalMargin - selfieContainer.getLeft();
+                if (posX + selfieContainer.getWidth() > contentContainer.getWidth() - scaledHorizontalMargin) {
+                    selfieTranslationX = contentContainer.getWidth() - scaledHorizontalMargin - selfieContainer.getRight();
                 }
 
-                if (posY < contentContainer.getY() + selfieVerticalMargin) {
-                    selfieTranslationY = (contentContainer.getTop() + selfieVerticalMargin) - selfieContainer.getTop();
+                if (posY < scaledVerticalMargin) {
+                    selfieTranslationY = scaledVerticalMargin - selfieContainer.getTop();
                 }
-                if (posY + height > contentContainer.getBottom() - selfieVerticalMargin) {
-                    selfieTranslationY = (contentContainer.getBottom() - selfieVerticalMargin) - selfieContainer.getBottom();
+                if (posY + selfieContainer.getHeight() > contentContainer.getHeight() - scaledVerticalMargin) {
+                    selfieTranslationY = contentContainer.getHeight() - scaledVerticalMargin - selfieContainer.getBottom();
                 }
 
                 selfieContainer.setTranslationX(selfieTranslationX);
@@ -839,7 +903,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             stickerSendContainer.setVisibility(View.GONE);
         }
     }
-
 
     private class EmojiStickerViewHolder extends RecyclerView.ViewHolder {
 
@@ -899,7 +962,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         videoReactionRecordControlView.setVisibility(View.GONE);
         camera.unbind();
         entryContainer.setVisibility(View.VISIBLE);
-        entryDisclaimer.setVisibility(View.VISIBLE);
         protectionFromRecording = false;
         updateContentProtection();
         videoRecordIndicator.setVisibility(View.GONE);
@@ -914,7 +976,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         videoDurationChronometer.start();
         videoRecordIndicator.setVisibility(View.VISIBLE);
         videoDurationChronometer.setVisibility(View.VISIBLE);
-        videoProgressContainer.startProgress(MAX_RECORD_TIME_SECONDS);
+        videoProgressContainer.startProgress(Constants.MAX_REACTION_RECORD_TIME_SECONDS);
     }
 
     private void initializeCamera() {
@@ -999,26 +1061,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
-    private void updateProtectionOverlays() {
-        if (protectionFromRecording) {
-            contentProtection.setVisibility(View.INVISIBLE);
-            recordProtection.setVisibility(View.VISIBLE);
-        } else if (protectionFromBottomsheet || protectionFromKeyboard) {
-            if (!protectionFromKeyboard) {
-                contentProtection.setAlpha(bottomsheetSlide);
-            } else {
-                contentProtection.setAlpha(1f);
-            }
-            contentProtection.setVisibility(View.VISIBLE);
-            recordProtection.setVisibility(View.INVISIBLE);
-        } else {
-            contentProtection.setVisibility(View.INVISIBLE);
-            recordProtection.setVisibility(View.INVISIBLE);
-        }
-    }
-
     private void updateContentProtection() {
-        updateProtectionOverlays();
+        recordProtection.setVisibility(protectionFromRecording ? View.VISIBLE : View.INVISIBLE);
         updateContentPlayingForProtection();
     }
 
@@ -1675,27 +1719,4 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
-    static class ReactionTooltipPopupWindow extends PopupWindow {
-        private static final int AUTO_DISMISS_DELAY_MS = 3000;
-
-        public ReactionTooltipPopupWindow(@NonNull Context context) {
-            super(context);
-
-            View root = LayoutInflater.from(context).inflate(R.layout.popup_video_reaction_info, null, false);
-            setContentView(root);
-
-            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            setOutsideTouchable(true);
-            setFocusable(false);
-        }
-
-        public void show(@NonNull View anchor) {
-            View contentView = getContentView();
-            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
-            showAsDropDown(anchor, 0, -contentView.getMeasuredHeight() - anchor.getHeight());
-
-            contentView.postDelayed(this::dismiss, AUTO_DISMISS_DELAY_MS);
-        }
-    }
 }

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/window_background_light"
     android:fitsSystemWindows="true"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:clipChildren="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/following_tab"
@@ -19,7 +20,6 @@
             android:id="@+id/following_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:gravity="center"
             >
 
@@ -493,5 +493,91 @@
             app:layout_constraintTop_toTopOf="@+id/discover"/>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/record_protection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:background="#BF000000"/>
+
+    <View
+        android:id="@+id/recording_indicator"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/recording_indicator"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone"
+        android:backgroundTint="@color/recording_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="00:01"/>
+
+    <Chronometer
+        android:id="@+id/recording_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textColor="@color/recording_color"
+        android:textSize="21sp"
+        android:visibility="gone"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintStart_toEndOf="@id/recording_indicator"
+        app:layout_constraintTop_toTopOf="@id/recording_indicator"
+        app:layout_constraintBottom_toBottomOf="@id/recording_indicator"
+        tools:text="00:01"/>
+
+    <com.halloapp.katchup.ui.VideoReactionRecordControlView
+        android:id="@+id/reaction_control_view"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"/>
+
+    <com.halloapp.katchup.JellybeanClipView
+        android:id="@+id/video_preview_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/recording_indicator"
+        app:jcvRotation="@integer/jellybean_slant_left_up"
+        app:layout_constraintWidth_percent="0.5">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/video_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:implementationMode="compatible"
+            app:scaleType="fillCenter" />
+
+        <View
+            android:id="@+id/preview_block"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"/>
+
+        <!-- TODO(vasil): Add ContentPlayerView that fades here-->
+
+    </com.halloapp.katchup.JellybeanClipView>
+
+    <com.halloapp.katchup.VideoReactionProgressView
+        android:id="@+id/video_reaction_progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:visibility="invisible"
+        app:vrpvRotation="@integer/jellybean_slant_left_up"
+        app:layout_constraintStart_toStartOf="@id/video_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/video_preview_container"
+        app:layout_constraintTop_toTopOf="@id/video_preview_container"
+        app:layout_constraintBottom_toBottomOf="@id/video_preview_container"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

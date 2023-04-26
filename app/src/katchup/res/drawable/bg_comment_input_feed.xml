@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/reaction_entry_button_background"/>
+    <corners
+        android:radius="@dimen/chat_input_bar_radius"/>
+    <stroke
+        android:color="@color/white"
+        android:width="1dp"/>
+</shape>

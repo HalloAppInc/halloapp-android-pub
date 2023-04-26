@@ -68,6 +68,7 @@ public class Constants {
     public static final boolean REACTIONS_ENABLED = false;
     public static final int STICKER_MAX_LINES = 2;
     public static final int STICKER_MAX_CHARS_PER_LINE = 10;
+    public static final int MAX_REACTION_RECORD_TIME_SECONDS = 15;
 
     public static final int EXTERNAL_SHARE_VIDEO_WIDTH = 720;
     public static final int EXTERNAL_SHARE_VIDEO_HEIGHT = 1280;

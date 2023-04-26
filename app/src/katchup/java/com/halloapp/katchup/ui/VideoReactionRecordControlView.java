@@ -11,16 +11,13 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 
 import com.halloapp.R;
 import com.halloapp.util.Rtl;
-import com.halloapp.widget.VoiceNoteRecorderControlView;
-import com.halloapp.widget.VoiceVisualizerView;
 
 public class VideoReactionRecordControlView extends FrameLayout {
 
+    private View uiContainer;
     private View voiceDelete;
     private View arrowCancel;
     private View touchCircle;
@@ -70,7 +67,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
 
     private boolean rtl;
 
-    private View recordingTime;
+    private View referenceView;
 
     public void onTouch(MotionEvent event) {
         final int action = event.getActionMasked();
@@ -100,24 +97,28 @@ public class VideoReactionRecordControlView extends FrameLayout {
         }
     }
 
+    public void setPositionReferenceView(@NonNull View referenceView) {
+        this.referenceView = referenceView;
+    }
+
     private void updatePadding() {
-        if (recordingTime == null) {
-            recordingTime = ((ViewGroup) getParent()).findViewById(R.id.recording_time);
+        if (referenceView == null) {
+            referenceView = ((ViewGroup) getParent()).findViewById(R.id.recording_time);
         }
-        if (recordingTime != null) {
+        if (referenceView != null) {
             int paddingLeft;
             int paddingRight;
             switch(getLayoutDirection()) {
                 case LAYOUT_DIRECTION_RTL:
                     paddingLeft = 0;
-                    paddingRight = getWidth() - recordingTime.getLeft();
+                    paddingRight = getWidth() - referenceView.getLeft();
                     break;
                 case LAYOUT_DIRECTION_LTR:
                 default:
-                    paddingLeft = recordingTime.getRight();
+                    paddingLeft = referenceView.getRight();
                     paddingRight = 0;
             }
-            setPadding(paddingLeft, 0, paddingRight, 0);
+            setPadding(paddingLeft, getPaddingTop(), paddingRight, getPaddingBottom());
         }
     }
 
@@ -157,6 +158,10 @@ public class VideoReactionRecordControlView extends FrameLayout {
 
     public void setRecordingListener(@Nullable RecordingListener listener) {
         this.listener = listener;
+    }
+
+    public void setUiContainerYOffset(int yOffset) {
+        uiContainer.setTranslationY(yOffset);
     }
 
     private void updateUI(float x, float y) {
@@ -255,6 +260,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.video_reaction_recording_ui, this, true);
 
+        uiContainer = findViewById(R.id.recording_ui_container);
         voiceDelete = findViewById(R.id.voice_delete);
         touchCircle = findViewById(R.id.touch_circle);
         arrowCancel = findViewById(R.id.arrow_cancel);

@@ -343,4 +343,124 @@
         android:visibility="gone"
         />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/window_background_light"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/entry_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="46dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/video_reaction_record_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/bg_comment_input_feed">
+
+            <ImageView
+                style="?actionButtonStyle"
+                android:id="@+id/kb_toggle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_gravity="center"
+                android:clickable="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/white_70"
+                android:src="@drawable/ic_emoji_keyboard"/>
+
+            <TextView
+                android:id="@+id/entry_card"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:text="@string/comment_hint"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif-medium"
+                app:layout_constraintStart_toEndOf="@id/kb_toggle"
+                app:layout_constraintEnd_toStartOf="@+id/media"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <FrameLayout
+            android:id="@+id/video_reaction_record_button"
+            app:layout_constraintStart_toEndOf="@id/entry_container"
+            app:layout_constraintBottom_toBottomOf="@id/entry_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="64dp"
+            android:layout_height="45dp"
+            android:layout_marginHorizontal="10dp"
+            android:visibility="gone"
+            android:background="@drawable/bg_comment_reaction_feed">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center"
+                android:paddingLeft="2dp"
+                android:scaleType="center"
+                android:src="@drawable/bg_record_video_reaction_feed"/>
+
+            <ImageView
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_video_reaction"/>
+
+        </FrameLayout>
+
+        <View
+            android:id="@+id/recording_indicator"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/recording_indicator"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            android:backgroundTint="@color/recording_color"
+            app:layout_constraintStart_toStartOf="@id/entry_container"
+            app:layout_constraintTop_toTopOf="@id/video_reaction_record_button"
+            app:layout_constraintBottom_toBottomOf="@id/video_reaction_record_button"
+            tools:text="00:01"/>
+
+        <Chronometer
+            android:id="@+id/recording_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/recording_color"
+            android:textSize="21sp"
+            android:visibility="gone"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintStart_toEndOf="@id/recording_indicator"
+            app:layout_constraintTop_toTopOf="@id/video_reaction_record_button"
+            app:layout_constraintBottom_toBottomOf="@id/video_reaction_record_button"
+            tools:text="00:01"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

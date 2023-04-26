@@ -14,7 +14,6 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.splashscreen.SplashScreenViewProvider;
 import androidx.fragment.app.Fragment;
@@ -45,7 +44,7 @@ import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, FollowingFragment.NextScreenHandler {
+public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, FollowingFragment.NextScreenHandler, MainFragment.SlidableActivity {
 
     // TODO(jack): Remove need for these being duplicated here from halloapp's MainActivity
     public static final String EXTRA_STACK_TOP_MOMENT_ID = "stack_top_moment";
@@ -225,6 +224,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
         });
         fadeOut.start();
+    }
+
+    @Override
+    public void setSlideEnabled(boolean enabled) {
+        viewPager.setUserInputEnabled(enabled);
     }
 
     private class SlidingPagerAdapter extends FragmentStateAdapter {

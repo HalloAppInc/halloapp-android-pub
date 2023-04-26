@@ -25,4 +25,5 @@
     <dimen name="request_access_banner_corner_radius">30dp</dimen>
     <dimen name="post_stroke_width">3dp</dimen>
     <dimen name="feed_protective_background_height">150dp</dimen>
+    <dimen name="view_katchup_bottom_sheet_min_peek_height">100dp</dimen>
 </resources>

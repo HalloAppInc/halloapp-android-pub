@@ -7,204 +7,228 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipChildren="false">
 
-    <com.halloapp.katchup.JellybeanClipView
-        android:id="@+id/avatar_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bar_container"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="15dp"
+        android:paddingBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="13dp"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:src="@drawable/avatar_person"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
+        <ImageButton
+            android:id="@+id/prev"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_left"
+            app:tint="@color/color_primary_light" />
+
+        <com.halloapp.katchup.JellybeanClipView
+            android:id="@+id/avatar_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/prev"
+            android:layout_marginStart="10dp"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@drawable/avatar_person"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                />
+
+        </com.halloapp.katchup.JellybeanClipView>
+
+        <TextView
+            android:id="@+id/header_username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintStart_toEndOf="@id/avatar_container"
+            app:layout_constraintTop_toTopOf="@id/avatar_container"
+            app:layout_constraintBottom_toTopOf="@+id/header_time_and_place"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginStart="8dp"
+            tools:text="Clark 12:00"/>
+
+        <TextView
+            android:id="@+id/header_geotag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:layout_marginStart="6dp"
+            app:layout_constraintStart_toEndOf="@+id/header_username"
+            app:layout_constraintTop_toTopOf="@+id/header_username"
+            app:layout_constraintBottom_toTopOf="@+id/header_time_and_place"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:background="@drawable/geotag_background"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:text="ucla"
             />
 
-    </com.halloapp.katchup.JellybeanClipView>
+        <TextView
+            android:id="@+id/header_time_and_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            app:layout_constraintStart_toEndOf="@+id/avatar_container"
+            app:layout_constraintTop_toBottomOf="@+id/header_username"
+            app:layout_constraintBottom_toBottomOf="@+id/avatar_container"
+            android:textColor="@color/white_70"
+            />
 
-    <TextView
-        android:id="@+id/header_username"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"
-        app:layout_constraintStart_toEndOf="@id/avatar_container"
-        app:layout_constraintTop_toTopOf="@id/avatar_container"
-        app:layout_constraintBottom_toTopOf="@+id/header_time_and_place"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:layout_marginStart="8dp"
-        tools:text="Clark 12:00"/>
+        <TextView
+            android:id="@+id/follow_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="2dp"
+            android:paddingHorizontal="9dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintStart_toEndOf="@+id/header_time_and_place"
+            app:layout_constraintTop_toTopOf="@+id/header_time_and_place"
+            app:layout_constraintBottom_toBottomOf="@+id/header_time_and_place"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:text="@string/follow_profile"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            />
 
-    <TextView
-        android:id="@+id/header_geotag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="6dp"
-        android:paddingVertical="2dp"
-        android:layout_marginStart="6dp"
-        app:layout_constraintStart_toEndOf="@+id/header_username"
-        app:layout_constraintTop_toTopOf="@+id/header_username"
-        app:layout_constraintBottom_toTopOf="@+id/header_time_and_place"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:background="@drawable/geotag_background"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="10sp"
-        android:textColor="@color/black"
-        android:text="ucla"
-        />
+        <ImageButton
+            android:id="@+id/share_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/more_options"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_share"
+            app:tint="@color/white"
+            android:visibility="gone"/>
 
-    <TextView
-        android:id="@+id/header_time_and_place"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        app:layout_constraintStart_toEndOf="@+id/avatar_container"
-        app:layout_constraintTop_toBottomOf="@+id/header_username"
-        app:layout_constraintBottom_toBottomOf="@+id/avatar_container"
-        android:textColor="@color/white_70"
-        />
+        <ImageButton
+            android:id="@+id/more_options"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/ic_more"
+            app:tint="@color/white_50"/>
 
-    <TextView
-        android:id="@+id/follow_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="2dp"
-        android:paddingHorizontal="9dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintStart_toEndOf="@+id/header_time_and_place"
-        app:layout_constraintTop_toTopOf="@+id/header_time_and_place"
-        app:layout_constraintBottom_toBottomOf="@+id/header_time_and_place"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        android:text="@string/follow_profile"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="12sp"
-        android:textColor="@color/white"
-        />
-
-    <ImageButton
-        android:id="@+id/share_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="?selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@+id/avatar_container"
-        app:layout_constraintBottom_toBottomOf="@id/avatar_container"
-        app:layout_constraintEnd_toStartOf="@id/more_options"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_share"
-        app:tint="@color/white"
-        android:visibility="gone"/>
-
-    <ImageButton
-        android:id="@+id/more_options"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="?selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@+id/avatar_container"
-        app:layout_constraintBottom_toBottomOf="@id/avatar_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_more"
-        app:tint="@color/white_50"/>
-
-    <FrameLayout
-        android:id="@+id/content_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatar_container"
-        android:layout_marginTop="7dp"
-        app:layout_constraintDimensionRatio="3:4">
-
-        <ImageView
-            android:id="@+id/content_photo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:src="@drawable/test_image"
-            android:scaleType="centerCrop"/>
-
-        <com.halloapp.widget.ContentPlayerView
-            android:id="@+id/content_video"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:show_shuffle_button="false"
-            android:animateLayoutChanges="true"
-            android:visibility="gone"
-            app:show_buffering="never"
-            app:show_timeout="1000"
-            app:resize_mode="zoom"
-            app:contentPlayerVideoCornerRadius="@dimen/post_card_radius"/>
-
-        <com.halloapp.katchup.LoadingView
-            android:id="@+id/content_loading"
-            android:layout_width="76dp"
-            android:layout_height="76dp"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
-
-    <com.halloapp.katchup.JellybeanClipView
-        android:id="@+id/selfie_container"
-        android:layout_width="0dp"
-        app:layout_constraintWidth_percent="0.5"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintStart_toStartOf="@id/content_container"
-        app:layout_constraintTop_toTopOf="@id/content_container"
-        android:layout_height="wrap_content"
-        app:jcvRotation="@integer/jellybean_slant_right_up"
-        app:jcvOutlineWidth="3dp">
-
-        <com.halloapp.widget.ContentPlayerView
-            android:id="@+id/selfie_player"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            app:surface_type="texture_view"
-            app:show_shuffle_button="false"
-            android:animateLayoutChanges="true"
-            app:show_buffering="never"
-            app:resize_mode="zoom"
-            app:controller_layout_id="@layout/exo_player_composer_view"
-            app:shutter_background_color="@android:color/black"
-            app:show_timeout="1000" />
-
-        <com.halloapp.katchup.LoadingView
-            android:id="@+id/selfie_loading"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center" />
-
-    </com.halloapp.katchup.JellybeanClipView>
-
-    <View
-        android:id="@+id/content_protection"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:background="#BF000000"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bar_container"
         app:layout_constraintBottom_toTopOf="@id/entry"
         >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/scalable_container"
+            android:layout_width="match_parent"
+            android:layout_height="500dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/content_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintDimensionRatio="3:4">
+
+                <ImageView
+                    android:id="@+id/content_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:src="@drawable/test_image"
+                    android:scaleType="centerCrop"/>
+
+                <com.halloapp.widget.ContentPlayerView
+                    android:id="@+id/content_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:show_shuffle_button="false"
+                    android:animateLayoutChanges="true"
+                    android:visibility="gone"
+                    app:show_buffering="never"
+                    app:show_timeout="1000"
+                    app:resize_mode="zoom"
+                    app:contentPlayerVideoCornerRadius="@dimen/post_card_radius"/>
+
+                <com.halloapp.katchup.LoadingView
+                    android:id="@+id/content_loading"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/selfie_container"
+                    android:layout_width="0dp"
+                    app:layout_constraintWidth_percent="0.5"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_height="wrap_content"
+                    app:jcvRotation="@integer/jellybean_slant_right_up"
+                    app:jcvOutlineWidth="3dp">
+
+                    <com.halloapp.widget.ContentPlayerView
+                        android:id="@+id/selfie_player"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        app:surface_type="texture_view"
+                        app:show_shuffle_button="false"
+                        android:animateLayoutChanges="true"
+                        app:show_buffering="never"
+                        app:resize_mode="zoom"
+                        app:controller_layout_id="@layout/exo_player_composer_view"
+                        app:show_timeout="1000" />
+
+                    <com.halloapp.katchup.LoadingView
+                        android:id="@+id/selfie_loading"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center" />
+
+                </com.halloapp.katchup.JellybeanClipView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="130dp"
             android:orientation="vertical"
             app:behavior_hideable="false"
-            app:behavior_peekHeight="130dp"
+            app:behavior_peekHeight="@dimen/view_katchup_bottom_sheet_min_peek_height"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -223,54 +247,44 @@
         android:visibility="invisible"
         android:background="#BF000000"/>
 
+    <FrameLayout
+        android:id="@+id/sticker_send_container"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:visibility="gone"
+        android:background="@color/black_80"
+        app:layout_constraintBottom_toTopOf="@id/entry">
+
+        <com.halloapp.katchup.ui.TextStickerView
+            android:id="@+id/sticker_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#C2D69B"
+            android:fontFamily="@font/rubikbubbles"
+            android:textSize="43sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:rotation="-10"
+            android:visibility="gone"
+            android:maxLines="2"
+            tools:text="OOOOOOOOO"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/emoji_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/black"
+        android:background="@color/reaction_entry_background_dark"
         android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/sticker_send_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="90dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/entry_disclaimer">
-
-            <com.halloapp.katchup.ui.TextStickerView
-                android:id="@+id/sticker_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#C2D69B"
-                android:fontFamily="@font/rubikbubbles"
-                android:textSize="43sp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:rotation="-10"
-                android:visibility="gone"
-                android:maxLines="2"
-                tools:text="OOOOOOOOO"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/emoji_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
-
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/entry_disclaimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/entry_container"
-            app:layout_constraintBottom_toTopOf="@id/entry_container"
-            android:textColor="@color/white_70"
-            android:layout_marginStart="14dp"
-            android:paddingVertical="3dp"
-            android:text="@string/visible_to_everyone"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/entry_container"
@@ -280,7 +294,7 @@
             android:minHeight="46dp"
             android:orientation="horizontal"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/video_reaction_record_button"
             app:layout_constraintBottom_toTopOf="@id/emoji_keyboard"
@@ -318,7 +332,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <FrameLayout
@@ -336,6 +349,7 @@
                 android:layout_height="26dp"
                 android:layout_gravity="center"
                 android:scaleType="center"
+                app:tint="@color/white_85"
                 android:src="@drawable/ic_video_reaction"/>
 
         </FrameLayout>
@@ -351,6 +365,7 @@
             android:layout_marginBottom="5dp"
             android:visibility="gone"
             android:backgroundTint="@color/recording_color"
+            android:fontFamily="sans-serif-medium"
             app:layout_constraintStart_toStartOf="@id/entry_container"
             app:layout_constraintTop_toTopOf="@id/video_reaction_record_button"
             app:layout_constraintBottom_toBottomOf="@id/video_reaction_record_button"
@@ -404,7 +419,8 @@
         android:id="@+id/reaction_control_view"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:paddingBottom="24dp"/>
 
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/video_preview_container"
@@ -437,12 +453,11 @@
         android:id="@+id/video_reaction_progress"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
         android:visibility="invisible"
+        app:vrpvRotation="@integer/jellybean_slant_left_up"
         app:layout_constraintStart_toStartOf="@id/video_preview_container"
         app:layout_constraintEnd_toEndOf="@id/video_preview_container"
         app:layout_constraintTop_toTopOf="@id/video_preview_container"
         app:layout_constraintBottom_toBottomOf="@id/video_preview_container"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
