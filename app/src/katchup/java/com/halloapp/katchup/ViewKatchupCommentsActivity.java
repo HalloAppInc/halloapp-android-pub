@@ -81,6 +81,7 @@ import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
+import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
@@ -106,6 +107,7 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.util.HashSet;
@@ -155,11 +157,15 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ExternalSelfieLoader externalSelfieLoader = new ExternalSelfieLoader();
+    private GeotagLoader geotagLoader = new GeotagLoader();
 
     private CommentsViewModel viewModel;
 
     private ImageView avatarView;
-    private TextView headerTextView;
+    private TextView headerUsername;
+    private TextView headerGeotag;
+    private TextView headerTimeAndPlace;
+    private View headerFollowButton;
     private ImageView postPhotoView;
     private ContentPlayerView postVideoView;
 
@@ -281,7 +287,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         recordVideoReaction = findViewById(R.id.video_reaction_record_button);
         sendButtonContainer = findViewById(R.id.send_comment_button);
         avatarView = findViewById(R.id.avatar);
-        headerTextView = findViewById(R.id.header_text_view);
+        headerUsername = findViewById(R.id.header_username);
+        headerGeotag = findViewById(R.id.header_geotag);
+        headerTimeAndPlace = findViewById(R.id.header_time_and_place);
+        headerFollowButton = findViewById(R.id.follow_button);
         selfieContainer = findViewById(R.id.selfie_container);
         postVideoView = findViewById(R.id.content_video);
         postPhotoView = findViewById(R.id.content_photo);
@@ -1058,20 +1067,45 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             bindSelfie(selfie);
         }
 
+        final CharSequence timeText = TimeFormatter.formatMessageTime(headerTimeAndPlace.getContext(), post.timestamp).toLowerCase(Locale.getDefault());
+        String location = ((KatchupPost)post).location;
+        if (location != null) {
+            headerTimeAndPlace.setText(timeText + " · " + location.toLowerCase(Locale.getDefault()));
+        } else {
+            headerTimeAndPlace.setText(timeText);
+        }
+
+        viewModel.getFollowable().observe(this, followable -> {
+            headerFollowButton.setVisibility(Boolean.TRUE.equals(followable) ? View.VISIBLE : View.GONE);
+        });
+        headerFollowButton.setOnClickListener(v -> {
+            UserId userIdToFollow = post.senderUserId;
+            Connection.getInstance().requestFollowUser(userIdToFollow).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
+                    if (userIdToFollow.equals(post.senderUserId)) {
+                        headerFollowButton.post(() -> headerFollowButton.setVisibility(View.GONE));
+                    }
+                } else {
+                    SnackbarHelper.showWarning(headerFollowButton, R.string.failed_to_follow);
+                }
+            }).onError(e -> SnackbarHelper.showWarning(headerFollowButton, R.string.failed_to_follow));
+        });
+
+        geotagLoader.load(headerGeotag, post.senderUserId);
         kAvatarLoader.load(avatarView, post.senderUserId);
         avatarView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
-        headerTextView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
+        headerUsername.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
         if (post.senderUserId.isMe()) {
-            setHeaderText(post, Me.getInstance().getUsername());
+            headerUsername.setText(Me.getInstance().getUsername());
         } else {
             if (isPublic) {
                 PublicContentCache.getInstance().subscribeToPost(post);
             }
-            contactLoader.load(headerTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            contactLoader.load(headerUsername, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        setHeaderText(post, result.username == null ? "" : result.username.toLowerCase(Locale.getDefault()));
+                        view.setText(result.username == null ? "" : result.username.toLowerCase(Locale.getDefault()));
                     }
                 }
 
@@ -1080,18 +1114,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     view.setText("");
                 }
             });
-        }
-    }
-
-    private void setHeaderText(@NonNull Post post, @NonNull String shortName) {
-        final StyleSpan nameSpan = new StyleSpan(Typeface.NORMAL);
-        final ForegroundColorSpan timeAndLocationSpan = new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.white_40));
-        if (post instanceof KatchupPost) {
-            headerTextView.setText(((KatchupPost) post).formatPostHeaderText(headerTextView.getContext(), shortName, ON_TIME_SUFFIX, nameSpan, timeAndLocationSpan));
-        } else {
-            final SpannableString name = new SpannableString(shortName);
-            name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            headerTextView.setText(name);
         }
     }
 

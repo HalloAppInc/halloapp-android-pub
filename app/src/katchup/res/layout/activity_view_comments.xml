@@ -28,20 +28,66 @@
     </com.halloapp.katchup.JellybeanClipView>
 
     <TextView
-        android:id="@+id/header_text_view"
+        android:id="@+id/header_username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:textSize="17sp"
+        android:textSize="15sp"
         android:fontFamily="sans-serif-medium"
         app:layout_constraintStart_toEndOf="@id/avatar_container"
-        app:layout_constraintEnd_toStartOf="@+id/share_button"
         app:layout_constraintTop_toTopOf="@id/avatar_container"
-        app:layout_constraintBottom_toBottomOf="@id/avatar_container"
+        app:layout_constraintBottom_toTopOf="@+id/header_time_and_place"
         android:maxLines="2"
         android:ellipsize="end"
         android:layout_marginStart="8dp"
         tools:text="Clark 12:00"/>
+
+    <TextView
+        android:id="@+id/header_geotag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:layout_marginStart="6dp"
+        app:layout_constraintStart_toEndOf="@+id/header_username"
+        app:layout_constraintTop_toTopOf="@+id/header_username"
+        app:layout_constraintBottom_toTopOf="@+id/header_time_and_place"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:background="@drawable/geotag_background"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="10sp"
+        android:textColor="@color/black"
+        android:text="ucla"
+        />
+
+    <TextView
+        android:id="@+id/header_time_and_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintStart_toEndOf="@+id/avatar_container"
+        app:layout_constraintTop_toBottomOf="@+id/header_username"
+        app:layout_constraintBottom_toBottomOf="@+id/avatar_container"
+        android:textColor="@color/white_70"
+        />
+
+    <TextView
+        android:id="@+id/follow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="2dp"
+        android:paddingHorizontal="9dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toEndOf="@+id/header_time_and_place"
+        app:layout_constraintTop_toTopOf="@+id/header_time_and_place"
+        app:layout_constraintBottom_toBottomOf="@+id/header_time_and_place"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:text="@string/follow_profile"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        />
 
     <ImageButton
         android:id="@+id/share_button"

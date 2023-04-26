@@ -19,6 +19,7 @@ import androidx.paging.PagedList;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
@@ -59,6 +60,7 @@ public class CommentsViewModel extends AndroidViewModel {
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
 
     private MutableLiveData<Post> postLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> followable = new MutableLiveData<>();
 
     private final boolean isPublic;
     private final boolean fromStack;
@@ -168,6 +170,10 @@ public class CommentsViewModel extends AndroidViewModel {
     private void updatePost() {
         Post post = posts.get(currentIndex);
         postLiveData.postValue(post);
+
+        bgWorkers.execute(() -> {
+            followable.postValue(contactsDb.getRelationship(post.senderUserId, RelationshipInfo.Type.FOLLOWING) == null);
+        });
 
         if (post != null && !post.senderUserId.isMe()) {
             contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
@@ -352,6 +358,10 @@ public class CommentsViewModel extends AndroidViewModel {
 
     public LiveData<Post> getPost() {
         return postLiveData;
+    }
+
+    public LiveData<Boolean> getFollowable() {
+        return followable;
     }
 
     @Override

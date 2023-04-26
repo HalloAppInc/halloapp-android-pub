@@ -116,31 +116,6 @@ public class KatchupPost extends Post {
         return isOutgoing() && transferred == TRANSFERRED_NO;
     }
 
-    public Spanned formatPostHeaderText(@NonNull Context context, @NonNull String shortName, @NonNull String onTimeSuffix, @NonNull CharacterStyle nameSpan, @NonNull CharacterStyle timeAndLocationSpan) {
-        final SpannableStringBuilder headerText = new SpannableStringBuilder();
-        final SpannableString name = new SpannableString(shortName);
-        name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        headerText.append(name);
-        headerText.append(" ");
-        final CharSequence timeText = TimeFormatter.formatMessageTime(context, timestamp).toLowerCase(Locale.getDefault());
-        final SpannableString time = new SpannableString(timeText);
-        time.setSpan(CharacterStyle.wrap(timeAndLocationSpan), 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        headerText.append(time);
-        final boolean isOnTime = timestamp - notificationTimestamp <= Constants.LATE_POST_THRESHOLD_MS;
-
-        if (location != null) {
-            headerText.append(" ");
-            final String locText = context.getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
-            final SpannableString loc = new SpannableString(locText);
-            loc.setSpan(CharacterStyle.wrap(timeAndLocationSpan), 0, locText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            headerText.append(loc);
-        } else if (isOnTime) {
-            headerText.append(onTimeSuffix);
-        }
-
-        return headerText;
-    }
-
     // order moments by own moment, unseen moments, seen moments
     public static Comparator<KatchupPost> comparator = (momentFirst, momentSecond) -> {
         if (momentFirst.isOutgoing() && momentSecond.isOutgoing()) {
