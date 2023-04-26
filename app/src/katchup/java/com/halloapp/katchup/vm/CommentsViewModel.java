@@ -172,7 +172,7 @@ public class CommentsViewModel extends AndroidViewModel {
         postLiveData.postValue(post);
 
         bgWorkers.execute(() -> {
-            followable.postValue(contactsDb.getRelationship(post.senderUserId, RelationshipInfo.Type.FOLLOWING) == null);
+            followable.postValue(!post.senderUserId.isMe() && contactsDb.getRelationship(post.senderUserId, RelationshipInfo.Type.FOLLOWING) == null);
         });
 
         if (post != null && !post.senderUserId.isMe()) {
