@@ -150,6 +150,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         blurView = itemView.findViewById(R.id.blur_view);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
 
+        headerGeotag.setOnClickListener(v -> {
+            new GeotagPopupWindow(headerGeotag.getContext(), false, headerUsername.getText().toString(), headerGeotag.getText().toString(), null).show(headerGeotag);
+        });
+
         headerFollowButton.setOnClickListener(v -> {
             UserId userIdToFollow = post.senderUserId;
             parent.followUser(userIdToFollow).onResponse(success -> {

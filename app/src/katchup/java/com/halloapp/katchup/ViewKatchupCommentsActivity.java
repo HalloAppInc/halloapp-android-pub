@@ -72,6 +72,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
@@ -103,6 +104,7 @@ import com.halloapp.util.ScreenshotDetector;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.ShareExternallyView;
@@ -243,6 +245,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private ShareBannerPopupWindow shareBannerPopupWindow;
     private ReactionTooltipPopupWindow reactionTooltipPopupWindow;
+    private GeotagPopupWindow geotagPopupWindow;
 
     private ScreenshotDetector screenshotDetector;
     private HandlerThread screenshotHandlerThread;
@@ -1089,6 +1092,29 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     SnackbarHelper.showWarning(headerFollowButton, R.string.failed_to_follow);
                 }
             }).onError(e -> SnackbarHelper.showWarning(headerFollowButton, R.string.failed_to_follow));
+        });
+
+        headerGeotag.setOnClickListener(v -> {
+            Runnable removeRunnable = () -> {
+                Connection.getInstance().removeGeotag(headerGeotag.getText().toString()).onResponse(res -> {
+                    if (res.success) {
+                        Log.i("ViewKatchupCommentsActivity successfully removed geotag");
+                        Preferences.getInstance().setGeotag(null);
+                        Analytics.getInstance().updateGeotag();
+                        geotagLoader.load(headerGeotag, post.senderUserId);
+                    } else {
+                        Log.w("ViewKatchupCommentsActivity failed to remove geotag");
+                        SnackbarHelper.showWarning(this, R.string.failed_remove_geotag);
+                    }
+                    headerGeotag.post(geotagPopupWindow::dismiss);
+                }).onError(e -> {
+                    Log.e("ViewKatchupCommentsActivity failed to remove geotag", e);
+                    SnackbarHelper.showWarning(this, R.string.failed_remove_geotag);
+                    headerGeotag.post(geotagPopupWindow::dismiss);
+                });
+            };
+            geotagPopupWindow = new GeotagPopupWindow(this, post.senderUserId.isMe(), headerUsername.getText().toString(), headerGeotag.getText().toString(), removeRunnable);
+            geotagPopupWindow.show(headerGeotag);
         });
 
         geotagLoader.load(headerGeotag, post.senderUserId);

@@ -4,22 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -58,8 +50,6 @@ import com.halloapp.content.MomentManager;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
-import com.halloapp.katchup.compose.BackgroundImagePicker;
-import com.halloapp.katchup.compose.CustomAiActivity;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.KMomentContainer;
@@ -76,11 +66,9 @@ import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.PostMetricsResultIq;
 import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -151,6 +139,8 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
+
+    private GeotagPopupWindow geotagPopupWindow;
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -316,7 +306,27 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                                         .build());
                     }
                 } else {
-                    new GeotagPopupWindow(requireContext(), isMe, usernameText, geotag).show(geotagView);
+                    Runnable removeRunnable = () -> {
+                        Connection.getInstance().removeGeotag(geotag).onResponse(res -> {
+                            if (res.success) {
+                                Log.i("NewProfileFragment successfully removed geotag");
+                                profileInfo.geotag = null;
+                                viewModel.item.postValue(profileInfo);
+                                Preferences.getInstance().setGeotag(null);
+                                Analytics.getInstance().updateGeotag();
+                            } else {
+                                Log.w("NewProfileFragment failed to remove geotag");
+                                viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
+                            }
+                            geotagView.post(geotagPopupWindow::dismiss);
+                        }).onError(e -> {
+                            Log.e("NewProfileFragment failed to remove geotag", e);
+                            viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
+                            geotagView.post(geotagPopupWindow::dismiss);
+                        });
+                    };
+                    geotagPopupWindow = new GeotagPopupWindow(requireContext(), isMe, usernameText, geotag, removeRunnable);
+                    geotagPopupWindow.show(geotagView);
                 }
             });
 
@@ -1035,55 +1045,6 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
 
         public LiveData<UserProfileInfo> getUserProfileInfo() {
             return item;
-        }
-    }
-
-    public class GeotagPopupWindow extends PopupWindow {
-        public GeotagPopupWindow(@NonNull Context context, boolean isMe, @Nullable String name, @NonNull String geotag) {
-            super(context);
-
-            final View root = LayoutInflater.from(context).inflate(R.layout.geotag_popup_window, null, false);
-
-            TextView text = root.findViewById(R.id.geotag_text);
-            Runnable removeRunnable = () -> {
-                Connection.getInstance().removeGeotag(geotag).onResponse(res -> {
-                    if (res.success) {
-                        Log.i("NewProfileFragment successfully removed geotag");
-                        UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
-                        if (profileInfo != null) {
-                            profileInfo.geotag = null;
-                            viewModel.item.postValue(profileInfo);
-                        }
-                        Preferences.getInstance().setGeotag(null);
-                        Analytics.getInstance().updateGeotag();
-                    } else {
-                        Log.w("NewProfileFragment failed to remove geotag");
-                        viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
-                    }
-                    text.post(this::dismiss);
-                }).onError(e -> {
-                    Log.e("NewProfileFragment failed to remove geotag", e);
-                    viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
-                    text.post(this::dismiss);
-                });
-            };
-            text.setMovementMethod(LinkMovementMethod.getInstance());
-            CharSequence content = isMe
-                    ? StringUtils.replaceLink(Html.fromHtml(getString(R.string.geotag_explanation_me, geotag)), "remove", Color.BLACK, Typeface.create("sans-serif", Typeface.BOLD), removeRunnable)
-                    : getString(R.string.geotag_expanation_other, name, geotag);
-            text.setText(content);
-
-            setContentView(root);
-
-            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            setOutsideTouchable(true);
-            setFocusable(false);
-        }
-
-        public void show(@NonNull View anchor) {
-            View contentView = getContentView();
-            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            showAsDropDown(anchor, (-contentView.getMeasuredWidth() + anchor.getMeasuredWidth()) / 2, 0);
         }
     }
 
