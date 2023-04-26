@@ -776,6 +776,8 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                             profileInfo.geotag = res.geotags.get(0);
                             item.postValue(profileInfo);
                         }
+                        Preferences.getInstance().setGeotag(res.geotags.size() <= 0 ? null : res.geotags.get(0));
+                        Analytics.getInstance().updateGeotag();
                     }
                 } else {
                     Log.w("NewProfileFragment failed to add geotag");
@@ -1052,6 +1054,8 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                             profileInfo.geotag = null;
                             viewModel.item.postValue(profileInfo);
                         }
+                        Preferences.getInstance().setGeotag(null);
+                        Analytics.getInstance().updateGeotag();
                     } else {
                         Log.w("NewProfileFragment failed to remove geotag");
                         viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);

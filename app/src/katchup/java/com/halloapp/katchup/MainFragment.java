@@ -997,6 +997,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 final Double latitude = location != null ? location.getLatitude() : null;
                 final Double longitude = location != null ? location.getLongitude() : null;
                 Connection.getInstance().requestPublicFeed(this.lastCursor, latitude, longitude, showDevContent).onResponse(response -> {
+                    Preferences.getInstance().setGeotag(response.geotags.size() <= 0 ? null : response.geotags.get(0));
+                    Analytics.getInstance().updateGeotag();
                     refreshing.postValue(false);
                     lastPublicFeedFetchTimestamp = System.currentTimeMillis();
                     if (!response.success) {

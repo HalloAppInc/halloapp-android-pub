@@ -14,12 +14,14 @@ public class PublicFeedResponseIq extends HalloIq {
     public String cursor;
     public boolean restarted;
     public List<PublicFeedItem> items;
+    public List<String> geotags;
 
     private PublicFeedResponseIq(@NonNull PublicFeedResponse publicFeedResponse) {
         this.success = publicFeedResponse.getResult().equals(PublicFeedResponse.Result.SUCCESS);
         this.cursor = publicFeedResponse.getCursor();
         this.restarted = publicFeedResponse.getCursorRestarted();
         this.items = publicFeedResponse.getItemsList();
+        this.geotags = publicFeedResponse.getGeoTagsList();
     }
 
     @Override

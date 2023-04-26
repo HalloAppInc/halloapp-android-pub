@@ -8,6 +8,7 @@ import com.google.android.gms.common.util.Hex;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
+import com.halloapp.Preferences;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
@@ -23,6 +24,7 @@ import android.content.Context;
 import android.provider.Settings;
 import android.provider.Telephony;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -86,6 +88,7 @@ public class Analytics {
         setUserProperty("contactsPermissionEnabled", EasyPermissions.hasPermissions(context, Manifest.permission.READ_CONTACTS));
         setUserProperty("locationPermissionEnabled", EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_FINE_LOCATION) || EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION));
         setUserProperty("notificationPermissionEnabled", NotificationManagerCompat.from(context).areNotificationsEnabled());
+        updateGeotag();
         // https://firebase.google.com/docs/test-lab/android/android-studio#modify_instrumented_test_behavior_for
         setUserProperty("runningInFirebaseTestLab", "true".equals(Settings.System.getString(context.getContentResolver(), "firebase.test.lab")));
 
@@ -103,11 +106,17 @@ public class Analytics {
         amplitude.setUserId(uid);
     }
 
-    public void setUserProperty(String prop, Object value) {
+    public void setUserProperty(String prop, @NonNull Object value) {
         if (prop.equals("notificationPermissionEnabled")) {
             notificationsEnabled = (boolean) value;
         }
         amplitude.identify(new Identify().set(prop, value));
+    }
+
+    public void updateGeotag() {
+        String geotag = Preferences.getInstance().getGeotag();
+        geotag = geotag == null ? "undefined" : geotag;
+        setUserProperty("geotag", geotag);
     }
 
     private void track(String event) {
