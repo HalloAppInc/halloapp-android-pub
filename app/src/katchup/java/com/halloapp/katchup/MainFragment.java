@@ -108,6 +108,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private ExternalSelfieLoader externalSelfieLoader;
     private ContactLoader contactLoader = new ContactLoader();
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
+    private final GeotagLoader geotagLoader = new GeotagLoader();
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
     private final Set<UserId> followedUsers = new HashSet<>();
 
@@ -1143,6 +1144,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             @Override
             public KAvatarLoader getAvatarLoader() {
                 return kAvatarLoader;
+            }
+
+            @Override
+            public GeotagLoader getGeotagLoader() {
+                return geotagLoader;
             }
 
             @Override

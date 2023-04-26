@@ -47,6 +47,7 @@ import com.halloapp.xmpp.WhisperKeysMessage;
 import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -469,6 +470,9 @@ public class KatchupConnectionObserver extends Connection.Observer {
         String username = profileUpdate.getProfile().getUsername();
         String name = profileUpdate.getProfile().getName();
         String avatarId = profileUpdate.getProfile().getAvatarId();
+        List<String> geotags = profileUpdate.getProfile().getGeoTagsList();
+        String geotag = geotags.size() > 0 ? geotags.get(0) : null;
+        contactsDb.updateGeotags(Collections.singletonMap(userId, geotag));
         if (profileUpdate.getType().equals(ProfileUpdate.Type.DELETE)) {
             contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWING));
             contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWER));

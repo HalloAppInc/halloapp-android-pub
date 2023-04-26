@@ -282,6 +282,7 @@ public class PublicContentCache {
 
         Map<UserId, String> namesMap = new HashMap<>();
         Map<UserId, String> usernamesMap = new HashMap<>();
+        Map<UserId, String> geotagsMap = new HashMap<>();
         Map<UserId, String> avatarsMap = new HashMap<>();
         List<Post> posts = new ArrayList<>();
         Map<String, List<Comment>> commentMap = new HashMap<>();
@@ -292,6 +293,8 @@ public class PublicContentCache {
                 Container container = Container.parseFrom(item.getPost().getPayload());
                 namesMap.put(publisherUserId, item.getPost().getPublisherName());
                 usernamesMap.put(publisherUserId, item.getUserProfile().getUsername());
+                List<String> geotags = item.getUserProfile().getGeoTagsList();
+                geotagsMap.put(publisherUserId, geotags.size() > 0 ? geotags.get(0) : null);
                 avatarsMap.put(publisherUserId, item.getUserProfile().getAvatarId());
                 KatchupPost post = feedContentParser.parseKatchupPost(
                         item.getPost().getId(),
@@ -328,6 +331,7 @@ public class PublicContentCache {
         ContactsDb contactsDb = ContactsDb.getInstance();
         contactsDb.updateUserNames(namesMap);
         contactsDb.updateUserUsernames(usernamesMap);
+        contactsDb.updateGeotags(geotagsMap);
         contactsDb.updateUserAvatars(avatarsMap);
 
         return posts;

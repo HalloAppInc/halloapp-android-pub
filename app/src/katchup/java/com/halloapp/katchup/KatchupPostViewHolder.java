@@ -39,6 +39,7 @@ import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
@@ -59,7 +60,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private KatchupExoPlayer selfiePlayer;
     private final View headerView;
     private final ImageView headerAvatarView;
-    private final TextView headerTextView;
+    private final TextView headerUsername;
+    private final TextView headerGeotag;
+    private final TextView headerTimeAndPlace;
     private final View headerFollowButton;
     private final View unlockContainer;
     private final TextView unlockMainTextView;
@@ -109,6 +112,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         public abstract MediaThumbnailLoader getExternalMediaThumbnailLoader();
         public abstract ExternalSelfieLoader getExternalSelfieLoader();
         public abstract KAvatarLoader getAvatarLoader();
+        public abstract GeotagLoader getGeotagLoader();
         public abstract void startActivity(Intent intent);
         public abstract void startComposerActivity();
         public abstract Observable<Boolean> followUser(UserId userId);
@@ -123,7 +127,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         selfieContainer = itemView.findViewById(R.id.selfie_container);
         headerView = itemView.findViewById(R.id.moment_header);
         headerAvatarView = itemView.findViewById(R.id.header_avatar);
-        headerTextView = itemView.findViewById(R.id.header_text);
+        headerUsername = itemView.findViewById(R.id.header_username);
+        headerGeotag = itemView.findViewById(R.id.header_geotag);
+        headerTimeAndPlace = itemView.findViewById(R.id.header_time_and_place);
         headerFollowButton = itemView.findViewById(R.id.follow_button);
         unlockContainer = itemView.findViewById(R.id.unlock_container);
         unlockMainTextView = itemView.findViewById(R.id.unlock_main_text);
@@ -236,26 +242,19 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         blurView.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
+        parent.getGeotagLoader().load(headerGeotag, post.senderUserId);
         parent.getContactLoader().load(unlockMainTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
                 if (result != null) {
-                    String shortName = result.username == null ? "" : result.username.toLowerCase(Locale.getDefault());
+                    String username = result.username == null ? "" : result.username.toLowerCase(Locale.getDefault());
                     if (inStack && unlocked) {
-                        view.setText(view.getContext().getString(R.string.new_from, shortName));
+                        view.setText(view.getContext().getString(R.string.new_from, username));
                     } else {
-                        view.setText(view.getContext().getString(R.string.post_to_see, shortName));
+                        view.setText(view.getContext().getString(R.string.post_to_see, username));
                     }
 
-                    final StyleSpan nameSpan = new StyleSpan(Typeface.BOLD);
-                    final ForegroundColorSpan timeAndLocationSpan = new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40));
-                    if (post instanceof KatchupPost) {
-                        headerTextView.setText(((KatchupPost) post).formatPostHeaderText(headerTextView.getContext(), shortName, ON_TIME_SUFFIX, nameSpan, timeAndLocationSpan));
-                    } else {
-                        final SpannableString name = new SpannableString(shortName);
-                        name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        headerTextView.setText(name);
-                    }
+                    headerUsername.setText(username);
                 }
             }
 
@@ -264,6 +263,14 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                 view.setText("");
             }
         });
+
+        final CharSequence timeText = TimeFormatter.formatMessageTime(headerTimeAndPlace.getContext(), post.timestamp).toLowerCase(Locale.getDefault());
+        String location = ((KatchupPost)post).location;
+        if (location != null) {
+            headerTimeAndPlace.setText(timeText + " · " + location.toLowerCase(Locale.getDefault()));
+        } else {
+            headerTimeAndPlace.setText(timeText);
+        }
 
         if (post instanceof KatchupPost) {
             Media selfieMedia = post.media.get(0);

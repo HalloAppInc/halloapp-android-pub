@@ -415,6 +415,48 @@ public class ContactsDb {
         });
     }
 
+    public Future<Void> updateGeotags(@NonNull Map<UserId, String> geotags) {
+        return databaseWriteExecutor.submit(() -> {
+            boolean updated = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                for (Map.Entry<UserId, String> user : geotags.entrySet()) {
+                    String currentName = null;
+                    try (final Cursor cursor = db.query(GeotagsTable.TABLE_NAME,
+                            new String[] { GeotagsTable.COLUMN_GEOTAG },
+                            GeotagsTable.COLUMN_USER_ID + "=?",
+                            new String [] {user.getKey().rawId()}, null, null, null, "1")) {
+                        if (cursor.moveToNext()) {
+                            currentName = cursor.getString(0);
+                        }
+                    }
+                    if (!Objects.equals(currentName, user.getValue())) {
+                        final ContentValues values = new ContentValues();
+                        values.put(GeotagsTable.COLUMN_GEOTAG, user.getValue());
+                        final int updatedRowsCount = db.updateWithOnConflict(GeotagsTable.TABLE_NAME, values,
+                                GeotagsTable.COLUMN_USER_ID + "=? ",
+                                new String[]{user.getKey().rawId()},
+                                SQLiteDatabase.CONFLICT_ABORT);
+                        if (updatedRowsCount == 0) {
+                            values.put(GeotagsTable.COLUMN_USER_ID, user.getKey().rawId());
+                            db.insert(GeotagsTable.TABLE_NAME, null, values);
+                            Log.i("ContactsDb.updateGeotags: geotag " + user.getValue() + " added for " + user.getKey());
+                        }
+                        updated = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updated) {
+                notifyContactsChanged();
+            }
+            return null;
+        });
+    }
+
     public Future<Void> updateUserAvatars(@NonNull Map<UserId, String> avatars) {
         return databaseWriteExecutor.submit(() -> {
             boolean updated = false;
@@ -590,6 +632,20 @@ public class ContactsDb {
                 new String[] { UsernamesTable.COLUMN_USERNAME },
                 UsernamesTable.COLUMN_USER_ID + "=?",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public @Nullable String readGeotag(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(GeotagsTable.TABLE_NAME,
+                new String[] { GeotagsTable.COLUMN_GEOTAG },
+                GeotagsTable.COLUMN_USER_ID + "=?",
+                new String[] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return cursor.getString(0);
             }
@@ -1348,6 +1404,17 @@ public class ContactsDb {
         static final String COLUMN_USERNAME = "username";
     }
 
+    private static final class GeotagsTable implements BaseColumns {
+        private GeotagsTable() {}
+
+        static final String TABLE_NAME = "geotags";
+
+        static final String INDEX_USER_ID = "geotags_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+        static final String COLUMN_GEOTAG = "geotag";
+    }
+
     private static final class ChatsPlaceholderTable implements BaseColumns {
         private ChatsPlaceholderTable() {}
 
@@ -1409,7 +1476,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 20;
+        private static final int DATABASE_VERSION = 21;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1486,6 +1553,18 @@ public class ContactsDb {
             db.execSQL("DROP INDEX IF EXISTS " + UsernamesTable.INDEX_USER_ID);
             db.execSQL("CREATE UNIQUE INDEX " + UsernamesTable.INDEX_USER_ID + " ON " + UsernamesTable.TABLE_NAME + " ("
                     + UsernamesTable.COLUMN_USER_ID
+                    + ");");
+
+            db.execSQL("DROP TABLE IF EXISTS " + GeotagsTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + GeotagsTable.TABLE_NAME + " ("
+                    + GeotagsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + GeotagsTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + GeotagsTable.COLUMN_GEOTAG + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + GeotagsTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + GeotagsTable.INDEX_USER_ID + " ON " + GeotagsTable.TABLE_NAME + " ("
+                    + GeotagsTable.COLUMN_USER_ID
                     + ");");
 
             db.execSQL("DROP TABLE IF EXISTS " + BlocklistTable.TABLE_NAME);
@@ -1585,6 +1664,9 @@ public class ContactsDb {
                 }
                 case 19: {
                     upgradeFromVersion19(db);
+                }
+                case 20: {
+                    upgradeFromVersion20(db);
                 }
                 break;
                 default: {
@@ -1851,6 +1933,20 @@ public class ContactsDb {
         private void upgradeFromVersion19(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + KatchupRelationshipTable.TABLE_NAME + " ADD COLUMN " + KatchupRelationshipTable.COLUMN_SEEN + " INTEGER DEFAULT 0");
             db.execSQL("UPDATE " + KatchupRelationshipTable.TABLE_NAME + " SET " + KatchupRelationshipTable.COLUMN_SEEN + "=1");
+        }
+
+        private void upgradeFromVersion20(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + GeotagsTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + GeotagsTable.TABLE_NAME + " ("
+                    + GeotagsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + GeotagsTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + GeotagsTable.COLUMN_GEOTAG + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + GeotagsTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + GeotagsTable.INDEX_USER_ID + " ON " + GeotagsTable.TABLE_NAME + " ("
+                    + GeotagsTable.COLUMN_USER_ID
+                    + ");");
         }
 
         /**
