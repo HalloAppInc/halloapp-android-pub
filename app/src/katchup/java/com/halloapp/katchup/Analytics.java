@@ -21,6 +21,7 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.provider.Settings;
+import android.provider.Telephony;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
@@ -48,6 +49,7 @@ public class Analytics {
 
     private String prevScreen = "";
     private boolean notificationsEnabled;
+    private Context context;
 
     public static Analytics getInstance() {
         if (instance == null) {
@@ -63,7 +65,7 @@ public class Analytics {
     private Analytics() {}
 
     public void init(Application application) {
-        Context context = application.getApplicationContext();
+        context = application.getApplicationContext();
         if (BuildConfig.DEBUG) {
             amplitude = new Amplitude(new Configuration("279d791071ab6d93eba1e53ebd7abc4a", context));
             // TODO(josh): remove when Amplitude stuff is done
@@ -326,6 +328,22 @@ public class Analytics {
         properties.put("post_moment_notif_id", kParentPost.notificationId);
         properties.put("type", type);
         track("commented", properties);
+    }
+
+    public void externalShare(String destination) {
+        String defaultSms = Telephony.Sms.getDefaultSmsPackage(context);
+        if ("com.whatsapp".equals(destination)) {
+            destination = "whatsapp";
+        } else if (defaultSms != null && defaultSms.equals(destination)) {
+            destination = "sms";
+        } else if ("com.instagram.android".equals(destination)) {
+            destination = "instagram";
+        } else if ("com.snapchat.android".equals(destination)) {
+            destination = "snapchat";
+        }
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("shareDestination", destination);
+        track("externalShare", properties);
     }
 
     public void followed(boolean success) {

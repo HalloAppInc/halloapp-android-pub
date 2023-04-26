@@ -1,14 +1,15 @@
 package com.halloapp.katchup;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.arch.core.util.Function;
-import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -25,6 +26,7 @@ import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ShareIntentHelper {
 
@@ -53,19 +55,32 @@ public class ShareIntentHelper {
     private static Intent generateShareIntent(@NonNull Context context, @Nullable String targetPackage, @NonNull File postFile) {
         Uri videoUri = FileProvider.getUriForFile(context, "com.halloapp.katchup.fileprovider", postFile);
 
-        ShareCompat.IntentBuilder builder = (new ShareCompat.IntentBuilder(context))
-                .setStream(videoUri)
-                .setType("video/mp4");
+        Intent builderIntent = new Intent(Intent.ACTION_SEND);
+        builderIntent.setType("video/mp4");
+        builderIntent.putExtra(Intent.EXTRA_STREAM, videoUri);
+
+        final String shareAction = "com.halloapp.katchup.share.SHARE_ACTION";
+        Intent receiver = new Intent(context, ShareReceiver.class);
+        receiver.setAction(shareAction);
 
         if (targetPackage == null) {
-            builder.setChooserTitle(context.getString(R.string.share_moment_label)).createChooserIntent();
-            return builder.getIntent();
+            Intent chooserIntent;
+            if (Build.VERSION.SDK_INT >= 31) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+                chooserIntent = Intent.createChooser(builderIntent, context.getString(R.string.share_moment_label), pendingIntent.getIntentSender());
+            } else if (Build.VERSION.SDK_INT >= 22) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver, PendingIntent.FLAG_UPDATE_CURRENT);
+                chooserIntent = Intent.createChooser(builderIntent, context.getString(R.string.share_moment_label), pendingIntent.getIntentSender());
+            } else {
+                Analytics.getInstance().externalShare("system");
+                chooserIntent = Intent.createChooser(builderIntent, context.getString(R.string.share_moment_label));
+            }
+            return chooserIntent;
         } else {
-            Intent intent = builder.getIntent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.setPackage(targetPackage);
+            Analytics.getInstance().externalShare(targetPackage);
+            builderIntent.setPackage(targetPackage);
 
-            return intent;
+            return builderIntent;
         }
     }
 

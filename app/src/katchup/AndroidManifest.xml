@@ -353,6 +353,15 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".katchup.ShareReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.halloapp.katchup.share.SHARE_ACTION" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.halloapp.katchup.fileprovider"
