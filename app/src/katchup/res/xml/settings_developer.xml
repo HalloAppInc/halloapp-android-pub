@@ -43,4 +43,8 @@
         app:key="fetch_props"
         app:title="Fetch props" />
 
+    <Preference
+        app:key="add_geotag"
+        app:title="Add cal_ave geotag" />
+
 </PreferenceScreen>

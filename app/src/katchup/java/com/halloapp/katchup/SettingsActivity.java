@@ -3,6 +3,7 @@ package com.halloapp.katchup;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
 import com.halloapp.xmpp.Connection;
 
@@ -280,6 +282,7 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_RUN_DAILY_WORKER = "run_daily_worker";
         private static final String PREF_KEY_MARK_ALL_UNREAD = "mark_all_unread";
         private static final String PREF_KEY_FETCH_PROPS = "fetch_props";
+        private static final String PREF_KEY_ADD_GEOTAG = "add_geotag";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -354,6 +357,18 @@ public class SettingsActivity extends HalloActivity {
 
             getPreference(PREF_KEY_FETCH_PROPS).setOnPreferenceClickListener(preference -> {
                 Connection.getInstance().requestServerProps();
+                return true;
+            });
+
+            getPreference(PREF_KEY_ADD_GEOTAG).setOnPreferenceClickListener(preference -> {
+                Location location = new Location("FAKE");
+                location.setLatitude(37.428917);
+                location.setLongitude(-122.142707);
+                Connection.getInstance().forceAddGeotag(location).onResponse(res -> {
+                    Log.d("Geotag add success? " + res.success);
+                }).onError(res -> {
+                    Log.w("Failed to add geotag");
+                });
                 return true;
             });
         }
