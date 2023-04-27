@@ -831,6 +831,7 @@ Abre la pantalla de Configuración para modificar los permisos de la aplicación
     <string name="groups_in_common">"Grupos en común"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <!-- Fuzzy -->
     <string name="slide_to_cancel">"Desliza para cancelar"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -2687,6 +2688,11 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">"cargando…"</string>
     <string name="app_name_katchup">"Katchup"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup caducó"</string>
+    <plurals name="katchup_notification_app_expiration_days_left_title">
+        <item quantity="one">"Katchup caduca en %d día"</item>
+        <item quantity="other">"Katchup caduca en %d días"</item>
+    </plurals>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>

@@ -788,6 +788,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="groups_in_common">"Grup bersama"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <!-- Fuzzy -->
     <string name="slide_to_cancel">"Geser untuk membatalkan"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -2617,6 +2618,10 @@ Open the app settings screen to modify app permissions."</string>
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">"loading…"</string>
     <string name="app_name_katchup">"Katchup"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <plurals name="katchup_notification_app_expiration_days_left_title">
+        <item quantity="other">"Katchup expires in %d day"</item>
+    </plurals>
     <string name="bg_option_generate">"buat latar belakang AI baru"</string>
     <string name="settings_feedback_title">"saran"</string>
     <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>

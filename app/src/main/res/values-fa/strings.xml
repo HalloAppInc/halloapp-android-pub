@@ -812,6 +812,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="groups_in_common">"گروه‌های مشترک"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <!-- Fuzzy -->
     <string name="slide_to_cancel">"برای لغو بکشید"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -2676,6 +2677,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">"بارگذاری…"</string>
     <string name="app_name_katchup">"Katchup"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <plurals name="katchup_notification_app_expiration_days_left_title">
+        <item quantity="one">"Katchup expires in %d day"</item>
+        <item quantity="other">"Katchup expires in %d day"</item>
+    </plurals>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>

@@ -828,6 +828,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="groups_in_common">"Gemeenschappelijke groepen"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <!-- Fuzzy -->
     <string name="slide_to_cancel">"Veeg om te annuleren"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -2422,7 +2423,7 @@ Je katchup-geschiedenis verwijderen van deze telefoon"</string>
     <string name="settings_notifications_mentions_option">"vermeldingen"</string>
 
     <!-- notifications settings on fire option -->
-    <string name="settings_notifications_on_fire_option">"on fire"</string>
+    <string name="settings_notifications_on_fire_option">"in vuur en vlam"</string>
 
     <!-- notifications settings new users option -->
     <string name="settings_notifications_new_users_option">"nieuwe gebruikers"</string>
@@ -2681,6 +2682,11 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">"laden…"</string>
     <string name="app_name_katchup">"Katchup"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup is verlopen"</string>
+    <plurals name="katchup_notification_app_expiration_days_left_title">
+        <item quantity="one">"Katchup verloopt in %d dag"</item>
+        <item quantity="other">"Katchup verloopt in %d dagen"</item>
+    </plurals>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
