@@ -22,6 +22,7 @@ import androidx.emoji2.text.EmojiSpan;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.util.logs.Log;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;

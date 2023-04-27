@@ -1508,9 +1508,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     color = Colors.getDefaultStickerColor();
                 }
                 textView.setTextColor(color);
-                textView.setText(StringUtils.formatMaxLineLengths(comment.text.substring(7), Constants.STICKER_MAX_CHARS_PER_LINE, Constants.STICKER_MAX_LINES));
+                textView.setText(comment.text.substring(7));
             } else {
-                textView.setText(StringUtils.formatMaxLineLengths(comment.text, Constants.STICKER_MAX_CHARS_PER_LINE, Constants.STICKER_MAX_LINES));
+                textView.setText(comment.text);
             }
             commentText = comment.text;
         }
