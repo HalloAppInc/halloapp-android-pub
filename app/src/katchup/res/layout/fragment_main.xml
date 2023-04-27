@@ -456,10 +456,10 @@
             android:id="@+id/following"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="14dp"
+            android:paddingHorizontal="18dp"
             android:paddingBottom="8dp"
             android:paddingTop="7dp"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginStart="10dp"
             android:textSize="17sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/white"
@@ -467,14 +467,24 @@
             android:text="@string/feed_type_following"
             />
 
+        <ImageView
+            android:id="@+id/updated_following_feed_dot"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_marginStart="-18dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/ic_updated_feed_dot"
+            app:layout_constraintStart_toEndOf="@+id/following"
+            app:layout_constraintTop_toTopOf="@+id/following"/>
+
         <TextView
             android:id="@+id/discover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="14dp"
+            android:layout_marginStart="28dp"
+            android:paddingHorizontal="18dp"
             android:paddingBottom="8dp"
             android:paddingTop="7dp"
-            android:layout_marginHorizontal="10dp"
             android:textSize="17sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/white"
@@ -483,10 +493,10 @@
             />
 
         <ImageView
-            android:id="@+id/updated_feed_dot"
+            android:id="@+id/updated_public_feed_dot"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:layout_marginStart="-24dp"
+            android:layout_marginStart="-18dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/ic_updated_feed_dot"
             app:layout_constraintStart_toEndOf="@+id/discover"

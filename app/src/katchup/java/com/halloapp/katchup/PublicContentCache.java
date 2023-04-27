@@ -145,7 +145,7 @@ public class PublicContentCache {
         return currentCachedItems;
     }
 
-    public MutableLiveData<Boolean> getHasUpdatedFeed() {
+    public MutableLiveData<Boolean> getHasUpdatedPublicFeed() {
         return hasUpdatedFeed;
     }
 

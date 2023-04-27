@@ -157,7 +157,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View tapToRequestLocation;
     private View tapToEnableNotifications;
     private View onlyOwnPost;
-    private View updatedFeedView;
+    private View updatedPublicFeedView;
+    private View updatedFollowingFeedView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ShareBannerPopupWindow shareBannerPopupWindow;
 
@@ -311,7 +312,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));
         discoverButton = root.findViewById(R.id.discover);
         discoverButton.setOnClickListener(v -> {
-            boolean hasUpdatedFeed = Boolean.TRUE.equals(publicContentCache.getHasUpdatedFeed().getValue());
+            boolean hasUpdatedFeed = Boolean.TRUE.equals(publicContentCache.getHasUpdatedPublicFeed().getValue());
             if (hasUpdatedFeed) {
                 viewModel.updatePublicFeed();
                 publicListView.scrollToPosition(0);
@@ -326,6 +327,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             boolean followingSelected = Boolean.TRUE.equals(selected);
             setFollowingSelected(followingSelected);
             notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
+            if (followingSelected) {
+                viewModel.setHasUpdatedFollowingFeed(false);
+            }
         });
 
         TextView newFollowerCount = root.findViewById(R.id.new_follower_count);
@@ -358,9 +362,17 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             discoverRefresh.setVisibility(restarted ? View.VISIBLE : View.GONE);
         });
 
-        updatedFeedView = root.findViewById(R.id.updated_feed_dot);
-        publicContentCache.getHasUpdatedFeed().observe(getViewLifecycleOwner(), hasUpdatedFeed -> {
-            updatedFeedView.setVisibility(hasUpdatedFeed ? View.VISIBLE : View.GONE);
+        updatedFollowingFeedView = root.findViewById(R.id.updated_following_feed_dot);
+        viewModel.getHasUpdatedFollowingFeed().observe(getViewLifecycleOwner(), hasUpdatedFeed -> {
+            boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+            updatedFollowingFeedView.setVisibility(hasUpdatedFeed && !followingTabSelected ? View.VISIBLE : View.INVISIBLE);
+        });
+
+        updatedPublicFeedView = root.findViewById(R.id.updated_public_feed_dot);
+        publicContentCache.getHasUpdatedPublicFeed().observe(getViewLifecycleOwner(), hasUpdatedFeed -> {
+            boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+            updatedPublicFeedView.setVisibility(hasUpdatedFeed && followingTabSelected ? View.VISIBLE : View.GONE);
+            discoverRefresh.setVisibility(hasUpdatedFeed && !followingTabSelected ? View.VISIBLE : View.GONE);
         });
 
         tapToRequestLocation = root.findViewById(R.id.request_location_access);
@@ -411,6 +423,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         followingListAdapter.addMomentsHeader();
         viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
+            if (moments.isEmpty()) {
+                viewModel.setHasUpdatedFollowingFeed(false);
+            }
             followingListAdapter.setMoments(moments);
             updateEmptyState();
         });
@@ -937,6 +952,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 if (post.senderUserId.isMe()) {
                     myPost.invalidate();
                 } else {
+                    if (!Boolean.TRUE.equals(followingTabSelected.getValue())) {
+                        setHasUpdatedFollowingFeed(true);
+                    }
                     momentList.invalidate();
                 }
                 dataSourceFactory.invalidateLatestDataSource();
@@ -1057,6 +1075,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
         private final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
+        private final MutableLiveData<Boolean> hasUpdatedFollowingFeed = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> restarted = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> refreshing = new MutableLiveData<>(true);
         final ComputableLiveData<Integer> unseenFollowerCount;
@@ -1247,6 +1266,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         public void setFollowingSelected(boolean selected) {
             followingTabSelected.postValue(selected);
+        }
+
+        public MutableLiveData<Boolean> getHasUpdatedFollowingFeed() {
+            return hasUpdatedFollowingFeed;
+        }
+
+        public void setHasUpdatedFollowingFeed(boolean hasUpdate) {
+            hasUpdatedFollowingFeed.postValue(hasUpdate);
         }
 
         public void updateLocation(@Nullable Location updatedLocation) {
