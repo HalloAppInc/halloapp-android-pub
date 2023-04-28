@@ -116,7 +116,7 @@
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
     <string name="contact_permission_title">One last thing</string>
     <string name="registration_code_invalid">Invalid registration code, try again</string>
-    <string name="registration_failed">Failed to register phone number, try again</string>
+    <string name="registration_failed">Failed to register, please try again</string>
     <string name="registration_failed_no_friends">We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number.</string>
     <string name="registration_failed_no_friends_title">Shucks!</string>
     <!-- message when user requests another SMS during registration -->

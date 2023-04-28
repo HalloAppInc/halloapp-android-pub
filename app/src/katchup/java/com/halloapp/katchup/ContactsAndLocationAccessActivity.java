@@ -37,6 +37,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -90,6 +91,8 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
                 Analytics.getInstance().registered(false);
             } else {
                 Log.e("Error with registering: " + result.result);
+                SnackbarHelper.showWarning(this, R.string.registration_failed);
+                return;
             }
             loadingProgressBar.setVisibility(View.GONE);
             startActivity(new Intent(this, MainActivity.class));
