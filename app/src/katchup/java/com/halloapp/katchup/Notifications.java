@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,13 +33,19 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.ScreenshotByInfo;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.IllegalFormatException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -448,7 +455,7 @@ public class Notifications {
 
     public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
         final String title = context.getString(R.string.notification_daily_katchup_title);
-        final String body = context.getString(R.string.notification_daily_katchup_body);
+        final String body = getDailyMomentNotificationText(prompt);
         final Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
         contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
         contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.DAILY_MOMENT_NOTIFICATION);
@@ -485,6 +492,34 @@ public class Notifications {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(DAILY_MOMENT_NOTIFICATION_TAG, DAILY_MOMENT_NOTIFICATION_ID, builder.build());
+    }
+
+    private String getDailyMomentNotificationText(String prompt) {
+        String body = ServerProps.getInstance().getPropDailyKatchupNotificationTemplate();
+        if (!TextUtils.isEmpty(body) && !TextUtils.isEmpty(prompt)) {
+            try {
+                JSONObject jsonObject = new JSONObject(body);
+
+                String language = Locale.getDefault().getLanguage();
+                // See https://developer.android.com/reference/java/util/Locale#getLanguage() for why one cannot directly look up the string
+                for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+                    String key = it.next();
+                    if (language.equals(new Locale(key).getLanguage())) {
+                        String selected = jsonObject.getString(key);
+                        try {
+                            return String.format(selected.replace('@', 's'), prompt);
+                        } catch (IllegalFormatException e) {
+                            Log.e("Failed to format daily notification prompt string", e);
+                            Log.sendErrorReport("Bad daily notification prompt string");
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("Failed to parse daily notification prompt json", e);
+                Log.sendErrorReport("Bad daily notification prompt json");
+            }
+        }
+        return context.getString(R.string.notification_daily_katchup_body);
     }
 
     public void clearDailyMomentNotification() {
