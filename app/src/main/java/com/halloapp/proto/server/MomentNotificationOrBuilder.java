@@ -63,4 +63,24 @@ public interface MomentNotificationOrBuilder extends
    * @return The promptImage.
    */
   com.google.protobuf.ByteString getPromptImage();
+
+  /**
+   * <pre>
+   * Local date of the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @return The date.
+   */
+  java.lang.String getDate();
+  /**
+   * <pre>
+   * Local date of the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @return The bytes for date.
+   */
+  com.google.protobuf.ByteString
+      getDateBytes();
 }

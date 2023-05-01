@@ -13,6 +13,7 @@ public  final class ArchiveResult extends
     ArchiveResultOrBuilder {
   private ArchiveResult() {
     posts_ = emptyProtobufList();
+    startDate_ = "";
   }
   /**
    * Protobuf enum {@code server.ArchiveResult.Result}
@@ -405,6 +406,73 @@ public  final class ArchiveResult extends
     posts_.remove(index);
   }
 
+  public static final int START_DATE_FIELD_NUMBER = 5;
+  private java.lang.String startDate_;
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   * @return The startDate.
+   */
+  @java.lang.Override
+  public java.lang.String getStartDate() {
+    return startDate_;
+  }
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   * @return The bytes for startDate.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getStartDateBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(startDate_);
+  }
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   * @param value The startDate to set.
+   */
+  private void setStartDate(
+      java.lang.String value) {
+    value.getClass();
+  
+    startDate_ = value;
+  }
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   */
+  private void clearStartDate() {
+    
+    startDate_ = getDefaultInstance().getStartDate();
+  }
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   * @param value The bytes for startDate to set.
+   */
+  private void setStartDateBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    startDate_ = value.toStringUtf8();
+    
+  }
+
   public static com.halloapp.proto.server.ArchiveResult parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -722,6 +790,75 @@ public  final class ArchiveResult extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+     * </pre>
+     *
+     * <code>string start_date = 5;</code>
+     * @return The startDate.
+     */
+    @java.lang.Override
+    public java.lang.String getStartDate() {
+      return instance.getStartDate();
+    }
+    /**
+     * <pre>
+     * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+     * </pre>
+     *
+     * <code>string start_date = 5;</code>
+     * @return The bytes for startDate.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getStartDateBytes() {
+      return instance.getStartDateBytes();
+    }
+    /**
+     * <pre>
+     * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+     * </pre>
+     *
+     * <code>string start_date = 5;</code>
+     * @param value The startDate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStartDate(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setStartDate(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+     * </pre>
+     *
+     * <code>string start_date = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearStartDate() {
+      copyOnWrite();
+      instance.clearStartDate();
+      return this;
+    }
+    /**
+     * <pre>
+     * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+     * </pre>
+     *
+     * <code>string start_date = 5;</code>
+     * @param value The bytes for startDate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStartDateBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setStartDateBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ArchiveResult)
   }
   @java.lang.Override
@@ -743,10 +880,11 @@ public  final class ArchiveResult extends
             "uid_",
             "posts_",
             com.halloapp.proto.server.Post.class,
+            "startDate_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
-              "\u0002\u0004\u001b";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
+              "\u0002\u0004\u001b\u0005\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

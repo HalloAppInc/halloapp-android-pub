@@ -12,6 +12,7 @@ public  final class MomentInfo extends
     // @@protoc_insertion_point(message_implements:server.MomentInfo)
     MomentInfoOrBuilder {
   private MomentInfo() {
+    date_ = "";
   }
   /**
    * Protobuf enum {@code server.MomentInfo.ContentType}
@@ -370,6 +371,73 @@ public  final class MomentInfo extends
   private void clearContentType() {
     
     contentType_ = 0;
+  }
+
+  public static final int DATE_FIELD_NUMBER = 7;
+  private java.lang.String date_;
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @return The date.
+   */
+  @java.lang.Override
+  public java.lang.String getDate() {
+    return date_;
+  }
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @return The bytes for date.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getDateBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(date_);
+  }
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @param value The date to set.
+   */
+  private void setDate(
+      java.lang.String value) {
+    value.getClass();
+  
+    date_ = value;
+  }
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   */
+  private void clearDate() {
+    
+    date_ = getDefaultInstance().getDate();
+  }
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @param value The bytes for date to set.
+   */
+  private void setDateBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    date_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.MomentInfo parseFrom(
@@ -733,6 +801,75 @@ public  final class MomentInfo extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Date received with the notification in the format: DD/MM/YYYY.
+     * </pre>
+     *
+     * <code>string date = 7;</code>
+     * @return The date.
+     */
+    @java.lang.Override
+    public java.lang.String getDate() {
+      return instance.getDate();
+    }
+    /**
+     * <pre>
+     * Date received with the notification in the format: DD/MM/YYYY.
+     * </pre>
+     *
+     * <code>string date = 7;</code>
+     * @return The bytes for date.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDateBytes() {
+      return instance.getDateBytes();
+    }
+    /**
+     * <pre>
+     * Date received with the notification in the format: DD/MM/YYYY.
+     * </pre>
+     *
+     * <code>string date = 7;</code>
+     * @param value The date to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDate(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setDate(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Date received with the notification in the format: DD/MM/YYYY.
+     * </pre>
+     *
+     * <code>string date = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearDate() {
+      copyOnWrite();
+      instance.clearDate();
+      return this;
+    }
+    /**
+     * <pre>
+     * Date received with the notification in the format: DD/MM/YYYY.
+     * </pre>
+     *
+     * <code>string date = 7;</code>
+     * @param value The bytes for date to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDateBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setDateBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MomentInfo)
   }
   @java.lang.Override
@@ -755,10 +892,11 @@ public  final class MomentInfo extends
             "numSelfieTakes_",
             "notificationId_",
             "contentType_",
+            "date_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
-              "\u0003\u0002\u0004\u0002\u0005\u0002\u0006\f";
+              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
+              "\u0003\u0002\u0004\u0002\u0005\u0002\u0006\f\u0007\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

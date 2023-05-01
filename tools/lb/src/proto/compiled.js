@@ -3809,6 +3809,7 @@ $root.server = (function() {
          * @property {number|Long|null} [numSelfieTakes] MomentInfo numSelfieTakes
          * @property {number|Long|null} [notificationId] MomentInfo notificationId
          * @property {server.MomentInfo.ContentType|null} [contentType] MomentInfo contentType
+         * @property {string|null} [date] MomentInfo date
          */
 
         /**
@@ -3875,6 +3876,14 @@ $root.server = (function() {
         MomentInfo.prototype.contentType = 0;
 
         /**
+         * MomentInfo date.
+         * @member {string} date
+         * @memberof server.MomentInfo
+         * @instance
+         */
+        MomentInfo.prototype.date = "";
+
+        /**
          * Creates a new MomentInfo instance using the specified properties.
          * @function create
          * @memberof server.MomentInfo
@@ -3910,6 +3919,8 @@ $root.server = (function() {
                 writer.uint32(/* id 5, wireType 0 =*/40).int64(message.notificationId);
             if (message.contentType != null && Object.hasOwnProperty.call(message, "contentType"))
                 writer.uint32(/* id 6, wireType 0 =*/48).int32(message.contentType);
+            if (message.date != null && Object.hasOwnProperty.call(message, "date"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.date);
             return writer;
         };
 
@@ -3961,6 +3972,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.contentType = reader.int32();
+                    break;
+                case 7:
+                    message.date = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4022,6 +4036,9 @@ $root.server = (function() {
                 case 3:
                     break;
                 }
+            if (message.date != null && message.hasOwnProperty("date"))
+                if (!$util.isString(message.date))
+                    return "date: string expected";
             return null;
         };
 
@@ -4100,6 +4117,8 @@ $root.server = (function() {
                 message.contentType = 3;
                 break;
             }
+            if (object.date != null)
+                message.date = String(object.date);
             return message;
         };
 
@@ -4143,6 +4162,7 @@ $root.server = (function() {
                 } else
                     object.notificationId = options.longs === String ? "0" : 0;
                 object.contentType = options.enums === String ? "IMAGE" : 0;
+                object.date = "";
             }
             if (message.notificationTimestamp != null && message.hasOwnProperty("notificationTimestamp"))
                 if (typeof message.notificationTimestamp === "number")
@@ -4171,6 +4191,8 @@ $root.server = (function() {
                     object.notificationId = options.longs === String ? $util.Long.prototype.toString.call(message.notificationId) : options.longs === Number ? new $util.LongBits(message.notificationId.low >>> 0, message.notificationId.high >>> 0).toNumber() : message.notificationId;
             if (message.contentType != null && message.hasOwnProperty("contentType"))
                 object.contentType = options.enums === String ? $root.server.MomentInfo.ContentType[message.contentType] : message.contentType;
+            if (message.date != null && message.hasOwnProperty("date"))
+                object.date = message.date;
             return object;
         };
 
@@ -26266,6 +26288,7 @@ $root.server = (function() {
          * @property {string|null} [prompt] MomentNotification prompt
          * @property {boolean|null} [hideBanner] MomentNotification hideBanner
          * @property {Uint8Array|null} [promptImage] MomentNotification promptImage
+         * @property {string|null} [date] MomentNotification date
          */
 
         /**
@@ -26332,6 +26355,14 @@ $root.server = (function() {
         MomentNotification.prototype.promptImage = $util.newBuffer([]);
 
         /**
+         * MomentNotification date.
+         * @member {string} date
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.date = "";
+
+        /**
          * Creates a new MomentNotification instance using the specified properties.
          * @function create
          * @memberof server.MomentNotification
@@ -26367,6 +26398,8 @@ $root.server = (function() {
                 writer.uint32(/* id 5, wireType 0 =*/40).bool(message.hideBanner);
             if (message.promptImage != null && Object.hasOwnProperty.call(message, "promptImage"))
                 writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.promptImage);
+            if (message.date != null && Object.hasOwnProperty.call(message, "date"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.date);
             return writer;
         };
 
@@ -26418,6 +26451,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.promptImage = reader.bytes();
+                    break;
+                case 7:
+                    message.date = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -26479,6 +26515,9 @@ $root.server = (function() {
             if (message.promptImage != null && message.hasOwnProperty("promptImage"))
                 if (!(message.promptImage && typeof message.promptImage.length === "number" || $util.isString(message.promptImage)))
                     return "promptImage: buffer expected";
+            if (message.date != null && message.hasOwnProperty("date"))
+                if (!$util.isString(message.date))
+                    return "date: string expected";
             return null;
         };
 
@@ -26539,6 +26578,8 @@ $root.server = (function() {
                     $util.base64.decode(object.promptImage, message.promptImage = $util.newBuffer($util.base64.length(object.promptImage)), 0);
                 else if (object.promptImage.length)
                     message.promptImage = object.promptImage;
+            if (object.date != null)
+                message.date = String(object.date);
             return message;
         };
 
@@ -26576,6 +26617,7 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.promptImage = $util.newBuffer(object.promptImage);
                 }
+                object.date = "";
             }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
@@ -26595,6 +26637,8 @@ $root.server = (function() {
                 object.hideBanner = message.hideBanner;
             if (message.promptImage != null && message.hasOwnProperty("promptImage"))
                 object.promptImage = options.bytes === String ? $util.base64.encode(message.promptImage, 0, message.promptImage.length) : options.bytes === Array ? Array.prototype.slice.call(message.promptImage) : message.promptImage;
+            if (message.date != null && message.hasOwnProperty("date"))
+                object.date = message.date;
             return object;
         };
 
@@ -26841,6 +26885,7 @@ $root.server = (function() {
          * @property {server.ArchiveResult.Reason|null} [reason] ArchiveResult reason
          * @property {number|Long|null} [uid] ArchiveResult uid
          * @property {Array.<server.IPost>|null} [posts] ArchiveResult posts
+         * @property {string|null} [startDate] ArchiveResult startDate
          */
 
         /**
@@ -26892,6 +26937,14 @@ $root.server = (function() {
         ArchiveResult.prototype.posts = $util.emptyArray;
 
         /**
+         * ArchiveResult startDate.
+         * @member {string} startDate
+         * @memberof server.ArchiveResult
+         * @instance
+         */
+        ArchiveResult.prototype.startDate = "";
+
+        /**
          * Creates a new ArchiveResult instance using the specified properties.
          * @function create
          * @memberof server.ArchiveResult
@@ -26924,6 +26977,8 @@ $root.server = (function() {
             if (message.posts != null && message.posts.length)
                 for (var i = 0; i < message.posts.length; ++i)
                     $root.server.Post.encode(message.posts[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.startDate != null && Object.hasOwnProperty.call(message, "startDate"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.startDate);
             return writer;
         };
 
@@ -26971,6 +27026,9 @@ $root.server = (function() {
                     if (!(message.posts && message.posts.length))
                         message.posts = [];
                     message.posts.push($root.server.Post.decode(reader, reader.uint32()));
+                    break;
+                case 5:
+                    message.startDate = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -27036,6 +27094,9 @@ $root.server = (function() {
                         return "posts." + error;
                 }
             }
+            if (message.startDate != null && message.hasOwnProperty("startDate"))
+                if (!$util.isString(message.startDate))
+                    return "startDate: string expected";
             return null;
         };
 
@@ -27094,6 +27155,8 @@ $root.server = (function() {
                     message.posts[i] = $root.server.Post.fromObject(object.posts[i]);
                 }
             }
+            if (object.startDate != null)
+                message.startDate = String(object.startDate);
             return message;
         };
 
@@ -27120,6 +27183,7 @@ $root.server = (function() {
                     object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.uid = options.longs === String ? "0" : 0;
+                object.startDate = "";
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.ArchiveResult.Result[message.result] : message.result;
@@ -27135,6 +27199,8 @@ $root.server = (function() {
                 for (var j = 0; j < message.posts.length; ++j)
                     object.posts[j] = $root.server.Post.toObject(message.posts[j], options);
             }
+            if (message.startDate != null && message.hasOwnProperty("startDate"))
+                object.startDate = message.startDate;
             return object;
         };
 
@@ -40002,6 +40068,7 @@ $root.server = (function() {
          * @property {string|null} [phone] DeleteAccount phone
          * @property {server.DeleteAccount.Reason|null} [reason] DeleteAccount reason
          * @property {string|null} [feedback] DeleteAccount feedback
+         * @property {string|null} [username] DeleteAccount username
          */
 
         /**
@@ -40044,6 +40111,14 @@ $root.server = (function() {
         DeleteAccount.prototype.feedback = "";
 
         /**
+         * DeleteAccount username.
+         * @member {string} username
+         * @memberof server.DeleteAccount
+         * @instance
+         */
+        DeleteAccount.prototype.username = "";
+
+        /**
          * Creates a new DeleteAccount instance using the specified properties.
          * @function create
          * @memberof server.DeleteAccount
@@ -40073,6 +40148,8 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
             if (message.feedback != null && Object.hasOwnProperty.call(message, "feedback"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.feedback);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.username);
             return writer;
         };
 
@@ -40115,6 +40192,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.feedback = reader.string();
+                    break;
+                case 4:
+                    message.username = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -40164,6 +40244,9 @@ $root.server = (function() {
             if (message.feedback != null && message.hasOwnProperty("feedback"))
                 if (!$util.isString(message.feedback))
                     return "feedback: string expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
             return null;
         };
 
@@ -40189,6 +40272,8 @@ $root.server = (function() {
             }
             if (object.feedback != null)
                 message.feedback = String(object.feedback);
+            if (object.username != null)
+                message.username = String(object.username);
             return message;
         };
 
@@ -40209,6 +40294,7 @@ $root.server = (function() {
                 object.phone = "";
                 object.reason = options.enums === String ? "UNKNOWN_DELETE_REASON" : 0;
                 object.feedback = "";
+                object.username = "";
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -40216,6 +40302,8 @@ $root.server = (function() {
                 object.reason = options.enums === String ? $root.server.DeleteAccount.Reason[message.reason] : message.reason;
             if (message.feedback != null && message.hasOwnProperty("feedback"))
                 object.feedback = message.feedback;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
             return object;
         };
 

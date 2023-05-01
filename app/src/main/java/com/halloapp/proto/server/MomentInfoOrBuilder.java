@@ -75,4 +75,24 @@ public interface MomentInfoOrBuilder extends
    * @return The contentType.
    */
   com.halloapp.proto.server.MomentInfo.ContentType getContentType();
+
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @return The date.
+   */
+  java.lang.String getDate();
+  /**
+   * <pre>
+   * Date received with the notification in the format: DD/MM/YYYY.
+   * </pre>
+   *
+   * <code>string date = 7;</code>
+   * @return The bytes for date.
+   */
+  com.google.protobuf.ByteString
+      getDateBytes();
 }

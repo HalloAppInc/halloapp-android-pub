@@ -48,4 +48,24 @@ public interface ArchiveResultOrBuilder extends
    * <code>repeated .server.Post posts = 4;</code>
    */
   int getPostsCount();
+
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   * @return The startDate.
+   */
+  java.lang.String getStartDate();
+  /**
+   * <pre>
+   * Starting date of archive (may be earlier than any posts) in DD/MM/YYYY format
+   * </pre>
+   *
+   * <code>string start_date = 5;</code>
+   * @return The bytes for startDate.
+   */
+  com.google.protobuf.ByteString
+      getStartDateBytes();
 }

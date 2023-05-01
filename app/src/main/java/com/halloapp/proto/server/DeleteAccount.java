@@ -14,6 +14,7 @@ public  final class DeleteAccount extends
   private DeleteAccount() {
     phone_ = "";
     feedback_ = "";
+    username_ = "";
   }
   /**
    * Protobuf enum {@code server.DeleteAccount.Reason}
@@ -228,6 +229,53 @@ public  final class DeleteAccount extends
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     feedback_ = value.toStringUtf8();
+    
+  }
+
+  public static final int USERNAME_FIELD_NUMBER = 4;
+  private java.lang.String username_;
+  /**
+   * <code>string username = 4;</code>
+   * @return The username.
+   */
+  @java.lang.Override
+  public java.lang.String getUsername() {
+    return username_;
+  }
+  /**
+   * <code>string username = 4;</code>
+   * @return The bytes for username.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getUsernameBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(username_);
+  }
+  /**
+   * <code>string username = 4;</code>
+   * @param value The username to set.
+   */
+  private void setUsername(
+      java.lang.String value) {
+    value.getClass();
+  
+    username_ = value;
+  }
+  /**
+   * <code>string username = 4;</code>
+   */
+  private void clearUsername() {
+    
+    username_ = getDefaultInstance().getUsername();
+  }
+  /**
+   * <code>string username = 4;</code>
+   * @param value The bytes for username to set.
+   */
+  private void setUsernameBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    username_ = value.toStringUtf8();
     
   }
 
@@ -470,6 +518,55 @@ public  final class DeleteAccount extends
       return this;
     }
 
+    /**
+     * <code>string username = 4;</code>
+     * @return The username.
+     */
+    @java.lang.Override
+    public java.lang.String getUsername() {
+      return instance.getUsername();
+    }
+    /**
+     * <code>string username = 4;</code>
+     * @return The bytes for username.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUsernameBytes() {
+      return instance.getUsernameBytes();
+    }
+    /**
+     * <code>string username = 4;</code>
+     * @param value The username to set.
+     * @return This builder for chaining.
+     */
+    public Builder setUsername(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setUsername(value);
+      return this;
+    }
+    /**
+     * <code>string username = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearUsername() {
+      copyOnWrite();
+      instance.clearUsername();
+      return this;
+    }
+    /**
+     * <code>string username = 4;</code>
+     * @param value The bytes for username to set.
+     * @return This builder for chaining.
+     */
+    public Builder setUsernameBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setUsernameBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.DeleteAccount)
   }
   @java.lang.Override
@@ -489,10 +586,11 @@ public  final class DeleteAccount extends
             "phone_",
             "reason_",
             "feedback_",
+            "username_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\f" +
-              "\u0003\u0208";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0003\u0208\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

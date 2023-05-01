@@ -1560,6 +1560,9 @@ export namespace server {
 
         /** MomentInfo contentType */
         contentType?: (server.MomentInfo.ContentType|null);
+
+        /** MomentInfo date */
+        date?: (string|null);
     }
 
     /** Represents a MomentInfo. */
@@ -1588,6 +1591,9 @@ export namespace server {
 
         /** MomentInfo contentType. */
         public contentType: server.MomentInfo.ContentType;
+
+        /** MomentInfo date. */
+        public date: string;
 
         /**
          * Creates a new MomentInfo instance using the specified properties.
@@ -9856,6 +9862,9 @@ export namespace server {
 
         /** MomentNotification promptImage */
         promptImage?: (Uint8Array|null);
+
+        /** MomentNotification date */
+        date?: (string|null);
     }
 
     /** Represents a MomentNotification. */
@@ -9884,6 +9893,9 @@ export namespace server {
 
         /** MomentNotification promptImage. */
         public promptImage: Uint8Array;
+
+        /** MomentNotification date. */
+        public date: string;
 
         /**
          * Creates a new MomentNotification instance using the specified properties.
@@ -10071,6 +10083,9 @@ export namespace server {
 
         /** ArchiveResult posts */
         posts?: (server.IPost[]|null);
+
+        /** ArchiveResult startDate */
+        startDate?: (string|null);
     }
 
     /** Represents an ArchiveResult. */
@@ -10093,6 +10108,9 @@ export namespace server {
 
         /** ArchiveResult posts. */
         public posts: server.IPost[];
+
+        /** ArchiveResult startDate. */
+        public startDate: string;
 
         /**
          * Creates a new ArchiveResult instance using the specified properties.
@@ -14358,6 +14376,9 @@ export namespace server {
 
         /** DeleteAccount feedback */
         feedback?: (string|null);
+
+        /** DeleteAccount username */
+        username?: (string|null);
     }
 
     /** Represents a DeleteAccount. */
@@ -14377,6 +14398,9 @@ export namespace server {
 
         /** DeleteAccount feedback. */
         public feedback: string;
+
+        /** DeleteAccount username. */
+        public username: string;
 
         /**
          * Creates a new DeleteAccount instance using the specified properties.
