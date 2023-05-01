@@ -34,6 +34,8 @@ El servidor de telefonía móvil podría aplicar cargos."</string>
 %s"</string>
     <string name="contact_permission_title">"Por último"</string>
     <string name="registration_code_invalid">"Código de registro inválido, inténtalo de nuevo"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"No se pudo registrar el número de teléfono, inténtalo de nuevo"</string>
     <string name="registration_failed_no_friends">"Por el momento Hallo App solo se puede usar con invitación. Si tienes un amigo o un familiar que use HalloApp, diles que te inviten usando tu número de teléfono."</string>
     <string name="registration_failed_no_friends_title">"¡Caramba!"</string>

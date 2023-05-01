@@ -32,6 +32,8 @@
     <string name="verify_registration_title">"%s numarasına gönderdiğimiz kodu gir"</string>
     <string name="contact_permission_title">"Son bir şey"</string>
     <string name="registration_code_invalid">"Geçersiz kod, tekrar dene"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"Telefon numarası kaydedilemedi, tekrar dene"</string>
     <string name="registration_failed_no_friends">"Şu anda yalnızca davet sistemiyle çalışıyoruz. HalloApp kullanan bir aile üyen veya arkadaşın varsa, telefon numaranı kullanarak sana davet göndermelerini isteyebilirsin."</string>
     <string name="registration_failed_no_friends_title">"Tüh!"</string>

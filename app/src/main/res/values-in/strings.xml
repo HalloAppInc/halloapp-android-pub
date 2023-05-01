@@ -32,7 +32,7 @@ Dapat dikenakan biaya operator."</string>
 %s"</string>
     <string name="contact_permission_title">"Satu hal lagi"</string>
     <string name="registration_code_invalid">"Kode pendaftaran invalid, coba lagi"</string>
-    <string name="registration_failed">"Gagal mendaftarkan nomor telepon, coba lagi"</string>
+    <string name="registration_failed">"Gagal mendaftar, silakan coba lagi"</string>
     <string name="registration_failed_no_friends">"Saat ini kami hanya menggunakan undangan. Jika Anda memiliki teman atau anggota keluarga yang menggunakan HalloApp, minta mereka mengundang Anda dengan menggunakan nomor telepon Anda."</string>
     <string name="registration_failed_no_friends_title">"Duh!"</string>
     <string name="type_a_message_hint">"Ketik pesan"</string>
@@ -577,7 +577,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="verify_safety_number">"Memverifikasi nomor keamanan"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"Dapatkan pembaruan dari teman &amp; keluarga dengan menyalakan izin kontak"</string>
+    <string name="enable_contacts_rationale">"Dapatkan pembaruan dari teman &amp; keluarga dengan mengaktifkan izin kontak"</string>
 
     <!-- Button that takes users to system settings -->
     <string name="go_to_settings">"Buka setelan"</string>
@@ -788,7 +788,6 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="groups_in_common">"Grup bersama"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <!-- Fuzzy -->
     <string name="slide_to_cancel">"Geser untuk membatalkan"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -1814,7 +1813,7 @@ pribadi Anda"</string>
     <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
     <string name="moment_location_permission_rationale_denied">"Kami perlu izin akses lokasi agar bisa menambahkannya ke momen.
 
-Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
+Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Mencari lokasi…"</string>
@@ -2185,16 +2184,14 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 Tindakan ini akan memungkinkan Anda terhubung dengan teman-teman di Katchup, dan melihat postingan mereka."</string>
 
     <!-- text of location permission access request prompt -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"“Katchup” ingin mengakses lokasi Anda.
-Tindakan ini memungkinkan Anda melihat aktivitas orang-orang di lokasi terdekat, dan membagi postingan dengan kalangan relevan."</string>
+Tindakan ini memungkinkan Anda membagi perkiraan lokasi Anda, dan melihat postingan orang-orang di sekitar Anda di Katchup."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"“Katchup” ingin mengakses lokasi Anda.
-Tindakan ini memungkinkan Anda melihat aktivitas orang-orang di lokasi terdekat, dan membagi postingan dengan kalangan relevan.
+Tindakan ini memungkinkan Anda membagi perkiraan lokasi Anda, dan melihat postingan orang-orang di sekitar Anda di Katchup.
 
-Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
+Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- text of deny button in request permission dialog -->
     <string name="permission_negative_button_text">"Jangan izinkan"</string>
@@ -2403,8 +2400,7 @@ temukan kenalan di katchup"</string>
     <string name="notification_screenshot_title">"tangkapan layar katchup"</string>
 
     <!-- title of the daily katchup notification -->
-    <!-- Fuzzy -->
-    <string name="notification_daily_katchup_title">"teman-teman di katchup"</string>
+    <string name="notification_daily_katchup_title">"katchup"</string>
 
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">"baru di katchup"</string>
@@ -2560,67 +2556,67 @@ notifikasi Anda di katchup"</string>
     <string name="bg_option_remove">"hapus"</string>
 
     <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
-    <string name="notification_reaction_other_post_author_body">"%s responded to their own katchup"</string>
+    <string name="notification_reaction_other_post_author_body">"%s membalas postingan katchup-nya"</string>
 
     <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
-    <string name="notification_reaction_other_post_commenter_body">"%1$s responded to %2$s's katchup"</string>
+    <string name="notification_reaction_other_post_commenter_body">"%1$s membalas postingan  katchup-nya %2$s"</string>
 
     <!-- Button text to add another user on the invite screen, after it is pressed -->
-    <string name="invite_add_button_sent">"followed"</string>
+    <string name="invite_add_button_sent">"mengikuti"</string>
 
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_random">"new ai background"</string>
+    <string name="bg_option_random">"latar belakang ai baru"</string>
 
     <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
-    <string name="bg_option_custom">"custom ai background"</string>
+    <string name="bg_option_custom">"kustomisasi latar belakang ai"</string>
 
     <!-- warning shown in a snackbar when ai image generation has failed -->
-    <string name="ai_generation_failed">"generation failed, please try again"</string>
+    <string name="ai_generation_failed">"gagal membuat, sila coba lagi"</string>
 
     <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
-    <string name="custom_ai_hint">"imagine"</string>
+    <string name="custom_ai_hint">"visualisasi"</string>
 
     <!-- menu option to use an image from your own gallery as the background -->
-    <string name="bg_option_gallery">"pick from gallery"</string>
+    <string name="bg_option_gallery">"pilih dari galeri"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
-    <string name="add_background_title">"add background"</string>
+    <string name="add_background_title">"tambah latar belakang"</string>
 
     <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_explanation_me">"you're affiliated with %s "<![CDATA[<a href="remove">remove</a>]]></string>
+    <string name="geotag_explanation_me">"Anda terkait dengan %s "<![CDATA[<a href="remove">remove</a>]]></string>
 
     <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_expanation_other">"%1$s's affiliated with %2$s"</string>
+    <string name="geotag_expanation_other">"%1$s terkait dengan %2$s"</string>
 
     <!-- text shown on a user's own profile when they do not currently have a geotag -->
-    <string name="add_school">"+ add school"</string>
+    <string name="add_school">"+ tambah sekolah"</string>
 
     <!-- title of the geotag location access request prompt -->
-    <string name="geotag_location_access_request_title">"Your campus is determined by your location"</string>
+    <string name="geotag_location_access_request_title">"Kampus Anda ditentukan oleh lokasi Anda"</string>
 
     <!-- text of geotag location permission access request prompt -->
-    <string name="geotag_location_access_request_rationale">"Enable location permissions to add your school."</string>
+    <string name="geotag_location_access_request_rationale">"Aktifkan izin akses lokasi kontak untuk menambah sekolah."</string>
 
     <!-- text of geotag location permission access request prompt, but it has already been denied -->
-    <string name="geotag_location_access_request_rationale_denied">"Enable location permissions to add your school.
+    <string name="geotag_location_access_request_rationale_denied">"Aktifkan izin lokasi untuk menambah sekolah Anda.
 
-Open the app settings screen to modify app permissions."</string>
+Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- error message in a snackbar when removing a geotag fails -->
-    <string name="failed_remove_geotag">"Failed to remove geotag, please try again"</string>
+    <string name="failed_remove_geotag">"Gagal menghapus geotag, silakan coba lagi"</string>
 
     <!-- error message in a snackbar when adding a geotag fails -->
-    <string name="failed_add_geotag">"Failed to add geotag, please try again"</string>
+    <string name="failed_add_geotag">"Gagal menambah geotag, silakan coba lagi"</string>
 
     <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
-    <string name="failed_no_matching_geotag">"No geotag matched your current location. Please ensure you are on campus and try again."</string>
+    <string name="failed_no_matching_geotag">"Tidak ada geotag sesuai lokasi Anda. Pastikan Anda sedang berada di kampus dan coba lagi."</string>
 
     <!-- a text displayed on a loading spinner -->
-    <string name="loading_spinner">"loading…"</string>
+    <string name="loading_spinner">"memuat…"</string>
     <string name="app_name_katchup">"Katchup"</string>
-    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup sudah kedaluwarsa"</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
-        <item quantity="other">"Katchup expires in %d day"</item>
+        <item quantity="other">"Katchup kedaluwarsa dalam %d hari"</item>
     </plurals>
     <string name="bg_option_generate">"buat latar belakang AI baru"</string>
     <string name="settings_feedback_title">"saran"</string>

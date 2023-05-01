@@ -32,6 +32,8 @@
 %s"</string>
     <string name="contact_permission_title">"أمر أخير"</string>
     <string name="registration_code_invalid">"رمز التسجيل غير صحيح، حاول مجددًا"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"تعذَر تسجيل رقم الهاتف، حاول مجددًا"</string>
     <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد عائلتك يستخدمون هالوآب، اطلب منهم دعوتك عن طريق رقم هاتفك."</string>
 

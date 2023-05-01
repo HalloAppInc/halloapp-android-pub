@@ -32,6 +32,8 @@
 %s"</string>
     <string name="contact_permission_title">"И последнее"</string>
     <string name="registration_code_invalid">"Неверный регистрационный код. Попробуйте еще раз"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"Не удалось зарегистрировать номер телефона. Попробуйте еще раз"</string>
     <string name="registration_failed_no_friends">"В настоящее время мы работаем только по приглашениям. Если у вас есть друг или член семьи, использующий HalloApp, попросите его или ее пригласить вас по вашему номеру телефона."</string>
     <string name="registration_failed_no_friends_title">"Ох!"</string>

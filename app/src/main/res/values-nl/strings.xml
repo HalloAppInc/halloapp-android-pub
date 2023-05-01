@@ -38,7 +38,7 @@ Je provider kan hiervoor kosten in rekening brengen."</string>
 %s"</string>
     <string name="contact_permission_title">"Nog één ding"</string>
     <string name="registration_code_invalid">"Ongeldige registratiecode, probeer het opnieuw"</string>
-    <string name="registration_failed">"Registratie telefoonnummer mislukt, probeer het opnieuw"</string>
+    <string name="registration_failed">"Registratie mislukt, probeer het opnieuw"</string>
     <string name="registration_failed_no_friends">"Op dit moment is onze app alleen op uitnodiging beschikbaar. Als je vrienden of familie hebt die HalloApp gebruiken, vraag hun dan om je uit te nodigen met je telefoonnummer."</string>
     <string name="registration_failed_no_friends_title">"Oeps!"</string>
     <string name="type_a_message_hint">"Typ een bericht"</string>
@@ -828,8 +828,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="groups_in_common">"Gemeenschappelijke groepen"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <!-- Fuzzy -->
-    <string name="slide_to_cancel">"Veeg om te annuleren"</string>
+    <string name="slide_to_cancel">"veeg om te annuleren"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Beantwoorden"</string>

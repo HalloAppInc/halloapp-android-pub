@@ -31,6 +31,8 @@
     <string name="verify_registration_title">"کدی که به %s ارسال شده را وارد کنید"</string>
     <string name="contact_permission_title">"نکته آخر"</string>
     <string name="registration_code_invalid">"کد ثبتنام غلط است، لطفاً دوباره امتحان کنید"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"شماره تلفن ثبت نشد، لطفاً دوباره امتحان کنید"</string>
     <string name="registration_failed_no_friends">"درحال حاضر فقط با دعوتنامه به هالواپ میتوانید دسترسی داشته باشید. اگر آشنایی دارید که از آن استفاده میکند، از او بخواهید شما را با شماره تلفنتان دعوت کند."</string>
     <string name="registration_failed_no_friends_title">"آخ!"</string>
@@ -2676,11 +2678,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">"بارگذاری…"</string>
-    <string name="app_name_katchup">"Katchup"</string>
-    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <string name="app_name_katchup">"کچاپ"</string>
+    <string name="katchup_notification_app_expired_title">"کچاپ منقضی شده است"</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
-        <item quantity="one">"Katchup expires in %d day"</item>
-        <item quantity="other">"Katchup expires in %d day"</item>
+        <item quantity="one">"کچاب در d% منقضی میشود"</item>
+        <item quantity="other">"کچاب در d% منقضی میشود"</item>
     </plurals>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"بازخورد"</string>

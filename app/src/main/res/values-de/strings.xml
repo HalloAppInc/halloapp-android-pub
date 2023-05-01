@@ -35,6 +35,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Version 0.158 : current string was not transmitted -->
     <string name="contact_permission_title">"Noch ein Hinweis"</string>
     <string name="registration_code_invalid">"Ungültiger Registrierungscode, versuch es noch einmal"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"Handynummer kann nicht registriert werden, versuch es noch einmal"</string>
     <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur mit Einladung möglich. Falls du Freunde oder Familienmitglieder hast, die HalloApp bereits nutzen, bitte sie, dich mit deiner Handynummer einzuladen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>

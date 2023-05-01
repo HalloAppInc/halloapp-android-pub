@@ -32,6 +32,8 @@ Sujeito a cobrança da operadora."</string>
 %s"</string>
     <string name="contact_permission_title">"Só mais uma coisa"</string>
     <string name="registration_code_invalid">"Código de registro inválido, tente novamente"</string>
+
+    <!-- Fuzzy -->
     <string name="registration_failed">"Falha ao registrar o número de telefone, tente novamente"</string>
     <string name="registration_failed_no_friends">"No momento os registros só estão disponíveis através de convite. Se você tem um amigo ou familiar que usa o HalloApp, peça um convite para eles usando o seu número de telefone."</string>
     <string name="registration_failed_no_friends_title">"Droga!"</string>
