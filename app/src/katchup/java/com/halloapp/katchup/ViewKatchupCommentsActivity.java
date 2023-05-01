@@ -178,7 +178,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private TextView headerUsername;
     private TextView headerGeotag;
     private TextView headerTimeAndPlace;
-    private View headerFollowButton;
+    private TextView headerFollowButton;
     private ImageView postPhotoView;
     private ContentPlayerView postVideoView;
 
@@ -1125,6 +1125,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         viewModel.getFollowable().observe(this, followable -> {
             headerFollowButton.setVisibility(Boolean.TRUE.equals(followable) ? View.VISIBLE : View.GONE);
         });
+        headerFollowButton.setText(" · " + headerFollowButton.getContext().getString(R.string.follow_profile));
         headerFollowButton.setOnClickListener(v -> {
             UserId userIdToFollow = post.senderUserId;
             Connection.getInstance().requestFollowUser(userIdToFollow).onResponse(success -> {

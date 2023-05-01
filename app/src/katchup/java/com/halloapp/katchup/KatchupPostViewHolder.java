@@ -64,7 +64,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final TextView headerUsername;
     private final TextView headerGeotag;
     private final TextView headerTimeAndPlace;
-    private final View headerFollowButton;
+    private final TextView headerFollowButton;
     private final View unlockContainer;
     private final TextView unlockMainTextView;
     private final MaterialButton unlockButton;
@@ -167,6 +167,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             new GeotagPopupWindow(headerGeotag.getContext(), false, headerUsername.getText().toString(), headerGeotag.getText().toString(), null).show(headerGeotag);
         });
 
+        headerFollowButton.setText(" · " + headerFollowButton.getContext().getString(R.string.follow_profile));
         headerFollowButton.setOnClickListener(v -> {
             UserId userIdToFollow = post.senderUserId;
             parent.followUser(userIdToFollow).onResponse(success -> {
