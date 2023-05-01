@@ -2681,8 +2681,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="app_name_katchup">"کچاپ"</string>
     <string name="katchup_notification_app_expired_title">"کچاپ منقضی شده است"</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
-        <item quantity="one">"کچاب در d% منقضی میشود"</item>
-        <item quantity="other">"کچاب در d% منقضی میشود"</item>
+        <item quantity="one">"کچاب در %d منقضی میشود"</item>
+        <item quantity="other">"کچاب در %d منقضی میشود"</item>
     </plurals>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
