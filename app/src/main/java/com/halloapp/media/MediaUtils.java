@@ -788,6 +788,17 @@ public class MediaUtils {
 
     @WorkerThread
     public static void cropImage(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension) throws IOException {
+        Bitmap bitmap = cropImage(fileFrom, cropRect, maxDimension);
+
+        try (final FileOutputStream output = new FileOutputStream(fileTo)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, output);
+        }
+
+        bitmap.recycle();
+    }
+
+    @WorkerThread
+    public static Bitmap cropImage(@NonNull File file, @Nullable RectF cropRect, int maxDimension) throws IOException {
         final int maxWidth;
         final int maxHeight;
 
@@ -799,7 +810,7 @@ public class MediaUtils {
             maxHeight = maxDimension;
         }
 
-        final Bitmap bitmap = MediaUtils.decodeImage(fileFrom, maxWidth, maxHeight);
+        final Bitmap bitmap = MediaUtils.decodeImage(file, maxWidth, maxHeight);
 
         if (bitmap != null) {
             final Bitmap croppedBitmap;
@@ -814,11 +825,7 @@ public class MediaUtils {
                 croppedBitmap = bitmap;
             }
 
-            try (final FileOutputStream output = new FileOutputStream(fileTo)) {
-                croppedBitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, output);
-            }
-
-            croppedBitmap.recycle();
+            return croppedBitmap;
         } else {
             throw new IOException("cannot decode image");
         }

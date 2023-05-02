@@ -26,10 +26,10 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
         this.image = img;
 
         paint.setAntiAlias(true);
-        paint.setColor(Constants.EXTERNAL_SHARE_FOOTER_COLOR);
+        paint.setColor(Constants.EXTERNAL_SHARE_FOOTER_TEXT_COLOR);
         paint.setTextSize(Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE);
         paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
-        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextAlign(Paint.Align.RIGHT);
 
         if (isSharingMedia) {
             url = "katchup.com/" + Me.getInstance().getUsername();
@@ -49,6 +49,8 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
         int bitmapHeight = image.getHeight();
 
         int scaledHeight = (int)(canvasWidth * ((float)bitmapHeight / (float)bitmapWidth));
+        float textPaddingBottom = Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE / 2;
+        float textPaddingRight = Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE;
 
         dst.right = canvasWidth;
         int remainingHeight = canvasHeight - scaledHeight;
@@ -59,7 +61,7 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
         canvas.drawBitmap(image, null, dst, null);
 
-        canvas.drawText(url, canvasWidth / 2f, scaledHeight + (Math.max(remainingHeight, 0) / 6f), paint);
+        canvas.drawText(url, canvasWidth - textPaddingRight, scaledHeight - textPaddingBottom, paint);
         super.drawCanvas(canvas);
         canvas.restore();
     }

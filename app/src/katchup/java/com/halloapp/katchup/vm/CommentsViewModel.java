@@ -152,7 +152,7 @@ public class CommentsViewModel extends AndroidViewModel {
     private String getCurrentPostId() {
         return posts == null ? originalPostId : Preconditions.checkNotNull(posts.get(currentIndex)).id;
     }
-    
+
     public void moveToNextPost() {
         if (posts != null && currentIndex + 1 < posts.size()) {
             currentIndex += 1;
@@ -337,7 +337,7 @@ public class CommentsViewModel extends AndroidViewModel {
             }
 
             try {
-                ShareIntentHelper.prepareExternalShareVideo(post, true, input -> {
+                ShareIntentHelper.prepareExternalShareVideo(post, true, false, input -> {
                     if (input == null) {
                         Log.e("CommentsViewModel/saveToGallery failed to get transcoded file");
                         result.postValue(false);

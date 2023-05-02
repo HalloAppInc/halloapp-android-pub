@@ -1655,7 +1655,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             Context context = view.getContext();
             ProgressDialog progressDialog = ProgressDialog.show(context, null, getString(R.string.share_moment_progress));
 
-            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true).observe(getViewLifecycleOwner(), intent -> {
+            boolean isCenterCrop = Constants.PACKAGE_INSTAGRAM.equals(targetPackage) || Constants.PACKAGE_SNAPCHAT.equals(targetPackage);
+
+            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true, isCenterCrop).observe(getViewLifecycleOwner(), intent -> {
                 progressDialog.dismiss();
 
                 if (intent != null) {

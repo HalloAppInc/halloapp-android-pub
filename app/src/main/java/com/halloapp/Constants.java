@@ -79,7 +79,7 @@ public class Constants {
     // These were the values used by Google Photos when editing media and WhatsApp keeping the original quality
     public static final int EXTERNAL_SHARE_BIT_RATE = 4_600_000;
 
-    public static final int EXTERNAL_SHARE_FOOTER_COLOR = 0xFFFED3D3;
+    public static final int EXTERNAL_SHARE_FOOTER_TEXT_COLOR = 0xBFFFFFFF;
     public static final float EXTERNAL_SHARE_FOOTER_TEXT_SIZE = 24f;
 
     public static final float EXTERNAL_SHARE_SELFIE_POS_X = 0.95f;

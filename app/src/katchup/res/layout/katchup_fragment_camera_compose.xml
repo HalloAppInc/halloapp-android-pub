@@ -34,22 +34,39 @@
             app:show_timeout="1000"
             app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
 
-        <TextView
-            android:id="@+id/preview_prompt_text"
-            android:layout_width="wrap_content"
+        <!-- with a width of 75% below and 3:4 ratio above, the text stays in the 9:16 ratio -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="80dp"
-            android:layout_marginBottom="40dp"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="3dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:gravity="center_horizontal"
-            android:textStyle="bold"
-            android:textSize="16.5dp"
-            android:textColor="@color/white"
-            android:background="@drawable/gallery_prompt_background"
-            android:visibility="gone"
-            />
+            android:layout_marginBottom="40dp"
+            >
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.75"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/preview_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="3dp"
+                    android:gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textSize="16.5dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/gallery_prompt_background"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 
@@ -86,10 +103,12 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:scaleType="fillCenter" />
 
+                    <!-- with a width of 75% below and 3:4 camera ratio, the text stays in the 9:16 ratio -->
                     <FrameLayout
                         android:id="@+id/camera_prompt_container"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        app:layout_constraintWidth_percent="0.75"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +119,6 @@
                             android:id="@+id/camera_prompt_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="80dp"
                             android:layout_marginBottom="40dp"
                             android:paddingHorizontal="6dp"
                             android:paddingVertical="3dp"

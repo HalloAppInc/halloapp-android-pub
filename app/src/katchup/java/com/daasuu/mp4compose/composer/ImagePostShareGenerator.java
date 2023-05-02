@@ -1,6 +1,7 @@
 package com.daasuu.mp4compose.composer;
 
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
@@ -16,6 +17,7 @@ import com.daasuu.mp4compose.SampleType;
 import com.daasuu.mp4compose.VideoFormatMimeType;
 import com.daasuu.mp4compose.logger.AndroidLogger;
 import com.halloapp.Constants;
+import com.halloapp.content.Media;
 import com.halloapp.katchup.media.ImageAndSelfieOverlayFilter;
 import com.halloapp.katchup.media.Mp4FrameExtractor;
 import com.halloapp.media.MediaUtils;
@@ -31,7 +33,7 @@ public class ImagePostShareGenerator {
 
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
-    public static void generateExternalShareVideo(File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
+    public static void generateExternalShareVideo(File image, File selfie, File dst, boolean isSharingMedia, boolean isCenterCrop) throws IOException {
         // AVC && EXTERNAL_SHARE_BIT_RATE (4_600_000) are required to avoid WhatsApp trashing the quality
         generateVideo(
                 Constants.EXTERNAL_SHARE_VIDEO_WIDTH,
@@ -42,12 +44,13 @@ public class ImagePostShareGenerator {
                 image,
                 selfie,
                 dst,
-                isSharingMedia);
+                isSharingMedia,
+                isCenterCrop);
     }
 
-    public static void generateVideo(int width, int height, long durationMs, int bitrate, VideoFormatMimeType mimeType, File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
+    public static void generateVideo(int width, int height, long durationMs, int bitrate, VideoFormatMimeType mimeType, File image, File selfie, File dst, boolean isSharingMedia, boolean isCenterCrop) throws IOException {
         ImagePostShareGenerator generator = new ImagePostShareGenerator(image, selfie, dst);
-        generator.setUp(width, height, bitrate, mimeType, isSharingMedia);
+        generator.setUp(width, height, bitrate, mimeType, isSharingMedia, isCenterCrop);
         generator.render(durationMs);
         generator.release();
     }
@@ -84,8 +87,17 @@ public class ImagePostShareGenerator {
     private long durationMs;
     private boolean encoderStarted;
 
-    public void setUp(int width, int height, int bitrate, VideoFormatMimeType mimeType, boolean isSharingMedia) throws IOException {
-        Bitmap img = MediaUtils.decodeImage(image, Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
+    public void setUp(int width, int height, int bitrate, VideoFormatMimeType mimeType, boolean isSharingMedia, boolean isCenterCrop) throws IOException {
+        Bitmap img;
+
+        Size size = MediaUtils.getDimensions(image, Media.MEDIA_TYPE_IMAGE);
+        if (size != null && isCenterCrop) {
+            RectF crop = computeRelativeCenterCropRect(size.getWidth(), size.getHeight(), width, height);
+            img = MediaUtils.cropImage(image, crop, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
+        } else {
+            img = MediaUtils.decodeImage(image, Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
+        }
+
         selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
 
         filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y, isSharingMedia);
@@ -120,6 +132,31 @@ public class ImagePostShareGenerator {
         renderSurface.completeParams();
         mediaMuxer = new MediaMuxer(dst.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         muxRender = new MuxRender(mediaMuxer, logger);
+    }
+
+    @NonNull
+    private RectF computeRelativeCenterCropRect(int width, int height, int targetWidth, int targetHeight) {
+        float targetRatio = (float)targetHeight / (float)targetWidth;
+        float ratio = (float)height / (float)width;
+
+        RectF crop = new RectF();
+        if (ratio < targetRatio) {
+            float croppedWidth = height / targetRatio;
+            float relativeWidth = croppedWidth / width;
+            crop.left = (1f - relativeWidth) / 2f;
+            crop.right = (1f + relativeWidth) / 2f;
+            crop.top = 0;
+            crop.bottom = 1;
+        } else {
+            float croppedHeight = width * targetRatio;
+            float relativeHeight = croppedHeight / height;
+            crop.left = 0;
+            crop.right = 1;
+            crop.top = (1f - relativeHeight) / 2f;
+            crop.bottom = (1f + relativeHeight) / 2f;
+        }
+
+        return crop;
     }
 
     private long presentationTimeUs;

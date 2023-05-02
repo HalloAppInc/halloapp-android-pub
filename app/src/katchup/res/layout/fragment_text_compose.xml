@@ -32,10 +32,12 @@
                     android:scaleType="centerCrop"
                     />
 
+                <!-- with a width of 75% below and 3:4 ratio above, the text stays in the 9:16 ratio -->
                 <LinearLayout
                     android:id="@+id/text_content"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    app:layout_constraintWidth_percent="0.75"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

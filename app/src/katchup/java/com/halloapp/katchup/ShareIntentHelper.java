@@ -26,16 +26,15 @@ import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class ShareIntentHelper {
 
-    public static LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @Nullable String targetPackage, @NonNull Post post, boolean isSharingMedia) {
+    public static LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @Nullable String targetPackage, @NonNull Post post, boolean isSharingMedia, boolean isCenterCrop) {
         MutableLiveData<Intent> result = new MutableLiveData<>();
 
         BgWorkers.getInstance().execute(() -> {
             try {
-                prepareExternalShareVideo(post, isSharingMedia, input -> {
+                prepareExternalShareVideo(post, isSharingMedia, isCenterCrop, input -> {
                     if (input == null) {
                         Log.e("ShareIntentHelper/shareExternallyWithPreview failed to get transcoded file");
                         result.postValue(null);
@@ -85,16 +84,13 @@ public class ShareIntentHelper {
     }
 
     @WorkerThread
-    public static void prepareExternalShareVideo(@NonNull Post post, boolean isSharingMedia, @NonNull Function<File, Void> callback) throws IOException {
+    public static void prepareExternalShareVideo(@NonNull Post post, boolean isSharingMedia, boolean isCenterCrop, @NonNull Function<File, Void> callback) throws IOException {
         Media selfie = post.getMedia().get(0);
         Media content = post.getMedia().get(1);
         File postFile = FileStore.getInstance().getShareFile(post.id + ".mp4");
-        if (postFile.exists()) {
-            callback.apply(postFile);
-            return;
-        }
+
         if (content.type == Media.MEDIA_TYPE_VIDEO) {
-            TranscodeExternalShareVideoTask transcodeExternalShareVideoTask = new TranscodeExternalShareVideoTask(content.file, selfie.file, postFile, isSharingMedia);
+            TranscodeExternalShareVideoTask transcodeExternalShareVideoTask = new TranscodeExternalShareVideoTask(content.file, selfie.file, postFile, isSharingMedia, isCenterCrop);
             MediaTranscoderTask transcoderTask = new MediaTranscoderTask(transcodeExternalShareVideoTask);
             transcoderTask.setListener(new MediaTranscoderTask.Listener() {
                 @Override
@@ -121,7 +117,7 @@ public class ShareIntentHelper {
             });
             transcoderTask.start();
         } else if (content.type == Media.MEDIA_TYPE_IMAGE) {
-            ImagePostShareGenerator.generateExternalShareVideo(content.file, selfie.file, postFile, isSharingMedia);
+            ImagePostShareGenerator.generateExternalShareVideo(content.file, selfie.file, postFile, isSharingMedia, isCenterCrop);
             callback.apply(postFile);
         } else {
             Log.e("Unexpected content type " + content.type);

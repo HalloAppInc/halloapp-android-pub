@@ -458,7 +458,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             }
 
             try {
-                ShareIntentHelper.prepareExternalShareVideo(post, false, input -> {
+                ShareIntentHelper.prepareExternalShareVideo(post, false, false, input -> {
                     if (input == null) {
                         Log.e("SelfieComposerViewModel/saveToGallery failed to get transcoded file");
                         result.postValue(false);

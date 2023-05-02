@@ -1712,7 +1712,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             Context context = view.getContext();
             ProgressDialog progressDialog = ProgressDialog.show(context, null, getString(R.string.share_moment_progress));
 
-            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true).observe(ViewKatchupCommentsActivity.this, intent -> {
+            boolean isCenterCrop = Constants.PACKAGE_INSTAGRAM.equals(targetPackage) || Constants.PACKAGE_SNAPCHAT.equals(targetPackage);
+
+            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true, isCenterCrop).observe(ViewKatchupCommentsActivity.this, intent -> {
                 progressDialog.dismiss();
                 dismiss();
                 callback.onCompletion(intent);
