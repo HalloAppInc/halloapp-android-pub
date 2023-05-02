@@ -1384,20 +1384,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         @Override
         public void markAttach() {
             super.markAttach();
-            if (player != null) {
-                player.destroy();
-                player = null;
-            }
-            player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
-            player.getPlayer().addListener(new Player.EventListener() {
-                @Override
-                public void onTimelineChanged(Timeline timeline, int reason) {
-                    durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration()));
-                }
-            });
-            player.observeLifecycle(ViewKatchupCommentsActivity.this);
-            currentPlayers.add(player);
-            durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration() * 1000));
+            bindReaction(media);
 
             viewModel.getPlayingVideoReaction().observe(this, playingReaction -> {
                 if (media != null && media.equals(playingReaction)) {
@@ -1431,6 +1418,41 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         public void bind(Comment comment) {
             super.bind(comment);
             this.media = comment.media.get(0);
+
+            if (media.file == null) {
+                // TODO(jack): Show loading indicator for reactions as well
+                externalSelfieLoader.load(contentPlayerView, media, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
+                    @Override
+                    public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
+                        if (result != null) {
+                            bindReaction(result);
+                        }
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull ContentPlayerView view) {
+                    }
+                });
+            } else {
+                bindReaction(media);
+            }
+        }
+
+        private void bindReaction(@NonNull Media media) {
+            if (player != null) {
+                player.destroy();
+                player = null;
+            }
+            player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
+            player.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onTimelineChanged(Timeline timeline, int reason) {
+                    durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration()));
+                }
+            });
+            player.observeLifecycle(ViewKatchupCommentsActivity.this);
+            currentPlayers.add(player);
+            durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration() * 1000));
         }
     }
 
