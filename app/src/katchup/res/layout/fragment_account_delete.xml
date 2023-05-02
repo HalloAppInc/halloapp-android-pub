@@ -33,12 +33,37 @@
         android:layout_marginHorizontal="16dp">
 
         <TextView
+            android:id="@+id/confirm_form_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/white_70"
             android:textSize="16sp"
             android:text="@string/delete_account_phone_confirm"/>
+
+        <LinearLayout
+            android:id="@+id/username_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_settings_field"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="14dp"
+                android:background="@null"
+                android:textSize="18sp"
+                android:inputType="text"
+                android:hint="@string/delete_account_username_confirm_hint"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white_50" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/phone_number_layout"

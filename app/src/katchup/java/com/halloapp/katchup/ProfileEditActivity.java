@@ -402,6 +402,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                     if (profileInfo.name != null && !TextUtils.isEmpty(profileInfo.name.trim()) && !profileInfo.name.equals(originalProfile.name)) {
                         connection.sendName(profileInfo.name.trim()).await();
+                        Me.getInstance().saveName(profileInfo.name.trim());
                     }
 
                     if (profileInfo.username != null && !TextUtils.isEmpty(profileInfo.username.trim()) && !profileInfo.username.equals(originalProfile.username)) {
@@ -438,6 +439,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                                 isSaving = false;
                                 return;
+                            } else {
+                                Me.getInstance().saveUsername(username);
                             }
                         }
                     }

@@ -1801,8 +1801,12 @@
     <string name="delete_katchup_account_button">delete account 🥺</string>
     <!-- label inviting a user to confirm phone number before account deletion -->
     <string name="delete_account_phone_confirm">enter phone number to confirm</string>
+    <!-- label inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm">enter username to confirm</string>
     <!-- hint on a field inviting a user to confirm phone number before account deletion -->
     <string name="delete_account_phone_confirm_hint">phone number</string>
+    <!-- hint on a field inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm_hint">username</string>
     <!-- label inviting a user to provide feedback before account deletion -->
     <string name="delete_account_feedback">any feedback for the katchup team?</string>
     <!-- hint on a field inviting a user to provide feedback before account deletion -->

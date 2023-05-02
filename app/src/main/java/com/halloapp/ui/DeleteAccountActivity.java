@@ -145,7 +145,7 @@ public class DeleteAccountActivity extends HalloActivity {
         }
 
         void deleteAccount(@NonNull String phone, @Nullable String reason) {
-            connection.deleteAccount(phone, reason).onResponse(iq -> {
+            connection.deleteAccount(phone, null, reason).onResponse(iq -> {
                 deleteAllUserData();
                 result.postValue(true);
                 final Intent intent = new Intent(getApplication(), DeletionConfirmationActivity.class);

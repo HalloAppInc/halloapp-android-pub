@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,11 +47,21 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
         View cancelBtn = root.findViewById(R.id.cancel);
         View confirmFormView = root.findViewById(R.id.confirm_form);
         View deleteBtn = root.findViewById(R.id.delete);
+        TextView confirmFormTextView = root.findViewById(R.id.confirm_form_text);
+
+        View phoneNumberViewContainer = root.findViewById(R.id.phone_number_layout);
         CountryCodePicker countryCodePicker = root.findViewById(R.id.ccp);
         EditText phoneNumberView = root.findViewById(R.id.phone_number);
+        EditText usernameView = root.findViewById(R.id.username);
         EditText feedbackView = root.findViewById(R.id.feedback);
 
         AccountDeleteViewModel viewModel = new ViewModelProvider(this).get(AccountDeleteViewModel.class);
+        viewModel.getPhone().observe(getViewLifecycleOwner(), phone -> {
+            boolean hasPhone = phone != null && !phone.isEmpty();
+            confirmFormTextView.setText(hasPhone ? R.string.delete_account_phone_confirm : R.string.delete_account_username_confirm);
+            phoneNumberViewContainer.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
+            usernameView.setVisibility(hasPhone ? View.GONE : View.VISIBLE);
+        });
 
         countryCodePicker.registerCarrierNumberEditText(phoneNumberView);
         countryCodePicker.useFlagEmoji(Build.VERSION.SDK_INT >= 28);
@@ -85,6 +96,8 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
         deleteBtn.setOnClickListener(v -> {
             if (phoneNumberView.hasFocus()) {
                 KeyboardUtils.hideSoftKeyboard(phoneNumberView);
+            } else if (usernameView.hasFocus()) {
+                KeyboardUtils.hideSoftKeyboard(usernameView);
             } else if (feedbackView.hasFocus()) {
                 KeyboardUtils.hideSoftKeyboard(feedbackView);
             }
@@ -122,17 +135,36 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
             }
         });
 
+        usernameView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable username) {
+                deleteBtn.setEnabled(username.toString().equals(Me.getInstance().getUsername()));
+            }
+        });
+
         return root;
     }
 
     public static class AccountDeleteViewModel extends AndroidViewModel {
         private final BgWorkers bgWorkers = BgWorkers.getInstance();
         private final Connection connection = Connection.getInstance();
+        private final Me me = Me.getInstance();
 
         private boolean processing = false;
 
         public AccountDeleteViewModel(@NonNull Application application) {
             super(application);
+            bgWorkers.execute(me::getPhone);
+        }
+
+        public MutableLiveData<String> getPhone() {
+            return me.phone;
         }
 
         public LiveData<Boolean> deleteAccount(String feedback) {
@@ -145,9 +177,9 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
 
             bgWorkers.execute(() -> {
                 try {
-                    connection.deleteAccount(Me.getInstance().getPhone(), feedback).await();
+                    connection.deleteAccount(me.getPhone(), me.getUsername(), feedback).await();
                     Analytics.getInstance().deletedAccount();
-                    Me.getInstance().resetRegistration();
+                    me.resetRegistration();
                     final Preferences preferences = Preferences.getInstance();
                     preferences.setOnboardingFollowingSetup(false);
                     preferences.setOnboardingGetStartedShown(false);

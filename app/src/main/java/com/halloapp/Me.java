@@ -57,6 +57,7 @@ public class Me {
     public final MutableLiveData<String> name = new MutableLiveData<>();
     public final MutableLiveData<String> username = new MutableLiveData<>();
     public final MutableLiveData<String> user = new MutableLiveData<>();
+    public final MutableLiveData<String> phone = new MutableLiveData<>();
 
     public static Me getInstance() {
         if (instance == null) {
@@ -182,7 +183,9 @@ public class Me {
 
     @WorkerThread
     public synchronized String getPhone() {
-        return getPreferences().getString(PREF_KEY_PHONE, null);
+        final String phone = getPreferences().getString(PREF_KEY_PHONE, null);
+        this.phone.postValue(phone);
+        return phone;
     }
 
     @WorkerThread
@@ -229,7 +232,7 @@ public class Me {
         if (!getPreferences().edit().putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.savePhone: failed");
         } else {
-            this.name.postValue(phone);
+            this.phone.postValue(phone);
         }
     }
 
@@ -248,6 +251,7 @@ public class Me {
             Log.e("Me.saveRegistration: failed");
         } else {
             this.user.postValue(user);
+            this.phone.postValue(phone);
         }
     }
 

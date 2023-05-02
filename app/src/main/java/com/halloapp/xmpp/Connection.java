@@ -302,7 +302,7 @@ public abstract class Connection {
 
     public abstract String getAndIncrementShortId();
 
-    public abstract Observable<Iq> deleteAccount(@NonNull String phone, @Nullable String reason);
+    public abstract Observable<Iq> deleteAccount(@Nullable String phone, @Nullable String username, @Nullable String reason);
 
     public abstract Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId, @Nullable ReportUserContent.Reason reason);
 
