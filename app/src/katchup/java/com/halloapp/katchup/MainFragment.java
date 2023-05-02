@@ -918,6 +918,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             public void onPostRemoved(@NonNull Post post) {
                 Log.d("MainFragment content cache observer post removed");
                 List<Post> posts = publicFeed.getValue();
+                if (posts == null) {
+                    return;
+                }
                 posts.remove(post);
                 publicFeed.postValue(posts);
             }
