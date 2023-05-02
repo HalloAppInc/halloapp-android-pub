@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.ForegroundObserver;
 import com.halloapp.HuaweiMessagingService;
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.PushMessagingService;
 import com.halloapp.RegistrationRequestActivity;

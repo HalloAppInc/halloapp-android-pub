@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.os.StrictMode;
 
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
@@ -25,13 +24,11 @@ import com.halloapp.katchup.KatchupContactsDbObserver;
 import com.halloapp.katchup.KatchupContentDbObserver;
 import com.halloapp.katchup.KatchupDailyWorker;
 import com.halloapp.katchup.KatchupUnfinishedRegistrationWorker;
-import com.halloapp.katchup.Notifications;
 import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.RelationshipSyncWorker;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.HAThreadPolicyListener;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 

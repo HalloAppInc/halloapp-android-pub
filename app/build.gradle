@@ -121,6 +121,7 @@ dependencies {
 
     // Do not include webrtc in Katchup
     halloappImplementation fileTree(dir: 'libs', include: ['*.jar'])
+    halloappImplementation(name: 'libwebrtc', ext:'aar')
 
     implementation platform('com.google.firebase:firebase-bom:30.5.0') // Ensures firebase libraries are compatible
     implementation 'com.google.firebase:firebase-analytics'
@@ -190,8 +191,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    // WebRTC
-    implementation(name: 'libwebrtc', ext:'aar')
 
     def camerax_version = "1.2.2"
     implementation "androidx.camera:camera-core:${camerax_version}"

@@ -1,6 +1,12 @@
 package com.halloapp;
 
 import android.text.format.DateUtils;
+import android.util.Rational;
+
+import androidx.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class Constants {
 
@@ -119,4 +125,20 @@ public class Constants {
     // This may be because not all of the character classes that are specified are listed in a table,
     // so it would be easy to miss some.
     public static final String USERNAME_CHARACTERS_REGEX = "^[a-zA-Z0-9_.]+$";
+
+    public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({Quadrant.TOP_LEFT, Quadrant.TOP_RIGHT, Quadrant.BOTTOM_LEFT, Quadrant.BOTTOM_RIGHT, })
+    public @interface Quadrant {
+        int TOP_RIGHT = 0;
+        int TOP_LEFT = 1;
+        int BOTTOM_LEFT = 2;
+        int BOTTOM_RIGHT = 3;
+    }
+
+    public static final int CALL_VIDEO_HEIGHT = 720;
+    public static final int CALL_VIDEO_WIDTH = 1280;
+    // TODO(nikola): The PIP_ASPECT_RATIO should be based on the resolution from the actual camera. Right now it is based on what we request from the camera.
+    public static final Rational PIP_ASPECT_RATIO = new Rational(CALL_VIDEO_HEIGHT, CALL_VIDEO_WIDTH);
 }

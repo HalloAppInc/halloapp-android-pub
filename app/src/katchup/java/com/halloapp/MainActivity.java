@@ -31,7 +31,6 @@ import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.GetStartedActivity;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
-import com.halloapp.katchup.Notifications;
 import com.halloapp.katchup.OnboardingFollowingActivity;
 import com.halloapp.katchup.SetupNameProfileActivity;
 import com.halloapp.katchup.SetupUsernameProfileActivity;

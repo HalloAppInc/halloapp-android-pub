@@ -8,8 +8,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.halloapp.AppContext;
 import com.halloapp.MainActivity;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;

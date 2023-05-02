@@ -5,14 +5,14 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.halloapp.calling.CallManager;
+import com.halloapp.Constants;
 
 public class PictureInPictureUtils {
 
     @RequiresApi(api = 26)
     public static PictureInPictureParams buildVideoCallParams() {
         PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
-        builder.setAspectRatio(CallManager.PIP_ASPECT_RATIO);
+        builder.setAspectRatio(Constants.PIP_ASPECT_RATIO);
         if (Build.VERSION.SDK_INT >= 31) {
             builder.setAutoEnterEnabled(true);
             builder.setSeamlessResizeEnabled(true);

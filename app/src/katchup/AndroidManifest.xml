@@ -327,19 +327,19 @@
             android:grantUriPermissions="true" />
 
         <receiver
-            android:name=".katchup.Notifications$DeleteMomentNotificationReceiver"
+            android:name=".Notifications$DeleteMomentNotificationReceiver"
             android:enabled="true"
             android:exported="false">
         </receiver>
 
         <receiver
-            android:name=".katchup.Notifications$DeleteScreenshotNotificationReceiver"
+            android:name=".Notifications$DeleteScreenshotNotificationReceiver"
             android:enabled="true"
             android:exported="false">
         </receiver>
 
         <receiver
-            android:name=".katchup.Notifications$DeleteReactionNotificationReceiver"
+            android:name=".Notifications$DeleteReactionNotificationReceiver"
             android:enabled="true"
             android:exported="false">
         </receiver>

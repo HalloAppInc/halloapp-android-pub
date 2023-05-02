@@ -14,7 +14,6 @@ import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.calling.CallParticipantsLayout;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
@@ -211,7 +210,7 @@ public class Preferences {
     private final LongPreference prefScreenshotNotificationCutoff = createPref(false, PREF_KEY_SCREENSHOT_NOTIFICATION_TIME_CUTOFF, 0L);
     private final BooleanPreference prefUseDebugHost = createPref(false, PREF_KEY_USE_DEBUG_HOST, BuildConfig.DEBUG);
     private final StringPreference prefActivePrivacyList = createPref(false, PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
-    private final IntPreference prefNextNotificationId = createPref(false, PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
+    private final IntPreference prefNextNotificationId = createPref(false, PREF_KEY_NEXT_NOTIF_ID, Constants.FIRST_DYNAMIC_NOTIFICATION_ID);
     private final LongPreference prefLastDecryptStatRowId = createPref(false, PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastGroupPostDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastGroupCommentDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID, -1L);
@@ -245,7 +244,7 @@ public class Preferences {
     private final IntPreference prefLocalEmojiVersion = createPref(true, PREF_KEY_LOCAL_EMOJI_VERSION, 0);
     private final StringPreference prefRecentEmojis = createPref(true, PREF_KEY_RECENT_EMOJIS, null);
     private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
-    private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
+    private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, Constants.Quadrant.TOP_RIGHT);
 
     private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);

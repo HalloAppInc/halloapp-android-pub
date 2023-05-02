@@ -10,6 +10,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.BgWorkers;

@@ -21,6 +21,7 @@ import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;

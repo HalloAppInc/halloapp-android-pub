@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.os.StrictMode;
 import android.provider.Settings;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -22,9 +21,8 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.halloapp.autodownload.DownloadableAssetManager;
-import com.halloapp.calling.CallManager;
+import com.halloapp.calling.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
@@ -37,16 +35,9 @@ import com.halloapp.registration.UnfinishedRegistrationWorker;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.HAThreadPolicyListener;
-import com.halloapp.util.LanguageUtils;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceManager;
-import com.huawei.hms.aaid.HmsInstanceId;
-import com.huawei.hms.api.ConnectionResult;
-import com.huawei.hms.api.HuaweiApiAvailability;
-import com.huawei.hms.common.ApiException;
-import com.huawei.hms.push.HmsMessaging;
 
 import io.sentry.android.core.SentryAndroid;
 

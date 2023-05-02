@@ -53,6 +53,7 @@ import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.MainActivity;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
@@ -127,7 +128,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
     private ExternalSelfieLoader externalSelfieLoader;
-    private ContactLoader contactLoader = new ContactLoader();
+    private ContactLoader contactLoader = new ContactLoader(userId -> null);
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
     private final GeotagLoader geotagLoader = new GeotagLoader();
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();

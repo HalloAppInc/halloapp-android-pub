@@ -3,7 +3,6 @@ package com.halloapp.katchup;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -11,14 +10,11 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 
+import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.MediaPagerAdapter;
-import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
-import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 

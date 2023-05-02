@@ -105,14 +105,14 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
-        <activity android:name=".ui.chat.ChatActivity"
+        <activity android:name=".ui.chat.chat.ChatActivity"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.Chat"
             android:label=""
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
-            android:name=".ui.calling.CallActivity"
+            android:name=".ui.calling.calling.CallActivity"
             android:label="@string/call_title"
             android:launchMode="singleTop"
             android:supportsPictureInPicture="true"
@@ -121,7 +121,7 @@
             android:taskAffinity="com.halloapp.calling"
             tools:targetApi="n" />
 
-        <activity android:name=".ui.chat.KeyVerificationActivity"
+        <activity android:name=".ui.chat.chat.KeyVerificationActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
@@ -182,7 +182,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/groups_in_common"/>
 
-        <activity android:name=".ui.calling.ExternalContactCallActivity"
+        <activity android:name=".ui.calling.calling.ExternalContactCallActivity"
             android:excludeFromRecents="true"
             android:permission="android.permission.CALL_PHONE"
             android:launchMode="singleTask"
@@ -198,7 +198,7 @@
 
         </activity>
 
-        <activity android:name=".ui.chat.ExternalContactChatActivity"
+        <activity android:name=".ui.chat.chat.ExternalContactChatActivity"
             android:excludeFromRecents="true"
             android:permission="android.permission.CALL_PHONE"
             android:launchMode="singleTask"
@@ -242,7 +242,7 @@
             android:label=""/>
 
         <activity
-            android:name=".ui.chat.MessageInfoActivity"
+            android:name=".ui.chat.chat.MessageInfoActivity"
             android:theme="@style/AppTheme"
             android:label="@string/message_info"/>
 
@@ -485,7 +485,7 @@
             android:exported="false">
         </receiver>
 
-        <receiver android:name=".calling.CallNotificationBroadcastReceiver"
+        <receiver android:name=".calling.calling.CallNotificationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.halloapp.calling.CallNotificationBroadcastReceiver.DECLINE"/>
@@ -526,13 +526,13 @@
         </service>
 
         <service
-            android:name=".calling.CallService"
+            android:name=".calling.calling.CallService"
             android:foregroundServiceType="phoneCall|microphone"
             android:enabled="true"
             android:exported="false">
         </service>
 
-        <service android:name=".calling.HaTelecomConnectionService"
+        <service android:name=".calling.calling.HaTelecomConnectionService"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             android:exported="true">
             <intent-filter>

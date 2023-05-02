@@ -1,15 +1,10 @@
 package com.halloapp;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
-import com.halloapp.ui.chats.ChatsFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.drafts.db.DraftsDb;
 
@@ -17,7 +12,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Set;
 
 public class ContentDraftManager {

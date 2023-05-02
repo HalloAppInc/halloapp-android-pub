@@ -1,9 +1,5 @@
 package com.halloapp;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,24 +15,16 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.transition.ChangeBounds;
-import androidx.transition.TransitionManager;
 
 import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
@@ -45,20 +33,17 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.AppExpirationActivity;
-import com.halloapp.katchup.Notifications;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.DebouncedClickListener;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.SystemUiVisibility;
-import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
-import com.halloapp.widget.DoodleBackgroundView;
 import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
@@ -105,7 +90,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private View sendLogsButton;
     private Preferences preferences;
     private ContactsSync contactsSync;
-    private AvatarLoader avatarLoader;
+    private KAvatarLoader kAvatarLoader;
 
     private boolean isReverification = false;
 
@@ -133,7 +118,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         preferences = Preferences.getInstance();
         contactsSync = ContactsSync.getInstance();
-        avatarLoader = AvatarLoader.getInstance();
+        kAvatarLoader = KAvatarLoader.getInstance();
 
         phoneNumberEditText = findViewById(R.id.phone_number);
         countryCodePicker = findViewById(R.id.ccp);
@@ -308,7 +293,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             preferences.setLastPushTokenSyncTime(0);
             preferences.setLastHuaweiPushToken("");
             preferences.setLastHuaweiPushTokenSyncTime(0);
-            avatarLoader.removeMyAvatar();
+            kAvatarLoader.removeMyAvatar();
         });
     }
 

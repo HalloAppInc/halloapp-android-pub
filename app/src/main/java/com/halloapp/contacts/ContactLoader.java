@@ -6,11 +6,11 @@ import android.widget.TextView;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.arch.core.util.Function;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
 import com.halloapp.id.UserId;
-import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.ArrayList;
@@ -21,9 +21,11 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
     private final LruCache<UserId, Contact> cache = new LruCache<>(512);
     private final ContactsDb contactsDb;
+    private final Function<UserId, Void> onTap;
 
-    public ContactLoader() {
+    public ContactLoader(Function<UserId, Void> onTap) {
         contactsDb = ContactsDb.getInstance();
+        this.onTap = onTap;
     }
 
     @MainThread
@@ -69,7 +71,7 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
                     view.setText(contact.getDisplayName(showTilde));
                     if (openProfileOnTap && !userId.isMe()) {
                         view.setOnClickListener(v -> {
-                            v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
+                            onTap.apply(userId);
                         });
                     }
                 }

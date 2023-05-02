@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/container"
-    tools:context=".ui.chat.ChatActivity">
+    tools:context=".ui.chat.chat.ChatActivity">
 
     <include
         android:id="@+id/call_toolbar"

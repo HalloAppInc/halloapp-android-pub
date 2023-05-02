@@ -280,7 +280,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
 
-        contactLoader = new ContactLoader();
+        contactLoader = new ContactLoader(userId -> null);
 
         screenshotHandlerThread = new HandlerThread("ScreenshotHandlerThread");
         screenshotHandlerThread.start();

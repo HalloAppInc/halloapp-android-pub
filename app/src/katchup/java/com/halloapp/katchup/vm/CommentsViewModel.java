@@ -17,7 +17,6 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
-import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
@@ -25,32 +24,25 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
-import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupCommentDataSource;
-import com.halloapp.katchup.Notifications;
+import com.halloapp.Notifications;
 import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.ShareIntentHelper;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.proto.server.FeedItem;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
-import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CommentsViewModel extends AndroidViewModel {
 
