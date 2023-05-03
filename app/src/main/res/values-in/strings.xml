@@ -2618,6 +2618,12 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
         <item quantity="other">"Katchup kedaluwarsa dalam %d hari"</item>
     </plurals>
+
+    <!-- label inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm">"enter username to confirm"</string>
+
+    <!-- hint on a field inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm_hint">"username"</string>
     <string name="bg_option_generate">"buat latar belakang AI baru"</string>
     <string name="settings_feedback_title">"saran"</string>
     <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>

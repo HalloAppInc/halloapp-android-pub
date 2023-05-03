@@ -2686,6 +2686,12 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
         <item quantity="one">"Katchup verloopt in %d dag"</item>
         <item quantity="other">"Katchup verloopt in %d dagen"</item>
     </plurals>
+
+    <!-- label inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm">"voer je gebruikersnaam in om te bevestigen"</string>
+
+    <!-- hint on a field inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm_hint">"gebruikersnaam"</string>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>

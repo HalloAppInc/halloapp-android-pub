@@ -2667,13 +2667,19 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="failed_no_matching_geotag">"Nenhuma geotag corresponde à sua localização atual. Verifique se você está no campus e tente novamente."</string>
 
     <!-- a text displayed on a loading spinner -->
-    <string name="loading_spinner">"loading…"</string>
+    <string name="loading_spinner">"carregando…"</string>
     <string name="app_name_katchup">"Katchup"</string>
-    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup expirou"</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
-        <item quantity="one">"Katchup expires in %d day"</item>
-        <item quantity="other">"Katchup expires in %d day"</item>
+        <item quantity="one">"Katchup expira em %d dia"</item>
+        <item quantity="other">"Katchup expira em %d dias"</item>
     </plurals>
+
+    <!-- label inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm">"enter username to confirm"</string>
+
+    <!-- hint on a field inviting a user to confirm username before account deletion -->
+    <string name="delete_account_username_confirm_hint">"username"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum feedback para a equipe katchup?"</string>
