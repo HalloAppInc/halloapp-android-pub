@@ -155,6 +155,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private int numTakes = 0;
     private int numSelfieTakes = 0;
     private long notificationTime;
+    private String notificationDate;
     private long notificationId;
     private long startTime;
     private int contentType;
@@ -163,9 +164,10 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     private MediaTranscoderTask mediaTranscoderTask;
 
-    public void setNotification(long notificationId, long notificationTime) {
+    public void setNotification(long notificationId, long notificationTime, String notificationDate) {
         this.notificationId = notificationId;
         this.notificationTime = notificationTime;
+        this.notificationDate = notificationDate;
     }
 
     public void setLocationIsUsed(boolean locationIsUsed) {
@@ -366,6 +368,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         post.numSelfieTakes = numSelfieTakes;
         post.notificationTimestamp = notificationTime;
         post.notificationId = notificationId;
+        post.notificationDate = notificationDate;
         post.timeTaken = Math.max(System.currentTimeMillis() - startTime, 0);
         post.media.add(Media.createFromFile(Media.MEDIA_TYPE_VIDEO, selfiePostFile));
         if (Boolean.TRUE.equals(locationIsUsed.getValue())) {

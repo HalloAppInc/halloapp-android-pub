@@ -96,7 +96,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     public static final String EXTRA_COMPOSER_TRANSITION = "composer-transition";
 
-    public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt) {
+    public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt, String notificationDate) {
         Intent i = new Intent(context, SelfiePostComposerActivity.class);
         i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
         if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
@@ -112,6 +112,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             i.putExtra(EXTRA_PROMPT, prompt);
         }
         i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
+        i.putExtra(EXTRA_NOTIFICATION_DATE, notificationDate);
         return i;
     }
 
@@ -122,13 +123,15 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         long notificationId = preferences.getMomentNotificationId();
         long timestamp = preferences.getMomentNotificationTimestamp();
         String prompt = preferences.getMomentNotificationPrompt();
+        String date = preferences.getMomentNotificationDate();
 
-        return startFromNotification(context, notificationId, timestamp, type, prompt);
+        return startFromNotification(context, notificationId, timestamp, type, prompt, date);
     }
 
     private static final String EXTRA_TYPE = "compose_type";
     private static final String EXTRA_NOTIFICATION_ID = "notification_id";
     private static final String EXTRA_NOTIFICATION_TIME = "notification_time";
+    private static final String EXTRA_NOTIFICATION_DATE = "notification_date";
     private static final String EXTRA_PROMPT = "notification_prompt";
 
     private static final int SELFIE_COUNTDOWN_DURATION_MS = 3000;
@@ -376,7 +379,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
         viewModel = new ViewModelProvider(this, new SelfieComposerViewModel.Factory(getApplication(), composeType)).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(this, this::configureViewsForState);
-        viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0));
+        viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0), getIntent().getStringExtra(EXTRA_NOTIFICATION_DATE));
         viewModel.setLocationIsUsed(hasLocationPermission());
 
         viewModel.getLocationIsUsed().observe(this, locationIsUsed -> {

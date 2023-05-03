@@ -33,6 +33,7 @@ public class KatchupMomentDb {
         cv.put(KatchupMomentsTable.COLUMN_TIME_TAKEN, moment.timeTaken);
         cv.put(KatchupMomentsTable.COLUMN_CONTENT_TYPE, KatchupPost.fromProtoContentType(moment.contentType));
         cv.put(KatchupMomentsTable.COLUMN_SCREENSHOTTED, moment.screenshotted);
+        cv.put(KatchupMomentsTable.COLUMN_NOTIFICATION_DATE, moment.notificationDate);
         db.insertWithOnConflict(KatchupMomentsTable.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
@@ -65,7 +66,8 @@ public class KatchupMomentDb {
                         KatchupMomentsTable.COLUMN_NUM_TAKES,
                         KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES,
                         KatchupMomentsTable.COLUMN_TIME_TAKEN,
-                        KatchupMomentsTable.COLUMN_CONTENT_TYPE
+                        KatchupMomentsTable.COLUMN_CONTENT_TYPE,
+                        KatchupMomentsTable.COLUMN_NOTIFICATION_DATE
                 },
                 KatchupMomentsTable.COLUMN_POST_ID + "=?",
                 new String[] {
@@ -84,6 +86,7 @@ public class KatchupMomentDb {
                 momentPost.numSelfieTakes = cursor.getInt(8);
                 momentPost.timeTaken = cursor.getLong(9);
                 momentPost.contentType = KatchupPost.getProtoContentType(cursor.getInt(10));
+                momentPost.notificationDate = cursor.getString(11);
             }
         }
     }

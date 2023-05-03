@@ -453,10 +453,10 @@ public class Notifications {
         }
     }
 
-    public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
+    public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt, String date) {
         final String title = context.getString(R.string.notification_daily_katchup_title);
         final String body = getDailyMomentNotificationText(prompt);
-        final Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
+        final Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt, date);
         contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
         contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.DAILY_MOMENT_NOTIFICATION);
 

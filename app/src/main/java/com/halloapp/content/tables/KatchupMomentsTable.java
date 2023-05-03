@@ -19,4 +19,5 @@ public class KatchupMomentsTable implements BaseColumns {
     public static final String COLUMN_TIME_TAKEN = "capture_time_taken";
     public static final String COLUMN_CONTENT_TYPE = "content_type";
     public static final String COLUMN_SCREENSHOTTED = "screenshotted";
+    public static final String COLUMN_NOTIFICATION_DATE = "notification_date"; // DD/MM/YYYY
 }

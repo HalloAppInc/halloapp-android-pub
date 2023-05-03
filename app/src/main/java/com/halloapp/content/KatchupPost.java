@@ -35,6 +35,7 @@ public class KatchupPost extends Post {
     public float selfieY;
     public long notificationTimestamp;
     public long notificationId;
+    public String notificationDate;
     public int numTakes;
     public int numSelfieTakes;
     public long timeTaken;
