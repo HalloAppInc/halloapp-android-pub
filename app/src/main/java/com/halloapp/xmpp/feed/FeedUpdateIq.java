@@ -108,14 +108,18 @@ public class FeedUpdateIq extends HalloIq {
         } else if (feedItem != null && feedItem.type == FeedItem.Type.POST) {
             Post.Builder pb = Post.newBuilder();
             if (katchupPost != null) {
-                pb.setMomentInfo(MomentInfo.newBuilder()
+                MomentInfo.Builder momentInfo = MomentInfo.newBuilder()
                         .setNotificationId(katchupPost.notificationId)
                         .setNumTakes(katchupPost.numTakes)
                         .setNumSelfieTakes(katchupPost.numSelfieTakes)
                         .setNotificationTimestamp(katchupPost.notificationTimestamp / 1000)
-                        .setDate(katchupPost.notificationDate)
                         .setTimeTaken(katchupPost.timeTaken)
-                        .setContentType(katchupPost.contentType).build());
+                        .setContentType(katchupPost.contentType);
+                // TODO(jack): Remove conditional after August 2023
+                if (katchupPost.notificationDate != null) {
+                    momentInfo.setDate(katchupPost.notificationDate);
+                }
+                pb.setMomentInfo(momentInfo);
             }
             if (audienceType != null && audienceList != null) {
                 List<Long> uids = new ArrayList<>();
