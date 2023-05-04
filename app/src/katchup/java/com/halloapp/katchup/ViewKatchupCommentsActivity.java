@@ -1329,6 +1329,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         private KatchupExoPlayer player;
         private ContentPlayerView contentPlayerView;
         private View videoContainerView;
+        private View loadingView;
 
         private Media media;
         private TextView durationView;
@@ -1342,6 +1343,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             contentPlayerView = itemView.findViewById(R.id.video_player);
             durationView = itemView.findViewById(R.id.video_duration);
             videoContainerView = itemView.findViewById(R.id.video_container);
+            loadingView = itemView.findViewById(R.id.video_loading);
             durationContainer = itemView.findViewById(R.id.duration_container);
             muteIcon = itemView.findViewById(R.id.mute_icon);
 
@@ -1415,12 +1417,24 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         }
 
+        private void showLoading() {
+            if (loadingView != null) {
+                loadingView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        private void hideLoading() {
+            if (loadingView != null) {
+                loadingView.setVisibility(View.GONE);
+            }
+        }
+
         public void bind(Comment comment) {
             super.bind(comment);
             this.media = comment.media.get(0);
 
             if (media.file == null) {
-                // TODO(jack): Show loading indicator for reactions as well
+                showLoading();
                 externalSelfieLoader.load(contentPlayerView, media, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
                     @Override
                     public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
@@ -1439,6 +1453,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
 
         private void bindReaction(@NonNull Media media) {
+            showLoading();
             if (player != null) {
                 player.destroy();
                 player = null;
@@ -1453,6 +1468,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             player.observeLifecycle(ViewKatchupCommentsActivity.this);
             currentPlayers.add(player);
             durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration() * 1000));
+            player.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY) {
+                        hideLoading();
+                    }
+                }
+            });
         }
     }
 

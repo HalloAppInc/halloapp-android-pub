@@ -30,6 +30,12 @@
             app:show_timeout="1000"
             app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
 
+        <com.halloapp.katchup.LoadingView
+            android:id="@+id/video_loading"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"/>
+
     </com.halloapp.katchup.JellybeanClipView>
 
     <LinearLayout
