@@ -7,6 +7,7 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -28,9 +29,11 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
@@ -72,6 +75,7 @@ import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
+import com.halloapp.katchup.ui.Colors;
 import com.halloapp.katchup.ui.KatchupShareExternallyView;
 import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -81,11 +85,13 @@ import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.HalloCamera;
+import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
@@ -99,6 +105,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -446,16 +453,12 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         uploadingProgressView = myPostHeader.findViewById(R.id.uploading_progress);
 
         viewModel.myPost.getLiveData().observe(getViewLifecycleOwner(), post -> {
-            if (post == null) {
-                followingListAdapter.hideHeader();
-            } else {
-                followingListAdapter.showHeader();
-                mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.image), post.media.get(1));
-                mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.selfie_preview), post.media.get(0));
-                TextView badgeCount = myPostHeader.findViewById(R.id.badge_count);
-                badgeCount.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
-                badgeCount.setText(String.format(Locale.getDefault(), "%d", post.commentCount));
-            }
+            bindMyPostHeader(post, viewModel.myPostComments.getValue());
+            updateEmptyState();
+        });
+
+        viewModel.myPostComments.observe(getViewLifecycleOwner(), comments -> {
+            bindMyPostHeader(viewModel.myPost.getLiveData().getValue(), comments);
             updateEmptyState();
         });
 
@@ -751,6 +754,109 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
     }
 
+    private void bindMyPostHeader(@Nullable Post post, @Nullable List<Comment> comments) {
+        if (post == null) {
+            followingListAdapter.hideHeader();
+        } else {
+            followingListAdapter.showHeader();
+            mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.image), post.media.get(1));
+            mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.selfie_preview), post.media.get(0));
+            TextView badgeCount = myPostHeader.findViewById(R.id.badge_count);
+            badgeCount.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
+            badgeCount.setText(String.format(Locale.getDefault(), "%d", post.commentCount));
+
+            LinearLayout commentsContainer = myPostHeader.findViewById(R.id.comments_container);
+            commentsContainer.removeAllViews();
+
+            if (comments != null) {
+                bindMyPostComments(commentsContainer, comments);
+                commentsContainer.setVisibility(View.VISIBLE);
+            } else {
+                commentsContainer.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void bindMyPostComments(@NonNull LinearLayout commentsContainer, @NonNull List<Comment> comments) {
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        for (int i = 0; i < comments.size(); i++) {
+            Comment comment = comments.get(i);
+            int commentLayout;
+            View commentView = null;
+            boolean showOnRight = i % 2 == 1;
+
+            switch (comment.type) {
+                case Comment.TYPE_USER:
+                    commentLayout = showOnRight ? R.layout.katchup_header_comment_text_right : R.layout.katchup_header_comment_text_left;
+                    commentView = inflater.inflate(commentLayout, commentsContainer, false);
+                    bindMyPostTextComment(commentView, comment);
+                    break;
+                case Comment.TYPE_STICKER:
+                    commentLayout = showOnRight ? R.layout.katchup_header_comment_sticker_right : R.layout.katchup_header_comment_sticker_left;
+                    commentView = inflater.inflate(commentLayout, commentsContainer, false);
+                    bindMyPostStickerComment(commentView, comment);
+                    break;
+                case Comment.TYPE_VIDEO_REACTION:
+                    commentLayout = showOnRight ? R.layout.katchup_header_comment_video_reaction_right : R.layout.katchup_header_comment_video_reaction_left;
+                    commentView = inflater.inflate(commentLayout, commentsContainer, false);
+                    bindMyPostVideoReactionComment(commentView, comment);
+                    break;
+            }
+
+            if (commentView != null) {
+                commentsContainer.addView(commentView);
+            }
+        }
+    }
+
+    private void bindMyPostTextComment(@NonNull View view, @NonNull Comment comment) {
+        TextView textView = view.findViewById(R.id.text);
+        TextView emojiOnlyView = view.findViewById(R.id.emoji_only_text);
+
+        int emojiOnlyCount = StringUtils.getOnlyEmojiCount(comment.text);
+        if (emojiOnlyCount >= 1 && emojiOnlyCount <= 4) {
+            textView.setVisibility(View.GONE);
+            emojiOnlyView.setVisibility(View.VISIBLE);
+
+            if (emojiOnlyCount == 4) {
+                emojiOnlyView.setTextSize(0.5f * 30);
+            } else if (emojiOnlyCount == 3) {
+                emojiOnlyView.setTextSize(0.65f * 30);
+            } else if (emojiOnlyCount == 2) {
+                emojiOnlyView.setTextSize(0.75f * 30);
+            } else {
+                emojiOnlyView.setTextSize(30);
+            }
+            emojiOnlyView.setText(comment.text);
+        } else {
+            textView.setVisibility(View.VISIBLE);
+            emojiOnlyView.setVisibility(View.GONE);
+            textView.setText(comment.text);
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), Colors.getCommentColor(comment.senderContact.getColorIndex())));
+        }
+    }
+
+    private void bindMyPostStickerComment(@NonNull View view, @NonNull Comment comment) {
+        TextView textView = view.findViewById(R.id.text);
+
+        if (comment.text != null && comment.text.length() > 7) {
+            @ColorInt int color;
+            try {
+                color = Color.parseColor(comment.text.substring(0, 7));
+            } catch (Exception e) {
+                color = Colors.getDefaultStickerColor();
+            }
+            textView.setTextColor(color);
+            textView.setText(comment.text.substring(7));
+        } else {
+            textView.setText(comment.text);
+        }
+    }
+
+    private void bindMyPostVideoReactionComment(@NonNull View view, @NonNull Comment comment) {
+        mediaThumbnailLoader.load(view.findViewById(R.id.image), comment.media.get(0));
+    }
+
     private void updateEmptyState() {
         List<Post> postList = viewModel.postList.getValue();
         List<KatchupPost> momentList = viewModel.momentList.getLiveData().getValue();
@@ -911,7 +1017,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
     public static class MainViewModel extends AndroidViewModel {
 
+        public final static int MY_POST_COMMENT_DISPLAY_LIMIT = 4;
+
         private final ContentDb contentDb = ContentDb.getInstance();
+        private final ContactsDb contactsDb = ContactsDb.getInstance();
         private final ConnectionObservers connectionObservers = ConnectionObservers.getInstance();
 
         private final PublicContentCache.Observer cacheObserver = new PublicContentCache.DefaultObserver() {
@@ -992,6 +1101,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 Post post = myPost.getLiveData().getValue();
                 if (post != null && comment.postId.equals(post.id)) {
                     myPost.invalidate();
+                    fetchMyPostComments();
                 } else {
                     PagedList<Post> followingPosts = postList.getValue();
                     if (followingPosts == null) {
@@ -1018,6 +1128,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 Post post = myPost.getLiveData().getValue();
                 if (post != null && comment.postId.equals(post.id)) {
                     myPost.invalidate();
+                    fetchMyPostComments();
                 } else {
                     PagedList<Post> followingPosts = postList.getValue();
                     if (followingPosts == null) {
@@ -1076,6 +1187,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         final MutableLiveData<Boolean> followingTabSelected = new MutableLiveData<>(true);
         final LiveData<PagedList<Post>> postList;
         final ComputableLiveData<Post> myPost;
+        final MutableLiveData<List<Comment>> myPostComments = new MutableLiveData<>();
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
         private final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
@@ -1093,6 +1205,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         private Post reactedToPost;
         private boolean reactedToPostIsPublic;
+        private List<Integer> unusedColors = new LinkedList<>();
 
         public MainViewModel(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
             super(application);
@@ -1140,6 +1253,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             };
 
             fetchSuggestions();
+            fetchMyPostComments();
         }
 
         private MutableLiveData<Boolean> getPublicFeedLoadFailed() {
@@ -1222,6 +1336,43 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     publicFeedLoadFailed.postValue(true);
                 });
             });
+        }
+
+        private void fetchMyPostComments() {
+            BgWorkers.getInstance().execute(() -> {
+                String unlockingPost = contentDb.getUnlockingMomentId();
+                if (unlockingPost == null) {
+                    myPostComments.postValue(null);
+                    return;
+                }
+
+                Post post = contentDb.getPost(unlockingPost);
+                if (post != null) {
+                    List<Comment> comments = contentDb.getOthersCommentsKatchup(unlockingPost, 0, MY_POST_COMMENT_DISPLAY_LIMIT);
+
+                    for (Comment comment : comments) {
+                        comment.senderContact = contactsDb.getContact(comment.senderUserId);
+                        comment.senderContact.setColorIndex(getColorIndex(comment.senderUserId));
+                    }
+
+                    myPostComments.postValue(comments);
+                } else {
+                    myPostComments.postValue(null);
+                }
+            });
+        }
+
+        private int getColorIndex(UserId userId) {
+            int defColor = GroupParticipants.getColorIndex(userId);
+            if (unusedColors.size() == 0) {
+                return defColor;
+            }
+            int index = unusedColors.indexOf(defColor);
+            if (index != -1) {
+                return unusedColors.remove(index);
+            }
+            index = (int)(Math.random() * unusedColors.size());
+            return unusedColors.remove(index);
         }
 
         public void showCachedItems() {

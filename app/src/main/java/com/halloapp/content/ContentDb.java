@@ -1079,6 +1079,12 @@ public class ContentDb {
     }
 
     @WorkerThread
+    @NonNull
+    public List<Comment> getOthersCommentsKatchup(@NonNull String postId, int start, int count) {
+        return postsDb.getOthersCommentsKatchup(postId, start, count);
+    }
+
+    @WorkerThread
     public int getCommentsKatchupCount(@NonNull String postId) {
         return postsDb.getCommentsKatchupCount(postId);
     }
