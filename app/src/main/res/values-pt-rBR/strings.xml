@@ -2679,10 +2679,10 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     </plurals>
 
     <!-- label inviting a user to confirm username before account deletion -->
-    <string name="delete_account_username_confirm">"enter username to confirm"</string>
+    <string name="delete_account_username_confirm">"digite o nome de usuário para confirmar"</string>
 
     <!-- hint on a field inviting a user to confirm username before account deletion -->
-    <string name="delete_account_username_confirm_hint">"username"</string>
+    <string name="delete_account_username_confirm_hint">"nome de usuário"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum comentário para a equipe katchup?"</string>

@@ -2422,7 +2422,7 @@ Je katchup-geschiedenis verwijderen van deze telefoon"</string>
     <string name="settings_notifications_mentions_option">"vermeldingen"</string>
 
     <!-- notifications settings on fire option -->
-    <string name="settings_notifications_on_fire_option">"in vuur en vlam"</string>
+    <string name="settings_notifications_on_fire_option">"on fire"</string>
 
     <!-- notifications settings new users option -->
     <string name="settings_notifications_new_users_option">"nieuwe gebruikers"</string>
