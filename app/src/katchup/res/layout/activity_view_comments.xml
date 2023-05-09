@@ -311,7 +311,7 @@
                 app:tint="@color/white_70"
                 android:src="@drawable/ic_emoji_keyboard"/>
 
-            <com.halloapp.widget.MentionableEntry
+            <com.halloapp.widget.PostEditText
                 android:id="@+id/entry_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
