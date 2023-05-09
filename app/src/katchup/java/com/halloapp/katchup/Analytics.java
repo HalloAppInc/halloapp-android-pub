@@ -339,7 +339,7 @@ public class Analytics {
         track("commented", properties);
     }
 
-    public void externalShare(String destination) {
+    public void externalShare(String destination, long notificationId) {
         String defaultSms = Telephony.Sms.getDefaultSmsPackage(context);
         if ("com.whatsapp".equals(destination)) {
             destination = "whatsapp";
@@ -352,6 +352,7 @@ public class Analytics {
         }
         Map<String, Object> properties = new HashMap<>();
         properties.put("shareDestination", destination);
+        properties.put("moment_notif_id", notificationId);
         track("externalShare", properties);
     }
 

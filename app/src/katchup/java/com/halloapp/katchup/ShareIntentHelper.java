@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.daasuu.mp4compose.composer.ImagePostShareGenerator;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.katchup.media.MediaTranscoderTask;
@@ -29,6 +30,8 @@ import java.io.IOException;
 
 public class ShareIntentHelper {
 
+    private static final String EXTRA_NOTIFICATION_ID = "notification_id";
+
     public static LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @Nullable String targetPackage, @NonNull Post post, boolean isSharingMedia, boolean isCenterCrop) {
         MutableLiveData<Intent> result = new MutableLiveData<>();
 
@@ -39,7 +42,7 @@ public class ShareIntentHelper {
                         Log.e("ShareIntentHelper/shareExternallyWithPreview failed to get transcoded file");
                         result.postValue(null);
                     } else {
-                        result.postValue(generateShareIntent(context, targetPackage, input));
+                        result.postValue(generateShareIntent(context, targetPackage, input, post));
                     }
                     return null;
                 });
@@ -51,8 +54,9 @@ public class ShareIntentHelper {
         return result;
     }
 
-    private static Intent generateShareIntent(@NonNull Context context, @Nullable String targetPackage, @NonNull File postFile) {
+    private static Intent generateShareIntent(@NonNull Context context, @Nullable String targetPackage, @NonNull File postFile, @NonNull Post post) {
         Uri videoUri = FileProvider.getUriForFile(context, "com.halloapp.katchup.fileprovider", postFile);
+        long notificationId = ((KatchupPost) post).notificationId;
 
         Intent builderIntent = new Intent(Intent.ACTION_SEND);
         builderIntent.setType("video/mp4");
@@ -61,6 +65,7 @@ public class ShareIntentHelper {
         final String shareAction = "com.halloapp.katchup.share.SHARE_ACTION";
         Intent receiver = new Intent(context, ShareReceiver.class);
         receiver.setAction(shareAction);
+        receiver.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
 
         if (targetPackage == null) {
             Intent chooserIntent;
@@ -71,12 +76,12 @@ public class ShareIntentHelper {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver, PendingIntent.FLAG_UPDATE_CURRENT);
                 chooserIntent = Intent.createChooser(builderIntent, context.getString(R.string.share_moment_label), pendingIntent.getIntentSender());
             } else {
-                Analytics.getInstance().externalShare("system");
+                Analytics.getInstance().externalShare("system", notificationId);
                 chooserIntent = Intent.createChooser(builderIntent, context.getString(R.string.share_moment_label));
             }
             return chooserIntent;
         } else {
-            Analytics.getInstance().externalShare(targetPackage);
+            Analytics.getInstance().externalShare(targetPackage, notificationId);
             builderIntent.setPackage(targetPackage);
 
             return builderIntent;
