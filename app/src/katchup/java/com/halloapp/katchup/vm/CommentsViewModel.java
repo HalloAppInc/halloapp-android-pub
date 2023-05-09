@@ -146,15 +146,15 @@ public class CommentsViewModel extends AndroidViewModel {
     }
 
     public void moveToNextPost() {
-        if (posts != null && currentIndex + 1 < posts.size()) {
-            currentIndex += 1;
+        if (posts != null && posts.size() > 1) {
+            currentIndex = (currentIndex + 1) % posts.size();
             updatePost();
         }
     }
 
     public void moveToPreviousPost() {
-        if (currentIndex > 0) {
-            currentIndex -= 1;
+        if (posts != null && posts.size() > 1) {
+            currentIndex = (currentIndex - 1 + posts.size()) % posts.size();
             updatePost();
         }
     }
