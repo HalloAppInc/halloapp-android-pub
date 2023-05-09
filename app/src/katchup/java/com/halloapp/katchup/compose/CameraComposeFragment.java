@@ -8,6 +8,7 @@ import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -197,6 +198,9 @@ public class CameraComposeFragment extends ComposeFragment {
         previewPromptText.setText(prompt);
         cameraPromptText.setText(prompt);
 
+        previewPromptText.setVisibility(TextUtils.isEmpty(prompt) ? View.GONE : View.VISIBLE);
+        cameraPromptText.setVisibility(TextUtils.isEmpty(prompt) ? View.GONE : View.VISIBLE);
+
         initializeCamera();
 
         return root;
@@ -259,7 +263,7 @@ public class CameraComposeFragment extends ComposeFragment {
         camera = new HalloCamera(this, cameraPreviewView, false, true, Surface.ROTATION_0, new HalloCamera.DefaultListener() {
             @Override
             public void onCaptureSuccess(File file, int type) {
-                if (type != Media.MEDIA_TYPE_VIDEO) {
+                if (type != Media.MEDIA_TYPE_VIDEO || TextUtils.isEmpty(prompt)) {
                     cameraPreviewView.post(() -> {
                         captureFile = file;
                         captureType = type;
@@ -328,7 +332,7 @@ public class CameraComposeFragment extends ComposeFragment {
     }
 
     private void showPreviewView() {
-        previewPromptText.setVisibility(captureType == Media.MEDIA_TYPE_IMAGE ? View.VISIBLE : View.GONE);
+        previewPromptText.setVisibility(captureType == Media.MEDIA_TYPE_IMAGE && !TextUtils.isEmpty(prompt) ? View.VISIBLE : View.GONE);
         controlsContainer.setVisibility(View.GONE);
         cameraPreviewContainer.setVisibility(View.GONE);
         mediaPreviewContainer.setVisibility(View.VISIBLE);
