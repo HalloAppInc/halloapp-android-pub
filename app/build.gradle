@@ -65,6 +65,11 @@ android {
         halloapp {
             dimension "app"
             buildConfigField "boolean", "IS_KATCHUP", "false"
+            repositories {
+                flatDir {
+                    dirs 'libs'
+                }
+            }
         }
         katchup {
             dimension "app"
