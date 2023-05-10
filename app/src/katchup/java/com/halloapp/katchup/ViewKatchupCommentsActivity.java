@@ -1018,8 +1018,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
             int[] location = new int[2];
-            totalEntry.getLocationOnScreen(location);
-            if (ev.getX() < location[0] || ev.getX() > location[0] + totalEntry.getWidth() || ev.getY() < location[1] || ev.getY() > location[1] + totalEntry.getHeight()) {
+            stickerSendContainer.getLocationOnScreen(location);
+            if (ev.getX() < location[0] || ev.getX() > location[0] + totalEntry.getWidth() || ev.getY() < location[1] || ev.getY() > location[1] + stickerSendContainer.getHeight() + totalEntry.getHeight()) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
