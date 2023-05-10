@@ -243,6 +243,7 @@
     <color name="tertiary_text">@color/black_40</color>
     <color name="hint_text">@color/black_30</color>
     <color name="disabled_text">@color/black_20</color>
+    <color name="prompt_text_color">#D9FFFFFF</color>
 
     <color name="reply_text_color">@color/secondary_text</color>
 
