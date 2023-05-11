@@ -36,6 +36,7 @@ import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
+import com.halloapp.content.tables.SeenPostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.util.logs.Log;
@@ -45,7 +46,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 94;
+    private static final int DATABASE_VERSION = 95;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -409,6 +410,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE UNIQUE INDEX " + SeenTable.INDEX_SEEN_KEY + " ON " + SeenTable.TABLE_NAME + "("
                 + SeenTable.COLUMN_POST_ID + ", "
                 + SeenTable.COLUMN_SEEN_BY_USER_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + SeenPostsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + SeenPostsTable.TABLE_NAME + " ("
+                + SeenPostsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + SeenPostsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + SeenPostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + SeenPostsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + SeenPostsTable.INDEX_SEEN_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + SeenPostsTable.INDEX_SEEN_KEY + " ON " + SeenPostsTable.TABLE_NAME + "("
+                + SeenPostsTable.COLUMN_POST_ID + ", "
+                + SeenPostsTable.COLUMN_SENDER_USER_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ReactionsTable.TABLE_NAME);
@@ -833,6 +848,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 93: {
                 upgradeFromVersion93(db);
+            }
+            case 94: {
+                upgradeFromVersion94(db);
             }
             break;
             default: {
@@ -1835,6 +1853,22 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion93(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_NOTIFICATION_DATE + " TEXT");
+    }
+
+    private void upgradeFromVersion94(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + SeenPostsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + SeenPostsTable.TABLE_NAME + " ("
+                + SeenPostsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + SeenPostsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + SeenPostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + SeenPostsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + SeenPostsTable.INDEX_SEEN_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + SeenPostsTable.INDEX_SEEN_KEY + " ON " + SeenPostsTable.TABLE_NAME + "("
+                + SeenPostsTable.COLUMN_POST_ID + ", "
+                + SeenPostsTable.COLUMN_SENDER_USER_ID
+                + ");");
     }
 
     /**

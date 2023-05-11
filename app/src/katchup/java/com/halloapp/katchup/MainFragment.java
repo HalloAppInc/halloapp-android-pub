@@ -272,12 +272,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         followingListView.setLayoutManager(layoutManager);
         followingListAdapter = new PostAdapter(false);
         followingListView.setAdapter(followingListAdapter);
-        followingListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                notifyPostsSeen(layoutManager, recyclerView, false);
-            }
-        });
 
         publicListView = root.findViewById(R.id.public_list);
         final LinearLayoutManager publicLayoutManager = new LinearLayoutManager(requireContext());
@@ -294,7 +288,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     viewModel.maybeFetchMoreFeed();
                 }
 
-                notifyPostsSeen(publicLayoutManager, recyclerView, true);
+                notifyPublicPostsSeen(publicLayoutManager, recyclerView);
             }
         });
 
@@ -334,9 +328,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
             boolean followingSelected = Boolean.TRUE.equals(selected);
             setFollowingSelected(followingSelected);
-            notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
             if (followingSelected) {
                 viewModel.setHasUpdatedFollowingFeed(false);
+            } else {
+                notifyPublicPostsSeen(publicLayoutManager, publicListView);
             }
         });
 
@@ -411,7 +406,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             Log.d("MainFragment got new post list " + posts);
             followingListAdapter.submitList(posts, () -> {
                 updateEmptyState();
-                notifyPostsSeen(layoutManager, followingListView, false);
             });
         });
 
@@ -518,7 +512,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         MomentManager.getInstance().isUnlockedLiveData().observe(getViewLifecycleOwner(), momentUnlockStatus -> {
             uploadingProgressView.setVisibility(momentUnlockStatus.isUnlocking() ? View.VISIBLE : View.GONE);
             boolean followingSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
-            notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
+            if (!followingSelected) {
+                notifyPublicPostsSeen(publicLayoutManager, publicListView);
+            }
         });
 
         ContactsDb.getInstance().addObserver(contactsDbObserver);
@@ -588,11 +584,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         followingListView.requestDisallowInterceptTouchEvent(!touchHandlingEnabled);
     }
 
-    private void notifyPostsSeen(@NonNull LinearLayoutManager layoutManager, @NonNull RecyclerView recyclerView, boolean publicFeed) {
-        if (Objects.equals(publicFeed, viewModel.followingTabSelected.getValue())) {
-            return;
-        }
-
+    private void notifyPublicPostsSeen(@NonNull LinearLayoutManager layoutManager, @NonNull RecyclerView recyclerView) {
         MomentUnlockStatus momentUnlockStatus = MomentManager.getInstance().isUnlockedLiveData().getValue();
         if (momentUnlockStatus == null || !momentUnlockStatus.isUnlocked()) {
             return;
@@ -604,8 +596,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForLayoutPosition(i);
             if (vh instanceof KatchupPostViewHolder) {
                 KatchupPostViewHolder kpvh = (KatchupPostViewHolder) vh;
-                if (!kpvh.seenReceiptSent) {
+                KatchupPost post = (KatchupPost) kpvh.post;
+                if (!kpvh.seenReceiptSent && post.seen == Post.SEEN_NO) {
                     kpvh.seenReceiptSent = true;
+                    post.seen = Post.SEEN_YES_PENDING;
                     sendSeenReceipt((KatchupPost) kpvh.post);
                 }
             }

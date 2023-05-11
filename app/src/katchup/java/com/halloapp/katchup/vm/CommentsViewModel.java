@@ -130,9 +130,6 @@ public class CommentsViewModel extends AndroidViewModel {
                 });
             } else {
                 Post post = isPublic ? PublicContentCache.getInstance().getPost(postId) : contentDb.getPost(postId);
-                if (post != null && !post.senderUserId.isMe()) {
-                    contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
-                }
                 posts = Collections.singletonList(post);
             }
             updatePost();
@@ -167,7 +164,7 @@ public class CommentsViewModel extends AndroidViewModel {
             followable.postValue(!post.senderUserId.isMe() && contactsDb.getRelationship(post.senderUserId, RelationshipInfo.Type.FOLLOWING) == null);
         });
 
-        if (post != null && !post.senderUserId.isMe()) {
+        if (post != null && !post.senderUserId.isMe() && (post.seen == Post.SEEN_NO || post.seen == Post.SEEN_NO_HIDDEN)) {
             contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
         }
 

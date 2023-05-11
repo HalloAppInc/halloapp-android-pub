@@ -248,6 +248,7 @@ public class FeedContentParser {
         if (!TextUtils.isEmpty(katchupContainer.getLocation())) {
             kp.location = katchupContainer.getLocation();
         }
+        kp.seen = ContentDb.getInstance().isPostSeen(id) ? Post.SEEN_YES : Post.SEEN_NO;
 
         return kp;
     }

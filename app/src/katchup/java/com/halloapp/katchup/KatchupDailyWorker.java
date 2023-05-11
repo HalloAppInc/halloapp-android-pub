@@ -61,6 +61,7 @@ public class KatchupDailyWorker extends Worker {
         Log.i("KatchupDailyWorker.doWork");
         // TODO(jack): Clean up ContentDb as well
 //        ContentDb.getInstance().cleanup();
+        ContentDb.getInstance().deleteOldSeenReceipts();
         FileStore.getInstance().cleanup();
         EmojiManager.getInstance().checkUpdate();
         reportPermissionStats();

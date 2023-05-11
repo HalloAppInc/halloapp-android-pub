@@ -905,6 +905,11 @@ public class ContentDb {
         return postsDb.getComment(commentId);
     }
 
+    @WorkerThread
+    public boolean isPostSeen(@NonNull String postId) {
+        return postsDb.isPostSeen(postId);
+    }
+
     public void addComment(@NonNull Comment comment) {
         addFeedItems(new ArrayList<>(), Collections.singletonList(comment), null);
     }
@@ -2028,6 +2033,11 @@ public class ContentDb {
                 }
             }
         }
+    }
+
+    public void deleteOldSeenReceipts() {
+        int deletedSeenCount = postsDb.deleteOldSeenPostsReceipts();
+        Log.i("ContentDb.deleteOldSeenReceipts: " + deletedSeenCount + " seen receipts deleted");
     }
 
     @NonNull

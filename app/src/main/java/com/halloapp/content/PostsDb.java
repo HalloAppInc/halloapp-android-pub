@@ -29,6 +29,7 @@ import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
+import com.halloapp.content.tables.SeenPostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -500,14 +501,20 @@ class PostsDb {
     @WorkerThread
     void setPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
         Log.i("ContentDb.setPostSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
-        final ContentValues values = new ContentValues();
-        values.put(PostsTable.COLUMN_SEEN, Post.SEEN_YES);
+        final ContentValues postValues = new ContentValues();
+        postValues.put(PostsTable.COLUMN_SEEN, Post.SEEN_YES);
+
+        final ContentValues seenValues = new ContentValues();
+        seenValues.put(SeenPostsTable.COLUMN_POST_ID, postId);
+        seenValues.put(SeenPostsTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
+        seenValues.put(SeenPostsTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
-            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, postValues,
                     PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                    new String [] {senderUserId.rawId(), postId},
+                    new String[] {senderUserId.rawId(), postId},
                     SQLiteDatabase.CONFLICT_ABORT);
+            db.insertWithOnConflict(SeenPostsTable.TABLE_NAME, null, seenValues, SQLiteDatabase.CONFLICT_IGNORE);
         } catch (SQLException ex) {
             Log.e("ContentDb.setPostSeenReceiptSent: failed");
             throw ex;
@@ -3231,6 +3238,16 @@ class PostsDb {
     }
 
     @WorkerThread
+    boolean isPostSeen(@NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(SeenPostsTable.TABLE_NAME,
+                    new String[] {SeenPostsTable.COLUMN_SENDER_USER_ID}, SeenPostsTable.COLUMN_POST_ID + "=?",
+                    new String[] {postId}, null, null, SeenPostsTable._ID + " DESC")) {
+            return cursor.getCount() > 0;
+        }
+    }
+
+    @WorkerThread
     @NonNull List<ScreenshotByInfo> getPostScreenshotByInfos(@NonNull String postId) {
         final List<ScreenshotByInfo> seenByInfos = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -4005,6 +4022,12 @@ class PostsDb {
                 " IN (SELECT "
                 + SeenTable.TABLE_NAME + "." + SeenTable.COLUMN_POST_ID
                 + " FROM " + SeenTable.TABLE_NAME + " LEFT JOIN " + PostsTable.TABLE_NAME + " ON " + SeenTable.TABLE_NAME + "." + SeenTable.COLUMN_POST_ID + "=" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " IS NULL)", null);
+    }
+
+    public int deleteOldSeenPostsReceipts() {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        String twoDayOldQuery = SeenPostsTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - (2 * DateUtils.DAY_IN_MILLIS));
+        return db.delete(SeenPostsTable.TABLE_NAME, twoDayOldQuery, null);
     }
 
     private int deleteOrphanedComments(SQLiteDatabase db) {
