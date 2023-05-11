@@ -3,6 +3,7 @@ package com.halloapp.crypto.home;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.crypto.AutoCloseLock;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
@@ -107,11 +108,19 @@ public class HomeFeedSessionManager {
     }
 
     public void sendPostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String postId, int rerequestCount, boolean senderStateIssue) {
-        connection.sendHomePostRerequest(senderUserId, favorites, postId, rerequestCount, senderStateIssue);
+        if (BuildConfig.IS_KATCHUP) {
+            Log.w("Dropping post rerequest in katchup");
+        } else {
+            connection.sendHomePostRerequest(senderUserId, favorites, postId, rerequestCount, senderStateIssue);
+        }
     }
 
     public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String commentId, @NonNull Comment.CommentType commentType) {
-        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId, commentType);
+        if (BuildConfig.IS_KATCHUP) {
+            Log.w("Dropping comment rerequest in katchup");
+        } else {
+            connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId, commentType);
+        }
     }
 
     public SenderState getSenderState(boolean favorites) throws CryptoException {
