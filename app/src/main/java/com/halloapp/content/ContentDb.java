@@ -18,6 +18,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
@@ -60,6 +61,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -340,10 +342,16 @@ public class ContentDb {
                 if (BuildConfig.IS_KATCHUP) {
                     final Post parentPost = comment.getParentPost();
                     final UserId parentPostSenderId = comment.getPostSenderUserId();
+                    List<RelationshipInfo> following = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWING);
+                    Set<UserId> followingUserIds = new HashSet<>();
+                    for (RelationshipInfo followingUser : following) {
+                        followingUserIds.add(followingUser.userId);
+                    }
 
                     final boolean ownParentPost = parentPostSenderId != null && parentPostSenderId.isMe();
                     final boolean subscribedToParentPost = parentPost != null && parentPost.subscribed && ServerProps.getInstance().getFeedCommentNotificationsEnabled();
-                    comment.shouldNotify = !comment.senderUserId.isMe() && (ownParentPost || subscribedToParentPost);
+                    final boolean isFollowingParentPostSender = parentPostSenderId != null && followingUserIds.contains(parentPostSenderId) && ServerProps.getInstance().getFeedFollowingCommentNotificationsEnabled();
+                    comment.shouldNotify = !comment.senderUserId.isMe() && (ownParentPost || subscribedToParentPost || isFollowingParentPostSender);
 
                     // Subscribe to parent post if we comment
                     if (parentPost != null && !parentPost.subscribed && comment.senderUserId.isMe()) {

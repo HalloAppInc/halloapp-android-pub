@@ -69,6 +69,7 @@ public class ServerProps {
     private static final String PROP_FEED_COMMENT_NOTIFICATIONS_ENABLED = "feed_comment_notifications";
     private static final String PROP_AMBASSADOR = "ambassador";
     private static final String PROP_DAILY_KATCHUP_NOTIFICATION_TEMPLATE = "daily_katchup_notif_template";
+    private static final String PROP_FEED_FOLLOWING_COMMENT_NOTIFICATIONS_ENABLED = "feed_following_comment_notifications";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -133,6 +134,7 @@ public class ServerProps {
     private final BooleanProp propFeedCommentNotificationsEnabled = createProp(PROP_FEED_COMMENT_NOTIFICATIONS_ENABLED, false);
     private final BooleanProp propAmbassador = createProp(PROP_AMBASSADOR, false);
     private final StringProp propDailyKatchupNotificationTemplate = createProp(PROP_DAILY_KATCHUP_NOTIFICATION_TEMPLATE, "");
+    private final BooleanProp propFeedFollowingCommentNotificationsEnabled = createProp(PROP_FEED_FOLLOWING_COMMENT_NOTIFICATIONS_ENABLED, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -424,5 +426,9 @@ public class ServerProps {
 
     public synchronized String getPropDailyKatchupNotificationTemplate() {
         return propDailyKatchupNotificationTemplate.getValue();
+    }
+
+    public synchronized boolean getFeedFollowingCommentNotificationsEnabled() {
+        return propFeedFollowingCommentNotificationsEnabled.getValue();
     }
 }
