@@ -141,6 +141,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
     private final Set<UserId> followedUsers = new HashSet<>();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private boolean goToForYou = false;
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
@@ -225,6 +226,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         @Override
         public void onFlushComplete(int requestCode) {}
     };
+
+    public MainFragment(boolean goToForYou) {
+        this.goToForYou = goToForYou;
+    }
 
     @Nullable
     @Override
@@ -325,6 +330,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         viewModel = new ViewModelProvider(requireActivity(), new MainViewModel.MainViewModelFactory(getActivity().getApplication(), externalMediaThumbnailLoader)).get(MainViewModel.class);
+        viewModel.setFollowingSelected(!goToForYou);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
             boolean followingSelected = Boolean.TRUE.equals(selected);
             setFollowingSelected(followingSelected);

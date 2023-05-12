@@ -52,6 +52,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_SCROLL_TO_TOP = "scroll_to_top";
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String EXTRA_POST_START_MOMENT_POST = "start_moment_post";
+    public static final String EXTRA_GO_TO_FOR_YOU = "go_to_for_you";
     public static final String NAV_TARGET_FEED = "feed";
     public static final String NAV_TARGET_GROUPS = "groups";
     public static final String NAV_TARGET_MESSAGES = "messages";
@@ -73,6 +74,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private ViewPager2 viewPager;
     private SlidingPagerAdapter pagerAdapter;
     private MainViewModel mainViewModel;
+    private boolean goToForYou = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +92,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         splashScreen.setOnExitAnimationListener(this::removeSplash);
 
         setContentView(R.layout.activity_new_main);
+
+        goToForYou = getIntent().getBooleanExtra(EXTRA_GO_TO_FOR_YOU, false);
 
         viewPager = findViewById(R.id.pager);
         pagerAdapter = new SlidingPagerAdapter(this);
@@ -240,7 +244,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0: return new FollowingFragment();
-                case 1: return new MainFragment();
+                case 1: return new MainFragment(goToForYou);
                 case 2: return NewProfileFragment.newProfileFragment(UserId.ME);
                 default: throw new IllegalArgumentException("Invalid position " + position);
             }

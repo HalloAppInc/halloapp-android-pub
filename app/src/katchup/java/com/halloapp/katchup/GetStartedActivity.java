@@ -12,8 +12,12 @@ import com.halloapp.MainActivity;
 import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.BgWorkers;
+
+import java.util.List;
 
 public class GetStartedActivity extends HalloActivity {
     @Override
@@ -43,8 +47,12 @@ public class GetStartedActivity extends HalloActivity {
                 preferences.setPrevUnfinishedRegistrationNotificationTimeInMillis(0);
             }
 
+            List<Post> posts = ContentDb.getInstance().getAllUnseenPosts();
+            boolean goToForYou = posts.isEmpty();
+
             runOnUiThread(() -> {
                 startActivity(new Intent(GetStartedActivity.this, MainActivity.class)
+                        .putExtra(MainActivity.EXTRA_GO_TO_FOR_YOU, goToForYou)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                 finish();
             });
