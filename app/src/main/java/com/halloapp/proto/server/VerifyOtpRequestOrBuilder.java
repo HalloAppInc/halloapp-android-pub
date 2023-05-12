@@ -156,4 +156,14 @@ public interface VerifyOtpRequestOrBuilder extends
    * @return The hashcashSolutionTimeTakenMs.
    */
   long getHashcashSolutionTimeTakenMs();
+
+  /**
+   * <pre>
+   * If the client already received a uid via phoneless registration.
+   * </pre>
+   *
+   * <code>int64 uid = 15;</code>
+   * @return The uid.
+   */
+  long getUid();
 }

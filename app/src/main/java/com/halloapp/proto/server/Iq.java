@@ -192,6 +192,8 @@ public  final class Iq extends
     POST_SUBSCRIPTION_RESPONSE(71),
     GEO_TAG_REQUEST(72),
     GEO_TAG_RESPONSE(73),
+    REGISTER_REQUEST(74),
+    REGISTER_RESPONSE(75),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -275,6 +277,8 @@ public  final class Iq extends
         case 71: return POST_SUBSCRIPTION_RESPONSE;
         case 72: return GEO_TAG_REQUEST;
         case 73: return GEO_TAG_RESPONSE;
+        case 74: return REGISTER_REQUEST;
+        case 75: return REGISTER_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3825,6 +3829,106 @@ public  final class Iq extends
     }
   }
 
+  public static final int REGISTER_REQUEST_FIELD_NUMBER = 74;
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   */
+  @java.lang.Override
+  public boolean hasRegisterRequest() {
+    return payloadCase_ == 74;
+  }
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.RegisterRequest getRegisterRequest() {
+    if (payloadCase_ == 74) {
+       return (com.halloapp.proto.server.RegisterRequest) payload_;
+    }
+    return com.halloapp.proto.server.RegisterRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   */
+  private void setRegisterRequest(com.halloapp.proto.server.RegisterRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 74;
+  }
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   */
+  private void mergeRegisterRequest(com.halloapp.proto.server.RegisterRequest value) {
+    value.getClass();
+  if (payloadCase_ == 74 &&
+        payload_ != com.halloapp.proto.server.RegisterRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RegisterRequest.newBuilder((com.halloapp.proto.server.RegisterRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 74;
+  }
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   */
+  private void clearRegisterRequest() {
+    if (payloadCase_ == 74) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int REGISTER_RESPONSE_FIELD_NUMBER = 75;
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   */
+  @java.lang.Override
+  public boolean hasRegisterResponse() {
+    return payloadCase_ == 75;
+  }
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.RegisterResponse getRegisterResponse() {
+    if (payloadCase_ == 75) {
+       return (com.halloapp.proto.server.RegisterResponse) payload_;
+    }
+    return com.halloapp.proto.server.RegisterResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   */
+  private void setRegisterResponse(com.halloapp.proto.server.RegisterResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 75;
+  }
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   */
+  private void mergeRegisterResponse(com.halloapp.proto.server.RegisterResponse value) {
+    value.getClass();
+  if (payloadCase_ == 75 &&
+        payload_ != com.halloapp.proto.server.RegisterResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RegisterResponse.newBuilder((com.halloapp.proto.server.RegisterResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 75;
+  }
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   */
+  private void clearRegisterResponse() {
+    if (payloadCase_ == 75) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -7339,6 +7443,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.RegisterRequest register_request = 74;</code>
+     */
+    @java.lang.Override
+    public boolean hasRegisterRequest() {
+      return instance.hasRegisterRequest();
+    }
+    /**
+     * <code>.server.RegisterRequest register_request = 74;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.RegisterRequest getRegisterRequest() {
+      return instance.getRegisterRequest();
+    }
+    /**
+     * <code>.server.RegisterRequest register_request = 74;</code>
+     */
+    public Builder setRegisterRequest(com.halloapp.proto.server.RegisterRequest value) {
+      copyOnWrite();
+      instance.setRegisterRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.RegisterRequest register_request = 74;</code>
+     */
+    public Builder setRegisterRequest(
+        com.halloapp.proto.server.RegisterRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRegisterRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.RegisterRequest register_request = 74;</code>
+     */
+    public Builder mergeRegisterRequest(com.halloapp.proto.server.RegisterRequest value) {
+      copyOnWrite();
+      instance.mergeRegisterRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.RegisterRequest register_request = 74;</code>
+     */
+    public Builder clearRegisterRequest() {
+      copyOnWrite();
+      instance.clearRegisterRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.RegisterResponse register_response = 75;</code>
+     */
+    @java.lang.Override
+    public boolean hasRegisterResponse() {
+      return instance.hasRegisterResponse();
+    }
+    /**
+     * <code>.server.RegisterResponse register_response = 75;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.RegisterResponse getRegisterResponse() {
+      return instance.getRegisterResponse();
+    }
+    /**
+     * <code>.server.RegisterResponse register_response = 75;</code>
+     */
+    public Builder setRegisterResponse(com.halloapp.proto.server.RegisterResponse value) {
+      copyOnWrite();
+      instance.setRegisterResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.RegisterResponse register_response = 75;</code>
+     */
+    public Builder setRegisterResponse(
+        com.halloapp.proto.server.RegisterResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRegisterResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.RegisterResponse register_response = 75;</code>
+     */
+    public Builder mergeRegisterResponse(com.halloapp.proto.server.RegisterResponse value) {
+      copyOnWrite();
+      instance.mergeRegisterResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.RegisterResponse register_response = 75;</code>
+     */
+    public Builder clearRegisterResponse() {
+      copyOnWrite();
+      instance.clearRegisterResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -7427,9 +7627,11 @@ public  final class Iq extends
             com.halloapp.proto.server.PostSubscriptionResponse.class,
             com.halloapp.proto.server.GeoTagRequest.class,
             com.halloapp.proto.server.GeoTagResponse.class,
+            com.halloapp.proto.server.RegisterRequest.class,
+            com.halloapp.proto.server.RegisterResponse.class,
           };
           java.lang.String info =
-              "\u0000F\u0001\u0000\u0001IF\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000H\u0001\u0000\u0001KH\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
@@ -7437,7 +7639,8 @@ public  final class Iq extends
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
               "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
-              "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000H<\u0000I<\u0000";
+              "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000H<\u0000I<\u0000J<\u0000K<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

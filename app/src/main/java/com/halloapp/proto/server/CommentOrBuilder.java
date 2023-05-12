@@ -104,4 +104,16 @@ public interface CommentOrBuilder extends
    * @return The commentType.
    */
   com.halloapp.proto.server.Comment.CommentType getCommentType();
+
+  /**
+   * <code>string publisher_username = 11;</code>
+   * @return The publisherUsername.
+   */
+  java.lang.String getPublisherUsername();
+  /**
+   * <code>string publisher_username = 11;</code>
+   * @return The bytes for publisherUsername.
+   */
+  com.google.protobuf.ByteString
+      getPublisherUsernameBytes();
 }

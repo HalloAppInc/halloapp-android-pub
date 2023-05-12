@@ -149,4 +149,16 @@ public interface PostOrBuilder extends
    * @return The isExpired.
    */
   boolean getIsExpired();
+
+  /**
+   * <code>string publisher_username = 15;</code>
+   * @return The publisherUsername.
+   */
+  java.lang.String getPublisherUsername();
+  /**
+   * <code>string publisher_username = 15;</code>
+   * @return The bytes for publisherUsername.
+   */
+  com.google.protobuf.ByteString
+      getPublisherUsernameBytes();
 }

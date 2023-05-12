@@ -415,6 +415,44 @@ public  final class MomentNotification extends
     
   }
 
+  public static final int REMINDER_FIELD_NUMBER = 8;
+  private boolean reminder_;
+  /**
+   * <pre>
+   * reminder of the daily moment notification.
+   * </pre>
+   *
+   * <code>bool reminder = 8;</code>
+   * @return The reminder.
+   */
+  @java.lang.Override
+  public boolean getReminder() {
+    return reminder_;
+  }
+  /**
+   * <pre>
+   * reminder of the daily moment notification.
+   * </pre>
+   *
+   * <code>bool reminder = 8;</code>
+   * @param value The reminder to set.
+   */
+  private void setReminder(boolean value) {
+    
+    reminder_ = value;
+  }
+  /**
+   * <pre>
+   * reminder of the daily moment notification.
+   * </pre>
+   *
+   * <code>bool reminder = 8;</code>
+   */
+  private void clearReminder() {
+    
+    reminder_ = false;
+  }
+
   public static com.halloapp.proto.server.MomentNotification parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -816,6 +854,46 @@ public  final class MomentNotification extends
       return this;
     }
 
+    /**
+     * <pre>
+     * reminder of the daily moment notification.
+     * </pre>
+     *
+     * <code>bool reminder = 8;</code>
+     * @return The reminder.
+     */
+    @java.lang.Override
+    public boolean getReminder() {
+      return instance.getReminder();
+    }
+    /**
+     * <pre>
+     * reminder of the daily moment notification.
+     * </pre>
+     *
+     * <code>bool reminder = 8;</code>
+     * @param value The reminder to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReminder(boolean value) {
+      copyOnWrite();
+      instance.setReminder(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * reminder of the daily moment notification.
+     * </pre>
+     *
+     * <code>bool reminder = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearReminder() {
+      copyOnWrite();
+      instance.clearReminder();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MomentNotification)
   }
   @java.lang.Override
@@ -839,10 +917,11 @@ public  final class MomentNotification extends
             "hideBanner_",
             "promptImage_",
             "date_",
+            "reminder_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
-              "\u0003\f\u0004\u0208\u0005\u0007\u0006\n\u0007\u0208";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\u0002\u0002\u0002\u0003\f" +
+              "\u0004\u0208\u0005\u0007\u0006\n\u0007\u0208\b\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

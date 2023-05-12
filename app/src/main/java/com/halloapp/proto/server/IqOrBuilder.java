@@ -794,5 +794,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.GeoTagResponse getGeoTagResponse();
 
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   * @return Whether the registerRequest field is set.
+   */
+  boolean hasRegisterRequest();
+  /**
+   * <code>.server.RegisterRequest register_request = 74;</code>
+   * @return The registerRequest.
+   */
+  com.halloapp.proto.server.RegisterRequest getRegisterRequest();
+
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   * @return Whether the registerResponse field is set.
+   */
+  boolean hasRegisterResponse();
+  /**
+   * <code>.server.RegisterResponse register_response = 75;</code>
+   * @return The registerResponse.
+   */
+  com.halloapp.proto.server.RegisterResponse getRegisterResponse();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

@@ -18,6 +18,7 @@ public  final class Comment extends
     publisherName_ = "";
     payload_ = com.google.protobuf.ByteString.EMPTY;
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
+    publisherUsername_ = "";
   }
   /**
    * Protobuf enum {@code server.Comment.CommentType}
@@ -509,6 +510,53 @@ public  final class Comment extends
   private void clearCommentType() {
     
     commentType_ = 0;
+  }
+
+  public static final int PUBLISHER_USERNAME_FIELD_NUMBER = 11;
+  private java.lang.String publisherUsername_;
+  /**
+   * <code>string publisher_username = 11;</code>
+   * @return The publisherUsername.
+   */
+  @java.lang.Override
+  public java.lang.String getPublisherUsername() {
+    return publisherUsername_;
+  }
+  /**
+   * <code>string publisher_username = 11;</code>
+   * @return The bytes for publisherUsername.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPublisherUsernameBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(publisherUsername_);
+  }
+  /**
+   * <code>string publisher_username = 11;</code>
+   * @param value The publisherUsername to set.
+   */
+  private void setPublisherUsername(
+      java.lang.String value) {
+    value.getClass();
+  
+    publisherUsername_ = value;
+  }
+  /**
+   * <code>string publisher_username = 11;</code>
+   */
+  private void clearPublisherUsername() {
+    
+    publisherUsername_ = getDefaultInstance().getPublisherUsername();
+  }
+  /**
+   * <code>string publisher_username = 11;</code>
+   * @param value The bytes for publisherUsername to set.
+   */
+  private void setPublisherUsernameBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    publisherUsername_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.Comment parseFrom(
@@ -1019,6 +1067,55 @@ public  final class Comment extends
       return this;
     }
 
+    /**
+     * <code>string publisher_username = 11;</code>
+     * @return The publisherUsername.
+     */
+    @java.lang.Override
+    public java.lang.String getPublisherUsername() {
+      return instance.getPublisherUsername();
+    }
+    /**
+     * <code>string publisher_username = 11;</code>
+     * @return The bytes for publisherUsername.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPublisherUsernameBytes() {
+      return instance.getPublisherUsernameBytes();
+    }
+    /**
+     * <code>string publisher_username = 11;</code>
+     * @param value The publisherUsername to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPublisherUsername(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setPublisherUsername(value);
+      return this;
+    }
+    /**
+     * <code>string publisher_username = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPublisherUsername() {
+      copyOnWrite();
+      instance.clearPublisherUsername();
+      return this;
+    }
+    /**
+     * <code>string publisher_username = 11;</code>
+     * @param value The bytes for publisherUsername to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPublisherUsernameBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPublisherUsernameBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Comment)
   }
   @java.lang.Override
@@ -1045,10 +1142,12 @@ public  final class Comment extends
             "encPayload_",
             "mediaCounters_",
             "commentType_",
+            "publisherUsername_",
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
-              "\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n\t\t\n\f";
+              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\u0208\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n\t\t\n\f\u000b\u0208" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

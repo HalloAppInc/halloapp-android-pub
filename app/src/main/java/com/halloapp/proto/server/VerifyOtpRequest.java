@@ -626,6 +626,44 @@ public  final class VerifyOtpRequest extends
     hashcashSolutionTimeTakenMs_ = 0L;
   }
 
+  public static final int UID_FIELD_NUMBER = 15;
+  private long uid_;
+  /**
+   * <pre>
+   * If the client already received a uid via phoneless registration.
+   * </pre>
+   *
+   * <code>int64 uid = 15;</code>
+   * @return The uid.
+   */
+  @java.lang.Override
+  public long getUid() {
+    return uid_;
+  }
+  /**
+   * <pre>
+   * If the client already received a uid via phoneless registration.
+   * </pre>
+   *
+   * <code>int64 uid = 15;</code>
+   * @param value The uid to set.
+   */
+  private void setUid(long value) {
+    
+    uid_ = value;
+  }
+  /**
+   * <pre>
+   * If the client already received a uid via phoneless registration.
+   * </pre>
+   *
+   * <code>int64 uid = 15;</code>
+   */
+  private void clearUid() {
+    
+    uid_ = 0L;
+  }
+
   public static com.halloapp.proto.server.VerifyOtpRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1344,6 +1382,46 @@ public  final class VerifyOtpRequest extends
       return this;
     }
 
+    /**
+     * <pre>
+     * If the client already received a uid via phoneless registration.
+     * </pre>
+     *
+     * <code>int64 uid = 15;</code>
+     * @return The uid.
+     */
+    @java.lang.Override
+    public long getUid() {
+      return instance.getUid();
+    }
+    /**
+     * <pre>
+     * If the client already received a uid via phoneless registration.
+     * </pre>
+     *
+     * <code>int64 uid = 15;</code>
+     * @param value The uid to set.
+     * @return This builder for chaining.
+     */
+    public Builder setUid(long value) {
+      copyOnWrite();
+      instance.setUid(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * If the client already received a uid via phoneless registration.
+     * </pre>
+     *
+     * <code>int64 uid = 15;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearUid() {
+      copyOnWrite();
+      instance.clearUid();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.VerifyOtpRequest)
   }
   @java.lang.Override
@@ -1374,11 +1452,12 @@ public  final class VerifyOtpRequest extends
             "campaignId_",
             "hashcashSolution_",
             "hashcashSolutionTimeTakenMs_",
+            "uid_",
           };
           java.lang.String info =
-              "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0001\u0000\u0001\u0208\u0002\u0208" +
+              "\u0000\u000f\u0000\u0000\u0001\u000f\u000f\u0000\u0001\u0000\u0001\u0208\u0002\u0208" +
               "\u0003\u0208\u0004\n\u0005\n\u0006\n\u0007\n\b\u001c\t\u0208\n\t\u000b\u0208\f\u0208" +
-              "\r\u0208\u000e\u0002";
+              "\r\u0208\u000e\u0002\u000f\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

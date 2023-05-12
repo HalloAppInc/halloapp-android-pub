@@ -1929,6 +1929,9 @@ export namespace server {
 
         /** Post isExpired */
         isExpired?: (boolean|null);
+
+        /** Post publisherUsername */
+        publisherUsername?: (string|null);
     }
 
     /** Represents a Post. */
@@ -1981,6 +1984,9 @@ export namespace server {
 
         /** Post isExpired. */
         public isExpired: boolean;
+
+        /** Post publisherUsername. */
+        public publisherUsername: string;
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -2096,6 +2102,9 @@ export namespace server {
 
         /** Comment commentType */
         commentType?: (server.Comment.CommentType|null);
+
+        /** Comment publisherUsername */
+        publisherUsername?: (string|null);
     }
 
     /** Represents a Comment. */
@@ -2136,6 +2145,9 @@ export namespace server {
 
         /** Comment commentType. */
         public commentType: server.Comment.CommentType;
+
+        /** Comment publisherUsername. */
+        public publisherUsername: string;
 
         /**
          * Creates a new Comment instance using the specified properties.
@@ -9865,6 +9877,9 @@ export namespace server {
 
         /** MomentNotification date */
         date?: (string|null);
+
+        /** MomentNotification reminder */
+        reminder?: (boolean|null);
     }
 
     /** Represents a MomentNotification. */
@@ -9896,6 +9911,9 @@ export namespace server {
 
         /** MomentNotification date. */
         public date: string;
+
+        /** MomentNotification reminder. */
+        public reminder: boolean;
 
         /**
          * Creates a new MomentNotification instance using the specified properties.
@@ -10411,6 +10429,12 @@ export namespace server {
 
         /** Iq geoTagResponse */
         geoTagResponse?: (server.IGeoTagResponse|null);
+
+        /** Iq registerRequest */
+        registerRequest?: (server.IRegisterRequest|null);
+
+        /** Iq registerResponse */
+        registerResponse?: (server.IRegisterResponse|null);
     }
 
     /** Represents an Iq. */
@@ -10632,8 +10656,14 @@ export namespace server {
         /** Iq geoTagResponse. */
         public geoTagResponse?: (server.IGeoTagResponse|null);
 
+        /** Iq registerRequest. */
+        public registerRequest?: (server.IRegisterRequest|null);
+
+        /** Iq registerResponse. */
+        public registerResponse?: (server.IRegisterResponse|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -15800,6 +15830,9 @@ export namespace server {
 
         /** VerifyOtpRequest hashcashSolutionTimeTakenMs */
         hashcashSolutionTimeTakenMs?: (number|Long|null);
+
+        /** VerifyOtpRequest uid */
+        uid?: (number|Long|null);
     }
 
     /** Represents a VerifyOtpRequest. */
@@ -15852,6 +15885,9 @@ export namespace server {
 
         /** VerifyOtpRequest hashcashSolutionTimeTakenMs. */
         public hashcashSolutionTimeTakenMs: (number|Long);
+
+        /** VerifyOtpRequest uid. */
+        public uid: (number|Long);
 
         /**
          * Creates a new VerifyOtpRequest instance using the specified properties.

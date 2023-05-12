@@ -17,6 +17,7 @@ public  final class Post extends
     publisherName_ = "";
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
     psaTag_ = "";
+    publisherUsername_ = "";
   }
   /**
    * Protobuf enum {@code server.Post.Tag}
@@ -687,6 +688,53 @@ public  final class Post extends
   private void clearIsExpired() {
     
     isExpired_ = false;
+  }
+
+  public static final int PUBLISHER_USERNAME_FIELD_NUMBER = 15;
+  private java.lang.String publisherUsername_;
+  /**
+   * <code>string publisher_username = 15;</code>
+   * @return The publisherUsername.
+   */
+  @java.lang.Override
+  public java.lang.String getPublisherUsername() {
+    return publisherUsername_;
+  }
+  /**
+   * <code>string publisher_username = 15;</code>
+   * @return The bytes for publisherUsername.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPublisherUsernameBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(publisherUsername_);
+  }
+  /**
+   * <code>string publisher_username = 15;</code>
+   * @param value The publisherUsername to set.
+   */
+  private void setPublisherUsername(
+      java.lang.String value) {
+    value.getClass();
+  
+    publisherUsername_ = value;
+  }
+  /**
+   * <code>string publisher_username = 15;</code>
+   */
+  private void clearPublisherUsername() {
+    
+    publisherUsername_ = getDefaultInstance().getPublisherUsername();
+  }
+  /**
+   * <code>string publisher_username = 15;</code>
+   * @param value The bytes for publisherUsername to set.
+   */
+  private void setPublisherUsernameBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    publisherUsername_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.Post parseFrom(
@@ -1377,6 +1425,55 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <code>string publisher_username = 15;</code>
+     * @return The publisherUsername.
+     */
+    @java.lang.Override
+    public java.lang.String getPublisherUsername() {
+      return instance.getPublisherUsername();
+    }
+    /**
+     * <code>string publisher_username = 15;</code>
+     * @return The bytes for publisherUsername.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPublisherUsernameBytes() {
+      return instance.getPublisherUsernameBytes();
+    }
+    /**
+     * <code>string publisher_username = 15;</code>
+     * @param value The publisherUsername to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPublisherUsername(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setPublisherUsername(value);
+      return this;
+    }
+    /**
+     * <code>string publisher_username = 15;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPublisherUsername() {
+      copyOnWrite();
+      instance.clearPublisherUsername();
+      return this;
+    }
+    /**
+     * <code>string publisher_username = 15;</code>
+     * @param value The bytes for publisherUsername to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPublisherUsernameBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPublisherUsernameBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -1407,11 +1504,12 @@ public  final class Post extends
             "showPostShareScreen_",
             "momentInfo_",
             "isExpired_",
+            "publisherUsername_",
           };
           java.lang.String info =
-              "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0000\u000f\u0000\u0000\u0001\u000f\u000f\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
               "\u0003\n\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002\f\u0007" +
-              "\r\t\u000e\u0007";
+              "\r\t\u000e\u0007\u000f\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

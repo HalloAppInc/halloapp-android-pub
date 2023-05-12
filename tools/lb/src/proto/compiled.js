@@ -4758,6 +4758,7 @@ $root.server = (function() {
          * @property {boolean|null} [showPostShareScreen] Post showPostShareScreen
          * @property {server.IMomentInfo|null} [momentInfo] Post momentInfo
          * @property {boolean|null} [isExpired] Post isExpired
+         * @property {string|null} [publisherUsername] Post publisherUsername
          */
 
         /**
@@ -4888,6 +4889,14 @@ $root.server = (function() {
         Post.prototype.isExpired = false;
 
         /**
+         * Post publisherUsername.
+         * @member {string} publisherUsername
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.publisherUsername = "";
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4939,6 +4948,8 @@ $root.server = (function() {
                 $root.server.MomentInfo.encode(message.momentInfo, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
             if (message.isExpired != null && Object.hasOwnProperty.call(message, "isExpired"))
                 writer.uint32(/* id 14, wireType 0 =*/112).bool(message.isExpired);
+            if (message.publisherUsername != null && Object.hasOwnProperty.call(message, "publisherUsername"))
+                writer.uint32(/* id 15, wireType 2 =*/122).string(message.publisherUsername);
             return writer;
         };
 
@@ -5014,6 +5025,9 @@ $root.server = (function() {
                     break;
                 case 14:
                     message.isExpired = reader.bool();
+                    break;
+                case 15:
+                    message.publisherUsername = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -5105,6 +5119,9 @@ $root.server = (function() {
             if (message.isExpired != null && message.hasOwnProperty("isExpired"))
                 if (typeof message.isExpired !== "boolean")
                     return "isExpired: boolean expected";
+            if (message.publisherUsername != null && message.hasOwnProperty("publisherUsername"))
+                if (!$util.isString(message.publisherUsername))
+                    return "publisherUsername: string expected";
             return null;
         };
 
@@ -5200,6 +5217,8 @@ $root.server = (function() {
             }
             if (object.isExpired != null)
                 message.isExpired = Boolean(object.isExpired);
+            if (object.publisherUsername != null)
+                message.publisherUsername = String(object.publisherUsername);
             return message;
         };
 
@@ -5255,6 +5274,7 @@ $root.server = (function() {
                 object.showPostShareScreen = false;
                 object.momentInfo = null;
                 object.isExpired = false;
+                object.publisherUsername = "";
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -5293,6 +5313,8 @@ $root.server = (function() {
                 object.momentInfo = $root.server.MomentInfo.toObject(message.momentInfo, options);
             if (message.isExpired != null && message.hasOwnProperty("isExpired"))
                 object.isExpired = message.isExpired;
+            if (message.publisherUsername != null && message.hasOwnProperty("publisherUsername"))
+                object.publisherUsername = message.publisherUsername;
             return object;
         };
 
@@ -5344,6 +5366,7 @@ $root.server = (function() {
          * @property {Uint8Array|null} [encPayload] Comment encPayload
          * @property {server.IMediaCounters|null} [mediaCounters] Comment mediaCounters
          * @property {server.Comment.CommentType|null} [commentType] Comment commentType
+         * @property {string|null} [publisherUsername] Comment publisherUsername
          */
 
         /**
@@ -5442,6 +5465,14 @@ $root.server = (function() {
         Comment.prototype.commentType = 0;
 
         /**
+         * Comment publisherUsername.
+         * @member {string} publisherUsername
+         * @memberof server.Comment
+         * @instance
+         */
+        Comment.prototype.publisherUsername = "";
+
+        /**
          * Creates a new Comment instance using the specified properties.
          * @function create
          * @memberof server.Comment
@@ -5485,6 +5516,8 @@ $root.server = (function() {
                 $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
             if (message.commentType != null && Object.hasOwnProperty.call(message, "commentType"))
                 writer.uint32(/* id 10, wireType 0 =*/80).int32(message.commentType);
+            if (message.publisherUsername != null && Object.hasOwnProperty.call(message, "publisherUsername"))
+                writer.uint32(/* id 11, wireType 2 =*/90).string(message.publisherUsername);
             return writer;
         };
 
@@ -5548,6 +5581,9 @@ $root.server = (function() {
                     break;
                 case 10:
                     message.commentType = reader.int32();
+                    break;
+                case 11:
+                    message.publisherUsername = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -5622,6 +5658,9 @@ $root.server = (function() {
                 case 2:
                     break;
                 }
+            if (message.publisherUsername != null && message.hasOwnProperty("publisherUsername"))
+                if (!$util.isString(message.publisherUsername))
+                    return "publisherUsername: string expected";
             return null;
         };
 
@@ -5692,6 +5731,8 @@ $root.server = (function() {
                 message.commentType = 2;
                 break;
             }
+            if (object.publisherUsername != null)
+                message.publisherUsername = String(object.publisherUsername);
             return message;
         };
 
@@ -5739,6 +5780,7 @@ $root.server = (function() {
                 }
                 object.mediaCounters = null;
                 object.commentType = options.enums === String ? "COMMENT" : 0;
+                object.publisherUsername = "";
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -5766,6 +5808,8 @@ $root.server = (function() {
                 object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
             if (message.commentType != null && message.hasOwnProperty("commentType"))
                 object.commentType = options.enums === String ? $root.server.Comment.CommentType[message.commentType] : message.commentType;
+            if (message.publisherUsername != null && message.hasOwnProperty("publisherUsername"))
+                object.publisherUsername = message.publisherUsername;
             return object;
         };
 
@@ -26289,6 +26333,7 @@ $root.server = (function() {
          * @property {boolean|null} [hideBanner] MomentNotification hideBanner
          * @property {Uint8Array|null} [promptImage] MomentNotification promptImage
          * @property {string|null} [date] MomentNotification date
+         * @property {boolean|null} [reminder] MomentNotification reminder
          */
 
         /**
@@ -26363,6 +26408,14 @@ $root.server = (function() {
         MomentNotification.prototype.date = "";
 
         /**
+         * MomentNotification reminder.
+         * @member {boolean} reminder
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.reminder = false;
+
+        /**
          * Creates a new MomentNotification instance using the specified properties.
          * @function create
          * @memberof server.MomentNotification
@@ -26400,6 +26453,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.promptImage);
             if (message.date != null && Object.hasOwnProperty.call(message, "date"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.date);
+            if (message.reminder != null && Object.hasOwnProperty.call(message, "reminder"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.reminder);
             return writer;
         };
 
@@ -26454,6 +26509,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.date = reader.string();
+                    break;
+                case 8:
+                    message.reminder = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -26518,6 +26576,9 @@ $root.server = (function() {
             if (message.date != null && message.hasOwnProperty("date"))
                 if (!$util.isString(message.date))
                     return "date: string expected";
+            if (message.reminder != null && message.hasOwnProperty("reminder"))
+                if (typeof message.reminder !== "boolean")
+                    return "reminder: boolean expected";
             return null;
         };
 
@@ -26580,6 +26641,8 @@ $root.server = (function() {
                     message.promptImage = object.promptImage;
             if (object.date != null)
                 message.date = String(object.date);
+            if (object.reminder != null)
+                message.reminder = Boolean(object.reminder);
             return message;
         };
 
@@ -26618,6 +26681,7 @@ $root.server = (function() {
                         object.promptImage = $util.newBuffer(object.promptImage);
                 }
                 object.date = "";
+                object.reminder = false;
             }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
@@ -26639,6 +26703,8 @@ $root.server = (function() {
                 object.promptImage = options.bytes === String ? $util.base64.encode(message.promptImage, 0, message.promptImage.length) : options.bytes === Array ? Array.prototype.slice.call(message.promptImage) : message.promptImage;
             if (message.date != null && message.hasOwnProperty("date"))
                 object.date = message.date;
+            if (message.reminder != null && message.hasOwnProperty("reminder"))
+                object.reminder = message.reminder;
             return object;
         };
 
@@ -27324,6 +27390,8 @@ $root.server = (function() {
          * @property {server.IPostSubscriptionResponse|null} [postSubscriptionResponse] Iq postSubscriptionResponse
          * @property {server.IGeoTagRequest|null} [geoTagRequest] Iq geoTagRequest
          * @property {server.IGeoTagResponse|null} [geoTagResponse] Iq geoTagResponse
+         * @property {server.IRegisterRequest|null} [registerRequest] Iq registerRequest
+         * @property {server.IRegisterResponse|null} [registerResponse] Iq registerResponse
          */
 
         /**
@@ -27901,17 +27969,33 @@ $root.server = (function() {
          */
         Iq.prototype.geoTagResponse = null;
 
+        /**
+         * Iq registerRequest.
+         * @member {server.IRegisterRequest|null|undefined} registerRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.registerRequest = null;
+
+        /**
+         * Iq registerResponse.
+         * @member {server.IRegisterResponse|null|undefined} registerResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.registerResponse = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse", "registerRequest", "registerResponse"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -28079,6 +28163,10 @@ $root.server = (function() {
                 $root.server.GeoTagRequest.encode(message.geoTagRequest, writer.uint32(/* id 72, wireType 2 =*/578).fork()).ldelim();
             if (message.geoTagResponse != null && Object.hasOwnProperty.call(message, "geoTagResponse"))
                 $root.server.GeoTagResponse.encode(message.geoTagResponse, writer.uint32(/* id 73, wireType 2 =*/586).fork()).ldelim();
+            if (message.registerRequest != null && Object.hasOwnProperty.call(message, "registerRequest"))
+                $root.server.RegisterRequest.encode(message.registerRequest, writer.uint32(/* id 74, wireType 2 =*/594).fork()).ldelim();
+            if (message.registerResponse != null && Object.hasOwnProperty.call(message, "registerResponse"))
+                $root.server.RegisterResponse.encode(message.registerResponse, writer.uint32(/* id 75, wireType 2 =*/602).fork()).ldelim();
             return writer;
         };
 
@@ -28322,6 +28410,12 @@ $root.server = (function() {
                     break;
                 case 73:
                     message.geoTagResponse = $root.server.GeoTagResponse.decode(reader, reader.uint32());
+                    break;
+                case 74:
+                    message.registerRequest = $root.server.RegisterRequest.decode(reader, reader.uint32());
+                    break;
+                case 75:
+                    message.registerResponse = $root.server.RegisterResponse.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -29050,6 +29144,26 @@ $root.server = (function() {
                         return "geoTagResponse." + error;
                 }
             }
+            if (message.registerRequest != null && message.hasOwnProperty("registerRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.RegisterRequest.verify(message.registerRequest);
+                    if (error)
+                        return "registerRequest." + error;
+                }
+            }
+            if (message.registerResponse != null && message.hasOwnProperty("registerResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.RegisterResponse.verify(message.registerResponse);
+                    if (error)
+                        return "registerResponse." + error;
+                }
+            }
             return null;
         };
 
@@ -29425,6 +29539,16 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.geoTagResponse: object expected");
                 message.geoTagResponse = $root.server.GeoTagResponse.fromObject(object.geoTagResponse);
             }
+            if (object.registerRequest != null) {
+                if (typeof object.registerRequest !== "object")
+                    throw TypeError(".server.Iq.registerRequest: object expected");
+                message.registerRequest = $root.server.RegisterRequest.fromObject(object.registerRequest);
+            }
+            if (object.registerResponse != null) {
+                if (typeof object.registerResponse !== "object")
+                    throw TypeError(".server.Iq.registerResponse: object expected");
+                message.registerResponse = $root.server.RegisterResponse.fromObject(object.registerResponse);
+            }
             return message;
         };
 
@@ -29788,6 +29912,16 @@ $root.server = (function() {
                 object.geoTagResponse = $root.server.GeoTagResponse.toObject(message.geoTagResponse, options);
                 if (options.oneofs)
                     object.payload = "geoTagResponse";
+            }
+            if (message.registerRequest != null && message.hasOwnProperty("registerRequest")) {
+                object.registerRequest = $root.server.RegisterRequest.toObject(message.registerRequest, options);
+                if (options.oneofs)
+                    object.payload = "registerRequest";
+            }
+            if (message.registerResponse != null && message.hasOwnProperty("registerResponse")) {
+                object.registerResponse = $root.server.RegisterResponse.toObject(message.registerResponse, options);
+                if (options.oneofs)
+                    object.payload = "registerResponse";
             }
             return object;
         };
@@ -43585,6 +43719,7 @@ $root.server = (function() {
          * @property {string|null} [campaignId] VerifyOtpRequest campaignId
          * @property {string|null} [hashcashSolution] VerifyOtpRequest hashcashSolution
          * @property {number|Long|null} [hashcashSolutionTimeTakenMs] VerifyOtpRequest hashcashSolutionTimeTakenMs
+         * @property {number|Long|null} [uid] VerifyOtpRequest uid
          */
 
         /**
@@ -43716,6 +43851,14 @@ $root.server = (function() {
         VerifyOtpRequest.prototype.hashcashSolutionTimeTakenMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * VerifyOtpRequest uid.
+         * @member {number|Long} uid
+         * @memberof server.VerifyOtpRequest
+         * @instance
+         */
+        VerifyOtpRequest.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new VerifyOtpRequest instance using the specified properties.
          * @function create
          * @memberof server.VerifyOtpRequest
@@ -43768,6 +43911,8 @@ $root.server = (function() {
                 writer.uint32(/* id 13, wireType 2 =*/106).string(message.hashcashSolution);
             if (message.hashcashSolutionTimeTakenMs != null && Object.hasOwnProperty.call(message, "hashcashSolutionTimeTakenMs"))
                 writer.uint32(/* id 14, wireType 0 =*/112).int64(message.hashcashSolutionTimeTakenMs);
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 15, wireType 0 =*/120).int64(message.uid);
             return writer;
         };
 
@@ -43845,6 +43990,9 @@ $root.server = (function() {
                     break;
                 case 14:
                     message.hashcashSolutionTimeTakenMs = reader.int64();
+                    break;
+                case 15:
+                    message.uid = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -43929,6 +44077,9 @@ $root.server = (function() {
             if (message.hashcashSolutionTimeTakenMs != null && message.hasOwnProperty("hashcashSolutionTimeTakenMs"))
                 if (!$util.isInteger(message.hashcashSolutionTimeTakenMs) && !(message.hashcashSolutionTimeTakenMs && $util.isInteger(message.hashcashSolutionTimeTakenMs.low) && $util.isInteger(message.hashcashSolutionTimeTakenMs.high)))
                     return "hashcashSolutionTimeTakenMs: integer|Long expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
             return null;
         };
 
@@ -44002,6 +44153,15 @@ $root.server = (function() {
                     message.hashcashSolutionTimeTakenMs = object.hashcashSolutionTimeTakenMs;
                 else if (typeof object.hashcashSolutionTimeTakenMs === "object")
                     message.hashcashSolutionTimeTakenMs = new $util.LongBits(object.hashcashSolutionTimeTakenMs.low >>> 0, object.hashcashSolutionTimeTakenMs.high >>> 0).toNumber();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
             return message;
         };
 
@@ -44062,6 +44222,11 @@ $root.server = (function() {
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -44097,6 +44262,11 @@ $root.server = (function() {
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? String(message.hashcashSolutionTimeTakenMs) : message.hashcashSolutionTimeTakenMs;
                 else
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? $util.Long.prototype.toString.call(message.hashcashSolutionTimeTakenMs) : options.longs === Number ? new $util.LongBits(message.hashcashSolutionTimeTakenMs.low >>> 0, message.hashcashSolutionTimeTakenMs.high >>> 0).toNumber() : message.hashcashSolutionTimeTakenMs;
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
             return object;
         };
 

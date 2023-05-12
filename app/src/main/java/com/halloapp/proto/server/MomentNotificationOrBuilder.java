@@ -83,4 +83,14 @@ public interface MomentNotificationOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDateBytes();
+
+  /**
+   * <pre>
+   * reminder of the daily moment notification.
+   * </pre>
+   *
+   * <code>bool reminder = 8;</code>
+   * @return The reminder.
+   */
+  boolean getReminder();
 }
