@@ -255,7 +255,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
                 Long notificationId = getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0);
                 String notificationPrompt = getIntent().getStringExtra(EXTRA_PROMPT);
                 String notificationBody = getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_BODY);
-                Analytics.getInstance().notificationOpened(notificationType, notificationId, notificationPrompt, notificationBody);
+                boolean isReminderNotification = getIntent().getBooleanExtra(Notifications.EXTRA_IS_DAILY_MOMENT_REMINDER_NOTIFICATION, false);
+                Analytics.getInstance().notificationOpened(notificationType, notificationId, notificationPrompt, notificationBody, isReminderNotification);
             } else {
                 Analytics.getInstance().notificationOpened(notificationType);
             }

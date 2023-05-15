@@ -91,6 +91,7 @@ public class Notifications {
     public static final String EXTRA_IS_NOTIFICATION = "is_notification";
     public static final String EXTRA_NOTIFICATION_TYPE = "notification_type";
     public static final String EXTRA_NOTIFICATION_BODY = "notification_body";
+    public static final String EXTRA_IS_DAILY_MOMENT_REMINDER_NOTIFICATION = "is_daily_reminder_notification";
 
     private static final AudioAttributes AUDIO_ATTRIBUTES = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
     private static final Uri DAILY_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.discovery)).build();
@@ -265,7 +266,7 @@ public class Notifications {
 
     public void updateMomentNotifications() {
         executor.execute(() -> {
-            final List<Post> newKatchupMoments = getNewMoments();
+            final List<Post> newKatchupMoments = getNewMoments(preferences.getMomentNotificationTimeCutoff());
             Log.i("Notifications/updateFeedNotifications newKatchupMoments=" + newKatchupMoments.size());
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -453,14 +454,15 @@ public class Notifications {
         }
     }
 
-    public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt, String date) {
+    public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt, String date, boolean reminder) {
         final String title = context.getString(R.string.notification_daily_katchup_title);
-        final String body = getDailyMomentNotificationText(prompt);
+        final String body = reminder ? getReminderDailyMomentNotificationText() : getDailyMomentNotificationText(prompt);
         final Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt, date);
         contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
         contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.DAILY_MOMENT_NOTIFICATION);
+        contentIntent.putExtra(EXTRA_IS_DAILY_MOMENT_REMINDER_NOTIFICATION, reminder);
 
-        Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, true, notificationId, prompt, body);
+        Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, true, notificationId, prompt, body, reminder);
 
         Intent parentIntent = new Intent(context, MainActivity.class);
         parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -492,6 +494,39 @@ public class Notifications {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(DAILY_MOMENT_NOTIFICATION_TAG, DAILY_MOMENT_NOTIFICATION_ID, builder.build());
+    }
+
+    private String getReminderDailyMomentNotificationText() {
+        final List<Post> newKatchupMoments = getNewMoments(preferences.getMomentNotificationTimestamp());
+        final HashSet<UserId> users = new HashSet<>();
+        final ArrayList<String> usernames = new ArrayList<>();
+        for (Post post : newKatchupMoments) {
+            final UserId userId = post.senderUserId;
+            if (users.contains(userId)) {
+                continue;
+            }
+
+            final String username = contactsDb.readUsername(userId);
+            if (username != null) {
+                usernames.add(username);
+                users.add(userId);
+            }
+        }
+
+        if (usernames.size() < 1) {
+            return context.getString(R.string.notification_daily_katchup_reminder_body);
+        } else {
+            switch (usernames.size()) {
+                case 1:
+                    return context.getString(R.string.notification_one_daily_katchup_reminder_body, usernames.get(0));
+                case 2:
+                    return context.getString(R.string.notification_two_daily_katchup_reminder_body, usernames.get(0), usernames.get(1));
+                case 3:
+                    return context.getString(R.string.notification_three_daily_katchup_reminder_body, usernames.get(0), usernames.get(1), usernames.get(2));
+                default:
+                    return context.getString(R.string.notification_many_daily_katchup_reminder_body, usernames.get(0), usernames.get(1), usernames.size() - 2);
+            }
+        }
     }
 
     private String getDailyMomentNotificationText(String prompt) {
@@ -694,8 +729,8 @@ public class Notifications {
 
     @WorkerThread
     @NonNull
-    private List<Post> getNewMoments() {
-        final List<Post> newMoments = contentDb.getUnexpiredUnseenPostsAfter(preferences.getMomentNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+    private List<Post> getNewMoments(long timestamp) {
+        final List<Post> newMoments = contentDb.getUnexpiredUnseenPostsAfter(timestamp, UNSEEN_POSTS_LIMIT);
 
         final ListIterator<Post> iterator = newMoments.listIterator();
         while (iterator.hasNext()) {
@@ -736,7 +771,7 @@ public class Notifications {
             case 3:
                 return context.getString(R.string.three_new_katchup_notification, usernames.get(0), usernames.get(1), usernames.get(2));
             default:
-                return context.getString(R.string.many_new_katchup_notification, usernames.get(0), usernames.get(1), usernames.size());
+                return context.getString(R.string.many_new_katchup_notification, usernames.get(0), usernames.get(1), usernames.size() - 2);
         }
     }
 

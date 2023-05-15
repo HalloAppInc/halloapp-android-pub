@@ -387,10 +387,10 @@ public class Analytics {
     }
 
     public void notificationReceived(String type, boolean shownToUser) {
-        notificationReceived(type, shownToUser, null, null, null);
+        notificationReceived(type, shownToUser, null, null, null, null);
     }
 
-    public void notificationReceived(String type, boolean shownToUser, @Nullable Long momentNotificationId, @Nullable String prompt, @Nullable String notificationMessage) {
+    public void notificationReceived(String type, boolean shownToUser, @Nullable Long momentNotificationId, @Nullable String prompt, @Nullable String notificationMessage, @Nullable Boolean reminder) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("notificationType", type);
         properties.put("shownToUser", shownToUser && notificationsEnabled);
@@ -403,14 +403,17 @@ public class Analytics {
         if (notificationMessage != null) {
             properties.put("moment_notif_msg", notificationMessage);
         }
+        if (reminder != null) {
+            properties.put("reminder", reminder);
+        }
         track("notificationReceived", properties);
     }
 
     public void notificationOpened(String type) {
-        notificationOpened(type, null, null, null);
+        notificationOpened(type, null, null, null, null);
     }
 
-    public void notificationOpened(String type, @Nullable Long momentNotificationId, @Nullable String prompt, @Nullable String notificationMessage) {
+    public void notificationOpened(String type, @Nullable Long momentNotificationId, @Nullable String prompt, @Nullable String notificationMessage, @Nullable Boolean reminder) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("notificationType", type);
         if (momentNotificationId != null) {
@@ -421,6 +424,9 @@ public class Analytics {
         }
         if (notificationMessage != null) {
             properties.put("moment_notif_msg", notificationMessage);
+        }
+        if (reminder != null) {
+            properties.put("reminder", reminder);
         }
         track("notificationOpened", properties);
     }

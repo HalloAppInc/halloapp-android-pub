@@ -21,6 +21,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
+import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.keys.PublicEdECKey;
@@ -451,15 +452,19 @@ public class KatchupConnectionObserver extends Connection.Observer {
             Log.e("onMomentNotificationReceived: " + timestamp + " is older than the current " + oldTimestamp);
         } else {
             long notificationId = momentNotification.getNotificationId();
-            preferences.setMomentNotificationId(notificationId);
-            preferences.setMomentNotificationTimestamp(timestamp);
-            preferences.setMomentNotificationType(momentNotification.getTypeValue());
-            preferences.setMomentNotificationPrompt(momentNotification.getPrompt());
-            preferences.setMomentNotificationDate(momentNotification.getDate());
-            if (!momentNotification.getHideBanner()) {
-                notifications.showDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt(), momentNotification.getDate());
+            MomentUnlockStatus momentUnlockStatus = contentDb.getMomentUnlockStatus();
+            boolean hasPosted = momentUnlockStatus != null && momentUnlockStatus.isUnlocked();
+            if (!momentNotification.getReminder() && notificationId != preferences.getMomentNotificationId()) {
+                preferences.setMomentNotificationId(notificationId);
+                preferences.setMomentNotificationTimestamp(timestamp);
+                preferences.setMomentNotificationType(momentNotification.getTypeValue());
+                preferences.setMomentNotificationPrompt(momentNotification.getPrompt());
+                preferences.setMomentNotificationDate(momentNotification.getDate());
+            }
+            if (!momentNotification.getHideBanner() && !(momentNotification.getReminder() && hasPosted)) {
+                notifications.showDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt(), momentNotification.getDate(), momentNotification.getReminder());
             } else {
-                Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, false, notificationId, momentNotification.getPrompt(), null);
+                Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, false, notificationId, momentNotification.getPrompt(), null, momentNotification.getReminder());
             }
             contentDb.expirePostsOlderThanNotificationId(notificationId);
         }
