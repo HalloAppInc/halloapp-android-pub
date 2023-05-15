@@ -264,21 +264,20 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
         }
 
         public void verifyRegistration() {
-            try {
-                hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
-                Log.i("ContactsAndLocationAcessActivity/verifyRegistration done waiting for hashcashLatch");
-            } catch (InterruptedException e) {
-                Log.e("Interrupted while waiting for hashcash", e);
-            }
-            if (hashcashResult != null) {
                 bgWorkers.execute(() -> {
-                    Registration.RegistrationVerificationResult result = registration.verifyWithoutPhoneNumber(hashcashResult);
-                    hashcashLatch = new CountDownLatch(1);
-                    hashcashResult = null;
-                    registrationRequestResult.postValue(result);
+                    try {
+                        hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                        Log.i("ContactsAndLocationAcessActivity/verifyRegistration done waiting for hashcashLatch");
+                    } catch (InterruptedException e) {
+                        Log.e("Interrupted while waiting for hashcash", e);
+                    }
+                    if (hashcashResult != null) {
+                        Registration.RegistrationVerificationResult result = registration.verifyWithoutPhoneNumber(hashcashResult);
+                        hashcashLatch = new CountDownLatch(1);
+                        hashcashResult = null;
+                        registrationRequestResult.postValue(result);
+                    }
                 });
-
-            }
         }
 
         private void runHashcash() {
