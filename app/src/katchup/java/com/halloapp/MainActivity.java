@@ -19,6 +19,7 @@ import androidx.core.splashscreen.SplashScreenViewProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -36,6 +37,7 @@ import com.halloapp.katchup.SetupNameProfileActivity;
 import com.halloapp.katchup.SetupUsernameProfileActivity;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
 
@@ -105,7 +107,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         }
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mainViewModel.registrationStatus.getLiveData().observe(this, checkResult -> {
+        mainViewModel.registrationStatus.observe(this, checkResult -> {
             if (checkResult == null) {
 //                progress.setVisibility(View.VISIBLE);
                 return;
@@ -165,7 +167,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onStart() {
         super.onStart();
-        mainViewModel.registrationStatus.invalidate();
+        mainViewModel.computeRegistrationStatus();
     }
 
     @Override
@@ -262,23 +264,24 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     public static class MainViewModel extends AndroidViewModel {
 
-        final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
+        final MutableLiveData<CheckRegistration.CheckResult> registrationStatus = new MutableLiveData<>();
 
         private final Me me;
+        private final BgWorkers bgWorkers;
         private final Preferences preferences;
 
         public MainViewModel(@NonNull Application application) {
             super(application);
 
             me = Me.getInstance();
+            bgWorkers = BgWorkers.getInstance();
             preferences = Preferences.getInstance();
+        }
 
-            registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {
-                @Override
-                protected CheckRegistration.CheckResult compute() {
-                    return CheckRegistration.checkRegistration(me, preferences);
-                }
-            };
+        public void computeRegistrationStatus() {
+            bgWorkers.execute(() -> {
+                registrationStatus.postValue(CheckRegistration.checkRegistration(me, preferences));
+            });
         }
     }
 }
