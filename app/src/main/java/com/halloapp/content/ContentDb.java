@@ -1104,6 +1104,28 @@ public class ContentDb {
 
     @WorkerThread
     @NonNull
+    public List<Reaction> getKatchupPostReactions(@NonNull String postId, int start, int count) {
+        return reactionsDb.getKatchupPostReactions(postId, start, count);
+    }
+
+    @WorkerThread
+    public int getKatchupPostReactionsCount(@NonNull String postId) {
+        return reactionsDb.getKatchupPostReactionsCount(postId, null);
+    }
+
+    @WorkerThread
+    public boolean getKatchupPostIsSelfReacted(@NonNull String postId) {
+        return reactionsDb.getKatchupPostReactionsCount(postId, UserId.ME.rawId()) > 0;
+    }
+
+    @WorkerThread
+    @Nullable
+    public Reaction getMyKatchupPostReaction(String postId) {
+        return reactionsDb.getMyKatchupPostReaction(postId);
+    }
+
+    @WorkerThread
+    @NonNull
     public List<String> getUnseenCommentIds(@NonNull String postId) {
         return postsDb.getUnseenCommentIds(postId);
     }

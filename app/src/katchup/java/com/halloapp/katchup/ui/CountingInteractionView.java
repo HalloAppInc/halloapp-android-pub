@@ -1,4 +1,4 @@
-package com.halloapp.katchup;
+package com.halloapp.katchup.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,31 +14,28 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import com.halloapp.R;
 
 import java.util.Locale;
 
-public class CountingCommentBubble extends FrameLayout {
+public abstract class CountingInteractionView extends FrameLayout {
 
-    private static final int TEXT_SIZE_DP = 18;
-    private static final int TEXT_PADDING_BOTTOM_DP = 4;
+    protected static final int TEXT_SIZE_DP = 18;
+    protected static final int TEXT_PADDING_BOTTOM_DP = 4;
 
     private final TextPaint textPaint = new TextPaint();
-    private int commentCount = 0;
+    private int interactionCount = 0;
 
-    public CountingCommentBubble(@NonNull Context context) {
+    public CountingInteractionView(@NonNull Context context) {
         super(context);
         init(null, 0);
     }
 
-    public CountingCommentBubble(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public CountingInteractionView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public CountingCommentBubble(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CountingInteractionView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
     }
@@ -52,28 +49,34 @@ public class CountingCommentBubble extends FrameLayout {
         textPaint.setTextSize(dpToPx(TEXT_SIZE_DP));
         textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         textPaint.setAntiAlias(true);
-
     }
 
-    public void setCommentCount(int count) {
-        this.commentCount = count;
+    public void setInteractionCount(int count) {
+        this.interactionCount = count;
         invalidate();
     }
 
-    private float dpToPx(float dp) {
+    protected float dpToPx(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+
+    abstract protected Drawable getDrawable();
+
+    protected TextPaint getTextPaint() {
+        return textPaint;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_speech_bubble);
+        Drawable icon = getDrawable();
         icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         icon.draw(canvas);
 
-        if (commentCount > 0) {
-            canvas.drawText(String.format(Locale.getDefault(), "%d", commentCount), getWidth() / 2f, getHeight() / 2f + dpToPx(TEXT_PADDING_BOTTOM_DP), textPaint);
+        if (interactionCount > 0) {
+            canvas.drawText(String.format(Locale.getDefault(), "%d", interactionCount), getWidth() / 2f, getHeight() / 2f + dpToPx(TEXT_PADDING_BOTTOM_DP), getTextPaint());
         }
     }
+
 }

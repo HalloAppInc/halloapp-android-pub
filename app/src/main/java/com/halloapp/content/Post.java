@@ -105,6 +105,8 @@ public class Post extends ContentItem {
     public boolean subscribed;
     public long updateTime;
     public byte[] commentKey;
+    public int reactionCount;
+    public boolean reactedByMe;
 
     public long expirationTime;
     public boolean expirationMismatch;
@@ -304,7 +306,9 @@ public class Post extends ContentItem {
                 seenByCount == post.seenByCount &&
                 seen == post.seen &&
                 media.equals(post.media) &&
-                type == post.type;
+                type == post.type &&
+                reactionCount == post.reactionCount &&
+                reactedByMe == post.reactedByMe;
     }
 
     public boolean shouldUpdateGroupTimestamp() {

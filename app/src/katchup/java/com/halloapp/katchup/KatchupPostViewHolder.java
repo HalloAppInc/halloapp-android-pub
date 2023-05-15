@@ -2,11 +2,6 @@ package com.halloapp.katchup;
 
 import android.content.Intent;
 import android.graphics.Outline;
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -36,6 +31,8 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
+import com.halloapp.katchup.ui.CountingCommentBubble;
+import com.halloapp.katchup.ui.CountingLikeButton;
 import com.halloapp.katchup.ui.ReactionTooltipPopupWindow;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
@@ -81,7 +78,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private View contentLoadingView;
     private View selfieLoadingView;
     private final BlurView blurView;
-    private final CountingCommentBubble commentView;
+    private final CountingCommentBubble commentView;;
+    private final CountingLikeButton likeView;
 
     public Post post;
     private boolean inStack;
@@ -125,6 +123,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         public abstract Observable<Boolean> followUser(UserId userId);
         public abstract boolean wasUserFollowed(UserId userId);
         public abstract boolean videoReactionTouchCallback(int screenYPosition, View view, MotionEvent motionEvent, Post post, boolean isPublic);
+        public abstract void toggleLike(@NonNull Post post, boolean isPublic);
     }
 
     public KatchupPostViewHolder(@NonNull View itemView, KatchupViewHolderParent parent) {
@@ -144,6 +143,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         unlockButton = itemView.findViewById(R.id.unlock);
         avatarContainer = itemView.findViewById(R.id.avatar_container);
         avatarView = itemView.findViewById(R.id.avatar);
+        likeView = itemView.findViewById(R.id.likes);
         commentView = itemView.findViewById(R.id.comments);
         serverScoreView = itemView.findViewById(R.id.server_score);
         selfieView = itemView.findViewById(R.id.selfie_player);
@@ -190,6 +190,15 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             }
         };
 
+        likeView.setOnClickListener(v -> {
+            if (!unlocked && !unlocking) {
+                Analytics.getInstance().tappedLockedPost();
+                parent.startComposerActivity();
+            } else if (!unlocking) {
+                parent.toggleLike(post, isPublic);
+            }
+        });
+
         commentView.setOnClickListener(listener);
         unlockButton.setOnClickListener(listener);
         cardView.setOnClickListener(listener);
@@ -206,6 +215,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             unlocking = unlockStatus.isUnlocking();
             unlockButton.setText(unlocked ? R.string.card_btn_view_katchup : R.string.card_btn_post_katchup);
             uploadingProgressView.setVisibility(unlocking ? View.VISIBLE : View.GONE);
+            likeView.setAlpha(unlocked ? 1f : 0.4f);
             commentView.setAlpha(unlocked ? 1f : 0.4f);
             if (post != null) {
                 bindTo(post, inStack, isPublic);
@@ -263,7 +273,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
     public void bindTo(@NonNull Post post, boolean inStack, boolean isPublic) {
         this.post = post;
-        this.commentView.setCommentCount(post.commentCount);
+        this.likeView.setInteractionCount(post.reactionCount);
+        this.likeView.setIsLiked(post.reactedByMe);
+        this.commentView.setInteractionCount(post.commentCount);
         this.isPublic = isPublic;
         this.inStack = inStack;
         MediaThumbnailLoader mediaThumbnailLoader = isPublic ? parent.getExternalMediaThumbnailLoader() : parent.getMediaThumbnailLoader();

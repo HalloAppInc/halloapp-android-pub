@@ -17,24 +17,29 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
+import com.halloapp.Notifications;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupCommentDataSource;
-import com.halloapp.Notifications;
+import com.halloapp.katchup.KatchupReactionDataSource;
 import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.ShareIntentHelper;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -61,9 +66,12 @@ public class CommentsViewModel extends AndroidViewModel {
     private List<Post> posts;
     private int currentIndex;
 
-    private KatchupCommentDataSource.Factory dataSourceFactory;
+    private KatchupCommentDataSource.Factory commentDataSourceFactory;
+    private KatchupReactionDataSource.Factory reactionDataSourceFactory;
 
     private LiveData<PagedList<Comment>> commentList;
+    private LiveData<PagedList<Reaction>> reactionList;
+    private ComputableLiveData<Boolean> postIsSelfReacted;
 
     private MutableLiveData<Comment> selectedComment = new MutableLiveData<>();
     private MutableLiveData<Media> playingVideoReaction = new MutableLiveData<>();
@@ -82,6 +90,22 @@ public class CommentsViewModel extends AndroidViewModel {
         @Override
         public void onCommentRetracted(@NonNull Comment comment) {
             if (getCurrentPostId().equals(comment.postId)) {
+                invalidateLatestDataSource();
+            }
+        }
+
+        @Override
+        public void onReactionsAdded(@NonNull List<Reaction> reactions) {
+            for (Reaction reaction : reactions) {
+                if (getCurrentPostId().equals(reaction.contentId)) {
+                    invalidateLatestDataSource();
+                }
+            }
+        }
+
+        @Override
+        public void onReactionRetracted(@NonNull Reaction reaction) {
+            if (getCurrentPostId().equals(reaction.contentId)) {
                 invalidateLatestDataSource();
             }
         }
@@ -108,6 +132,13 @@ public class CommentsViewModel extends AndroidViewModel {
                 invalidateLatestDataSource();
             }
         }
+
+        @Override
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+            if (getCurrentPostId().equals(reaction.contentId)) {
+                invalidateLatestDataSource();
+            }
+        }
     };
 
     public CommentsViewModel(@NonNull Application application, String postId, boolean isPublic, boolean fromStack) {
@@ -116,6 +147,13 @@ public class CommentsViewModel extends AndroidViewModel {
         this.fromStack = fromStack;
         this.originalPostId = postId;
         commentList = createCommentsList();
+        reactionList = createReactionsList();
+        postIsSelfReacted = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return contentDb.getKatchupPostIsSelfReacted(getCurrentPostId());
+            }
+        };
         bgWorkers.execute(() -> {
             if (fromStack) {
                 posts = contentDb.getAllUnseenPosts();
@@ -176,17 +214,29 @@ public class CommentsViewModel extends AndroidViewModel {
     }
 
     protected LiveData<PagedList<Comment>> createCommentsList() {
-        dataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
+        commentDataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
 
-        return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
+        return new LivePagedListBuilder<>(commentDataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
+    }
+
+    protected LiveData<PagedList<Reaction>> createReactionsList() {
+        reactionDataSourceFactory = new KatchupReactionDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
+
+        return new LivePagedListBuilder<>(reactionDataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
 
     protected void invalidateLatestDataSource() {
-        dataSourceFactory.invalidateLatestDataSource();
+        commentDataSourceFactory.invalidateLatestDataSource();
+        reactionDataSourceFactory.invalidateLatestDataSource();
+        postIsSelfReacted.invalidate();
     }
 
     public LiveData<PagedList<Comment>> getCommentList() {
         return commentList;
+    }
+
+    public LiveData<PagedList<Reaction>> getReactionList() {
+        return reactionList;
     }
 
     public void selectComment(@Nullable Comment comment) {
@@ -309,7 +359,11 @@ public class CommentsViewModel extends AndroidViewModel {
     public void retractComment(@NonNull Comment comment, @NonNull ProgressDialog progressDialog) {
         bgWorkers.execute(() -> {
             contentDb.retractComment(comment);
-            publicContentCache.removeComment(comment.postId, comment);
+            if (comment instanceof ReactionComment) {
+                publicContentCache.removeReaction(comment.postId, ((ReactionComment) comment).reaction);
+            } else {
+                publicContentCache.removeComment(comment.postId, comment);
+            }
             invalidateLatestDataSource();
             progressDialog.cancel();
         });
@@ -353,6 +407,10 @@ public class CommentsViewModel extends AndroidViewModel {
         return followable;
     }
 
+    public LiveData<Boolean> getPostIsSelfReacted() {
+        return postIsSelfReacted.getLiveData();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -375,6 +433,31 @@ public class CommentsViewModel extends AndroidViewModel {
         }
     }
 
+    public void toggleLike() {
+        final Post post = getPost().getValue();
+        if (post == null) {
+            Log.i("CommentsViewModel/toggleLike null moment");
+            return;
+        }
+        bgWorkers.execute(() -> {
+            final Reaction existingReaction = contentDb.getMyKatchupPostReaction(post.id);
+            if (existingReaction != null) {
+                contentDb.retractReaction(existingReaction, post);
+                if (isPublic) {
+                    publicContentCache.removeReaction(existingReaction.contentId, existingReaction);
+                    invalidateLatestDataSource();
+                }
+            } else {
+                final Reaction newReaction = new Reaction(RandomId.create(), post.id, UserId.ME, Reaction.TYPE_KATCHUP_LIKE, System.currentTimeMillis());
+                contentDb.addReaction(newReaction, post);
+                if (isPublic) {
+                    publicContentCache.addReaction(newReaction.contentId, newReaction);
+                    invalidateLatestDataSource();
+                }
+            }
+        });
+    }
+
     public static class CommentsViewModelFactory implements ViewModelProvider.Factory {
 
         private Application application;
@@ -388,7 +471,6 @@ public class CommentsViewModel extends AndroidViewModel {
             this.isPublic = isPublic;
             this.fromStack = fromStack;
         }
-
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {

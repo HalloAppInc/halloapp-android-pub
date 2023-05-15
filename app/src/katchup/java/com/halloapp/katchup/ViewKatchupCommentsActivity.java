@@ -68,6 +68,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.tabs.TabLayout;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -79,12 +80,14 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.Colors;
+import com.halloapp.katchup.ui.CountingLikeButton;
 import com.halloapp.katchup.ui.KatchupShareExternallyView;
 import com.halloapp.katchup.ui.ReactionTooltipPopupWindow;
 import com.halloapp.katchup.ui.TextStickerView;
@@ -112,6 +115,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -161,6 +165,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final String ON_TIME_SUFFIX = " \uD83E\uDD0D";
     private static final String EXTRA_ENTRY_FOCUSED = "entry_focused";
 
+    private static final int TAB_COMMENTS_POSITION = 0;
+    private static final int TAB_REACTIONS_POSITION = 1;
+
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -176,6 +183,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private TextView headerFollowButton;
     private ImageView postPhotoView;
     private ContentPlayerView postVideoView;
+    private CountingLikeButton likeButton;
 
     private View selfieContainer;
     private ContentPlayerView selfieView;
@@ -223,6 +231,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private boolean scrollToBottom = false;
 
     private LinearLayoutManager commentLayoutManager;
+    private LinearLayoutManager reactionLayoutManager;
 
     private HalloCamera camera;
 
@@ -250,7 +259,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private boolean keyboardOpened;
     private boolean canTextBeSticker = true;
 
+    private TabLayout interactionTabLayout;
     private RecyclerView commentsRv;
+    private RecyclerView reactionsRv;
 
     private ShareBannerPopupWindow shareBannerPopupWindow;
     private ReactionTooltipPopupWindow reactionTooltipPopupWindow;
@@ -266,12 +277,38 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         setContentView(R.layout.activity_view_comments);
 
+        interactionTabLayout = findViewById(R.id.interaction_tabs);
         commentsRv = findViewById(R.id.comments_rv);
+        reactionsRv = findViewById(R.id.reactions_rv);
 
-        CommentsAdapter adapter = new CommentsAdapter();
+        interactionTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                final boolean commentsSelected = tab.getPosition() == TAB_COMMENTS_POSITION;
+                commentsRv.setVisibility(commentsSelected ? View.VISIBLE : View.GONE);
+                reactionsRv.setVisibility(commentsSelected ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        final CommentsAdapter commentsAdapter = new CommentsAdapter();
         commentLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         commentsRv.setLayoutManager(commentLayoutManager);
-        commentsRv.setAdapter(adapter);
+        commentsRv.setAdapter(commentsAdapter);
+
+        final ReactionsAdapter reactionsAdapter = new ReactionsAdapter();
+        reactionLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        reactionsRv.setLayoutManager(reactionLayoutManager);
+        reactionsRv.setAdapter(reactionsAdapter);
 
         selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
 
@@ -305,6 +342,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         selfieContainer = findViewById(R.id.selfie_container);
         postVideoView = findViewById(R.id.content_video);
         postPhotoView = findViewById(R.id.content_photo);
+        likeButton = findViewById(R.id.likes);
         recordProtection = findViewById(R.id.record_protection);
         selfieView = findViewById(R.id.selfie_player);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
@@ -442,9 +480,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_POST_ID), isPublic, fromStack)).get(CommentsViewModel.class);
-        viewModel.getPost().observe(this, post -> {
-            bindPost(post, isPublic);
-        });
+        viewModel.getPost().observe(this, post -> bindPost(post, isPublic));
+        viewModel.getPostIsSelfReacted().observe(this, liked -> likeButton.setIsLiked(liked));
 
         bottomSheetView = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
@@ -605,13 +642,36 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         });
 
         viewModel.getCommentList().observe(this, list -> {
-            adapter.submitList(list, () -> {
+            final TabLayout.Tab commentsTab = interactionTabLayout.getTabAt(TAB_COMMENTS_POSITION);
+            if (commentsTab != null) {
+                commentsTab.setText(Integer.toString(list.size()));
+            }
+            updateTabVisibility(list, viewModel.getReactionList().getValue());
+            final PagedList<Reaction> reactions = viewModel.getReactionList().getValue();
+            commentsAdapter.submitList(list, () -> {
                 if (!scrollToBottom) {
                     return;
                 }
                 int lastVisible = commentLayoutManager.findLastCompletelyVisibleItemPosition();
                 if (lastVisible != list.size() - 1) {
                     commentsRv.scrollToPosition(list.size() - 1);
+                }
+                scrollToBottom = false;
+            });
+        });
+        viewModel.getReactionList().observe(this, list -> {
+            final TabLayout.Tab commentsTab = interactionTabLayout.getTabAt(TAB_REACTIONS_POSITION);
+            if (commentsTab != null) {
+                commentsTab.setText(Integer.toString(list.size()));
+            }
+            updateTabVisibility(viewModel.getCommentList().getValue(), list);
+            reactionsAdapter.submitList(list, () -> {
+                if (!scrollToBottom) {
+                    return;
+                }
+                int lastVisible = reactionLayoutManager.findLastCompletelyVisibleItemPosition();
+                if (lastVisible != list.size() - 1) {
+                    reactionsRv.scrollToPosition(list.size() - 1);
                 }
                 scrollToBottom = false;
             });
@@ -694,6 +754,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private void sendSticker() {
         viewModel.sendTextSticker(textStickerPreview.getText().toString(), textStickerPreview.getCurrentTextColor());
         onSendComment(true);
+    }
+
+    private void updateTabVisibility(@Nullable List<Comment> comments, @Nullable List<Reaction> reactions) {
+        boolean hideTab = (comments == null || comments.isEmpty()) && (reactions == null || reactions.isEmpty());
+        interactionTabLayout.setVisibility(hideTab ? View.GONE : View.VISIBLE);
     }
 
     private ActionMode actionMode;
@@ -1086,7 +1151,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         if (disableComments || post.isExpired()) {
             commentsRv.setVisibility(View.GONE);
             totalEntry.setVisibility(View.GONE);
+            likeButton.setVisibility(View.GONE);
         }
+
+        likeButton.setOnClickListener(v -> viewModel.toggleLike());
 
         Media selfie = post.media.get(0);
         if (selfie.file == null) {
@@ -1268,7 +1336,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         mediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
     }
 
-    private static final DiffUtil.ItemCallback<Comment> DIFF_CALLBACK = new DiffUtil.ItemCallback<Comment>() {
+    private static final DiffUtil.ItemCallback<Comment> DIFF_COMMENT_CALLBACK = new DiffUtil.ItemCallback<Comment>() {
 
         @Override
         public boolean areItemsTheSame(Comment oldItem, Comment newItem) {
@@ -1281,6 +1349,46 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             return oldItem.equals(newItem);
         }
     };
+
+    private static final DiffUtil.ItemCallback<Reaction> DIFF_REACTION_CALLBACK = new DiffUtil.ItemCallback<Reaction>() {
+        @Override
+        public boolean areItemsTheSame(Reaction oldItem, Reaction newItem) {
+            return oldItem.reactionId.equals(newItem.reactionId);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Reaction oldItem, @NonNull Reaction newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    private class ReactionViewHolder extends ViewHolderWithLifecycle {
+        private Reaction reaction;
+
+        private ImageView avatarView;
+        private TextView nameView;
+        private TextView usernameView;
+
+        public ReactionViewHolder(@NonNull View itemView) {
+            super(itemView);
+            avatarView = itemView.findViewById(R.id.avatar);
+            nameView = itemView.findViewById(R.id.name);
+            usernameView = itemView.findViewById(R.id.username);
+        }
+
+        public void bind(Reaction reaction) {
+            this.reaction = reaction;
+            if (reaction.senderUserId.isMe()) {
+                nameView.setText(Me.getInstance().getName());
+                usernameView.setText(Me.getInstance().getUsername());
+            } else if (reaction.senderContact != null) {
+                nameView.setText(reaction.senderContact.halloName);
+                usernameView.setText(reaction.senderContact.username);
+            }
+            itemView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(ViewKatchupCommentsActivity.this, reaction.senderUserId)));
+            kAvatarLoader.load(avatarView, reaction.senderUserId);
+        }
+    }
 
     private class CommentViewHolder extends ViewHolderWithLifecycle {
 
@@ -1315,7 +1423,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         public void bind(Comment comment) {
             this.comment = comment;
-
         }
     }
 
@@ -1594,7 +1701,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 }
             };
 
-            differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build());
+            differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_COMMENT_CALLBACK).build());
         }
 
         void submitList(@Nullable PagedList<Comment> pagedList) {
@@ -1668,6 +1775,67 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 ((CommentViewHolder) holder).bind(getItem(position));
             }
 
+        }
+    }
+
+    private class ReactionsAdapter extends RecyclerView.Adapter<ReactionViewHolder> {
+        final AsyncPagedListDiffer<Reaction> differ;
+
+        ReactionsAdapter() {
+            setHasStableIds(false);
+
+            final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
+            final ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
+
+                public void onInserted(int position, int count) {
+                    adapterCallback.onInserted(position, count);
+                }
+
+                public void onRemoved(int position, int count) {
+                    adapterCallback.onRemoved(position, count);
+                }
+
+                public void onMoved(int fromPosition, int toPosition) {
+                    adapterCallback.onMoved(fromPosition, toPosition);
+                }
+
+                public void onChanged(int position, int count, @Nullable Object payload) {
+                    adapterCallback.onChanged(position, count, payload);
+                }
+            };
+
+            differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_REACTION_CALLBACK).build());
+        }
+
+        void submitList(@Nullable PagedList<Reaction> pagedList, @Nullable final Runnable commitCallback) {
+            differ.submitList(pagedList, commitCallback);
+        }
+
+        @NonNull
+        @Override
+        public ReactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            final PressInterceptView root = new PressInterceptView(parent.getContext());
+            final LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            return new ReactionViewHolder(layoutInflater.inflate(R.layout.reaction_comment, root, true));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ReactionViewHolder holder, int position) {
+            Reaction reaction = getItem(position);
+            if (reaction != null) {
+                holder.bind(reaction);
+            } else {
+                Log.e("ReactionsAdapter.onBindViewHolder no reaction for position = " + position);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return differ.getItemCount();
+        }
+
+        @Nullable Reaction getItem(int position) {
+            return differ.getItem(position);
         }
     }
 

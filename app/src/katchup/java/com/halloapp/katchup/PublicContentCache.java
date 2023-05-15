@@ -1,5 +1,7 @@
 package com.halloapp.katchup;
 
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
@@ -10,6 +12,8 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.FeedItem;
@@ -67,7 +71,7 @@ public class PublicContentCache {
             public void onMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {
                 clear();
             }
-    
+
             @Override
             public void onPublicFeedUpdate(@NonNull PublicFeedUpdate publicFeedUpdate, @NonNull String ackId) {
                 Log.d("PublicContentCache recieved public feed update");
@@ -78,16 +82,28 @@ public class PublicContentCache {
             @Override
             public void onPublicCommentRevoked(@NonNull String id, @NonNull String postId) {
                 List<Comment> existingComments = commentCache.get(postId);
+                List<Reaction> existingReactions = reactionCache.get(postId);
                 Post post = getPost(postId);
-                if (existingComments == null || post == null) {
+                if (post == null || (existingComments == null && existingReactions == null)) {
                     Log.w("Failed to find post " + postId + " with comment " + id);
                     return;
                 }
-                existingComments = new ArrayList<>(existingComments);
-                for (Comment comment : existingComments) {
-                    if (comment.id.equals(id)) {
-                        removeComment(postId, comment);
-                        notifyCommentRetracted(comment);
+                if (existingComments != null) {
+                    existingComments = new ArrayList<>(existingComments);
+                    for (Comment comment : existingComments) {
+                        if (comment.id.equals(id)) {
+                            removeComment(postId, comment);
+                            notifyCommentRetracted(comment);
+                        }
+                    }
+                }
+                if (existingReactions != null) {
+                    existingReactions = new ArrayList<>(existingReactions);
+                    for (Reaction reaction : existingReactions) {
+                        if (reaction.reactionId.equals(id)) {
+                            removeReaction(postId, reaction);
+                            notifyReactionRetracted(reaction);
+                        }
                     }
                 }
             }
@@ -105,15 +121,24 @@ public class PublicContentCache {
             }
 
             @Override
-            public void onIncomingPublicFeedItemsReceived(@NonNull List<Comment> comments) {
-                for (Comment comment : new ArrayList<>(comments)) {
+            public void onIncomingPublicFeedItemsReceived(@NonNull List<Comment> commentsReceived) {
+                final List<Reaction> reactions = new ArrayList<>();
+                final List<Comment> comments = new ArrayList<>();
+                for (Comment comment : commentsReceived) {
                     Post post = getPost(comment.postId);
                     if (post == null) {
                         Log.w("Failed to find post " + comment.postId);
                     } else {
-                        addComment(comment.postId, comment);
+                        if (comment instanceof ReactionComment) {
+                            addReaction(comment.postId, ((ReactionComment) comment).reaction);
+                            reactions.add(((ReactionComment) comment).reaction);
+                        } else {
+                            addComment(comment.postId, comment);
+                            comments.add(comment);
+                        }
                     }
                 }
+                notifyReactionsAdded(reactions);
                 notifyCommentsAdded(comments);
             }
         };
@@ -151,13 +176,15 @@ public class PublicContentCache {
 
     private final Map<String, Post> postCache = new HashMap<>();
     private final Map<String, List<Comment>> commentCache = new HashMap<>();
+    private final Map<String, List<Reaction>> reactionCache = new HashMap<>();
 
-    public void insertContent(@NonNull List<Post> posts, @NonNull Map<String, List<Comment>> commentMap) {
+    public void insertContent(@NonNull List<Post> posts, @NonNull Map<String, List<Comment>> commentMap, @NonNull Map<String, List<Reaction>> reactionMap) {
         executor.execute(() -> {
             for (Post post : posts) {
                 postCache.put(post.id, post);
             }
             commentCache.putAll(commentMap);
+            reactionCache.putAll(reactionMap);
         });
     }
 
@@ -181,6 +208,39 @@ public class PublicContentCache {
         });
     }
 
+    public void addReaction(@NonNull String postId, @NonNull Reaction reaction) {
+        executor.execute(() -> {
+            Post post = postCache.get(postId);
+            List<Reaction> reactions = reactionCache.get(postId);
+            if (reactions == null) {
+                reactions = new ArrayList<>();
+            }
+            reactions = new ArrayList<>(reactions);
+            boolean reactionAdded = false;
+            for (int i = 0; i < reactions.size(); i++) {
+                Reaction existingReaction = reactions.get(i);
+                if (existingReaction.contentId.equals(reaction.contentId) && existingReaction.senderUserId.equals(reaction.senderUserId)) {
+                    reactions.set(i, reaction);
+                    reactionAdded = true;
+                    break;
+                }
+            }
+            if (!reactionAdded) {
+                reactions.add(reaction);
+            }
+            reactionCache.put(postId, reactions);
+            post.reactionCount = reactions.size();
+            boolean reactedByMe = false;
+            for (Reaction r : reactions) {
+                if (r.senderUserId.isMe()) {
+                    reactedByMe = true;
+                    break;
+                }
+            }
+            post.reactedByMe = reactedByMe;
+        });
+    }
+
     public void removeComment(@NonNull String postId, @NonNull Comment comment) {
         executor.execute(() -> {
             Post post = postCache.get(postId);
@@ -196,6 +256,35 @@ public class PublicContentCache {
         });
     }
 
+    public void removeReaction(@NonNull String postId, @NonNull Reaction reaction) {
+        executor.execute(() -> {
+            Post post = postCache.get(postId);
+            List<Reaction> existingReactions = reactionCache.get(postId);
+            if (existingReactions == null || post == null) {
+                Log.w("Failed to find post " + postId);
+            } else {
+                existingReactions = new ArrayList<>(existingReactions);
+                for (int i = 0; i < existingReactions.size(); i++) {
+                    Reaction existingReaction = existingReactions.get(i);
+                    if (existingReaction.contentId.equals(reaction.contentId) && existingReaction.senderUserId.equals(reaction.senderUserId)) {
+                        existingReactions.remove(i);
+                        break;
+                    }
+                }
+                reactionCache.put(postId, existingReactions);
+                post.reactionCount = existingReactions.size();
+                boolean reactedByMe = false;
+                for (Reaction r : existingReactions) {
+                    if (r.senderUserId.isMe()) {
+                        reactedByMe = true;
+                        break;
+                    }
+                }
+                post.reactedByMe = reactedByMe;
+            }
+        });
+    }
+
     public Post getPost(@NonNull String postId) {
         return postCache.get(postId);
     }
@@ -205,6 +294,15 @@ public class PublicContentCache {
         List<Comment> comments = commentCache.get(postId);
         if (comments != null) {
             ret.addAll(comments);
+        }
+        return ret;
+    }
+
+    public List<Reaction> getReactions(@NonNull String postId) {
+        List<Reaction> ret = new ArrayList<>();
+        List<Reaction> reactions = reactionCache.get(postId);
+        if (reactions != null) {
+            ret.addAll(reactions);
         }
         return ret;
     }
@@ -251,6 +349,22 @@ public class PublicContentCache {
         }
     }
 
+    public void notifyReactionsAdded(@NonNull List<Reaction> reactions) {
+        synchronized (observers) {
+            for (PublicContentCache.Observer observer : observers) {
+                observer.onReactionsAdded(reactions);
+            }
+        }
+    }
+
+    public void notifyReactionRetracted(@NonNull Reaction reaction) {
+        synchronized (observers) {
+            for (PublicContentCache.Observer observer : observers) {
+                observer.onReactionRetracted(reaction);
+            }
+        }
+    }
+
     public void addObserver(@NonNull PublicContentCache.Observer observer) {
         synchronized (observers) {
             observers.add(observer);
@@ -266,13 +380,17 @@ public class PublicContentCache {
     public interface Observer {
         void onPostRemoved(@NonNull Post post);
         void onCommentsAdded(@NonNull List<Comment> comments);
-        void onCommentRetracted(@NonNull Comment comment);
+        void onCommentRetracted(@NonNull Comment comment);;
+        void onReactionsAdded(@NonNull List<Reaction> reactions);
+        void onReactionRetracted(@NonNull Reaction comment);
     }
 
     public static class DefaultObserver implements PublicContentCache.Observer {
         public void onPostRemoved(@NonNull Post post) {}
         public void onCommentsAdded(@NonNull List<Comment> comments) {}
         public void onCommentRetracted(@NonNull Comment comment) {}
+        public void onReactionsAdded(@NonNull List<Reaction> reactions) {}
+        public void onReactionRetracted(@NonNull Reaction comment) {}
     }
 
     public List<Post> processPublicFeedItems(List<PublicFeedItem> feedItems, boolean wasRestarted) {
@@ -286,6 +404,7 @@ public class PublicContentCache {
         Map<UserId, String> avatarsMap = new HashMap<>();
         List<Post> posts = new ArrayList<>();
         Map<String, List<Comment>> commentMap = new HashMap<>();
+        Map<String, List<Reaction>> reactionMap = new HashMap<>();
         FeedContentParser feedContentParser = new FeedContentParser(me);
         for (PublicFeedItem item : feedItems) {
             try {
@@ -314,7 +433,7 @@ public class PublicContentCache {
                 post.contentType = momentInfo.getContentType();
 
 
-                processProtoComments(post, item.getCommentsList(), feedContentParser, commentMap);
+                processProtoComments(post, item.getCommentsList(), feedContentParser, commentMap, reactionMap);
 
                 posts.add(post);
             } catch (InvalidProtocolBufferException e) {
@@ -326,7 +445,7 @@ public class PublicContentCache {
             cachedItems.addAll(posts);
         }
 
-        insertContent(posts, commentMap);
+        insertContent(posts, commentMap, reactionMap);
 
         ContactsDb contactsDb = ContactsDb.getInstance();
         contactsDb.updateUserNames(namesMap);
@@ -339,10 +458,13 @@ public class PublicContentCache {
 
 
 
-    public void processProtoComments(Post post, List<com.halloapp.proto.server.Comment> commentsList, FeedContentParser feedContentParser, Map<String, List<Comment>> commentMap) {
+    public void processProtoComments(Post post, List<com.halloapp.proto.server.Comment> commentsList, FeedContentParser feedContentParser, Map<String, List<Comment>> commentMap, Map<String, List<Reaction>> reactionMap) {
         String meUser = me.getUser();
 
+        List<Reaction> reactions = new ArrayList<>();
+        Set<Pair<String, UserId>> reactionIndexSet = new HashSet<>();
         List<Comment> comments = new ArrayList<>();
+        boolean reactedByMe = false;
         for (com.halloapp.proto.server.Comment protoComment : commentsList) {
             try {
                 Container commentContainer = Container.parseFrom(protoComment.getPayload());
@@ -355,14 +477,29 @@ public class PublicContentCache {
                         commentContainer.getCommentContainer(),
                         false
                 );
-                comments.add(comment);
+                if (comment instanceof ReactionComment) {
+                    Reaction reaction = ((ReactionComment) comment).reaction;
+                    Pair<String, UserId> reactionIndex = new Pair<>(reaction.contentId, reaction.senderUserId);
+                    if (!reactionIndexSet.contains(reactionIndex)) {
+                        reactionIndexSet.add(reactionIndex);
+                        reactions.add(reaction);
+                        if (reaction.senderUserId.isMe()) {
+                            reactedByMe = true;
+                        }
+                    }
+                } else {
+                    comments.add(comment);
+                }
             } catch (InvalidProtocolBufferException e) {
                 Log.e("Failed to parse container for public feed comment", e);
             }
         }
 
         commentMap.put(post.id, comments);
+        reactionMap.put(post.id, reactions);
         post.commentCount = comments.size();
+        post.reactionCount = reactions.size();
+        post.reactedByMe = reactedByMe;
     }
 
     private List<com.halloapp.proto.server.Comment> getProtoComments(List<FeedItem> feedItems) {
@@ -387,10 +524,19 @@ public class PublicContentCache {
                     Log.d("ViewKatchupCommentsActivity successfully subscribed to post " + postId);
                     FeedContentParser feedContentParser = new FeedContentParser(me);
                     Map<String, List<Comment>> commentMap = new HashMap<>();
-                    List<com.halloapp.proto.server.Comment> comments = getProtoComments(res.feedItems);
-                    processProtoComments(post, comments, feedContentParser, commentMap);
+                    Map<String, List<Reaction>> reactionMap = new HashMap<>();
+                    List<com.halloapp.proto.server.Comment> protoComments = getProtoComments(res.feedItems);
+                    processProtoComments(post, protoComments, feedContentParser, commentMap, reactionMap);
                     commentCache.putAll(commentMap);
-                    notifyCommentsAdded(commentMap.get(post.id));
+                    List<Comment> comments = commentCache.get(post.id);
+                    if (comments != null) {
+                        notifyCommentsAdded(comments);
+                    }
+                    reactionCache.putAll(reactionMap);
+                    List<Reaction> reactions = reactionCache.get(post.id);
+                    if (reactions != null) {
+                        notifyReactionsAdded(reactions);
+                    }
                 } else {
                     Log.w("ViewKatchupCommentsActivity post " + postId + " subscription failed: " + res.reason);
                 }

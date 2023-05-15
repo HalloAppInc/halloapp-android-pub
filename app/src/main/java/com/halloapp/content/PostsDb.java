@@ -27,6 +27,7 @@ import com.halloapp.content.tables.KatchupMomentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
 import com.halloapp.content.tables.SeenPostsTable;
@@ -1706,6 +1707,7 @@ class PostsDb {
             }
         }
         List<String> args = new ArrayList<>();
+        args.add(UserId.ME.rawId()); // For reactedByMe field computed in a subquery.
         if (senderUserId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
             args.add(senderUserId.rawId());
@@ -1781,7 +1783,9 @@ class PostsDb {
                 "fc.first_comment_user_id" + ", " +
                 "fc.first_comment_text" + ", " +
                 "fc.first_comment_timestamp" + ", " +
-                "s.seen_by_count" + " " +
+                "s.seen_by_count" + ", " +
+                "r.reaction_count" + ", " +
+                "l.self_reacted" + " " +
 
             "FROM " + PostsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
@@ -1826,8 +1830,34 @@ class PostsDb {
                     "count(*) AS seen_by_count " +
                     "FROM " + SeenTable.TABLE_NAME + " GROUP BY " + SeenTable.COLUMN_POST_ID + ") " +
                 "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    ReactionsTable.COLUMN_CONTENT_ID + "," +
+                    "count(*) AS reaction_count " +
+                    "FROM (" +
+                        "SELECT " + ReactionsTable.COLUMN_CONTENT_ID + " FROM " + ReactionsTable.TABLE_NAME + " " +
+                        "LEFT JOIN " + CommentsTable.TABLE_NAME + " " +
+                        "ON " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + "=" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " " +
+                        "WHERE " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + "<>'' " +
+                        "AND (" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TYPE + "<>" + Comment.TYPE_RETRACTED + " " +
+                        "OR " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " IS NULL)" +
+                    ") GROUP BY " + ReactionsTable.COLUMN_CONTENT_ID + ") " +
+                "AS r ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=r." + ReactionsTable.COLUMN_CONTENT_ID + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    "count(*) AS self_reacted " +
+                    "FROM (" +
+                        "SELECT " + ReactionsTable.COLUMN_CONTENT_ID + " FROM " + ReactionsTable.TABLE_NAME + " " +
+                        "LEFT JOIN " + CommentsTable.TABLE_NAME + " " +
+                        "ON " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + "=" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " " +
+                        "WHERE " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_SENDER_USER_ID + "=? " +
+                        "AND " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + "<>'' " +
+                        "AND (" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TYPE + "<>" + Comment.TYPE_RETRACTED + " " +
+                        "OR " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " IS NULL)" +
+                    ")) " +
+                "AS l ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=r." + ReactionsTable.COLUMN_CONTENT_ID + " " +
             "WHERE " + where + " " +
-            "ORDER BY " + orderBy + (count == null ? "" : ("LIMIT " + count));;
+            "ORDER BY " + orderBy + (count == null ? "" : ("LIMIT " + count));
 
         try (final Cursor cursor = db.rawQuery(sql, selectionArgs)) {
 
@@ -1890,6 +1920,8 @@ class PostsDb {
                     if (post instanceof KatchupPost) {
                         katchupMomentDb.fillKatchupMoment((KatchupPost) post);
                     }
+                    post.reactionCount = cursor.getInt(36);
+                    post.reactedByMe = cursor.getInt(37) > 0;
                 }
                 if (!cursor.isNull(17)) {
                     Media media = new Media(

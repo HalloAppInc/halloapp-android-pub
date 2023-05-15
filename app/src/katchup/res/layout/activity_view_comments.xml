@@ -216,26 +216,73 @@
 
                 </com.halloapp.katchup.JellybeanClipView>
 
+                <com.halloapp.katchup.ui.CountingLikeButton
+                    android:id="@+id/likes"
+                    android:layout_width="46dp"
+                    android:layout_height="44dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="19dp"
+                    android:elevation="2dp"
+                    />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="130dp"
-            android:orientation="vertical"
             app:behavior_hideable="false"
             app:behavior_peekHeight="@dimen/view_katchup_bottom_sheet_min_peek_height"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/interaction_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tabInlineLabel="true"
+                app:tabIconTint="@color/interaction_tab_color_selector"
+                app:tabTextColor="@color/interaction_tab_color_selector">
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_comment_bubble_shadow"
+                    android:text="0"
+                    />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_likes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_heart"
+                    android:text="0"
+                    />
+
+            </com.google.android.material.tabs.TabLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comments_rv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/interaction_tabs"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-        </FrameLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reactions_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/interaction_tabs"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

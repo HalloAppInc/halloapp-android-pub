@@ -64,11 +64,13 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
@@ -1056,6 +1058,28 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 }
                 publicFeed.postValue(posts);
             }
+
+            @Override
+            public void onReactionsAdded(@NonNull List<Reaction> reactions) {
+                Log.d("MainFragment cache observer reaction added");
+
+                List<Post> posts = publicFeed.getValue();
+                if (posts == null) {
+                    return;
+                }
+                publicFeed.postValue(posts);
+            }
+
+            @Override
+            public void onReactionRetracted(@NonNull Reaction reaction) {
+                Log.d("MainFragment cache observer reaction retracted");
+
+                List<Post> posts = publicFeed.getValue();
+                if (posts == null) {
+                    return;
+                }
+                publicFeed.postValue(posts);
+            }
         };
 
         private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
@@ -1104,21 +1128,24 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     fetchMyPostComments();
                 } else {
                     PagedList<Post> followingPosts = postList.getValue();
-                    if (followingPosts == null) {
-                        return;
-                    }
-                    for (Post followingPost : followingPosts) {
-                        if (comment.postId.equals(followingPost.id)) {
-                            dataSourceFactory.invalidateLatestDataSource();
-                            return;
+                    if (followingPosts != null) {
+                        for (Post followingPost : followingPosts) {
+                            if (comment.postId.equals(followingPost.id)) {
+                                dataSourceFactory.invalidateLatestDataSource();
+                                break;
+                            }
                         }
                     }
 
                     List<Post> publicPosts = publicFeed.getValue();
-                    if (publicPosts == null) {
-                        return;
+                    if (publicPosts != null) {
+                        for (Post publicPost : publicPosts) {
+                            if (comment.postId.equals(publicPost.id)) {
+                                publicFeed.postValue(publicPosts);
+                                break;
+                            }
+                        }
                     }
-                    publicFeed.postValue(publicPosts);
                 }
             }
 
@@ -1131,21 +1158,24 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     fetchMyPostComments();
                 } else {
                     PagedList<Post> followingPosts = postList.getValue();
-                    if (followingPosts == null) {
-                        return;
-                    }
-                    for (Post followingPost : followingPosts) {
-                        if (comment.postId.equals(followingPost.id)) {
-                            dataSourceFactory.invalidateLatestDataSource();
-                            return;
+                    if (followingPosts != null) {
+                        for (Post followingPost : followingPosts) {
+                            if (comment.postId.equals(followingPost.id)) {
+                                dataSourceFactory.invalidateLatestDataSource();
+                                break;
+                            }
                         }
                     }
 
                     List<Post> publicPosts = publicFeed.getValue();
-                    if (publicPosts == null) {
-                        return;
+                    if (publicPosts != null) {
+                        for (Post publicPost : publicPosts) {
+                            if (comment.postId.equals(publicPost.id)) {
+                                publicFeed.postValue(publicPosts);
+                                break;
+                            }
+                        }
                     }
-                    publicFeed.postValue(publicPosts);
                 }
             }
 
@@ -1155,6 +1185,35 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 Post post = myPost.getLiveData().getValue();
                 if (post != null && postId.equals(post.id)) {
                     myPost.invalidate();
+                }
+            }
+
+            @Override
+            public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+                Log.d("MainFragment content observer reaction added " + reaction);
+                Post post = myPost.getLiveData().getValue();
+                if (post != null && reaction.contentId.equals(post.id)) {
+                    myPost.invalidate();
+                } else {
+                    PagedList<Post> followingPosts = postList.getValue();
+                    if (followingPosts != null) {
+                        for (Post followingPost : followingPosts) {
+                            if (reaction.contentId.equals(followingPost.id)) {
+                                dataSourceFactory.invalidateLatestDataSource();
+                                break;
+                            }
+                        }
+                    }
+
+                    List<Post> publicPosts = publicFeed.getValue();
+                    if (publicPosts != null) {
+                        for (Post publicPost : publicPosts) {
+                            if (reaction.contentId.equals(publicPost.id)) {
+                                publicFeed.postValue(publicPosts);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -1520,6 +1579,28 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             return sendSuccess;
         }
 
+        public void toggleLike(@NonNull Post interactedPost, boolean isPublic) {
+            BgWorkers.getInstance().execute(() -> {
+                final Reaction existingReaction = contentDb.getMyKatchupPostReaction(interactedPost.id);
+                if (existingReaction != null) {
+                    contentDb.retractReaction(existingReaction, interactedPost);
+                    if (isPublic) {
+                        publicContentCache.removeReaction(interactedPost.id, existingReaction);
+                        dataSourceFactory.invalidateLatestDataSource();
+                        momentList.invalidate();
+                    }
+                } else {
+                    final Reaction newReaction = new Reaction(RandomId.create(), interactedPost.id, UserId.ME, Reaction.TYPE_KATCHUP_LIKE, System.currentTimeMillis());
+                    contentDb.addReaction(newReaction, interactedPost);
+                    if (isPublic) {
+                        publicContentCache.addReaction(interactedPost.id, newReaction);
+                        dataSourceFactory.invalidateLatestDataSource();
+                        momentList.invalidate();
+                    }
+                }
+            });
+        }
+
         public static class MainViewModelFactory implements ViewModelProvider.Factory {
 
             private final Application application;
@@ -1625,6 +1706,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 }
                 videoReactionRecordControlView.onTouch(event);
                 return true;
+            }
+
+            @Override
+            public void toggleLike(@NonNull Post interactedPost, boolean isPublic) {
+                viewModel.toggleLike(interactedPost, isPublic);
             }
         };
 

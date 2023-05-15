@@ -5,9 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.halloapp.content.tables.CommentsTable;
-import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
@@ -190,5 +191,100 @@ public class ReactionsDb {
         }
         Log.i("ContentDb.getPendingReactions: reactions.size=" + reactions.size());
         return reactions;
+    }
+
+    @WorkerThread
+    @NonNull List<Reaction> getKatchupPostReactions(@NonNull String postId, int start, int count) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final List<Reaction> reactions = new ArrayList<>();
+        final String sql =
+                "SELECT " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + ","
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_CONTENT_ID + ","
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_SENDER_USER_ID + ","
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + ","
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_TIMESTAMP
+                        + " FROM " + ReactionsTable.TABLE_NAME
+                        + " LEFT JOIN " + CommentsTable.TABLE_NAME
+                        + " ON " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + "=" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID
+                        + " WHERE " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_CONTENT_ID + "=?"
+                        + " AND " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + "<>''"
+                        + " AND (" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TYPE + "<>" + Comment.TYPE_RETRACTED
+                        + " OR " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " IS NULL)"
+                        + " LIMIT " + count + " OFFSET " + start;
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{postId})) {
+            while (cursor.moveToNext()) {
+                final Reaction reaction = new Reaction(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getLong(4));
+                reactions.add(reaction);
+            }
+        }
+        Log.i("ReactionsDb.getLikeReactionsKatchup: start=" + start + " count=" + count + " reactions.size=" + reactions.size());
+        return reactions;
+    }
+
+    @WorkerThread
+    int getKatchupPostReactionsCount(@NonNull String postId, @Nullable String senderUserId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        String sql =
+                "SELECT COUNT(*) FROM " + ReactionsTable.TABLE_NAME
+                        + " LEFT JOIN " + CommentsTable.TABLE_NAME
+                        + " ON " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + "=" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID
+                        + " WHERE " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_CONTENT_ID + "=?"
+                        + " AND " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + "<>''"
+                        + " AND (" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TYPE + "<>" + Comment.TYPE_RETRACTED
+                        + " OR " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " IS NULL)";
+        final List<String> arguments = new ArrayList<>();
+        arguments.add(postId);
+
+        if (senderUserId != null) {
+            sql += " AND " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_SENDER_USER_ID + "=?";
+            arguments.add(senderUserId);
+        }
+
+        int count = 0;
+        try (final Cursor cursor = db.rawQuery(sql, arguments.toArray(new String[0]))) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                count = cursor.getInt(0);
+            }
+        }
+        return count;
+    }
+
+    @WorkerThread
+    @Nullable
+    Reaction getMyKatchupPostReaction(@NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + ", "
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_CONTENT_ID + ", "
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_SENDER_USER_ID + ", "
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + ", "
+                        + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_TIMESTAMP
+                        + " FROM " + ReactionsTable.TABLE_NAME
+                        + " LEFT JOIN " + CommentsTable.TABLE_NAME
+                        + " ON " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_ID + "=" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID
+                        + " WHERE " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_CONTENT_ID + "=?"
+                        + " AND " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_SENDER_USER_ID + "=?"
+                        + " AND " + ReactionsTable.TABLE_NAME + "." + ReactionsTable.COLUMN_REACTION_TYPE + "<>''"
+                        + " AND (" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TYPE + "<>" + Comment.TYPE_RETRACTED
+                        + " OR " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " IS NULL)";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{postId, UserId.ME.rawId()})) {
+            if (cursor.moveToNext()) {
+                return new Reaction(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getLong(4));
+            }
+        }
+        return null;
     }
 }

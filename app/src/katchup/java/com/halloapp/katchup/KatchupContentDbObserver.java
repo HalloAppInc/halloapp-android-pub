@@ -183,7 +183,11 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
                 Post reactedPost = (Post)contentItem;
                 ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedPost.id, UserId.ME, reaction.reactionId, null, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
                 reactionComment.setParentPost(reactedPost);
-                connection.sendComment(reactionComment);
+                if (reaction.reactionType.equals("")) {
+                    connection.retractComment(reactedPost.id, reactionComment.id);
+                } else {
+                    connection.sendComment(reactionComment);
+                }
             }
 
             // TODO(vasil): implement reply notification
