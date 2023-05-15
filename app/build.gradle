@@ -210,7 +210,7 @@ dependencies {
 
     implementation 'com.amplitude:analytics-android:1.5.2'
 
-    implementation 'androidx.core:core-splashscreen:1.0.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 }
 
 apply plugin: 'com.huawei.agconnect'
