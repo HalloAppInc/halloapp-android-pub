@@ -32,9 +32,7 @@ Sujeito a cobrança da operadora."</string>
 %s"</string>
     <string name="contact_permission_title">"Só mais uma coisa"</string>
     <string name="registration_code_invalid">"Código de registo inválido, tente novamente"</string>
-
-    <!-- Fuzzy -->
-    <string name="registration_failed">"Falha ao registar o número de telefone, tente novamente"</string>
+    <string name="registration_failed">"Falha no registro, por favor, tente novamente"</string>
     <string name="registration_failed_no_friends">"De momento os registos só estão disponíveis através de convite. Se tem um amigo ou familiar que usa o HalloApp, peça-lhes um convite usando o seu número de telefone."</string>
     <string name="registration_failed_no_friends_title">"Que coisa! "</string>
     <string name="type_a_message_hint">"Digite uma mensagem"</string>
@@ -815,7 +813,6 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="groups_in_common">"Grupos em comum"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <!-- Fuzzy -->
     <string name="slide_to_cancel">"Deslize para cancelar"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -2680,6 +2677,21 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- hint on a field inviting a user to confirm username before account deletion -->
     <string name="delete_account_username_confirm_hint">"Nome de usuário"</string>
+
+    <!-- body of the daily katchup reminder notification -->
+    <string name="notification_daily_katchup_reminder_body">"Atualize-se com seus amigos agora…"</string>
+
+    <!-- body of the daily katchup reminder notification. %s is the username of someone who posted -->
+    <string name="notification_one_daily_katchup_reminder_body">"Atualize-se com %s agora…"</string>
+
+    <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted -->
+    <string name="notification_two_daily_katchup_reminder_body">"Atualize-se com %1$s e %2$s agora…"</string>
+
+    <!-- body of the daily katchup reminder notification. %1$s, %2$s, %3$s are replaced with the usernames of those who posted -->
+    <string name="notification_three_daily_katchup_reminder_body">"Atualize-se com %1$s, %2$s, e %3$s agora…"</string>
+
+    <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
+    <string name="notification_many_daily_katchup_reminder_body">"Atualize-se com %1$s, %2$s, +%3$d outros agora…"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum feedback para a equipe katchup?"</string>

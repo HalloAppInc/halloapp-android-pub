@@ -2864,6 +2864,21 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- hint on a field inviting a user to confirm username before account deletion -->
     <string name="delete_account_username_confirm_hint">"username"</string>
+
+    <!-- body of the daily katchup reminder notification -->
+    <string name="notification_daily_katchup_reminder_body">"catch up with your friends now…"</string>
+
+    <!-- body of the daily katchup reminder notification. %s is the username of someone who posted -->
+    <string name="notification_one_daily_katchup_reminder_body">"catch up with %s now…"</string>
+
+    <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted -->
+    <string name="notification_two_daily_katchup_reminder_body">"catch up with %1$s and %2$s now…"</string>
+
+    <!-- body of the daily katchup reminder notification. %1$s, %2$s, %3$s are replaced with the usernames of those who posted -->
+    <string name="notification_three_daily_katchup_reminder_body">"catch up with %1$s, %2$s, and %3$s now…"</string>
+
+    <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
+    <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"Отзывы"</string>
     <string name="ask_for_feedback">"Привет! какие-либо отзывы для команде katchup?"</string>
