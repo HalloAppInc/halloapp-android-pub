@@ -758,6 +758,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private void updateTabVisibility(@Nullable List<Comment> comments, @Nullable List<Reaction> reactions) {
         boolean hideTab = (comments == null || comments.isEmpty()) && (reactions == null || reactions.isEmpty());
+        hideTab |= getIntent().getBooleanExtra(EXTRA_DISABLE_COMMENTS, false);
         interactionTabLayout.setVisibility(hideTab ? View.GONE : View.VISIBLE);
     }
 
