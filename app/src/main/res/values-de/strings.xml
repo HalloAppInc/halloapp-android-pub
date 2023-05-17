@@ -35,9 +35,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Version 0.158 : current string was not transmitted -->
     <string name="contact_permission_title">"Noch ein Hinweis"</string>
     <string name="registration_code_invalid">"Ungültiger Registrierungscode, versuch es noch einmal"</string>
-
-    <!-- Fuzzy -->
-    <string name="registration_failed">"Handynummer kann nicht registriert werden, versuch es noch einmal"</string>
+    <string name="registration_failed">"Registrierung fehlgeschlagen. Bitte erneut versuchen"</string>
     <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur mit Einladung möglich. Falls du Freunde oder Familienmitglieder hast, die HalloApp bereits nutzen, bitte sie, dich mit deiner Handynummer einzuladen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Nachricht eingeben"</string>
@@ -876,8 +874,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="groups_in_common">"Gemeinsame Gruppen"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <!-- Fuzzy -->
-    <string name="slide_to_cancel">"Zum Abbrechen wischen"</string>
+    <string name="slide_to_cancel">"Wischen zum Abbrechen"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Antworten"</string>
@@ -2646,7 +2643,7 @@ Bleibe dran!"</string>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"plaudere mit Freunden - jetzt oder später"</string>
+    <string name="notification_daily_katchup_body">"sieh dir an, was deine Freunde machen - jetzt oder später"</string>
 
     <!-- Button title for adding a location to a katchup post -->
     <string name="katchup_add_location">"Standort hinzufügen"</string>
@@ -2703,10 +2700,10 @@ Bleibe dran!"</string>
     <string name="geotag_explanation_me">"du bist verbunden mit %s "<![CDATA[<a href="entfernen">remove</a>]]></string>
 
     <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_expanation_other">"%1$s's affiliated with %2$s"</string>
+    <string name="geotag_expanation_other">"%1$s ist mit der %2$s verbunden"</string>
 
     <!-- text shown on a user's own profile when they do not currently have a geotag -->
-    <string name="add_school">"+ add school"</string>
+    <string name="add_school">"+ Uni/Hochschule hinzufügen"</string>
 
     <!-- title of the geotag location access request prompt -->
     <string name="geotag_location_access_request_title">"Dein Standort bestimmt deinen Campus"</string>
@@ -2731,31 +2728,35 @@ Bleibe dran!"</string>
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">"laden …"</string>
     <string name="app_name_katchup">"Katchup"</string>
-    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup ist abgelaufen"</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
-        <item quantity="one">"Katchup expires in %d day"</item>
-        <item quantity="other">"Katchup expires in %d day"</item>
+        <item quantity="one">"Katchup läuft in %d Tag ab"</item>
+        <item quantity="other">"Katchup läuft in %d Tagen ab"</item>
     </plurals>
 
     <!-- label inviting a user to confirm username before account deletion -->
-    <string name="delete_account_username_confirm">"enter username to confirm"</string>
+    <string name="delete_account_username_confirm">"Benutzername zur Bestätigung eingeben"</string>
 
     <!-- hint on a field inviting a user to confirm username before account deletion -->
-    <string name="delete_account_username_confirm_hint">"username"</string>
+    <string name="delete_account_username_confirm_hint">"Benutzername"</string>
 
     <!-- body of the daily katchup reminder notification -->
-    <string name="notification_daily_katchup_reminder_body">"catch up with your friends now…"</string>
+    <string name="notification_daily_katchup_reminder_body">"sieh dir jetzt an, was deine Freunde machen"</string>
 
     <!-- body of the daily katchup reminder notification. %s is the username of someone who posted -->
-    <string name="notification_one_daily_katchup_reminder_body">"catch up with %s now…"</string>
+    <string name="notification_one_daily_katchup_reminder_body">"sieh dir jetzt an, was %s macht"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted -->
-    <string name="notification_two_daily_katchup_reminder_body">"catch up with %1$s and %2$s now…"</string>
+    <string name="notification_two_daily_katchup_reminder_body">"sieh dir jetzt an, was %1$s und %2$s machen"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s, %3$s are replaced with the usernames of those who posted -->
-    <string name="notification_three_daily_katchup_reminder_body">"catch up with %1$s, %2$s, and %3$s now…"</string>
+    <string name="notification_three_daily_katchup_reminder_body">"sieh dir jetzt an, was %1$s, %2$s, und %3$s machen"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
+    <plurals name="notification_many_daily_katchup_reminder_body_plural">
+        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+    </plurals>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"Feedback"</string>

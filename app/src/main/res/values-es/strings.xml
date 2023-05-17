@@ -2715,6 +2715,10 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
     <string name="notification_three_daily_katchup_reminder_body">"ponte al día con %1$s, %2$s y %3$s ahora…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
+    <plurals name="notification_many_daily_katchup_reminder_body_plural">
+        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+    </plurals>
     <string name="notification_many_daily_katchup_reminder_body">"ponte al día con %1$s, %2$s, +%3$d otros ahora…"</string>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>

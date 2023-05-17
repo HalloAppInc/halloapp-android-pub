@@ -2596,7 +2596,7 @@ op katchup te personaliseren"</string>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"praat nu bij met je vrienden… of later"</string>
+    <string name="notification_daily_katchup_body">"bekijk nu wat je vrienden bezighoudt… of later"</string>
 
     <!-- Button title for adding a location to a katchup post -->
     <string name="katchup_add_location">"locatie toevoegen"</string>
@@ -2694,18 +2694,22 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="delete_account_username_confirm_hint">"gebruikersnaam"</string>
 
     <!-- body of the daily katchup reminder notification -->
-    <string name="notification_daily_katchup_reminder_body">"catch up with your friends now…"</string>
+    <string name="notification_daily_katchup_reminder_body">"bekijk nu wat je vrienden bezighoudt…"</string>
 
     <!-- body of the daily katchup reminder notification. %s is the username of someone who posted -->
-    <string name="notification_one_daily_katchup_reminder_body">"catch up with %s now…"</string>
+    <string name="notification_one_daily_katchup_reminder_body">"bekijk nu wat %s bezighoudt…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted -->
-    <string name="notification_two_daily_katchup_reminder_body">"catch up with %1$s and %2$s now…"</string>
+    <string name="notification_two_daily_katchup_reminder_body">"bekijk nu wat %1$s en %2$s bezighoudt…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s, %3$s are replaced with the usernames of those who posted -->
-    <string name="notification_three_daily_katchup_reminder_body">"catch up with %1$s, %2$s, and %3$s now…"</string>
+    <string name="notification_three_daily_katchup_reminder_body">"bekijk nu wat %1$s, %2$s en %3$s bezighoudt…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
+    <plurals name="notification_many_daily_katchup_reminder_body_plural">
+        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+    </plurals>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>

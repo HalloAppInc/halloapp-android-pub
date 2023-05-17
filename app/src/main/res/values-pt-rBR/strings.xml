@@ -2694,6 +2694,10 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="notification_three_daily_katchup_reminder_body">"converse com %1$s, %2$s, e %3$s agora…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
+    <plurals name="notification_many_daily_katchup_reminder_body_plural">
+        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+    </plurals>
     <string name="notification_many_daily_katchup_reminder_body">"converse com %1$s, %2$s, +%3$d outros agora…"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
