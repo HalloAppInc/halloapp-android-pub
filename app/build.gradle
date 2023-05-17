@@ -143,7 +143,7 @@ dependencies {
     implementation 'androidx.paging:paging-runtime:2.1.2'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.security:security-crypto:1.1.0-alpha03'
-    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'androidx.work:work-runtime:2.8.1'
     implementation 'at.favre.lib:hkdf:1.1.0'
     implementation 'com.dstukalov:videoconverter:1.9'
     implementation 'com.github.Dimezis:BlurView:version-2.0.0'
