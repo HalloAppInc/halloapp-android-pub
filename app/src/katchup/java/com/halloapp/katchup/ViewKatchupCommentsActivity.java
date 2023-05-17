@@ -387,7 +387,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     final int bottomSheetPeekHeight = Math.max(bottomSheetMinPeekHeight, coordinatorHeight - preferredConstraintHeight);
 
                     bottomSheetBehavior.setPeekHeight(bottomSheetPeekHeight);
-                    rescaleContent(coordinatorHeight - bottomSheetPeekHeight);
+                    rescaleContent(bottomSheetView.getTop());
                 }
             }
         });
@@ -648,6 +648,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
             updateTabVisibility(list, viewModel.getReactionList().getValue());
             final PagedList<Reaction> reactions = viewModel.getReactionList().getValue();
+            if (list.size() > 0 && !fromStack) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
             commentsAdapter.submitList(list, () -> {
                 if (!scrollToBottom) {
                     return;
