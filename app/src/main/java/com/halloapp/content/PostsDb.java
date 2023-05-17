@@ -1845,6 +1845,7 @@ class PostsDb {
                 "AS r ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=r." + ReactionsTable.COLUMN_CONTENT_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
+                    ReactionsTable.COLUMN_CONTENT_ID + "," +
                     "count(*) AS self_reacted " +
                     "FROM (" +
                         "SELECT " + ReactionsTable.COLUMN_CONTENT_ID + " FROM " + ReactionsTable.TABLE_NAME + " " +
@@ -1855,7 +1856,7 @@ class PostsDb {
                         "AND (" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TYPE + "<>" + Comment.TYPE_RETRACTED + " " +
                         "OR " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " IS NULL)" +
                     ")) " +
-                "AS l ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=r." + ReactionsTable.COLUMN_CONTENT_ID + " " +
+                "AS l ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=l." + ReactionsTable.COLUMN_CONTENT_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + orderBy + (count == null ? "" : ("LIMIT " + count));
 
