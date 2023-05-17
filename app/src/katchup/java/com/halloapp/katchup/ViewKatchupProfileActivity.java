@@ -38,6 +38,7 @@ public class ViewKatchupProfileActivity extends HalloActivity {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
+        window.setNavigationBarColor(Color.BLACK);
 
         UserId userId = getIntent().getParcelableExtra(EXTRA_USER_ID);
         if (userId == null && getIntent().getData() == null) {
