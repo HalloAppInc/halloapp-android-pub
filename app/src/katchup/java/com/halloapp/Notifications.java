@@ -524,7 +524,7 @@ public class Notifications {
                 case 3:
                     return context.getString(R.string.notification_three_daily_katchup_reminder_body, usernames.get(0), usernames.get(1), usernames.get(2));
                 default:
-                    return context.getString(R.string.notification_many_daily_katchup_reminder_body, usernames.get(0), usernames.get(1), usernames.size() - 2);
+                    return context.getResources().getQuantityString(R.plurals.notification_many_daily_katchup_reminder_body_plural, usernames.size() - 2, usernames.get(0), usernames.get(1), usernames.size() - 2);
             }
         }
     }
