@@ -1660,13 +1660,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     color = Colors.getDefaultStickerColor();
                 }
                 textView.setTextColor(color);
-                textView.setText(comment.text.substring(7));
+                String text = comment.text.substring(7);
+                text = text.length() > Constants.STICKER_MAX_CHARS_PER_LINE * Constants.STICKER_MAX_LINES
+                        ? text
+                        : StringUtils.formatMaxLineLengths(text, Constants.STICKER_MAX_CHARS_PER_LINE, Constants.STICKER_MAX_LINES);
+                textView.setText(text);
             } else {
                 textView.setText(comment.text);
             }
             commentText = comment.text;
         }
-
     }
 
     private static final int ITEM_TYPE_TEXT = 1;
