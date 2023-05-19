@@ -77,6 +77,11 @@ public class BackgroundImagePicker extends HalloActivity implements EasyPermissi
 
         setContentView(R.layout.activity_background_image_picker);
 
+        View back = findViewById(R.id.back);
+        back.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
         thumbnailLoader = new GalleryThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_size));
 
         final GridLayoutManager layoutManager = new GridLayoutManager(this, ITEMS_PER_ROW);
