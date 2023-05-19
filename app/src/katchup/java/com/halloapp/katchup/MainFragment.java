@@ -56,9 +56,11 @@ import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.MainActivity;
+import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
@@ -94,6 +96,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
@@ -147,12 +150,16 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
     private ImageView avatarView;
+    private View pingsTab;
+    private RecyclerView pingsListView;
+    private PingsAdapter pingsListAdapter;
     private View followingTab;
     private RecyclerView followingListView;
     private PostAdapter followingListAdapter;
     private View publicTab;
     private RecyclerView publicListView;
     private PostAdapter publicListAdapter;
+    private TextView pingsButton;
     private TextView followingButton;
     private TextView discoverButton;
     private View myPostHeader;
@@ -270,12 +277,31 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
 
+        pingsTab = root.findViewById(R.id.pings_tab);
         followingTab = root.findViewById(R.id.following_tab);
         publicTab = root.findViewById(R.id.discover_tab);
 
+        pingsListView = root.findViewById(R.id.pings_list);
+        final LinearLayoutManager pingsLayoutManager = new LinearLayoutManager(requireContext());
+        pingsListView.setLayoutManager(pingsLayoutManager);
+        pingsListAdapter = new PingsAdapter(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
+            @NonNull
+            @Override
+            public Context getContext() {
+                return requireContext();
+            }
+
+            @NonNull
+            @Override
+            public ViewGroup getParentViewGroup() {
+                return pingsListView;
+            }
+        });
+        pingsListView.setAdapter(pingsListAdapter);
+
         followingListView = root.findViewById(R.id.following_list);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
-        followingListView.setLayoutManager(layoutManager);
+        final LinearLayoutManager followingLayoutManager = new LinearLayoutManager(requireContext());
+        followingListView.setLayoutManager(followingLayoutManager);
         followingListAdapter = new PostAdapter(false);
         followingListView.setAdapter(followingListAdapter);
 
@@ -300,10 +326,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         View title = root.findViewById(R.id.title);
         title.setOnClickListener(v -> {
-            boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
-            if (followingTabSelected) {
-                layoutManager.scrollToPosition(0);
-            } else {
+            if (MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue())) {
+                followingLayoutManager.scrollToPosition(0);
+            } else if (MainViewModel.Tab.ForYou.equals(viewModel.selectedTab.getValue())) {
                 publicLayoutManager.scrollToPosition(0);
             }
         });
@@ -316,8 +341,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             startComposerActivity();
         });
 
+        pingsButton = root.findViewById(R.id.pings);
+        pingsButton.setOnClickListener(v -> viewModel.setSelectedTab(MainViewModel.Tab.Pings));
         followingButton = root.findViewById(R.id.following);
-        followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));
+        followingButton.setOnClickListener(v -> viewModel.setSelectedTab(MainViewModel.Tab.Following));
         discoverButton = root.findViewById(R.id.discover);
         discoverButton.setOnClickListener(v -> {
             boolean hasUpdatedFeed = Boolean.TRUE.equals(publicContentCache.getHasUpdatedPublicFeed().getValue());
@@ -327,17 +354,18 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             } else {
                 viewModel.maybeRefreshPublicFeed();
             }
-            viewModel.setFollowingSelected(false);
+            viewModel.setSelectedTab(MainViewModel.Tab.ForYou);
         });
 
         viewModel = new ViewModelProvider(requireActivity(), new MainViewModel.MainViewModelFactory(getActivity().getApplication(), externalMediaThumbnailLoader)).get(MainViewModel.class);
-        viewModel.setFollowingSelected(!goToForYou);
-        viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
-            boolean followingSelected = Boolean.TRUE.equals(selected);
-            setFollowingSelected(followingSelected);
-            if (followingSelected) {
+        if (goToForYou) {
+            viewModel.setSelectedTab(MainViewModel.Tab.ForYou);
+        }
+        viewModel.selectedTab.observe(getViewLifecycleOwner(), tab -> {
+            setSelectedTab(tab);
+            if (MainViewModel.Tab.Following.equals(tab)) {
                 viewModel.setHasUpdatedFollowingFeed(false);
-            } else {
+            } else if (MainViewModel.Tab.ForYou.equals(tab)) {
                 notifyPublicPostsSeen(publicLayoutManager, publicListView);
             }
         });
@@ -374,15 +402,15 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         updatedFollowingFeedView = root.findViewById(R.id.updated_following_feed_dot);
         viewModel.getHasUpdatedFollowingFeed().observe(getViewLifecycleOwner(), hasUpdatedFeed -> {
-            boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+            boolean followingTabSelected = MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue());
             updatedFollowingFeedView.setVisibility(hasUpdatedFeed && !followingTabSelected ? View.VISIBLE : View.INVISIBLE);
         });
 
         updatedPublicFeedView = root.findViewById(R.id.updated_public_feed_dot);
         publicContentCache.getHasUpdatedPublicFeed().observe(getViewLifecycleOwner(), hasUpdatedFeed -> {
-            boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
-            updatedPublicFeedView.setVisibility(hasUpdatedFeed && followingTabSelected ? View.VISIBLE : View.GONE);
-            discoverRefresh.setVisibility(hasUpdatedFeed && !followingTabSelected ? View.VISIBLE : View.GONE);
+            boolean publicFeedSelected = MainViewModel.Tab.ForYou.equals(viewModel.selectedTab.getValue());
+            updatedPublicFeedView.setVisibility(hasUpdatedFeed && !publicFeedSelected ? View.VISIBLE : View.GONE);
+            discoverRefresh.setVisibility(hasUpdatedFeed && publicFeedSelected ? View.VISIBLE : View.GONE);
         });
 
         tapToRequestLocation = root.findViewById(R.id.request_location_access);
@@ -407,6 +435,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 publicFailedText.setText(R.string.failed_load_public_feed);
                 publicListView.setVisibility(View.GONE);
             }
+        });
+
+        viewModel.pingItems.getLiveData().observe(getViewLifecycleOwner(), items -> {
+            Log.d("MainFragment got new ping list " + items);
+            pingsListAdapter.submitItems(items);
         });
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
@@ -518,7 +551,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         MomentManager.getInstance().isUnlockedLiveData().observe(getViewLifecycleOwner(), momentUnlockStatus -> {
             uploadingProgressView.setVisibility(momentUnlockStatus.isUnlocking() ? View.VISIBLE : View.GONE);
-            boolean followingSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+            boolean followingSelected = MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue());
             if (!followingSelected) {
                 notifyPublicPostsSeen(publicLayoutManager, publicListView);
             }
@@ -665,7 +698,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     }
 
     private void sendSeenReceipt(@NonNull KatchupPost post) {
-        String feedType = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue()) ? "following" : "public";
+        String feedType = MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue()) ? "following" : "public";
         Analytics.getInstance().seenPost(post.id, post.contentType, post.notificationId, feedType);
 
         Connection.getInstance().sendPostSeenReceipt(post.senderUserId, post.id);
@@ -674,8 +707,20 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     @Override
     public void onResume() {
         super.onResume();
-        Analytics.getInstance().openScreen(
-                Boolean.TRUE.equals(viewModel.followingTabSelected.getValue()) ? "followingFeed" : "publicFeed");
+        switch (viewModel.selectedTab.getValue()) {
+            case Following: {
+                Analytics.getInstance().openScreen("followingFeed");
+                break;
+            }
+            case ForYou: {
+                Analytics.getInstance().openScreen("publicFeed");
+                break;
+            }
+            case Pings: {
+                Analytics.getInstance().openScreen("pings");
+                break;
+            }
+        }
         kAvatarLoader.load(avatarView, UserId.ME);
         if (hasLocationPermission()) {
             Log.d("MainFragment.onResume hasLocationPermission=true");
@@ -686,7 +731,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             tapToRequestLocation.setVisibility(View.VISIBLE);
         }
         tapToEnableNotifications.setVisibility(NotificationManagerCompat.from(requireActivity()).areNotificationsEnabled() ? View.GONE : View.VISIBLE);
-        if (Boolean.FALSE.equals(viewModel.followingTabSelected.getValue())) {
+        if (MainViewModel.Tab.ForYou.equals(viewModel.selectedTab.getValue())) {
             viewModel.maybeRefreshPublicFeed();
         }
         viewModel.unseenFollowerCount.invalidate();
@@ -719,7 +764,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     }
 
     public void onActivityReenter(int resultCode, Intent data) {
-        boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+        boolean followingTabSelected = MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue());
 
         if (resultCode == Activity.RESULT_OK && followingTabSelected && data != null && data.getBooleanExtra(SelfiePostComposerActivity.EXTRA_COMPOSER_TRANSITION, false)) {
             ViewGroup.LayoutParams params = composerTransitionView.getLayoutParams();
@@ -742,7 +787,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     }
 
     public void startComposerActivity() {
-        boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+        boolean followingTabSelected = MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue());
 
         if (followingTabSelected) {
             // avoid the share element showing during the activity start transition
@@ -887,18 +932,37 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         );
     }
 
-    private void setFollowingSelected(boolean followingSelected) {
+    private void setSelectedTab(@NonNull MainViewModel.Tab tab) {
+        switch (tab) {
+            case Following: {
+                Analytics.getInstance().openScreen("followingFeed");
+                break;
+            }
+            case ForYou: {
+                Analytics.getInstance().openScreen("publicFeed");
+                break;
+            }
+            case Pings: {
+                Analytics.getInstance().openScreen("pings");
+                break;
+            }
+        }
+
         int selectedTextColor = getResources().getColor(R.color.white);
         int unselectedTextColor = getResources().getColor(R.color.black);
-        Analytics.getInstance().openScreen(followingSelected ? "followingFeed" : "publicFeed");
         Drawable selectedBackgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.selected_feed_type_background);
         Drawable unselectedBackgroundDrawable = null;
-        followingButton.setBackground(followingSelected ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
-        followingButton.setTextColor(followingSelected ? selectedTextColor : unselectedTextColor);
-        discoverButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
-        discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
-        followingTab.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
-        publicTab.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
+
+        followingButton.setBackground(MainViewModel.Tab.Following.equals(tab) ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
+        followingButton.setTextColor(MainViewModel.Tab.Following.equals(tab) ? selectedTextColor : unselectedTextColor);
+        discoverButton.setBackground(MainViewModel.Tab.ForYou.equals(tab) ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
+        discoverButton.setTextColor(MainViewModel.Tab.ForYou.equals(tab) ? selectedTextColor : unselectedTextColor);
+        pingsButton.setBackground(MainViewModel.Tab.Pings.equals(tab) ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
+        pingsButton.setTextColor(MainViewModel.Tab.Pings.equals(tab) ? selectedTextColor : unselectedTextColor);
+
+        followingTab.setVisibility(MainViewModel.Tab.Following.equals(tab) ? View.VISIBLE : View.GONE);
+        publicTab.setVisibility(MainViewModel.Tab.ForYou.equals(tab) ? View.VISIBLE : View.GONE);
+        pingsTab.setVisibility(MainViewModel.Tab.Pings.equals(tab) ? View.VISIBLE : View.GONE);
     }
 
     private boolean hasLocationPermission() {
@@ -938,7 +1002,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private void possiblyShowReactionTooltip() {
         final Post post = viewModel.getReactedToPost();
         if (post != null && !camera.isRecordingVideo() && !recordingCanceled) {
-            final RecyclerView parentListView = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue()) ? followingListView : publicListView;
+            final RecyclerView parentListView = MainViewModel.Tab.Following.equals(viewModel.selectedTab.getValue()) ? followingListView : publicListView;
             final RecyclerView.ViewHolder holder = parentListView.findViewHolderForItemId(post.rowId);
             if (holder instanceof KatchupPostViewHolder) {
                 ((KatchupPostViewHolder) holder).showReactionTooltip();
@@ -1038,6 +1102,12 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         public final static int MY_POST_COMMENT_DISPLAY_LIMIT = 4;
 
+        enum Tab {
+            Pings,
+            Following,
+            ForYou,
+        }
+
         private final ContentDb contentDb = ContentDb.getInstance();
         private final ContactsDb contactsDb = ContactsDb.getInstance();
         private final ConnectionObservers connectionObservers = ConnectionObservers.getInstance();
@@ -1106,7 +1176,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 if (post.senderUserId.isMe()) {
                     myPost.invalidate();
                 } else {
-                    if (!Boolean.TRUE.equals(followingTabSelected.getValue())) {
+                    if (!Tab.Following.equals(selectedTab.getValue())) {
                         setHasUpdatedFollowingFeed(true);
                     }
                     momentList.invalidate();
@@ -1260,7 +1330,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private final KatchupPostsDataSource.Factory dataSourceFactory;
         // TODO(michelle): Move publicFeed to PublicContentCache
         final MutableLiveData<List<Post>> publicFeed = new MutableLiveData<>();
-        final MutableLiveData<Boolean> followingTabSelected = new MutableLiveData<>(true);
+        final MutableLiveData<Tab> selectedTab = new MutableLiveData<>(Tab.Following);
+        final ComputableLiveData<List<PingItem>> pingItems;
         final LiveData<PagedList<Post>> postList;
         final ComputableLiveData<Post> myPost;
         final MutableLiveData<List<Comment>> myPostComments = new MutableLiveData<>();
@@ -1292,6 +1363,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             this.externalMediaThumbnailLoader = externalMediaThumbnailLoader;
             dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
+
+            pingItems = new ComputableLiveData<List<PingItem>>() {
+                @Override
+                protected List<PingItem> compute() {
+                    return computePingItems();
+                }
+            };
 
             myPost = new ComputableLiveData<Post>() {
                 @Override
@@ -1330,6 +1408,20 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
             fetchSuggestions();
             fetchMyPostComments();
+        }
+
+        private List<PingItem> computePingItems() {
+            List<PingItem> ret = new ArrayList<>();
+
+            List<Comment> comments = contentDb.getIncomingCommentsHistory(250);
+            for (Comment comment : comments) {
+                PingItem item = new PingItem();
+                item.userId = comment.senderUserId;
+                item.text = comment.type == Comment.TYPE_STICKER && comment.text.length() > 7 ? comment.text.substring(7) : comment.text;
+                ret.add(item);
+            }
+
+            return ret;
         }
 
         private MutableLiveData<Boolean> getPublicFeedLoadFailed() {
@@ -1495,8 +1587,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             fetchPublicFeed();
         }
 
-        public void setFollowingSelected(boolean selected) {
-            followingTabSelected.postValue(selected);
+        public void setSelectedTab(@NonNull Tab tab) {
+            selectedTab.setValue(tab);
         }
 
         public MutableLiveData<Boolean> getHasUpdatedFollowingFeed() {
@@ -1635,6 +1727,85 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     return (T) new MainViewModel(application, externalMediaThumbnailLoader);
                 }
                 throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        }
+    }
+
+    private static class PingItem {
+        UserId userId;
+        String text;
+    }
+
+    private abstract class PingViewHolder<T extends PingItem> extends ViewHolderWithLifecycle {
+
+        public PingViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        public abstract void bindTo(@NonNull T item);
+    }
+
+    private class CommentViewHolder extends PingViewHolder<PingItem> {
+        private ImageView avatar;
+        private TextView text;
+
+        public CommentViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            avatar = itemView.findViewById(R.id.avatar);
+            text = itemView.findViewById(R.id.text);
+        }
+
+        @Override
+        public void bindTo(@NonNull PingItem item) {
+            kAvatarLoader.load(avatar, item.userId);
+
+            contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                    text.setText(result.getShortName() + ": " + item.text);
+                }
+
+                @Override
+                public void showLoading(@NonNull TextView view) {
+
+                }
+            });
+        }
+    }
+
+    private class PingsAdapter extends HeaderFooterAdapter<PingItem> {
+
+        public PingsAdapter(@NonNull HeaderFooterAdapterParent parent) {
+            super(parent);
+
+            View welcomeFooter = addFooter(R.layout.ping_item_welcome);
+            kAvatarLoader.load(welcomeFooter.findViewById(R.id.avatar), UserId.ME);
+            String username = Me.getInstance().getUsername();
+            TextView text = welcomeFooter.findViewById(R.id.text);
+            text.setText(getString(R.string.ping_welcome, username));
+        }
+
+        @Override
+        public long getIdForItem(PingItem pingItem) {
+            return 0;
+        }
+
+        @Override
+        public int getViewTypeForItem(PingItem pingItem) {
+            return 0;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
+            return new CommentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ping_item_comment, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
+            if (holder instanceof CommentViewHolder) {
+                ((CommentViewHolder) holder).bindTo(getItem(position));
             }
         }
     }

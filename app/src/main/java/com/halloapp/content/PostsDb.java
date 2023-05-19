@@ -3134,7 +3134,8 @@ class PostsDb {
                     CommentsTable.COLUMN_TIMESTAMP + ", " +
                     CommentsTable.COLUMN_TRANSFERRED + ", " +
                     CommentsTable.COLUMN_TEXT + ", " +
-                    CommentsTable.COLUMN_SEEN + " " +
+                    CommentsTable.COLUMN_SEEN + ", " +
+                    CommentsTable.COLUMN_TYPE + " " +
                 "FROM " + CommentsTable.TABLE_NAME + " " +
                 "WHERE comments.comment_sender_user_id<>'' " +
                     "AND comments.text IS NOT NULL " +
@@ -3148,8 +3149,9 @@ class PostsDb {
                 (limit < 0 ? "" : "LIMIT " + limit);
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
-                final Comment comment = new Comment(
+                final Comment comment = Comment.build(
                         cursor.getLong(0),
+                        cursor.getInt(9),
                         cursor.getString(1),
                         new UserId(cursor.getString(2)),
                         cursor.getString(3),
