@@ -36,6 +36,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
 
     public interface RecordingListener {
         void onCancel();
+        void onDone();
         void onSend();
     }
 
@@ -58,6 +59,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
 
     private static final int STATE_DEFAULT = 0;
     private static final int STATE_CANCELING = 2;
+    private static final int STATE_CANCELLED = 3;
     private static final int STATE_DONE = 4;
 
     private ValueAnimator enterAnimator;
@@ -76,12 +78,17 @@ public class VideoReactionRecordControlView extends FrameLayout {
             state = STATE_DEFAULT;
             fadeInElements();
         } else if (action == MotionEvent.ACTION_UP) {
-            onDone();
-            if (state != STATE_DONE) {
+            if (state == STATE_CANCELLED) {
+                if (listener != null) {
+                    listener.onDone();
+                    state = STATE_DONE;
+                }
+            } else if (state != STATE_DONE) {
                 if (listener != null) {
                     listener.onSend();
                 }
             }
+            fadeOutElements();
         } else if (action == MotionEvent.ACTION_MOVE) {
             float adjustedX = event.getRawX() - pos[0];
             if (rtl) {
@@ -90,9 +97,9 @@ public class VideoReactionRecordControlView extends FrameLayout {
             updateUI(adjustedX, event.getRawY() - pos[1]);
         } else if (action == MotionEvent.ACTION_CANCEL) {
             if (state != STATE_DONE) {
-                listener.onCancel();
+                listener.onDone();
                 state = STATE_DONE;
-                onDone();
+                fadeOutElements();
             }
         }
     }
@@ -188,7 +195,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
         switch (state) {
             case STATE_CANCELING: {
                 if (dX > swipeToCancelDistance) {
-                    state = STATE_DONE;
+                    state = STATE_CANCELLED;
                     if (listener != null) {
                         listener.onCancel();
                     }
@@ -196,8 +203,9 @@ public class VideoReactionRecordControlView extends FrameLayout {
                 updateButtonsCanceling(x, y);
                 break;
             }
+            case STATE_CANCELLED:
             case STATE_DONE: {
-                onDone();
+                fadeOutElements();
                 break;
             }
             default:
@@ -208,7 +216,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
         }
     }
 
-    private void onDone() {
+    private void fadeOutElements() {
         if (enterAnimator != null) {
             enterAnimator.cancel();
             enterAnimator = null;

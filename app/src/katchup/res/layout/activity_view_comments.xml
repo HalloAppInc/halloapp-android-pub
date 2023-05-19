@@ -467,7 +467,8 @@
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="match_parent"
-        android:paddingBottom="24dp"/>
+        android:paddingBottom="24dp"
+        android:clipToPadding="false"/>
 
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/video_preview_container"

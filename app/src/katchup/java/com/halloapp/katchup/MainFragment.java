@@ -111,7 +111,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -544,9 +543,19 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             }
 
             @Override
+            public void onDone() {
+                if (!recordingCanceled) {
+                    recordingCanceled = true;
+                    onStopRecording();
+                }
+                hideRecordingUI();
+            }
+
+            @Override
             public void onSend() {
                 recordingCanceled = false;
                 onStopRecording();
+                hideRecordingUI();
             }
         });
         videoReactionRecordControlView.setPositionReferenceView(videoDurationChronometer);
@@ -942,14 +951,22 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         locationManager.removeUpdates(locationListener);
     }
 
+    private void showRecordingUI() {
+        videoReactionRecordControlView.setVisibility(View.VISIBLE);
+        setEnableParentTouchHandling(false);
+    }
+
+    private void hideRecordingUI() {
+        setEnableParentTouchHandling(true);
+        videoReactionRecordControlView.setVisibility(View.GONE);
+    }
+
     private void onStopRecording() {
         possiblyShowReactionTooltip();
 
         camera.stopRecordingVideo();
-        setEnableParentTouchHandling(true);
         videoPreviewContainer.setVisibility(View.GONE);
         videoProgressContainer.setVisibility(View.GONE);
-        videoReactionRecordControlView.setVisibility(View.GONE);
         camera.unbind();
         recordProtection.setVisibility(View.INVISIBLE);
         videoRecordIndicator.setVisibility(View.GONE);
@@ -1697,8 +1714,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
                     recordingCanceled = false;
                     viewModel.setReactedToPost(post, isPublic);
-                    videoReactionRecordControlView.setVisibility(View.VISIBLE);
-                    setEnableParentTouchHandling(false);
+                    showRecordingUI();
                     camera.bindCameraUseCases();
                     videoPreviewContainer.setVisibility(View.VISIBLE);
                     videoProgressContainer.setVisibility(View.VISIBLE);

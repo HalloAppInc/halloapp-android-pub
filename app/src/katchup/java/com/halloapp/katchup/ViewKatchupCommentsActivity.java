@@ -616,9 +616,19 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
 
             @Override
+            public void onDone() {
+                if (!canceled) {
+                    canceled = true;
+                    onStopRecording();
+                }
+                hideRecordingUI();
+            }
+
+            @Override
             public void onSend() {
                 canceled = false;
                 onStopRecording();
+                hideRecordingUI();
             }
         });
         recordVideoReaction.setOnTouchListener((v, event) -> {
@@ -1010,6 +1020,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
+    private void showRecordingUI() {
+        videoReactionRecordControlView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideRecordingUI() {
+        videoReactionRecordControlView.setVisibility(View.GONE);
+    }
+
     private void onStopRecording() {
         if (!camera.isRecordingVideo() && !canceled) {
             if (reactionTooltipPopupWindow != null) {
@@ -1023,7 +1041,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         camera.stopRecordingVideo();
         videoPreviewContainer.setVisibility(View.GONE);
         videoProgressContainer.setVisibility(View.GONE);
-        videoReactionRecordControlView.setVisibility(View.GONE);
         camera.unbind();
         entryContainer.setVisibility(View.VISIBLE);
         protectionFromRecording = false;
@@ -1049,7 +1066,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             public void onCaptureSuccess(File file, int type) {
                 runOnUiThread(() -> {
                     viewModel.onVideoReaction(file, canceled).observe(ViewKatchupCommentsActivity.this, sent -> {
-                        onSendComment();
+                        if (sent) {
+                            onSendComment();
+                        }
                     });
                 });
             }
