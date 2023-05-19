@@ -57,7 +57,8 @@ public class RelationshipApi {
                         res.username,
                         res.name,
                         res.avatarId,
-                        RelationshipInfo.Type.FOLLOWING
+                        RelationshipInfo.Type.FOLLOWING,
+                        System.currentTimeMillis()
                 ));
             }
             Analytics.getInstance().followed(res.success);
@@ -119,7 +120,8 @@ public class RelationshipApi {
                         res.username,
                         res.name,
                         res.avatarId,
-                        RelationshipInfo.Type.BLOCKED
+                        RelationshipInfo.Type.BLOCKED,
+                        System.currentTimeMillis()
                 ));
 
                 deletePostsByUser(userId);

@@ -24,7 +24,8 @@ public class RelationshipListResponseIq extends HalloIq {
                     userProfile.getUsername(),
                     userProfile.getName(),
                     userProfile.getAvatarId(),
-                    type
+                    type,
+                    System.currentTimeMillis()
             ));
         }
         this.relationshipList = infos;

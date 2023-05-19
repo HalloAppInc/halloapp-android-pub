@@ -84,6 +84,7 @@ import com.halloapp.katchup.ui.KatchupShareExternallyView;
 import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.server.Ping;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
@@ -1431,9 +1432,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
             List<Comment> comments = contentDb.getIncomingCommentsHistory(250);
             for (Comment comment : comments) {
-                PingItem item = new PingItem();
-                item.userId = comment.senderUserId;
-                item.text = comment.type == Comment.TYPE_STICKER && comment.text.length() > 7 ? comment.text.substring(7) : comment.text;
+                String text = comment.type == Comment.TYPE_STICKER && comment.text.length() > 7 ? comment.text.substring(7) : comment.text;
+                PingItem item = new PingItem(PingItem.PingType.Comment, comment.senderUserId, text, comment.timestamp);
+                ret.add(item);
+            }
+
+            List<RelationshipInfo> infos = contactsDb.getFollowerHistory(250);
+            for (RelationshipInfo info : infos) {
+                PingItem item = new PingItem(PingItem.PingType.Follow, info.userId, null, info.timestamp);
                 ret.add(item);
             }
 
@@ -1748,20 +1754,63 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     }
 
     private static class PingItem {
+        enum PingType {
+            Comment,
+            Follow,
+        }
+
+        PingType pingType;
         UserId userId;
         String text;
+        long timestamp;
+
+        public PingItem(PingType pingType, UserId userId, String text, long timestamp) {
+            this.pingType = pingType;
+            this.userId = userId;
+            this.text = text;
+            this.timestamp = timestamp;
+        }
     }
 
-    private abstract class PingViewHolder<T extends PingItem> extends ViewHolderWithLifecycle {
+    private abstract class PingViewHolder extends ViewHolderWithLifecycle {
 
         public PingViewHolder(@NonNull View itemView) {
             super(itemView);
         }
 
-        public abstract void bindTo(@NonNull T item);
+        public abstract void bindTo(@NonNull PingItem item);
     }
 
-    private class CommentViewHolder extends PingViewHolder<PingItem> {
+    private class FollowViewHolder extends PingViewHolder {
+        private ImageView avatar;
+        private TextView text;
+
+        public FollowViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            avatar = itemView.findViewById(R.id.avatar);
+            text = itemView.findViewById(R.id.text);
+        }
+
+        @Override
+        public void bindTo(@NonNull PingItem item) {
+            kAvatarLoader.load(avatar, item.userId);
+
+            contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                    text.setText(getString(R.string.ping_followed_you, result.getShortName()));
+                }
+
+                @Override
+                public void showLoading(@NonNull TextView view) {
+
+                }
+            });
+        }
+    }
+
+    private class CommentViewHolder extends PingViewHolder {
         private ImageView avatar;
         private TextView text;
 
@@ -1792,6 +1841,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
     private class PingsAdapter extends HeaderFooterAdapter<PingItem> {
 
+        private static final int ITEM_TYPE_COMMENT = 0;
+        private static final int ITEM_TYPE_FOLLOW = 1;
+
         public PingsAdapter(@NonNull HeaderFooterAdapterParent parent) {
             super(parent);
 
@@ -1809,19 +1861,31 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         @Override
         public int getViewTypeForItem(PingItem pingItem) {
-            return 0;
+            switch (pingItem.pingType) {
+                case Comment: return ITEM_TYPE_COMMENT;
+                case Follow: return ITEM_TYPE_FOLLOW;
+                default: throw new IllegalStateException("Missing item type");
+            }
         }
 
         @NonNull
         @Override
         public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
-            return new CommentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ping_item_comment, parent, false));
+            if (viewType == ITEM_TYPE_COMMENT) {
+                return new CommentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ping_item_comment, parent, false));
+            } else if (viewType == ITEM_TYPE_FOLLOW) {
+                return new FollowViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ping_item_follow, parent, false));
+            } else {
+                throw new IllegalArgumentException("Unexpected viewType " + viewType);
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof CommentViewHolder) {
                 ((CommentViewHolder) holder).bindTo(getItem(position));
+            } else if (holder instanceof FollowViewHolder) {
+                ((FollowViewHolder) holder).bindTo(getItem(position));
             }
         }
     }

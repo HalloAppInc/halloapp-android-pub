@@ -28,7 +28,8 @@ public class FollowSuggestionsResponseIq extends HalloIq {
                     userProfile.getUsername(),
                     userProfile.getName(),
                     userProfile.getAvatarId(),
-                    RelationshipInfo.Type.BLOCKED
+                    RelationshipInfo.Type.BLOCKED,
+                    System.currentTimeMillis()
             );
             suggestions.add(new Suggestion(Suggestion.fromProto(suggestedProfile.getReason()), suggestedProfile.getRank(), info, suggestedProfile.getUserProfile().getNumMutualFollowing()));
         }

@@ -1980,4 +1980,6 @@
     <string name="failed_to_request_archive">Failed to load calendar</string>
     <!-- Message shown in the pings tab to welcome the user -->
     <string name="ping_welcome">%s welcome to katchup! 🍅🔥</string>
+    <!-- Message shown in the pings tab when someone has followed you -->
+    <string name="ping_followed_you">%s followed you</string>
 </resources>

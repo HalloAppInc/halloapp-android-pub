@@ -481,8 +481,8 @@ public class KatchupConnectionObserver extends Connection.Observer {
         String geotag = geotags.size() > 0 ? geotags.get(0) : null;
         contactsDb.updateGeotags(Collections.singletonMap(userId, geotag));
         if (profileUpdate.getType().equals(ProfileUpdate.Type.DELETE)) {
-            contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWING));
-            contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWER));
+            contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWING, 0));
+            contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWER, 0));
             notifications.clearNewUserNotification(userId);
         } else {
             FollowStatus followerStatus = profileUpdate.getProfile().getFollowerStatus();
@@ -490,33 +490,35 @@ public class KatchupConnectionObserver extends Connection.Observer {
             RelationshipInfo followingInfo = contactsDb.getRelationship(userId, RelationshipInfo.Type.FOLLOWING);
             RelationshipInfo followerInfo = contactsDb.getRelationship(userId, RelationshipInfo.Type.FOLLOWER);
 
+            long now = System.currentTimeMillis();
+
             if (followerInfo == null && followerStatus.equals(FollowStatus.FOLLOWING)) {
-                contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+                contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER, now));
                 notifications.showNewFollowerNotification(userId, username);
             } else if (followerInfo != null && followerStatus.equals(FollowStatus.FOLLOWING)) {
                 if (!Objects.equals(followerInfo.avatarId, avatarId)) {
                     avatarLoader.reportAvatarUpdate(userId, avatarId);
                 }
 
-                contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+                contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER, now));
                 if (followerInfo.relationshipType != RelationshipInfo.Type.FOLLOWER) {
                     notifications.showNewFollowerNotification(userId, username);
                 }
             } else if (followerInfo != null && followerStatus.equals(FollowStatus.NONE)) {
-                contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+                contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER, now));
                 notifications.clearNewFollowerNotification(userId);
             }
 
             if (followingInfo == null && followingStatus.equals(FollowStatus.FOLLOWING)) {
-                contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
+                contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING, now));
             } else if (followingInfo != null && followingStatus.equals(FollowStatus.FOLLOWING)) {
                 if (!Objects.equals(followingInfo.avatarId, avatarId)) {
                     avatarLoader.reportAvatarUpdate(userId, avatarId);
                 }
 
-                contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
+                contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING, now));
             } else if (followingInfo != null && followingStatus.equals(FollowStatus.NONE)) {
-                contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
+                contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING, now));
             }
 
             if (profileUpdate.getType().equals(ProfileUpdate.Type.CONTACT_NOTICE) && !TextUtils.isEmpty(username)) {

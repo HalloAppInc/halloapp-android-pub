@@ -59,13 +59,15 @@ public class RelationshipInfo {
     public final String avatarId;
     public final int relationshipType;
     public boolean seen;
+    public final long timestamp;
 
-    public RelationshipInfo(UserId userId, String username, String name, String avatarId, @Type int relationshipType) {
+    public RelationshipInfo(UserId userId, String username, String name, String avatarId, @Type int relationshipType, long timestamp) {
         this.userId = userId;
         this.username = username;
         this.name = name;
         this.avatarId = avatarId;
         this.relationshipType = relationshipType;
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -77,7 +79,8 @@ public class RelationshipInfo {
                 && Objects.equals(userId, that.userId)
                 && Objects.equals(username, that.username)
                 && Objects.equals(name, that.name)
-                && Objects.equals(avatarId, that.avatarId);
+                && Objects.equals(avatarId, that.avatarId)
+                && Objects.equals(timestamp, that.timestamp);
     }
 
     @Override

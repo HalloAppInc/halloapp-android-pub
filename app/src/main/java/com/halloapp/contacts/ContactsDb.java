@@ -1116,7 +1116,8 @@ public class ContactsDb {
                 KatchupRelationshipTable.COLUMN_NAME + "," +
                 KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
                 KatchupRelationshipTable.COLUMN_LIST_TYPE + "," +
-                KatchupRelationshipTable.COLUMN_SEEN +
+                KatchupRelationshipTable.COLUMN_SEEN + "," +
+                KatchupRelationshipTable.COLUMN_TIMESTAMP +
                 " FROM " + KatchupRelationshipTable.TABLE_NAME +
                 " WHERE " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
 
@@ -1127,7 +1128,8 @@ public class ContactsDb {
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
-                        cursor.getInt(5)
+                        cursor.getInt(5),
+                        cursor.getLong(7)
                 );
                 relationshipInfo.seen = cursor.getInt(6) == 1;
                 relationships.add(relationshipInfo);
@@ -1149,7 +1151,8 @@ public class ContactsDb {
                 KatchupRelationshipTable.COLUMN_NAME + "," +
                 KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
                 KatchupRelationshipTable.COLUMN_LIST_TYPE + "," +
-                KatchupRelationshipTable.COLUMN_SEEN +
+                KatchupRelationshipTable.COLUMN_SEEN + "," +
+                KatchupRelationshipTable.COLUMN_TIMESTAMP +
                 " FROM " + KatchupRelationshipTable.TABLE_NAME +
                 " WHERE " + KatchupRelationshipTable.COLUMN_USER_ID + "=?" +
                 " AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
@@ -1161,7 +1164,8 @@ public class ContactsDb {
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
-                        cursor.getInt(5)
+                        cursor.getInt(5),
+                        cursor.getLong(7)
                 );
                 relationshipInfo.seen = cursor.getInt(6) == 1;
                 return relationshipInfo;
@@ -1169,6 +1173,42 @@ public class ContactsDb {
         }
 
         return null;
+    }
+
+    public List<RelationshipInfo> getFollowerHistory(int limit) {
+        final List<RelationshipInfo> relationships = new ArrayList<>();
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String sql = "SELECT " +
+                KatchupRelationshipTable._ID + "," +
+                KatchupRelationshipTable.COLUMN_USER_ID + "," +
+                KatchupRelationshipTable.COLUMN_USERNAME + "," +
+                KatchupRelationshipTable.COLUMN_NAME + "," +
+                KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
+                KatchupRelationshipTable.COLUMN_LIST_TYPE + "," +
+                KatchupRelationshipTable.COLUMN_SEEN + "," +
+                KatchupRelationshipTable.COLUMN_TIMESTAMP +
+                " FROM " + KatchupRelationshipTable.TABLE_NAME +
+                " WHERE " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=" + RelationshipInfo.Type.FOLLOWER +
+                " ORDER BY " + KatchupRelationshipTable.COLUMN_TIMESTAMP + " DESC " +
+                " LIMIT " + limit;
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {})) {
+            while (cursor.moveToNext()) {
+                RelationshipInfo relationshipInfo = new RelationshipInfo(
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getLong(7)
+                );
+                relationshipInfo.seen = cursor.getInt(6) == 1;
+                relationships.add(relationshipInfo);
+            }
+        }
+
+        return relationships;
     }
 
     @WorkerThread
@@ -1181,7 +1221,7 @@ public class ContactsDb {
         values.put(KatchupRelationshipTable.COLUMN_NAME, relationship.name);
         values.put(KatchupRelationshipTable.COLUMN_AVATAR_ID, relationship.avatarId);
         values.put(KatchupRelationshipTable.COLUMN_LIST_TYPE, relationship.relationshipType);
-        values.put(KatchupRelationshipTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
+        values.put(KatchupRelationshipTable.COLUMN_TIMESTAMP, relationship.timestamp);
 
         db.insert(KatchupRelationshipTable.TABLE_NAME, null, values);
 
