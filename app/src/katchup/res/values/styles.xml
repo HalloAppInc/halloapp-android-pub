@@ -46,4 +46,9 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="RoundedGalleryImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
 </resources>

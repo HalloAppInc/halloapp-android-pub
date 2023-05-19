@@ -93,6 +93,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     private File captureFile;
     private @Media.MediaType int captureType;
     private GalleryPopupWindow galleryPopupWindow;
+    private FullMediaPopupWindow fullMediaPopupWindow;
     private File createdImage;
 
     private ContentPlayerView videoPlayerView;
@@ -285,6 +286,16 @@ public class GalleryComposeFragment extends ComposeFragment {
         }
         galleryPopupWindow = new GalleryPopupWindow(requireContext(), viewModel.getSelectedImage().getValue());
         galleryPopupWindow.show(mediaPreviewContainer);
+    }
+
+    private void showFullMedia(Uri uri) {
+        if (fullMediaPopupWindow != null) {
+            fullMediaPopupWindow.dismiss();
+            fullMediaPopupWindow = null;
+        }
+
+        fullMediaPopupWindow = new FullMediaPopupWindow(requireContext(), uri);
+        fullMediaPopupWindow.show(mediaPreviewContainer);
     }
 
     private void showPreviewView() {
@@ -565,6 +576,11 @@ public class GalleryComposeFragment extends ComposeFragment {
 
             if (thumbnailView != null) {
                 thumbnailView.setOnClickListener(tv -> onItemClicked());
+                thumbnailView.setOnLongClickListener(tv -> {
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
+                    showFullMedia(uri);
+                    return true;
+                });
             }
         }
 
@@ -624,6 +640,34 @@ public class GalleryComposeFragment extends ComposeFragment {
             setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             setOutsideTouchable(true);
             setFocusable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            View contentView = getContentView();
+            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            showAsDropDown(anchor);
+        }
+    }
+
+    private class FullMediaPopupWindow extends PopupWindow {
+        public FullMediaPopupWindow(@NonNull Context context, @NonNull Uri uri) {
+            super(LayoutInflater.from(context).inflate(R.layout.gallery_full_media_popup_window, null, false), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+
+            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(false);
+
+            File file = FileStore.getInstance().getTmpFileForUri(uri, null);
+            FileUtils.uriToFile(requireContext(), uri, file);
+
+            View contentView = getContentView();
+            contentView.setOnClickListener(v -> {
+                BgWorkers.getInstance().execute(file::delete);
+                dismiss();
+            });
+
+            ImageView imageView = contentView.findViewById(R.id.image);
+            mediaLoader.load(imageView, Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file));
         }
 
         public void show(@NonNull View anchor) {
