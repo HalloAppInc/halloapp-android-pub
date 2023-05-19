@@ -1181,6 +1181,7 @@ public class ContactsDb {
         values.put(KatchupRelationshipTable.COLUMN_NAME, relationship.name);
         values.put(KatchupRelationshipTable.COLUMN_AVATAR_ID, relationship.avatarId);
         values.put(KatchupRelationshipTable.COLUMN_LIST_TYPE, relationship.relationshipType);
+        values.put(KatchupRelationshipTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
 
         db.insert(KatchupRelationshipTable.TABLE_NAME, null, values);
 
@@ -1471,12 +1472,13 @@ public class ContactsDb {
         static final String COLUMN_AVATAR_ID = "avatar_id";
         static final String COLUMN_LIST_TYPE = "list_type"; // following, follower, incoming, outgoing, blocked
         static final String COLUMN_SEEN = "seen";
+        static final String COLUMN_TIMESTAMP = "timestamp";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 21;
+        private static final int DATABASE_VERSION = 22;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1601,7 +1603,8 @@ public class ContactsDb {
                     + KatchupRelationshipTable.COLUMN_NAME + " TEXT,"
                     + KatchupRelationshipTable.COLUMN_AVATAR_ID + " TEXT,"
                     + KatchupRelationshipTable.COLUMN_LIST_TYPE + " INTEGER,"
-                    + KatchupRelationshipTable.COLUMN_SEEN + " INTEGER DEFAULT 0"
+                    + KatchupRelationshipTable.COLUMN_SEEN + " INTEGER DEFAULT 0,"
+                    + KatchupRelationshipTable.COLUMN_TIMESTAMP + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY);
@@ -1667,6 +1670,9 @@ public class ContactsDb {
                 }
                 case 20: {
                     upgradeFromVersion20(db);
+                }
+                case 21: {
+                    upgradeFromVersion21(db);
                 }
                 break;
                 default: {
@@ -1947,6 +1953,10 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + GeotagsTable.INDEX_USER_ID + " ON " + GeotagsTable.TABLE_NAME + " ("
                     + GeotagsTable.COLUMN_USER_ID
                     + ");");
+        }
+
+        private void upgradeFromVersion21(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + KatchupRelationshipTable.TABLE_NAME + " ADD COLUMN " + KatchupRelationshipTable.COLUMN_TIMESTAMP + " INTEGER");
         }
 
         /**
