@@ -38,7 +38,6 @@ import com.halloapp.katchup.SetupUsernameProfileActivity;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
 
 import java.util.List;
@@ -112,16 +111,15 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 //                progress.setVisibility(View.VISIBLE);
                 return;
             }
-            // If a phone number is not needed, registration happens in ContactsAndLocationAccessActivity instead of RegistrationRequestActivity
-            if (!checkResult.onboardingPermissionsSetup || (!checkResult.isPhoneNeeded && !checkResult.registered)) {
-                Log.i("MainActivity.onCreate.registrationStatus: onboarding permissions not setup or not registered (no phone number needed)");
+            if (!checkResult.onboardingPermissionsSetup) {
+                Log.i("MainActivity.onCreate.registrationStatus: onboarding permissions not setup");
                 splashScreen.setKeepOnScreenCondition(() -> true);
                 startActivity(new Intent(getBaseContext(), ContactsAndLocationAccessActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else if (checkResult.isPhoneNeeded && !checkResult.registered) {
-                Log.i("MainActivity.onCreate.registrationStatus: not registered with a required phone number");
+            } else if (!checkResult.registered) {
+                Log.i("MainActivity.onCreate.registrationStatus: not registered");
                 Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
                 startActivity(regIntent);
                 overridePendingTransition(0, 0);

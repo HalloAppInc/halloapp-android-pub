@@ -114,16 +114,6 @@
 
     </ScrollView>
 
-    <ProgressBar
-        style="@style/Widget.ProgressBar.Horizontal"
-        android:id="@+id/loading"
-        android:indeterminateTint="@color/color_secondary"
-        android:indeterminate="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:visibility="gone" />
-
     <fragment
         android:id="@+id/splash_screen_fragment"
         android:layout_width="match_parent"

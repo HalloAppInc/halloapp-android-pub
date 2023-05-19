@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,18 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
-import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.registration.Registration;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.BgWorkers;
@@ -37,11 +32,8 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
-import com.halloapp.widget.SnackbarHelper;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
@@ -55,8 +47,6 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
 
     private boolean splashFaded;
     private ContactsAndLocationAccessViewModel viewModel;
-
-    private View loadingProgressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,26 +68,10 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
         requestLocationAccessButton = findViewById(R.id.request_location_access);
         requestLocationAccessButton.setOnClickListener(view -> requestLocationAccess());
 
-        loadingProgressBar = findViewById(R.id.loading);
         viewModel = new ViewModelProvider(this).get(ContactsAndLocationAccessViewModel.class);
         viewModel.contactsAccessRequested.getLiveData().observe(this, accessRequested -> requestContactsAccessButton.setEnabled(!accessRequested));
         viewModel.locationAccessRequested.getLiveData().observe(this, accessRequested -> requestLocationAccessButton.setEnabled(!accessRequested));
         viewModel.allPermissionsRequested.observe(this, this::allPermissionsRequested);
-        viewModel.getRegistrationVerificationResult().observe(this, result -> {
-            if (result == null) {
-                return;
-            }
-            if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
-                Analytics.getInstance().registered(false);
-            } else {
-                Log.e("Error with registering: " + result.result);
-                SnackbarHelper.showWarning(this, R.string.registration_failed);
-                return;
-            }
-            loadingProgressBar.setVisibility(View.GONE);
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
     }
 
     @Override
@@ -160,13 +134,8 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
 
     private void allPermissionsRequested(@Nullable Boolean granted) {
         if (Boolean.TRUE.equals(granted)) {
-            if (viewModel.shouldRegister()) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                viewModel.verifyRegistration();
-            } else {
-                startActivity(new Intent(ContactsAndLocationAccessActivity.this, MainActivity.class));
-                finish();
-            }
+            startActivity(new Intent(ContactsAndLocationAccessActivity.this, MainActivity.class));
+            finish();
         }
     }
 
@@ -208,12 +177,6 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
         final ComputableLiveData<Boolean> contactsAccessRequested;
         final ComputableLiveData<Boolean> locationAccessRequested;
         final MediatorLiveData<Boolean> allPermissionsRequested;
-        private boolean isPhoneNeeded;
-        private static Registration.HashcashResult hashcashResult;
-        private static CountDownLatch hashcashLatch = new CountDownLatch(1);
-        private final Registration registration = Registration.getInstance();
-        private final MutableLiveData<Registration.RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
-        private static final long HASHCASH_MAX_WAIT_MS = 60_000;
 
         public ContactsAndLocationAccessViewModel(@NonNull Application application) {
             super(application);
@@ -235,10 +198,6 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
             allPermissionsRequested = new MediatorLiveData<>();
             allPermissionsRequested.addSource(contactsAccessRequested.getLiveData(), requested -> allPermissionsRequested.setValue(Boolean.TRUE.equals(requested) && Boolean.TRUE.equals(locationAccessRequested.getLiveData().getValue())));
             allPermissionsRequested.addSource(locationAccessRequested.getLiveData(), requested -> allPermissionsRequested.setValue(Boolean.TRUE.equals(requested) && Boolean.TRUE.equals(contactsAccessRequested.getLiveData().getValue())));
-            preferences.setProfileSetup(false);
-            // The hashcash is started early to determine if a phone number is needed - if it is not,
-            // this class will handle the remaining registration needed instead of RegistrationRequestActivity.
-            runHashcash();
         }
 
         public void flagContactsAccessRequested() {
@@ -252,47 +211,6 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
             bgWorkers.execute(() -> {
                 preferences.setLocationPermissionRequested(true);
                 locationAccessRequested.invalidate();
-            });
-        }
-
-        public LiveData<Registration.RegistrationVerificationResult> getRegistrationVerificationResult() {
-            return registrationRequestResult;
-        }
-
-        public boolean shouldRegister() {
-            return !isPhoneNeeded && !Me.getInstance().isRegistered();
-        }
-
-        public void verifyRegistration() {
-                bgWorkers.execute(() -> {
-                    try {
-                        hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
-                        Log.i("ContactsAndLocationAcessActivity/verifyRegistration done waiting for hashcashLatch");
-                    } catch (InterruptedException e) {
-                        Log.e("Interrupted while waiting for hashcash", e);
-                    }
-                    if (hashcashResult != null) {
-                        Registration.RegistrationVerificationResult result = registration.verifyWithoutPhoneNumber(hashcashResult);
-                        hashcashLatch = new CountDownLatch(1);
-                        hashcashResult = null;
-                        registrationRequestResult.postValue(result);
-                    }
-                });
-        }
-
-        private void runHashcash() {
-            bgWorkers.execute(() -> {
-                String hashcashChallenge = registration.requestHashcashChallenge();
-                isPhoneNeeded = registration.getIsPhoneNeeded();
-                preferences.setIsPhoneNeeded(isPhoneNeeded);
-                if (!isPhoneNeeded) {
-                    hashcashResult = registration.getHashcashSolution(hashcashChallenge);
-                    if (hashcashResult.result != Registration.HashcashResult.RESULT_OK) {
-                        Log.e("Got hashcash failure " + hashcashResult.result);
-                        Log.sendErrorReport("Hashcash failed");
-                    }
-                    hashcashLatch.countDown();
-                }
             });
         }
     }

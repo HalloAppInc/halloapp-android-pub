@@ -34,6 +34,12 @@
         <item name="android:textAlignment">center</item>
     </style>
 
+    <style name="OnboardingSkipText">
+        <item name="android:textColor">@color/onboarding_skip_text</item>
+        <item name="android:textSize">@dimen/onboarding_skip_text_size</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="OnboardingInfoText">
         <item name="android:textColor">@color/onboarding_info_text</item>
         <item name="android:textSize">@dimen/onboarding_info_text_size</item>

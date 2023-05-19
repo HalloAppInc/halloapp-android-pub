@@ -83,7 +83,6 @@ public class Registration {
     private final Connection connection;
     private final Preferences preferences;
     private final EncryptedKeyStore encryptedKeyStore;
-    private boolean isPhoneNeeded;
     private HashcashResult hashcashResult;
 
     private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull EncryptedKeyStore encryptedKeyStore) {
@@ -94,9 +93,6 @@ public class Registration {
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
-    public boolean getIsPhoneNeeded() {
-        return isPhoneNeeded;
-    }
 
     @WorkerThread
     public HashcashResult getHashcashSolution() {
@@ -250,7 +246,7 @@ public class Registration {
     }
 
     @WorkerThread
-    public @Nullable String requestHashcashChallenge() {
+    private @Nullable String requestHashcashChallenge() {
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
 
         byte[] noiseKey = me.getMyRegEd25519NoiseKey();
@@ -272,7 +268,6 @@ public class Registration {
                 return null;
             }
             HashcashResponse response = packet.getHashcashResponse();
-            isPhoneNeeded = !response.getIsPhoneNotNeeded();
 
             return response.getHashcashChallenge();
         } catch (IOException | NoiseException | BadPaddingException | ShortBufferException e) {
@@ -416,7 +411,7 @@ public class Registration {
                 contentDb.deleteDb();
             }
 
-            if (!isPhoneNeeded) {
+            if (verificationResult.phone == null) {
                 me.saveRegistrationNoise(Preconditions.checkNotNull(verificationResult.user));
             } else {
                 me.saveRegistrationNoise(
@@ -459,7 +454,7 @@ public class Registration {
 
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
         VerifyOtpRequest.Builder verifyOtpRequestBuilder = VerifyOtpRequest.newBuilder();
-        if (isPhoneNeeded) {
+        if (phone != null && code != null) {
             verifyOtpRequestBuilder.setPhone(phone);
             verifyOtpRequestBuilder.setCode(code);
         } else if (hashcashResult != null) {
@@ -510,7 +505,7 @@ public class Registration {
             VerifyOtpResponse.Reason reason = response.getReason();
 
             final String uid = Long.toString(response.getUid());
-            if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || (TextUtils.isEmpty(phone) && isPhoneNeeded) || TextUtils.isEmpty(uid)) {
+            if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || TextUtils.isEmpty(uid)) {
                 Log.w("Registration.verifyRegistration server rejected verification");
                 return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER, reason);
             }

@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -88,11 +89,13 @@ public class RegistrationRequestActivity extends HalloActivity {
     private View verificationInstructions;
     private View loadingProgressBar;
     private View sendLogsButton;
+    private View addPhoneLaterButton;
     private Preferences preferences;
     private ContactsSync contactsSync;
     private KAvatarLoader kAvatarLoader;
 
     private boolean isReverification = false;
+    private boolean isPhoneAdded = false;
 
     private final View.OnClickListener startRegistrationRequestListener = new DebouncedClickListener() {
         @Override
@@ -128,6 +131,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         nextButton = findViewById(R.id.next);
         verificationInstructions = findViewById(R.id.verification_instructions);
         sendLogsButton = findViewById(R.id.send_logs);
+        addPhoneLaterButton = findViewById(R.id.add_phone_later);
 
         privacyNoteView = findViewById(R.id.privacy_link);
         privacyNoteView.setOnClickListener(view -> {
@@ -199,8 +203,23 @@ public class RegistrationRequestActivity extends HalloActivity {
             loadingProgressBar.setVisibility(View.INVISIBLE );
         });
 
+        registrationRequestViewModel.getPhonelessRegistrationRequestResult().observe(this, result -> {
+            if (result == null) {
+                return;
+            }
+            if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
+                Analytics.getInstance().registered(false);
+            } else {
+                Log.e("Error with registering: " + result.result);
+            }
+            loadingProgressBar.setVisibility(View.GONE);
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        });
+
         phoneNumberEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                isPhoneAdded = true;
                 startRegistrationRequestListener.onClick(v);
             }
             return false;
@@ -221,7 +240,10 @@ public class RegistrationRequestActivity extends HalloActivity {
                 updateNextButton();
             }
         });
-        nextButton.setOnClickListener(startRegistrationRequestListener);
+        nextButton.setOnClickListener(v -> {
+            isPhoneAdded = true;
+            startRegistrationRequestListener.onClick(v);
+        });
 
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
         indicatorView.bind(this);
@@ -235,6 +257,11 @@ public class RegistrationRequestActivity extends HalloActivity {
                 startActivity(intent);
                 progressDialog.dismiss();
             });
+        });
+
+        addPhoneLaterButton.setOnClickListener(v -> {
+            isPhoneAdded = false;
+            startRegistrationRequestListener.onClick(v);
         });
 
         updateNextButton();
@@ -299,7 +326,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private void startRegistrationRequest() {
         firebaseAnalytics.logEvent("reg_requested", null);
-        if (!isPhoneOkayLength()) {
+        if (isPhoneAdded && !isPhoneOkayLength()) {
             SnackbarHelper.showInfo(this, R.string.invalid_phone_number);
             phoneNumberEditText.requestFocus();
             return;
@@ -310,10 +337,14 @@ public class RegistrationRequestActivity extends HalloActivity {
         loadingProgressBar.setVisibility(View.VISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
         countryCodePicker.setCcpClickable(false);
-        Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
-
-        smsVerificationManager.start(getApplicationContext());
-        registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber());
+        if (!isPhoneAdded) {
+            Log.i("RegistrationRequestActivity.startRegistrationRequest without a given phone number");
+            registrationRequestViewModel.requestPhonelessRegistration();
+        } else {
+            Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
+            smsVerificationManager.start(getApplicationContext());
+            registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber());
+        }
     }
 
     public static class RegistrationRequestViewModel extends AndroidViewModel {
@@ -324,6 +355,8 @@ public class RegistrationRequestActivity extends HalloActivity {
         private final Registration registration = Registration.getInstance();
 
         private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
+        private final MutableLiveData<Registration.RegistrationVerificationResult> phonelessRegistrationRequestResult = new MutableLiveData<>();
+
         private CountDownLatch hashcashLatch = new CountDownLatch(1);
 
         private String groupInviteToken;
@@ -360,7 +393,27 @@ public class RegistrationRequestActivity extends HalloActivity {
             return registrationRequestResult;
         }
 
-        void requestRegistration(@NonNull String phone) {
+        LiveData<Registration.RegistrationVerificationResult> getPhonelessRegistrationRequestResult() {
+            return phonelessRegistrationRequestResult;
+        }
+
+        void requestPhonelessRegistration() {
+            bgWorkers.execute(() -> {
+                try {
+                    hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                    Log.i("RegistrationRequestActivity/requestPhonelessRegistration done waiting for hashcashLatch");
+                } catch (InterruptedException e) {
+                    Log.e("Interrupted while waiting for hashcash", e);
+                }
+                Preferences.getInstance().setProfileSetup(false);
+                Registration.RegistrationVerificationResult result = registration.verifyWithoutPhoneNumber(hashcashResult);
+                hashcashLatch = new CountDownLatch(1);
+                hashcashResult = null;
+                phonelessRegistrationRequestResult.postValue(result);
+            });
+        }
+
+        void requestRegistration(@Nullable String phone) {
             bgWorkers.execute(() -> {
                 try {
                     hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);

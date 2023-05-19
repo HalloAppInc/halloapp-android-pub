@@ -1905,6 +1905,8 @@
     <string name="katchup_phone_number_hint">phone number</string>
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
     <string name="katchup_having_issues_registering">having issues registering?</string>
+    <!-- Option for user to skip adding their phone number when registering -->
+    <string name="katchup_add_phone_later">add later</string>
     <!-- prompt for entering the registration verification code -->
     <string name="katchup_verify_registration_title">enter the code we sent to\n%s</string>
     <!-- button to request another sms code -->
