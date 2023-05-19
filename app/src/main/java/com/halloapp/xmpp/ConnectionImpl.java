@@ -2014,6 +2014,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<ArchiveResultIq> requestArchive(@NonNull UserId userId) {
+        return sendIqRequestAsync(new ArchiveRequestIq(userId)).map(response -> {
+            Log.d("connection: response after request archive " + ProtoPrinter.toString(response));
+            return ArchiveResultIq.fromProto(response.getArchiveResult());
+        });
+    }
+
+    @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
     }

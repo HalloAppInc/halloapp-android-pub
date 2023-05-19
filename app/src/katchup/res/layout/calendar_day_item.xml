@@ -10,10 +10,19 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
 
+    <ImageView
+        android:id="@+id/calendar_present_day_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/calendar_present_day_circle"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/calendar_day_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="15sp"

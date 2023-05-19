@@ -353,4 +353,6 @@ public abstract class Connection {
     public abstract Observable<GeotagResponseIq> forceAddGeotag(@NonNull Location location);
 
     public abstract Observable<GeotagResponseIq> removeGeotag(@NonNull String geotag);
+
+    public abstract Observable<ArchiveResultIq> requestArchive(@NonNull UserId userId);
 }

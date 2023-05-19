@@ -1645,6 +1645,8 @@
     </plurals>
     <!-- Text shown at the bottom of the archive to let users know that the historical content they see is not public -->
     <string name="calendar_privacy_note">your calendar is only visible to you</string>
+    <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed  -->
+    <string name="calendar_last_30_days_note">displaying last 30 days</string>
     <!-- Error shown in a snackbar when the request to follow a user did not succeed -->
     <string name="failed_to_follow">Following failed</string>
     <!-- Error shown in a snackbar when the request to unfollow a user did not succeed -->
@@ -1970,4 +1972,6 @@
     <string name="failed_no_matching_geotag">No geotag matched your current location. Please ensure you are on campus and try again.</string>
     <!-- a text displayed on a loading spinner -->
     <string name="loading_spinner">loading…</string>
+    <!-- Error shown in a snackbar when request for archive data fails -->
+    <string name="failed_to_request_archive">Failed to load calendar</string>
 </resources>

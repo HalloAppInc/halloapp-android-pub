@@ -275,7 +275,8 @@
                 android:paddingTop="5dp"
                 android:text="@string/calendar"
                 android:textColor="@color/white_60"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone"/>
 
         </LinearLayout>
 

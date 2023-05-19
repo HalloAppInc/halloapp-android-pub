@@ -35,8 +35,6 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
@@ -47,6 +45,7 @@ import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentManager;
+import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
@@ -61,7 +60,6 @@ import com.halloapp.proto.server.UserProfile;
 import com.halloapp.proto.server.UserProfileResult;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
-import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.DialogFragmentUtils;
@@ -248,9 +246,6 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
             more.setVisibility(View.GONE);
         }
 
-        final BottomSheetDialog dialog = new HalloBottomSheetDialog(requireActivity());
-        dialog.setContentView(R.layout.calendar_coming_soon_bottom_sheet);
-
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
 
             boolean isMe = profileInfo.userId.isMe();
@@ -270,13 +265,21 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                 username.setOnClickListener(v -> openProfileEdit());
                 addBio.setOnClickListener(v -> openProfileEdit());
                 userBio.setOnClickListener(v -> openProfileEdit());
-                calendar.setOnClickListener(view -> startActivity(new Intent(requireContext(), ArchiveActivity.class)));
-            } else {
-                calendar.setOnClickListener(view -> {
-                    dialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-                    dialog.show();
-                });
             }
+            viewModel.resolvedUserId.observe(getViewLifecycleOwner(), resolvedUserId -> {
+                final MomentUnlockStatus unlockStatus = MomentManager.getInstance().isUnlockedLiveData().getValue();
+                updateCalendarVisibility(unlockStatus != null && unlockStatus.isUnlocked(), resolvedUserId != null, resolvedUserId != null && resolvedUserId.isMe());
+                if (resolvedUserId == null) {
+                    calendar.setOnClickListener(null);
+                } else {
+                    calendar.setOnClickListener(view -> {
+                        final Context context = getContext();
+                        if (context != null) {
+                            startActivity(ArchiveActivity.open(context, resolvedUserId));
+                        }
+                    });
+                }
+            });
 
             updateLinks(profileInfo);
             updateFollowButton(profileInfo);
@@ -386,6 +389,8 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
             List<Post> posts = viewModel.posts.getValue();
             Map<String, Integer> impressions = viewModel.impressions.getValue();
             updatePosts(posts == null ? new ArrayList<>() : posts, impressions);
+            final UserId userId = viewModel.resolvedUserId.getValue();
+            updateCalendarVisibility(unlockStatus.isUnlocked(), userId != null, userId != null && userId.isMe());
         });
 
         more.setOnClickListener(this::showMenu);
@@ -491,6 +496,14 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
 
         if (showNewPostCard) {
             addNewPostCard(archiveContent, notificationTimestamp);
+        }
+    }
+
+    private void updateCalendarVisibility(boolean isUnlocked, boolean userIsResolved, boolean userIsMe) {
+        if (userIsMe) {
+            calendar.setVisibility(View.VISIBLE);
+        } else {
+            calendar.setVisibility(isUnlocked ? (userIsResolved ? View.VISIBLE : View.INVISIBLE) : View.GONE);
         }
     }
 
@@ -768,6 +781,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
         public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
         public final MutableLiveData<Integer> error = new MutableLiveData<>();
         public final MutableLiveData<HashMap<String, Integer>> impressions = new MutableLiveData<>();
+        public final MutableLiveData<UserId> resolvedUserId = new MutableLiveData<>();
 
         public NewProfileViewModel(@Nullable UserId userId, @Nullable String username) {
             this.userId = userId;
@@ -832,6 +846,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                     } else {
                         Analytics.getInstance().openScreen("profile");
                     }
+                    resolvedUserId.postValue(userId);
                     String name = userProfile.getName();
                     String username = userProfile.getUsername();
                     String bio = userProfile.getBio();
