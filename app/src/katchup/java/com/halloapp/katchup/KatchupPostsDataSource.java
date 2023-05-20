@@ -7,25 +7,38 @@ import androidx.paging.ItemKeyedDataSource;
 
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
+    public final static int POST_TYPE_SEEN = 1;
+    public final static int POST_TYPE_UNSEEN = 2;
+    public final static int POST_TYPE_MY_ARCHIVE = 3;
+
     private final ContentDb contentDb;
+    private final int postType;
+    private final String postId;
     private Long keyTimestamp;
 
     public static class Factory extends DataSource.Factory<Long, Post> {
 
         private final ContentDb contentDb;
+        private final int postType;
+        private final String postId;
         private KatchupPostsDataSource latestSource;
 
-        public Factory(@NonNull ContentDb contentDb) {
+        public Factory(@NonNull ContentDb contentDb, int postType) {
+            this(contentDb, postType, null);
+        }
+
+        public Factory(@NonNull ContentDb contentDb, int postType, @Nullable String postId) {
             this.contentDb = contentDb;
-            latestSource = new KatchupPostsDataSource(contentDb);
+            this.postType = postType;
+            this.postId = postId;
+            latestSource = new KatchupPostsDataSource(contentDb, postType, postId);
         }
 
         @Override
@@ -33,7 +46,7 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
             Log.i("KatchupPostsDataSource.Factory.create");
             if (latestSource.isInvalid()) {
                 Log.i("KatchupPostsDataSource.Factory.create old source was invalidated; creating a new one");
-                latestSource = new KatchupPostsDataSource(contentDb);
+                latestSource = new KatchupPostsDataSource(contentDb, postType, postId);
             }
             return latestSource;
         }
@@ -44,8 +57,10 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
         }
     }
 
-    private KatchupPostsDataSource(@NonNull ContentDb contentDb) {
+    private KatchupPostsDataSource(@NonNull ContentDb contentDb, int postType, String postId) {
         this.contentDb = contentDb;
+        this.postType = postType;
+        this.postId = postId;
     }
 
     @Override
@@ -71,14 +86,23 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Post> callback) {
         final List<Post> posts;
-        if (params.requestedInitialKey == null || params.requestedInitialKey == Long.MAX_VALUE) {
-            posts = contentDb.getSeenPosts(null, params.requestedLoadSize, true);
-        } else {
-            // load around params.requestedInitialKey, otherwise the view that represents this data may jump
-            posts = contentDb.getSeenPosts(params.requestedInitialKey, params.requestedLoadSize / 2, false);
-            posts.addAll(contentDb.getSeenPosts(params.requestedInitialKey + 1, params.requestedLoadSize / 2, true));
+        Long initialKey = params.requestedInitialKey;
 
+        if (postId != null) {
+            Post post = contentDb.getPost(postId);
+            if (post != null) {
+                initialKey = post.timestamp;
+            }
         }
+
+        if (initialKey == null || initialKey == Long.MAX_VALUE) {
+            posts = getPosts(null, params.requestedLoadSize, true);
+        } else {
+            // load around initialKey, otherwise the view that represents this data may jump
+            posts = getPosts(initialKey, params.requestedLoadSize / 2, false);
+            posts.addAll(getPosts(initialKey + 1, params.requestedLoadSize / 2, true));
+        }
+
         Log.d("KatchupPostsDataSource.loadInitial: requestedInitialKey=" + params.requestedInitialKey + " requestedLoadSize:" + params.requestedLoadSize + " got " + posts.size() +
                 (posts.isEmpty() ? "" : " posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp));
         callback.onResult(posts);
@@ -87,12 +111,26 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Post> callback) {
         Log.d("KatchupPostsDataSource.loadAfter: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(contentDb.getSeenPosts(params.key, params.requestedLoadSize, true));
+        callback.onResult(getPosts(params.key, params.requestedLoadSize, true));
     }
 
     @Override
     public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Post> callback) {
         Log.d("KatchupPostsDataSource.loadBefore: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(contentDb.getSeenPosts(params.key, params.requestedLoadSize, false));
+        callback.onResult(getPosts(params.key, params.requestedLoadSize, false));
+    }
+
+    @NonNull
+    private List<Post> getPosts(@Nullable Long timestamp, int count, boolean after) {
+        switch (postType) {
+            case POST_TYPE_SEEN:
+                return contentDb.getSeenPosts(timestamp, count, after);
+            case POST_TYPE_UNSEEN:
+                return contentDb.getUnseenPosts(timestamp, count, after);
+            case POST_TYPE_MY_ARCHIVE:
+                return contentDb.getMyArchivePosts(timestamp, count, after);
+        }
+
+        return new ArrayList<>();
     }
 }

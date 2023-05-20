@@ -409,7 +409,8 @@ public class ArchiveActivity extends HalloActivity {
                         externalMediaThumbnailLoader.load(dayImageView, post.media.get(1));
                     }
                 }
-                dayView.setOnClickListener(view -> startActivity(ViewKatchupCommentsActivity.viewPost(view.getContext(), post.id, !isLocal, !isLocal, false)));
+
+                dayView.setOnClickListener(view -> startActivity(ViewKatchupCommentsActivity.viewPost(view.getContext(), post.id, !isLocal, !isLocal, false, post.senderUserId.isMe(), false)));
             }
             if (dayData.getDayNumber() != MonthDayData.PADDING_DAY) {
                 dayNumberView.setText(String.valueOf(getItem(position).getDayNumber()));

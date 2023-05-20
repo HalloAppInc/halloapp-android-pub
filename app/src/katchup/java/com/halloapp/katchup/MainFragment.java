@@ -1361,7 +1361,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             contentDb.addObserver(contentObserver);
             connectionObservers.addObserver(connectionObserver);
             this.externalMediaThumbnailLoader = externalMediaThumbnailLoader;
-            dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
+            dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb, KatchupPostsDataSource.POST_TYPE_SEEN);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
             pingItems = new ComputableLiveData<List<PingItem>>() {

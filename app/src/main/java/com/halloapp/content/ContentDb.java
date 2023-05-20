@@ -771,8 +771,13 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<Post> getUnseenPosts(long timestamp, int count) {
-        return getPosts(timestamp, count, false, null, true);
+    public @NonNull List<Post> getUnseenPosts(Long timestamp, int count) {
+        return getUnseenPosts(timestamp, count, false);
+    }
+
+    @WorkerThread
+    public @NonNull List<Post> getUnseenPosts(Long timestamp, int count, boolean after) {
+        return getPosts(timestamp, count, after, null, true);
     }
 
     @WorkerThread
@@ -842,12 +847,17 @@ public class ContentDb {
 
     @WorkerThread
     public @NonNull List<Post> getMyArchivePosts() {
-        return postsDb.getPosts(null, null, false, UserId.ME, null, false, false, false, false);
+        return postsDb.getPosts(null, null, false, UserId.ME, null, false, false, false, false, true);
+    }
+
+    @WorkerThread
+    public @NonNull List<Post> getMyArchivePosts(@Nullable Long timestamp, int count, boolean after) {
+        return postsDb.getPosts(timestamp, count, after, UserId.ME, null, false, false, false, false, true);
     }
 
     @WorkerThread
     public @NonNull List<Post> getUnexpiredUnseenPostsAfter(long timestamp, @Nullable Integer count) {
-        return postsDb.getPosts(timestamp, count, false, null, null, true, false, false, true);
+        return postsDb.getPosts(timestamp, count, false, null, null, true, false, false, true, true);
     }
 
     @WorkerThread

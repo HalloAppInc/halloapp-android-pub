@@ -1680,11 +1680,11 @@ class PostsDb {
 
     @WorkerThread
     @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean seenOnly, boolean orderByLastUpdated) {
-      return getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly, seenOnly, orderByLastUpdated, true);
+      return getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly, seenOnly, orderByLastUpdated, true, false);
     };
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean seenOnly, boolean orderByLastUpdated, boolean excludeExpired) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean seenOnly, boolean orderByLastUpdated, boolean excludeExpired, boolean excludeRetracted) {
         Preconditions.checkArgument(!unseenOnly || !seenOnly);
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -1728,6 +1728,9 @@ class PostsDb {
         if (groupId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
+        }
+        if (excludeRetracted) {
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED;
         }
 
         if (groupId == null || orderByLastUpdated) {

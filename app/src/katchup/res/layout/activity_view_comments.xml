@@ -149,86 +149,25 @@
             android:layout_width="match_parent"
             android:layout_height="500dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/content_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintDimensionRatio="3:4">
+                app:layout_constraintDimensionRatio="3:4"
+                />
 
-                <ImageView
-                    android:id="@+id/content_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:src="@drawable/test_image"
-                    android:scaleType="centerCrop"/>
-
-                <com.halloapp.widget.ContentPlayerView
-                    android:id="@+id/content_video"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:show_shuffle_button="false"
-                    android:animateLayoutChanges="true"
-                    android:visibility="gone"
-                    app:show_buffering="never"
-                    app:show_timeout="1000"
-                    app:resize_mode="zoom"
-                    app:contentPlayerVideoCornerRadius="@dimen/post_card_radius"/>
-
-                <com.halloapp.katchup.LoadingView
-                    android:id="@+id/content_loading"
-                    android:layout_width="76dp"
-                    android:layout_height="76dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <com.halloapp.katchup.JellybeanClipView
-                    android:id="@+id/selfie_container"
-                    android:layout_width="0dp"
-                    app:layout_constraintWidth_percent="0.5"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_height="wrap_content"
-                    app:jcvRotation="@integer/jellybean_slant_right_up"
-                    app:jcvOutlineWidth="3dp">
-
-                    <com.halloapp.widget.ContentPlayerView
-                        android:id="@+id/selfie_player"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        app:surface_type="texture_view"
-                        app:show_shuffle_button="false"
-                        android:animateLayoutChanges="true"
-                        app:show_buffering="never"
-                        app:resize_mode="zoom"
-                        app:controller_layout_id="@layout/exo_player_composer_view"
-                        app:show_timeout="1000" />
-
-                    <com.halloapp.katchup.LoadingView
-                        android:id="@+id/selfie_loading"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center" />
-
-                </com.halloapp.katchup.JellybeanClipView>
-
-                <com.halloapp.katchup.ui.CountingLikeButton
-                    android:id="@+id/likes"
-                    android:layout_width="46dp"
-                    android:layout_height="44dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="19dp"
-                    android:elevation="2dp"
-                    />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.halloapp.katchup.ui.CountingLikeButton
+                android:id="@+id/likes"
+                android:layout_width="46dp"
+                android:layout_height="44dp"
+                app:layout_constraintEnd_toEndOf="@id/content_container"
+                app:layout_constraintBottom_toBottomOf="@id/content_container"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="19dp"
+                android:elevation="2dp"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

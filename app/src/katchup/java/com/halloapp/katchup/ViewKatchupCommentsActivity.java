@@ -20,7 +20,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +51,7 @@ import androidx.emoji2.text.EmojiSpan;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
+import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
@@ -59,6 +59,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
@@ -136,15 +137,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack) {
-        return viewPost(context, postId, isPublic, disableComments, fromStack, false);
+        return viewPost(context, postId, isPublic, disableComments, fromStack, false, false);
     }
 
-    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack, boolean entryFocused) {
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, postId);
         i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
         i.putExtra(EXTRA_DISABLE_COMMENTS, disableComments);
         i.putExtra(EXTRA_FROM_STACK, fromStack);
+        i.putExtra(EXTRA_FROM_ARCHIVE, fromArchive);
         i.putExtra(EXTRA_ENTRY_FOCUSED, entryFocused);
 
         return i;
@@ -157,6 +159,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final String EXTRA_IS_PUBLIC_POST = "is_public_post";
     private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
     private static final String EXTRA_FROM_STACK = "from_stack";
+    private static final String EXTRA_FROM_ARCHIVE = "from_archive";
 
     private static final float CONTENT_ASPECT_RATIO = 0.75f;
     private static final int MAX_RECORD_TIME_SECONDS = 15;
@@ -181,21 +184,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private TextView headerGeotag;
     private TextView headerTimeAndPlace;
     private TextView headerFollowButton;
-    private ImageView postPhotoView;
-    private ContentPlayerView postVideoView;
     private CountingLikeButton likeButton;
 
-    private View selfieContainer;
-    private ContentPlayerView selfieView;
-    private LoadingView selfieLoadingView;
-    private LoadingView contentLoadingView;
-
     private ContactLoader contactLoader;
-    private KatchupExoPlayer contentPlayer;
-    private KatchupExoPlayer selfiePlayer;
 
     private View coordinator;
-    private View contentContainer;
+    private ViewPager2 contentContainer;
+    private PostsAdapter postsAdapter = new PostsAdapter();
     private View scalableContainer;
     private View recordProtection;
     private EmojiKeyboardLayout emojiKeyboardLayout;
@@ -212,6 +207,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private BottomSheetBehavior bottomSheetBehavior;
 
     private int selfieMargin;
+    private int selfieVerticalMargin;
+    private int selfieHorizontalMargin;
 
     private View sendButtonContainer;
     private View recordVideoReaction;
@@ -221,12 +218,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private EditText textEntry;
 
-    private String postId;
     private boolean isMyOwnPost;
-    private float selfieTranslationX;
-    private float selfieTranslationY;
-    private int selfieVerticalMargin;
-    private int selfieHorizontalMargin;
 
     private boolean scrollToBottom = false;
 
@@ -247,7 +239,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private boolean canceled = false;
 
-    private final HashSet<KatchupExoPlayer> currentPlayers = new HashSet<>();
+    private final HashSet<KatchupExoPlayer> postsPlayers = new HashSet<>();
+    private final HashSet<KatchupExoPlayer> commentsPlayers = new HashSet<>();
 
     private Chronometer videoDurationChronometer;
     private View videoRecordIndicator;
@@ -311,6 +304,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         reactionsRv.setAdapter(reactionsAdapter);
 
         selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
+        selfieVerticalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_vertical_margin);
+        selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
 
         contactLoader = new ContactLoader(userId -> null);
 
@@ -339,19 +334,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         headerGeotag = findViewById(R.id.header_geotag);
         headerTimeAndPlace = findViewById(R.id.header_time_and_place);
         headerFollowButton = findViewById(R.id.follow_button);
-        selfieContainer = findViewById(R.id.selfie_container);
-        postVideoView = findViewById(R.id.content_video);
-        postPhotoView = findViewById(R.id.content_photo);
         likeButton = findViewById(R.id.likes);
         recordProtection = findViewById(R.id.record_protection);
-        selfieView = findViewById(R.id.selfie_player);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
         textEntry = findViewById(R.id.entry_card);
         ImageView kbToggle = findViewById(R.id.kb_toggle);
         shareButton = findViewById(R.id.share_button);
         moreButton = findViewById(R.id.more_options);
-        selfieLoadingView = findViewById(R.id.selfie_loading);
-        contentLoadingView = findViewById(R.id.content_loading);
         emojiKeyboardLayout.bind(kbToggle, textEntry);
         emojiKeyboardLayout.addListener(new EmojiKeyboardLayout.Listener() {
             @Override
@@ -402,53 +391,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         scalableContainer.setLayoutParams(params);
 
         contentContainer = findViewById(R.id.content_container);
-        GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            private static final float FLING_THRESHOLD = 200;
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                } else {
-                    if (e.getX() > contentContainer.getWidth() / 3f) {
-                        viewModel.moveToNextPost();
-                    } else {
-                        viewModel.moveToPreviousPost();
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    return true;
-                } else if (Math.abs(velocityX) > Math.abs(velocityY)) {
-                    if (velocityX > FLING_THRESHOLD) {
-                        viewModel.moveToPreviousPost();
-                        return true;
-                    } else if (velocityX < -FLING_THRESHOLD) {
-                        viewModel.moveToNextPost();
-                        return true;
-                    }
-                } else {
-                    if (velocityY > FLING_THRESHOLD) {
-                        finish();
-                        return true;
-                    } else if (velocityY < -FLING_THRESHOLD) {
-                        KeyboardUtils.showSoftKeyboard(textEntry);
-                        return true;
-                    }
-                }
-                return super.onFling(e1, e2, velocityX, velocityY);
-            }
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-        });
         final float radius = getResources().getDimension(R.dimen.post_card_radius);
         ViewOutlineProvider roundedOutlineProvider = new ViewOutlineProvider() {
             @Override
@@ -458,16 +400,20 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         };
         contentContainer.setClipToOutline(true);
         contentContainer.setOutlineProvider(roundedOutlineProvider);
-        contentContainer.setOnTouchListener(new View.OnTouchListener() {
+        contentContainer.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
+            public void onPageSelected(int position) {
+                Post post = Objects.requireNonNull(postsAdapter.getCurrentList()).get(position);
+                if (post != null) {
+                    viewModel.setPost(post);
+                }
             }
         });
-
+        contentContainer.setAdapter(postsAdapter);
 
         boolean isPublic = getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false);
         boolean fromStack = getIntent().getBooleanExtra(EXTRA_FROM_STACK, false);
+        boolean fromArchive = getIntent().getBooleanExtra(EXTRA_FROM_ARCHIVE, false);
 
         if (getIntent().getBooleanExtra(EXTRA_ENTRY_FOCUSED, false)) {
             KeyboardUtils.showSoftKeyboard(textEntry);
@@ -479,7 +425,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 ? new ExternalMediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)))
                 : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_POST_ID), isPublic, fromStack)).get(CommentsViewModel.class);
+        String originalPostId = getIntent().getStringExtra(EXTRA_POST_ID);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), originalPostId, isPublic, fromStack, fromArchive)).get(CommentsViewModel.class);
         viewModel.getPost().observe(this, post -> bindPost(post, isPublic));
         viewModel.getPostIsSelfReacted().observe(this, liked -> likeButton.setIsLiked(liked));
 
@@ -563,7 +510,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     SnackbarHelper.showWarning(shareButton, R.string.external_share_failed);
                 }
             });
-            shareBannerPopupWindow.show(selfieContainer);
+
+            shareBannerPopupWindow.show(contentContainer);
         });
 
         moreButton.setOnClickListener(v -> {
@@ -651,6 +599,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             return true;
         });
 
+        boolean disableComments = getIntent().getBooleanExtra(EXTRA_DISABLE_COMMENTS, false);
+
         viewModel.getCommentList().observe(this, list -> {
             final TabLayout.Tab commentsTab = interactionTabLayout.getTabAt(TAB_COMMENTS_POSITION);
             if (commentsTab != null) {
@@ -658,7 +608,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
             updateTabVisibility(list, viewModel.getReactionList().getValue());
             final PagedList<Reaction> reactions = viewModel.getReactionList().getValue();
-            if (list.size() > 0 && !fromStack) {
+            if (list.size() > 0 && !fromStack && !fromArchive && !disableComments) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
             commentsAdapter.submitList(list, () -> {
@@ -719,8 +669,20 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         });
 
-        makeSelfieDraggable();
-        moveSelfieToCorner();
+        viewModel.getPostList().observe(this, list -> {
+            postsAdapter.submitList(list, () -> {
+                // the data source is expected to load the initial post
+                for (int i = 0; i < list.size(); i++) {
+                    Post post = list.get(i);
+
+                    if (post != null && post.id.equals(originalPostId)) {
+                        contentContainer.setCurrentItem(i, false);
+                        viewModel.setPost(post);
+                        break;
+                    }
+                }
+            });
+        });
 
         randomizeTextStickerColor();
 
@@ -732,28 +694,23 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     public void onResume() {
         super.onResume();
         Analytics.getInstance().openScreen("comments");
+        resumePostsPlayback();
         shouldNotifyScreenshot = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        pausePostsPlayback();
         shouldNotifyScreenshot = false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (selfiePlayer != null) {
-            selfiePlayer.destroy();
-            selfiePlayer = null;
-        }
-        if (contentPlayer != null) {
-            contentPlayer.destroy();
-            contentPlayer = null;
-        }
         contactLoader.destroy();
-        currentPlayers.clear();
+        postsPlayers.clear();
+        commentsPlayers.clear();
         screenshotDetector.stop();
         screenshotHandlerThread.quit();
     }
@@ -882,59 +839,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         scalableContainer.setScaleX(scale);
         scalableContainer.setScaleY(scale);
         scalableContainer.setTranslationY(-offsetY);
-    }
-
-    private void makeSelfieDraggable() {
-        selfieVerticalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_vertical_margin);
-        selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
-        selfieContainer.setOnTouchListener(new View.OnTouchListener() {
-
-            private float startX;
-            private float startY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    startX = event.getRawX();
-                    startY = event.getRawY();
-                    return true;
-                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    final float containerScale = scalableContainer.getScaleX();
-                    selfieContainer.setTranslationX(selfieTranslationX + (event.getRawX() - startX) / containerScale);
-                    selfieContainer.setTranslationY(selfieTranslationY + (event.getRawY() - startY) / containerScale);
-                    return true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    selfieTranslationX = selfieContainer.getTranslationX();
-                    selfieTranslationY = selfieContainer.getTranslationY();
-                    forceWithinBounds();
-                }
-                return false;
-            }
-
-            private void forceWithinBounds() {
-                final float posX = selfieContainer.getX();
-                final float posY = selfieContainer.getY();
-                final int scaledHorizontalMargin = selfieHorizontalMargin;
-                final int scaledVerticalMargin = selfieVerticalMargin;
-
-                if (posX < scaledHorizontalMargin) {
-                    selfieTranslationX = scaledHorizontalMargin - selfieContainer.getLeft();
-                }
-                if (posX + selfieContainer.getWidth() > contentContainer.getWidth() - scaledHorizontalMargin) {
-                    selfieTranslationX = contentContainer.getWidth() - scaledHorizontalMargin - selfieContainer.getRight();
-                }
-
-                if (posY < scaledVerticalMargin) {
-                    selfieTranslationY = scaledVerticalMargin - selfieContainer.getTop();
-                }
-                if (posY + selfieContainer.getHeight() > contentContainer.getHeight() - scaledVerticalMargin) {
-                    selfieTranslationY = contentContainer.getHeight() - scaledVerticalMargin - selfieContainer.getBottom();
-                }
-
-                selfieContainer.setTranslationX(selfieTranslationX);
-                selfieContainer.setTranslationY(selfieTranslationY);
-            }
-        });
     }
 
     private void handleMessageRetract() {
@@ -1117,27 +1021,19 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private void updateContentPlayingForProtection() {
         if (protectionFromBottomsheet || protectionFromKeyboard || protectionFromRecording) {
-            if (contentPlayer != null) {
-                contentPlayer.pause();
-            }
-            if (selfiePlayer != null) {
-                selfiePlayer.pause();
-            }
+            pausePostsPlayback();
+            contentContainer.setUserInputEnabled(false);
         } else {
-            if (contentPlayer != null) {
-                contentPlayer.play();
-            }
-            if (selfiePlayer != null) {
-                selfiePlayer.play();
-            }
+            resumePostsPlayback();
+            contentContainer.setUserInputEnabled(true);
         }
         if (protectionFromRecording) {
-            for (KatchupExoPlayer player : currentPlayers) {
+            for (KatchupExoPlayer player : commentsPlayers) {
                 SimpleExoPlayer p = player.getPlayer();
                 p.setPlayWhenReady(false);
             }
         } else {
-            for (KatchupExoPlayer player : currentPlayers) {
+            for (KatchupExoPlayer player : commentsPlayers) {
                 SimpleExoPlayer p = player.getPlayer();
                 p.setPlayWhenReady(true);
             }
@@ -1160,14 +1056,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         } else {
             shareButton.setVisibility(View.GONE);
         }
-        if (post.media.size() > 1) {
-            Media content = post.media.get(1);
-            if (content.type == Media.MEDIA_TYPE_VIDEO) {
-                bindContentVideo(content);
-            } else {
-                bindContentPhoto(content);
-            }
-        }
 
         boolean disableComments = getIntent().getBooleanExtra(EXTRA_DISABLE_COMMENTS, false);
 
@@ -1178,27 +1066,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
 
         likeButton.setOnClickListener(v -> viewModel.toggleLike());
-
-        Media selfie = post.media.get(0);
-        if (selfie.file == null) {
-            selfieLoadingView.setVisibility(View.VISIBLE);
-            externalSelfieLoader.load(selfieView, selfie, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
-                @Override
-                public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
-                    if (result != null) {
-                        bindSelfie(result);
-                    } else {
-                        selfieLoadingView.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void showLoading(@NonNull ContentPlayerView view) {
-                }
-            });
-        } else {
-            bindSelfie(selfie);
-        }
 
         final CharSequence timeText = TimeFormatter.formatMessageTime(headerTimeAndPlace.getContext(), post.timestamp).toLowerCase(Locale.getDefault());
         String location = ((KatchupPost)post).location;
@@ -1274,89 +1141,338 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
-    private void moveSelfieToCorner() {
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
-        layoutParams.bottomMargin = layoutParams.topMargin = selfieVerticalMargin;
-        layoutParams.leftMargin = layoutParams.rightMargin = selfieHorizontalMargin;
-        layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
+    private void resumePostsPlayback() {
+        Post post = viewModel.getPost().getValue();
+        if (post == null) {
+            return;
+        }
 
-        layoutParams.topToTop = layoutParams.endToEnd = contentContainer.getId();
-        layoutParams.bottomToBottom = layoutParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
-        layoutParams.matchConstraintPercentWidth = 0.5f;
-        layoutParams.constrainedWidth = true;
+        if (post.media.size() > 0) {
+            ContentPlayerView playerView = contentContainer.findViewWithTag(post.media.get(0));
+            if (playerView != null) {
+                playerView.play();
+            }
+        }
 
-        selfieTranslationY = 0;
-        selfieTranslationX = 0;
-        selfieContainer.setTranslationY(0);
-        selfieContainer.setTranslationX(0);
-        selfieContainer.setLayoutParams(layoutParams);
+        if (post.media.size() > 1) {
+            ContentPlayerView playerView = contentContainer.findViewWithTag(post.media.get(1));
+            if (playerView != null) {
+                playerView.play();
+            }
+        }
     }
 
-    private void bindSelfie(Media selfie) {
-        if (selfiePlayer != null) {
-            selfiePlayer.destroy();
+    private void pausePostsPlayback() {
+        Post post = viewModel.getPost().getValue();
+        if (post == null) {
+            return;
         }
-        selfiePlayer = KatchupExoPlayer.forSelfieView(selfieView, selfie);
-        selfiePlayer.getPlayer().addListener(new Player.EventListener() {
-            @Override
-            public void onPlaybackStateChanged(int state) {
-                if (state == Player.STATE_READY) {
-                    selfieLoadingView.setVisibility(View.GONE);
+
+        if (post.media.size() > 0) {
+            ContentPlayerView playerView = contentContainer.findViewWithTag(post.media.get(0));
+            if (playerView != null) {
+                playerView.pause();
+            }
+        }
+
+        if (post.media.size() > 1) {
+            ContentPlayerView playerView = contentContainer.findViewWithTag(post.media.get(1));
+            if (playerView != null) {
+                playerView.pause();
+            }
+        }
+    }
+
+    private class PostViewHolder extends RecyclerView.ViewHolder {
+
+        private final View selfieContainer;
+        private final ContentPlayerView selfieView;
+        private final LoadingView selfieLoadingView;
+        private final ImageView postPhotoView;
+        private final ContentPlayerView postVideoView;
+        private final LoadingView contentLoadingView;
+        private KatchupExoPlayer contentPlayer;
+        private KatchupExoPlayer selfiePlayer;
+
+        private float selfieTranslationX;
+        private float selfieTranslationY;
+
+        public PostViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            selfieContainer = itemView.findViewById(R.id.selfie_container);
+            selfieView = itemView.findViewById(R.id.selfie_player);
+            selfieLoadingView = itemView.findViewById(R.id.selfie_loading);
+            postVideoView = itemView.findViewById(R.id.content_video);
+            postPhotoView = itemView.findViewById(R.id.content_photo);
+            contentLoadingView = itemView.findViewById(R.id.content_loading);
+
+            makeSelfieDraggable();
+        }
+
+        public void bind(@NonNull Post post) {
+            clear();
+            moveSelfieToCorner();
+
+            if (post.media.size() > 1) {
+                Media content = post.media.get(1);
+                if (content.type == Media.MEDIA_TYPE_VIDEO) {
+                    bindContentVideo(content);
+                } else {
+                    bindContentPhoto(content);
                 }
             }
-        });
-    }
 
-    private void bindContentVideo(Media content) {
-        if (contentPlayer != null) {
-            contentPlayer.destroy();
-        }
-        postPhotoView.setVisibility(View.GONE);
-        postVideoView.setVisibility(View.VISIBLE);
-        contentPlayer = KatchupExoPlayer.fromPlayerView(postVideoView);
-        contentPlayer.getPlayer().addListener(new Player.EventListener() {
-            @Override
-            public void onIsPlayingChanged(boolean isPlaying) {
-                postVideoView.setKeepScreenOn(isPlaying);
+            Media selfie = post.media.get(0);
+            if (selfie.file == null) {
+                selfieLoadingView.setVisibility(View.VISIBLE);
+                externalSelfieLoader.load(selfieView, selfie, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
+                    @Override
+                    public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
+                        if (result != null) {
+                            bindSelfie(result);
+                        } else {
+                            selfieLoadingView.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull ContentPlayerView view) {
+                    }
+                });
+            } else {
+                bindSelfie(selfie);
             }
-        });
-        postVideoView.setPlayer(contentPlayer.getPlayer());
+        }
 
-        final DataSource.Factory dataSourceFactory;
-        final MediaItem exoMediaItem;
-        dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(postVideoView.getContext());
-        exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(content.file));
+        public void clear() {
+            if (selfiePlayer != null) {
+                postsPlayers.remove(selfiePlayer);
+                selfiePlayer.destroy();
+                selfiePlayer = null;
+                selfieView.setPlayer(null);
+                selfieView.setTag(null);
+            }
 
-        postVideoView.setControllerAutoShow(true);
-        final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
+            if (contentPlayer != null) {
+                postsPlayers.remove(contentPlayer);
+                contentPlayer.destroy();
+                contentPlayer = null;
+                postVideoView.setPlayer(null);
+                postPhotoView.setTag(null);
+            }
+        }
 
-        postVideoView.setUseController(false);
-
-        contentLoadingView.setVisibility(View.VISIBLE);
-        SimpleExoPlayer player = contentPlayer.getPlayer();
-        player.addListener(new Player.EventListener() {
-            @Override
-            public void onPlaybackStateChanged(int state) {
-                if (state == Player.STATE_READY) {
-                    contentLoadingView.setVisibility(View.GONE);
+        private void bindSelfie(Media selfie) {
+            if (selfiePlayer != null) {
+                postsPlayers.remove(selfiePlayer);
+                selfiePlayer.destroy();
+                selfieView.setPlayer(null);
+            }
+            selfiePlayer = KatchupExoPlayer.forSelfieView(selfieView, selfie);
+            selfiePlayer.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY) {
+                        selfieLoadingView.setVisibility(View.GONE);
+                    }
                 }
+            });
+            postsPlayers.add(selfiePlayer);
+            selfieView.setTag(selfie);
+        }
+
+        private void bindContentVideo(Media content) {
+            if (contentPlayer != null) {
+                postsPlayers.remove(contentPlayer);
+                contentPlayer.destroy();
+                postVideoView.setPlayer(null);
             }
-        });
-        player.setRepeatMode(Player.REPEAT_MODE_ALL);
-        player.setMediaSource(mediaSource);
-        player.setPlayWhenReady(true);
-        player.prepare();
+            postPhotoView.setVisibility(View.GONE);
+            postVideoView.setVisibility(View.VISIBLE);
+            contentPlayer = KatchupExoPlayer.fromPlayerView(postVideoView);
+            contentPlayer.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    postVideoView.setKeepScreenOn(isPlaying);
+                }
+            });
+            postVideoView.setPlayer(contentPlayer.getPlayer());
+            postVideoView.setTag(content);
+            postsPlayers.add(contentPlayer);
+
+            final DataSource.Factory dataSourceFactory;
+            final MediaItem exoMediaItem;
+            dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(postVideoView.getContext());
+            exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(content.file));
+
+            postVideoView.setControllerAutoShow(true);
+            final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
+
+            postVideoView.setUseController(false);
+
+            contentLoadingView.setVisibility(View.VISIBLE);
+            SimpleExoPlayer player = contentPlayer.getPlayer();
+            player.addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY) {
+                        contentLoadingView.setVisibility(View.GONE);
+                    }
+                }
+            });
+            player.setRepeatMode(Player.REPEAT_MODE_ALL);
+            player.setMediaSource(mediaSource);
+            player.setPlayWhenReady(false);
+            player.prepare();
+        }
+
+        private void bindContentPhoto(Media content) {
+            if (contentPlayer != null) {
+                contentPlayer.destroy();
+                contentPlayer = null;
+            }
+            postVideoView.setVisibility(View.GONE);
+            postPhotoView.setVisibility(View.VISIBLE);
+            contentLoadingView.setVisibility(View.VISIBLE);
+            mediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
+        }
+
+        private void moveSelfieToCorner() {
+            selfieTranslationY = 0;
+            selfieTranslationX = 0;
+            selfieContainer.setTranslationY(0);
+            selfieContainer.setTranslationX(0);
+        }
+
+        private void makeSelfieDraggable() {
+            selfieContainer.setOnTouchListener(new View.OnTouchListener() {
+
+                private float startX;
+                private float startY;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        startX = event.getRawX();
+                        startY = event.getRawY();
+                        contentContainer.setUserInputEnabled(false);
+                        return true;
+                    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        final float containerScale = scalableContainer.getScaleX();
+                        selfieContainer.setTranslationX(selfieTranslationX + (event.getRawX() - startX) / containerScale);
+                        selfieContainer.setTranslationY(selfieTranslationY + (event.getRawY() - startY) / containerScale);
+                        return true;
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        selfieTranslationX = selfieContainer.getTranslationX();
+                        selfieTranslationY = selfieContainer.getTranslationY();
+                        forceWithinBounds();
+                        contentContainer.setUserInputEnabled(true);
+                    }
+                    return false;
+                }
+
+                private void forceWithinBounds() {
+                    final float posX = selfieContainer.getX();
+                    final float posY = selfieContainer.getY();
+                    final int scaledHorizontalMargin = selfieHorizontalMargin;
+                    final int scaledVerticalMargin = selfieVerticalMargin;
+
+                    if (posX < scaledHorizontalMargin) {
+                        selfieTranslationX = scaledHorizontalMargin - selfieContainer.getLeft();
+                    }
+                    if (posX + selfieContainer.getWidth() > contentContainer.getWidth() - scaledHorizontalMargin) {
+                        selfieTranslationX = contentContainer.getWidth() - scaledHorizontalMargin - selfieContainer.getRight();
+                    }
+
+                    if (posY < scaledVerticalMargin) {
+                        selfieTranslationY = scaledVerticalMargin - selfieContainer.getTop();
+                    }
+                    if (posY + selfieContainer.getHeight() > contentContainer.getHeight() - scaledVerticalMargin) {
+                        selfieTranslationY = contentContainer.getHeight() - scaledVerticalMargin - selfieContainer.getBottom();
+                    }
+
+                    selfieContainer.setTranslationX(selfieTranslationX);
+                    selfieContainer.setTranslationY(selfieTranslationY);
+                }
+            });
+        }
+
+        public void pause() {
+            if (selfiePlayer != null) {
+                selfiePlayer.pause();
+            }
+
+            if (contentPlayer != null) {
+                contentPlayer.pause();
+            }
+        }
+
+        public void play() {
+            if (selfiePlayer != null) {
+                selfiePlayer.play();
+            }
+
+            if (contentPlayer != null) {
+                contentPlayer.play();
+            }
+        }
     }
 
-    private void bindContentPhoto(Media content) {
-        if (contentPlayer != null) {
-            contentPlayer.destroy();
-            contentPlayer = null;
+    private class PostsAdapter extends PagedListAdapter<Post, PostViewHolder> {
+
+        PostsAdapter() {
+            super(new DiffUtil.ItemCallback<Post>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull Post oldItem, @NonNull Post newItem) {
+                    // The ID property identifies when items are the same.
+                    return oldItem.rowId == newItem.rowId;
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull Post oldItem, @NonNull Post newItem) {
+                    return oldItem.equals(newItem);
+                }
+            });
         }
-        postVideoView.setVisibility(View.GONE);
-        postPhotoView.setVisibility(View.VISIBLE);
-        contentLoadingView.setVisibility(View.VISIBLE);
-        mediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
+
+        @Override
+        public long getItemId(int position) {
+            return Objects.requireNonNull(getItem(position)).rowId;
+        }
+
+        @NonNull
+        @Override
+        public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new PostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.katchup_comment_post_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+            Post post = getItem(position);
+
+            if (post != null) {
+                holder.bind(post);
+            }
+        }
+
+        @Override
+        public void onViewRecycled(@NonNull PostViewHolder holder) {
+            super.onViewRecycled(holder);
+            holder.clear();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(@NonNull PostViewHolder holder) {
+            super.onViewDetachedFromWindow(holder);
+            holder.pause();
+        }
+
+        @Override
+        public void onViewAttachedToWindow(@NonNull PostViewHolder holder) {
+            super.onViewAttachedToWindow(holder);
+            holder.play();
+        }
     }
 
     private static final DiffUtil.ItemCallback<Comment> DIFF_COMMENT_CALLBACK = new DiffUtil.ItemCallback<Comment>() {
@@ -1534,7 +1650,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             super.markDetach();
             if (player != null) {
                 player.destroy();
-                currentPlayers.remove(player);
+                commentsPlayers.remove(player);
                 player = null;
                 if (media != null && media.equals(viewModel.getPlayingVideoReaction().getValue())) {
                     viewModel.setPlayingVideoReaction(null);
@@ -1591,7 +1707,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 }
             });
             player.observeLifecycle(ViewKatchupCommentsActivity.this);
-            currentPlayers.add(player);
+            commentsPlayers.add(player);
             durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration() * 1000));
             player.getPlayer().addListener(new Player.EventListener() {
                 @Override
@@ -1913,7 +2029,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             View contentView = getContentView();
             contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
-            showAsDropDown(anchor);
+            showAsDropDown(anchor, 0, (-contentView.getMeasuredHeight() - anchor.getHeight()) / 2);
 
             int animationStartX = contentView.getMeasuredWidth() + contentView.getPaddingEnd();
 
