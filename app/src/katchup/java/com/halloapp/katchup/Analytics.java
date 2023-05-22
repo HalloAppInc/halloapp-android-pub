@@ -450,6 +450,12 @@ public class Analytics {
         track("tappedPostButtonFromFeaturedPosts");
     }
 
+    public void changedPostBackground(String backgroundType) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("background_type", backgroundType);
+        track("changedPostBackground", properties);
+    }
+
     public void seenPost(String postId, MomentInfo.ContentType contentType, long notifId, String feed_type) {
         // amplitude ignores subsequent events from the same device with the same insert_id value
         // https://www.docs.developers.amplitude.com/analytics/apis/http-v2-api/#event-deduplication

@@ -38,6 +38,7 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.emoji.EmojiKeyboardLayout;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
@@ -340,6 +341,7 @@ public class TextComposeFragment extends ComposeFragment {
             try {
                 FileInputStream fis = new FileInputStream(path);
                 Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                Analytics.getInstance().changedPostBackground("user_ai");
                 viewModel.handleGeneratedImage(bitmap);
             } catch (FileNotFoundException e) {
                 Log.e("Failed to read ai image from disk", e);
@@ -349,6 +351,7 @@ public class TextComposeFragment extends ComposeFragment {
             try {
                 FileInputStream fis = new FileInputStream(path);
                 Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                Analytics.getInstance().changedPostBackground("custom_image");
                 viewModel.handleGeneratedImage(bitmap);
             } catch (FileNotFoundException e) {
                 Log.e("Failed to read selected image from disk", e);
@@ -364,11 +367,13 @@ public class TextComposeFragment extends ComposeFragment {
 
             final View remove = root.findViewById(R.id.remove);
             remove.setOnClickListener(v -> {
+                Analytics.getInstance().changedPostBackground("none");
                 viewModel.clearGeneratedImage();
                 dismiss();
             });
             final View random = root.findViewById(R.id.random);
             random.setOnClickListener(v -> {
+                Analytics.getInstance().changedPostBackground("server_ai");
                 viewModel.generateAiImage(editText.getEditableText().toString(), false);
                 dismiss();
             });
