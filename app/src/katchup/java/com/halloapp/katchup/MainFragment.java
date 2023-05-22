@@ -1434,6 +1434,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             for (Comment comment : comments) {
                 String text = comment.type == Comment.TYPE_STICKER && comment.text.length() > 7 ? comment.text.substring(7) : comment.text;
                 PingItem item = new PingItem(PingItem.PingType.Comment, comment.senderUserId, text, comment.timestamp);
+                item.postId = comment.postId;
                 ret.add(item);
             }
 
@@ -1765,6 +1766,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         String text;
         long timestamp;
         boolean showFollowBack;
+        String postId;
 
         public PingItem(PingType pingType, UserId userId, String text, long timestamp) {
             this.pingType = pingType;
@@ -1847,6 +1849,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         @Override
         public void bindTo(@NonNull PingItem item) {
             kAvatarLoader.load(avatar, item.userId);
+
+            itemView.setOnClickListener(v -> {
+                startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), item.postId, false));
+            });
 
             contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
