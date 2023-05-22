@@ -1673,7 +1673,8 @@ export namespace server {
             IMAGE = 0,
             VIDEO = 1,
             TEXT = 2,
-            ALBUM_IMAGE = 3
+            ALBUM_IMAGE = 3,
+            ALBUM_DUMP = 4
         }
     }
 
@@ -9993,7 +9994,8 @@ export namespace server {
             LIVE_CAMERA = 0,
             TEXT_POST = 1,
             PROMPT_POST = 2,
-            ALBUM_POST = 3
+            ALBUM_POST = 3,
+            ALBUM_DUMP = 4
         }
     }
 

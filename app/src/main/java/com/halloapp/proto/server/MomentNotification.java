@@ -38,6 +38,10 @@ public  final class MomentNotification extends
      * <code>ALBUM_POST = 3;</code>
      */
     ALBUM_POST(3),
+    /**
+     * <code>ALBUM_DUMP = 4;</code>
+     */
+    ALBUM_DUMP(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -57,6 +61,10 @@ public  final class MomentNotification extends
      * <code>ALBUM_POST = 3;</code>
      */
     public static final int ALBUM_POST_VALUE = 3;
+    /**
+     * <code>ALBUM_DUMP = 4;</code>
+     */
+    public static final int ALBUM_DUMP_VALUE = 4;
 
 
     @java.lang.Override
@@ -84,6 +92,7 @@ public  final class MomentNotification extends
         case 1: return TEXT_POST;
         case 2: return PROMPT_POST;
         case 3: return ALBUM_POST;
+        case 4: return ALBUM_DUMP;
         default: return null;
       }
     }

@@ -4034,6 +4034,7 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
             if (message.date != null && message.hasOwnProperty("date"))
@@ -4115,6 +4116,10 @@ $root.server = (function() {
             case "ALBUM_IMAGE":
             case 3:
                 message.contentType = 3;
+                break;
+            case "ALBUM_DUMP":
+            case 4:
+                message.contentType = 4;
                 break;
             }
             if (object.date != null)
@@ -4215,6 +4220,7 @@ $root.server = (function() {
          * @property {number} VIDEO=1 VIDEO value
          * @property {number} TEXT=2 TEXT value
          * @property {number} ALBUM_IMAGE=3 ALBUM_IMAGE value
+         * @property {number} ALBUM_DUMP=4 ALBUM_DUMP value
          */
         MomentInfo.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -4222,6 +4228,7 @@ $root.server = (function() {
             values[valuesById[1] = "VIDEO"] = 1;
             values[valuesById[2] = "TEXT"] = 2;
             values[valuesById[3] = "ALBUM_IMAGE"] = 3;
+            values[valuesById[4] = "ALBUM_DUMP"] = 4;
             return values;
         })();
 
@@ -26562,6 +26569,7 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
             if (message.prompt != null && message.hasOwnProperty("prompt"))
@@ -26628,6 +26636,10 @@ $root.server = (function() {
             case "ALBUM_POST":
             case 3:
                 message.type = 3;
+                break;
+            case "ALBUM_DUMP":
+            case 4:
+                message.type = 4;
                 break;
             }
             if (object.prompt != null)
@@ -26727,6 +26739,7 @@ $root.server = (function() {
          * @property {number} TEXT_POST=1 TEXT_POST value
          * @property {number} PROMPT_POST=2 PROMPT_POST value
          * @property {number} ALBUM_POST=3 ALBUM_POST value
+         * @property {number} ALBUM_DUMP=4 ALBUM_DUMP value
          */
         MomentNotification.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -26734,6 +26747,7 @@ $root.server = (function() {
             values[valuesById[1] = "TEXT_POST"] = 1;
             values[valuesById[2] = "PROMPT_POST"] = 2;
             values[valuesById[3] = "ALBUM_POST"] = 3;
+            values[valuesById[4] = "ALBUM_DUMP"] = 4;
             return values;
         })();
 
