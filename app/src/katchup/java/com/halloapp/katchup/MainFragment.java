@@ -1800,6 +1800,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         public void bindTo(@NonNull PingItem item) {
             kAvatarLoader.load(avatar, item.userId);
 
+            itemView.setOnClickListener(v -> {
+                startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), item.userId));
+            });
+
             followBack.setVisibility(item.showFollowBack ? View.VISIBLE : View.GONE);
             followBack.setOnClickListener(v -> {
                 RelationshipApi.getInstance().requestFollowUser(item.userId).onResponse(res -> {
