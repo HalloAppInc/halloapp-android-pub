@@ -1440,6 +1440,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             List<RelationshipInfo> infos = contactsDb.getFollowerHistory(250);
             for (RelationshipInfo info : infos) {
                 PingItem item = new PingItem(PingItem.PingType.Follow, info.userId, null, info.timestamp);
+                item.showFollowBack = contactsDb.getRelationship(info.userId, RelationshipInfo.Type.FOLLOWING) == null;
                 ret.add(item);
             }
 
@@ -1763,6 +1764,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         UserId userId;
         String text;
         long timestamp;
+        boolean showFollowBack;
 
         public PingItem(PingType pingType, UserId userId, String text, long timestamp) {
             this.pingType = pingType;
@@ -1784,17 +1786,34 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private class FollowViewHolder extends PingViewHolder {
         private ImageView avatar;
         private TextView text;
+        private View followBack;
 
         public FollowViewHolder(@NonNull View itemView) {
             super(itemView);
 
             avatar = itemView.findViewById(R.id.avatar);
             text = itemView.findViewById(R.id.text);
+            followBack = itemView.findViewById(R.id.follow_back_button);
         }
 
         @Override
         public void bindTo(@NonNull PingItem item) {
             kAvatarLoader.load(avatar, item.userId);
+
+            followBack.setVisibility(item.showFollowBack ? View.VISIBLE : View.GONE);
+            followBack.setOnClickListener(v -> {
+                RelationshipApi.getInstance().requestFollowUser(item.userId).onResponse(res -> {
+                    if (Boolean.TRUE.equals(res)) {
+                        viewModel.pingItems.invalidate();
+                    } else {
+                        SnackbarHelper.showWarning(followBack, R.string.failed_to_follow);
+                        Log.e("Failed to follow user");
+                    }
+                }).onError(err -> {
+                    SnackbarHelper.showWarning(followBack, R.string.failed_to_follow);
+                    Log.e("Failed to follow user", err);
+                });
+            });
 
             contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override

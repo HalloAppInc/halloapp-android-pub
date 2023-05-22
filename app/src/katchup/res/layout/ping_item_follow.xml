@@ -41,4 +41,19 @@
         tools:text="Dev: Wild"
         />
 
+    <TextView
+        android:id="@+id/follow_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="6dp"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/follow_back_button_background"
+        android:text="@string/follow_back_profile"
+        android:textColor="@color/black"
+        android:textSize="12sp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
