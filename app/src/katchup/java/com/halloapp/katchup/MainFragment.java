@@ -1799,7 +1799,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                    text.setText(getString(R.string.ping_followed_you, result.getShortName()));
+                    text.setText(getString(R.string.ping_followed_you, result.username));
                 }
 
                 @Override
@@ -1828,7 +1828,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                    text.setText(result.getShortName() + ": " + item.text);
+                    text.setText(result.username + ": " + item.text);
                 }
 
                 @Override
