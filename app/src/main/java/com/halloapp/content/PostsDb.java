@@ -3142,7 +3142,7 @@ class PostsDb {
                 "FROM " + CommentsTable.TABLE_NAME + " " +
                 "WHERE comments.comment_sender_user_id<>'' " +
                     "AND comments.text IS NOT NULL " +
-                    "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" + // post exists
+                    "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id AND posts.expiration_time > " + System.currentTimeMillis() + ") " + // post exists and not expired
                     "AND ((" +
                         "EXISTS(SELECT post_id FROM " + PostsTable.TABLE_NAME + " WHERE posts.post_id=comments.post_id AND posts.sender_user_id='')" + // my post
                         "OR " +
