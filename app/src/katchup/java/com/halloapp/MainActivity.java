@@ -244,7 +244,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0: return new FollowingFragment();
-                case 1: return new MainFragment(goToForYou);
+                case 1: return MainFragment.create(goToForYou);
                 case 2: return NewProfileFragment.newProfileFragment(UserId.ME);
                 default: throw new IllegalArgumentException("Invalid position " + position);
             }

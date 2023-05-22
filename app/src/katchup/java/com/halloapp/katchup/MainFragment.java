@@ -122,6 +122,16 @@ import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
 public class MainFragment extends HalloFragment implements EasyPermissions.PermissionCallbacks {
+    public static MainFragment create(boolean goToForYou) {
+        MainFragment mainFragment = new MainFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_GO_TO_FOR_YOU, goToForYou);
+        mainFragment.setArguments(args);
+        return mainFragment;
+    }
+
+    private static final String ARG_GO_TO_FOR_YOU = "got_to_for_you";
+
     private static final int REQUEST_LOCATION_PERMISSION = 0;
     private static final int REQUEST_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_POST_COMPOSER = 2;
@@ -235,8 +245,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         public void onFlushComplete(int requestCode) {}
     };
 
-    public MainFragment(boolean goToForYou) {
-        this.goToForYou = goToForYou;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            goToForYou = args.getBoolean(ARG_GO_TO_FOR_YOU, false);
+        }
     }
 
     @Nullable
