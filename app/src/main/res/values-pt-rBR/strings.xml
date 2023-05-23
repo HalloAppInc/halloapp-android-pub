@@ -2698,6 +2698,24 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
         <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
         <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
     </plurals>
+
+    <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
+    <string name="calendar_last_30_days_note">"displaying last 30 days"</string>
+
+    <!-- Error shown in a snackbar when request for archive data fails -->
+    <string name="failed_to_request_archive">"Failed to load calendar"</string>
+
+    <!-- Option for user to skip adding their phone number when registering -->
+    <string name="katchup_add_phone_later">"add later"</string>
+
+    <!-- Tab to show activity notifications -->
+    <string name="feed_type_activity">"pings"</string>
+
+    <!-- Message shown in the pings tab to welcome the user -->
+    <string name="ping_welcome">"%s welcome to katchup! &#127813;&#128293;"</string>
+
+    <!-- Message shown in the pings tab when someone has followed you -->
+    <string name="ping_followed_you">"%s followed you"</string>
     <string name="notification_many_daily_katchup_reminder_body">"converse com %1$s, %2$s, +%3$d outros agora…"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>

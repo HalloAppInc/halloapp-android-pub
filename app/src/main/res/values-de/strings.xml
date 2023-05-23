@@ -2754,9 +2754,27 @@ Bleibe dran!"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
     <plurals name="notification_many_daily_katchup_reminder_body_plural">
-        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
-        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="one">"sieh dir jetzt an, was %1$s, %2$s und +%3$d weitere Person gerade machen"</item>
+        <item quantity="other">"sieh dir jetzt an, was %1$s, %2$s und +%3$d weitere Personen gerade machen"</item>
     </plurals>
+
+    <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
+    <string name="calendar_last_30_days_note">"Die letzten 30 Tage werden angezeigt"</string>
+
+    <!-- Error shown in a snackbar when request for archive data fails -->
+    <string name="failed_to_request_archive">"Kalender kann nicht geladen werden"</string>
+
+    <!-- Option for user to skip adding their phone number when registering -->
+    <string name="katchup_add_phone_later">"später hinzufügen"</string>
+
+    <!-- Tab to show activity notifications -->
+    <string name="feed_type_activity">"Pings"</string>
+
+    <!-- Message shown in the pings tab to welcome the user -->
+    <string name="ping_welcome">"%s, willkommen bei katchup! &#127813;&#128293;"</string>
+
+    <!-- Message shown in the pings tab when someone has followed you -->
+    <string name="ping_followed_you">"%s folgt dir"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"Feedback"</string>

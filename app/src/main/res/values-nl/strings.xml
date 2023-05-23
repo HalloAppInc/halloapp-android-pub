@@ -2707,9 +2707,27 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
     <plurals name="notification_many_daily_katchup_reminder_body_plural">
-        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
-        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="one">"bekijk nu wat %1$s, %2$s, +%3$d ander bezighoudt…"</item>
+        <item quantity="other">"bekijk nu wat %1$s, %2$s, +%3$d anderen bezighoudt…"</item>
     </plurals>
+
+    <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
+    <string name="calendar_last_30_days_note">"laatste 30 dagen weergegeven"</string>
+
+    <!-- Error shown in a snackbar when request for archive data fails -->
+    <string name="failed_to_request_archive">"Laden van kalender mislukt"</string>
+
+    <!-- Option for user to skip adding their phone number when registering -->
+    <string name="katchup_add_phone_later">"later toevoegen"</string>
+
+    <!-- Tab to show activity notifications -->
+    <string name="feed_type_activity">"meldingen"</string>
+
+    <!-- Message shown in the pings tab to welcome the user -->
+    <string name="ping_welcome">"%s, welkom bij katchup! &#127813;&#128293;"</string>
+
+    <!-- Message shown in the pings tab when someone has followed you -->
+    <string name="ping_followed_you">"%s followed you"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>

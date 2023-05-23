@@ -34,9 +34,7 @@ El servidor de telefonía móvil podría aplicar cargos."</string>
 %s"</string>
     <string name="contact_permission_title">"Por último"</string>
     <string name="registration_code_invalid">"Código de registro inválido, inténtalo de nuevo"</string>
-
-    <!-- Fuzzy -->
-    <string name="registration_failed">"No se pudo registrar el número de teléfono, inténtalo de nuevo"</string>
+    <string name="registration_failed">"Error de registro, inténtalo de nuevo"</string>
     <string name="registration_failed_no_friends">"Por el momento Hallo App solo se puede usar con invitación. Si tienes un amigo o un familiar que use HalloApp, diles que te inviten usando tu número de teléfono."</string>
     <string name="registration_failed_no_friends_title">"¡Caramba!"</string>
     <string name="type_a_message_hint">"Escribe un mensaje"</string>
@@ -2716,9 +2714,27 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
     <plurals name="notification_many_daily_katchup_reminder_body_plural">
-        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
-        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="one">"Ponte al día con %1$s, %2$s, +%3$d ahora…"</item>
+        <item quantity="other">"Ponte al día con %1$s, %2$s, +%3$d otros ahora…"</item>
     </plurals>
+
+    <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
+    <string name="calendar_last_30_days_note">"mostrar últimos 30 días"</string>
+
+    <!-- Error shown in a snackbar when request for archive data fails -->
+    <string name="failed_to_request_archive">"Error al cargar calendario"</string>
+
+    <!-- Option for user to skip adding their phone number when registering -->
+    <string name="katchup_add_phone_later">"agregar después"</string>
+
+    <!-- Tab to show activity notifications -->
+    <string name="feed_type_activity">"pings"</string>
+
+    <!-- Message shown in the pings tab to welcome the user -->
+    <string name="ping_welcome">"%s bienvenido(a) katchup! &#127813;&#128293;"</string>
+
+    <!-- Message shown in the pings tab when someone has followed you -->
+    <string name="ping_followed_you">"%s followed you"</string>
     <string name="notification_many_daily_katchup_reminder_body">"ponte al día con %1$s, %2$s, +%3$d otros ahora…"</string>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>
