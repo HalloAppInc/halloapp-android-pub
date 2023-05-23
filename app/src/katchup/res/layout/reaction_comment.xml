@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reaction_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
@@ -49,6 +50,20 @@
             />
 
         <TextView
+            android:id="@+id/follow_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/name"
+            android:layout_marginTop="2dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:background="@drawable/reaction_follow_back_button_background"
+            android:text="@string/follow_back_profile"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,6 +74,20 @@
             android:textColor="@color/white_50"
             android:textSize="12sp"
             tools:text="\@devpihtov"
+            />
+
+        <!-- TODO(vasil): figure out how to efficiently fetch mutuals -->
+        <TextView
+            android:id="@+id/mutuals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/username"
+            app:layout_constraintTop_toTopOf="@+id/username"
+            app:layout_constraintBottom_toBottomOf="@+id/username"
+            android:textColor="@color/white_50"
+            android:textSize="12sp"
+            tools:text=" • 10 mutual"
+            android:visibility="gone"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

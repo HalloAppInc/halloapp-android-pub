@@ -20,6 +20,8 @@ public class Reaction {
 
     @Nullable
     public Contact senderContact;
+    public boolean isFollowingSender;
+    public boolean isFollowerSender;
 
     public Reaction(@NonNull String reactionId, @NonNull String contentId, @NonNull UserId senderUserId, @NonNull String reactionType, long timestamp) {
         this.reactionId = reactionId;

@@ -1501,34 +1501,58 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         @Override
         public boolean areContentsTheSame(@NonNull Reaction oldItem, @NonNull Reaction newItem) {
-            return oldItem.equals(newItem);
+            return oldItem.equals(newItem) && oldItem.isFollowingSender == newItem.isFollowingSender && oldItem.isFollowerSender == newItem.isFollowerSender;
         }
     };
 
     private class ReactionViewHolder extends ViewHolderWithLifecycle {
         private Reaction reaction;
 
-        private ImageView avatarView;
-        private TextView nameView;
-        private TextView usernameView;
+        private final ImageView avatarView;
+        private final TextView nameView;
+        private final TextView usernameView;
+        private final TextView mutuals;
+        private final TextView followButton;
 
         public ReactionViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             usernameView = itemView.findViewById(R.id.username);
+            mutuals = itemView.findViewById(R.id.mutuals);
+            followButton = itemView.findViewById(R.id.follow_button);
+
+            final View reactionContainer = itemView.findViewById(R.id.reaction_container);
+            reactionContainer.setOnClickListener(v -> {
+                startActivity(ViewKatchupProfileActivity.viewProfile(ViewKatchupCommentsActivity.this, reaction.senderUserId));
+            });
+            followButton.setOnClickListener(v -> {
+                viewModel.followUser(reaction.senderUserId).observe(ViewKatchupCommentsActivity.this, success -> {
+                    if (!Boolean.TRUE.equals(success)) {
+                        SnackbarHelper.showWarning(followButton, R.string.failed_to_follow);
+                    }
+                });
+            });
         }
 
         public void bind(Reaction reaction) {
+            // TODO(vasil): No batch request for BasicUserProfile/UserProfile exists, and RelationshipList might not contain data for the relevant users.
+            //  Create a specialized loader to efficiently fetch BasicUserProfile to display the mutuals count.
             this.reaction = reaction;
             if (reaction.senderUserId.isMe()) {
                 nameView.setText(Me.getInstance().getName());
                 usernameView.setText(Me.getInstance().getUsername());
+                followButton.setVisibility(View.GONE);
             } else if (reaction.senderContact != null) {
                 nameView.setText(reaction.senderContact.halloName);
                 usernameView.setText(reaction.senderContact.username);
+                if (reaction.isFollowingSender) {
+                    followButton.setVisibility(View.GONE);
+                } else {
+                    followButton.setVisibility(View.VISIBLE);
+                    followButton.setText(getString(reaction.isFollowerSender ? R.string.follow_back_profile : R.string.follow_profile));
+                }
             }
-            itemView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(ViewKatchupCommentsActivity.this, reaction.senderUserId)));
             kAvatarLoader.load(avatarView, reaction.senderUserId);
         }
     }

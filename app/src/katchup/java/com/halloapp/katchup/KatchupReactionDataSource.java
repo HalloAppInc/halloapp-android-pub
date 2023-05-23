@@ -7,6 +7,7 @@ import androidx.paging.PositionalDataSource;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Reaction;
 import com.halloapp.id.UserId;
@@ -15,8 +16,10 @@ import com.halloapp.ui.groups.GroupParticipants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class KatchupReactionDataSource extends PositionalDataSource<Reaction> {
     private final ContactsDb contactsDb;
@@ -90,6 +93,16 @@ public abstract class KatchupReactionDataSource extends PositionalDataSource<Rea
     }
 
     protected void loadExtraFields(@NonNull List<Reaction> reactions) {
+        List<RelationshipInfo> followingList = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWING);
+        List<RelationshipInfo> followerList = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWER);
+        Set<UserId> followingSet = new HashSet<>();
+        Set<UserId> followerSet = new HashSet<>();
+        for (RelationshipInfo following : followingList) {
+            followingSet.add(following.userId);
+        }
+        for (RelationshipInfo follower : followerList) {
+            followerSet.add(follower.userId);
+        }
         for (Reaction reaction : reactions) {
             if (contactMap.containsKey(reaction.senderUserId)) {
                 reaction.senderContact = contactMap.get(reaction.senderUserId);
@@ -98,6 +111,8 @@ public abstract class KatchupReactionDataSource extends PositionalDataSource<Rea
                 reaction.senderContact.setColorIndex(getColorIndex(reaction.senderUserId));
                 contactMap.put(reaction.senderUserId, reaction.senderContact);
             }
+            reaction.isFollowingSender = followingSet.contains(reaction.senderUserId);
+            reaction.isFollowerSender = followerSet.contains(reaction.senderUserId);
         }
     }
 

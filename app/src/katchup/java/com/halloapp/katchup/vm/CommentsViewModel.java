@@ -21,6 +21,7 @@ import androidx.paging.PositionalDataSource;
 import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.halloapp.FileStore;
 import com.halloapp.Notifications;
+import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
@@ -38,6 +39,7 @@ import com.halloapp.katchup.KatchupCommentDataSource;
 import com.halloapp.katchup.KatchupPostsDataSource;
 import com.halloapp.katchup.KatchupReactionDataSource;
 import com.halloapp.katchup.PublicContentCache;
+import com.halloapp.katchup.RelationshipApi;
 import com.halloapp.katchup.ShareIntentHelper;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
@@ -46,10 +48,12 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -147,6 +151,20 @@ public class CommentsViewModel extends AndroidViewModel {
         }
     };
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+        @Override
+        public void onRelationshipsChanged() {
+            invalidateLatestDataSource();
+        }
+
+        @Override
+        public void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo) {
+            if (relationshipInfo.relationshipType == RelationshipInfo.Type.FOLLOWING) {
+                invalidateLatestDataSource();
+            }
+        }
+    };
+
     public CommentsViewModel(@NonNull Application application, String postId, List<String> postIdList, boolean fromStack, boolean fromArchive) {
         super(application);
         this.fromStack = fromStack;
@@ -163,6 +181,7 @@ public class CommentsViewModel extends AndroidViewModel {
         };
         contentDb.addObserver(contentObserver);
         publicContentCache.addObserver(cacheObserver);
+        contactsDb.addObserver(contactsObserver);
     }
 
     private String getCurrentPostId() {
@@ -494,6 +513,7 @@ public class CommentsViewModel extends AndroidViewModel {
         super.onCleared();
         contentDb.removeObserver(contentObserver);
         publicContentCache.removeObserver(cacheObserver);
+        contactsDb.removeObserver(contactsObserver);
     }
 
     public void onScreenshotted() {
@@ -535,6 +555,23 @@ public class CommentsViewModel extends AndroidViewModel {
                 }
             }
         });
+    }
+
+    public LiveData<Boolean> followUser(@NonNull UserId userId) {
+        final MutableLiveData<Boolean> result = new MutableLiveData<>();
+        RelationshipApi.getInstance().requestFollowUser(userId).onResponse(res -> {
+            if (Boolean.TRUE.equals(res)) {
+                invalidateLatestDataSource();
+                result.postValue(true);
+            } else {
+                Log.e("Failed to follow user");
+                result.postValue(false);
+            }
+        }).onError(err -> {
+            Log.e("Failed to follow user", err);
+            result.postValue(false);
+        });
+        return result;
     }
 
     public static class CommentsViewModelFactory implements ViewModelProvider.Factory {
