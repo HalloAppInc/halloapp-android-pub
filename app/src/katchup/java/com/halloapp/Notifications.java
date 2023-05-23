@@ -239,7 +239,7 @@ public class Notifications {
 
             final String unlockingMomentId = Preconditions.checkNotNull(contentDb.getUnlockingMomentId());
 
-            final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, unlockingMomentId, false);
+            final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, unlockingMomentId);
             contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
             contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.SCREENSHOT_NOTIFICATION);
             Analytics.getInstance().notificationReceived(Analytics.SCREENSHOT_NOTIFICATION, true);
@@ -406,7 +406,7 @@ public class Notifications {
                         .setSound(REACTION_NOTIFICATION_SOUND_URI, AudioManager.STREAM_NOTIFICATION);
 
                 final int requestCode = Objects.hashCode(comment.rowId);
-                final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, parentPost, false);
+                final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, parentPost);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);

@@ -26,10 +26,10 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
     protected final ContentDb contentDb;
     protected final String postId;
 
-    private HashMap<UserId, Contact> contactMap;
-    private HashMap<String, Comment> commentMap;
+    private final HashMap<UserId, Contact> contactMap;
+    private final HashMap<String, Comment> commentMap;
 
-    private List<Integer> unusedColors;
+    private final List<Integer> unusedColors;
 
     public static class Factory extends DataSource.Factory<Integer, Comment> {
 
@@ -37,16 +37,16 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
         private final ContentDb contentDb;
         private final PublicContentCache publicContentCache;
         private final Function<Void, String> getId;
-        private final boolean isPublic;
+        private final Function<Void, Boolean> isPublic;
 
         private KatchupCommentDataSource latestSource;
 
-        private HashMap<UserId, Contact> contactMap = new HashMap<>();
-        private HashMap<String, Comment> commentMap = new HashMap<>();
+        private final HashMap<UserId, Contact> contactMap = new HashMap<>();
+        private final HashMap<String, Comment> commentMap = new HashMap<>();
 
-        private List<Integer> unusedColors = new LinkedList<>();
+        private final List<Integer> unusedColors = new LinkedList<>();
 
-        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull Function<Void, String> getId) {
+        public Factory(@NonNull Function<Void, Boolean> isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull Function<Void, String> getId) {
             this.contactsDb = contactsDb;
             this.contentDb = contentDb;
             this.publicContentCache = publicContentCache;
@@ -70,7 +70,7 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
 
         private void createInternal() {
             String postId = getId.apply(null);
-            latestSource = isPublic
+            latestSource = isPublic.apply(null)
                     ? new PublicKatchupCommentsDataSource(contentDb, contactsDb, publicContentCache, postId, contactMap, commentMap, unusedColors)
                     : new LocalKatchupCommentsDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
         }

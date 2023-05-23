@@ -51,7 +51,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 public class CommentsViewModel extends AndroidViewModel {
@@ -64,7 +66,7 @@ public class CommentsViewModel extends AndroidViewModel {
     private final MutableLiveData<Post> postLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> followable = new MutableLiveData<>();
 
-    private final boolean isPublic;
+    private final Set<String> publicPostIdSet = new HashSet<>();
     private final boolean fromStack;
     private final boolean fromArchive;
     private final String originalPostId;
@@ -145,13 +147,12 @@ public class CommentsViewModel extends AndroidViewModel {
         }
     };
 
-    public CommentsViewModel(@NonNull Application application, String postId, boolean isPublic, boolean fromStack, boolean fromArchive) {
+    public CommentsViewModel(@NonNull Application application, String postId, List<String> postIdList, boolean fromStack, boolean fromArchive) {
         super(application);
-        this.isPublic = isPublic;
         this.fromStack = fromStack;
         this.fromArchive = fromArchive;
         this.originalPostId = postId;
-        postList = createPostsList();
+        postList = createPostsList(postIdList);
         commentList = createCommentsList();
         reactionList = createReactionsList();
         postIsSelfReacted = new ComputableLiveData<Boolean>() {
@@ -187,68 +188,111 @@ public class CommentsViewModel extends AndroidViewModel {
         Notifications.getInstance(getApplication()).clearReactionNotifications(unseenCommentIds);
     }
 
-    protected LiveData<PagedList<Post>> createPostsList() {
+    protected LiveData<PagedList<Post>> createPostsList(@Nullable List<String> postIdList) {
         if (fromStack) {
-            KatchupPostsDataSource.Factory postsDataSourceFactory = new KatchupPostsDataSource.Factory(contentDb, KatchupPostsDataSource.POST_TYPE_UNSEEN, originalPostId);
+            KatchupPostsDataSource.Factory postsDataSourceFactory = new KatchupPostsDataSource.Factory(contentDb, KatchupPostsDataSource.POST_TYPE_UNSEEN, originalPostId, false);
             return new LivePagedListBuilder<>(postsDataSourceFactory, new PagedList.Config.Builder().setPageSize(5).setEnablePlaceholders(false).build()).build();
         } else if (fromArchive) {
             Executor mainThreadExecutor = new HandlerExecutor(getApplication().getMainLooper());
             MediatorLiveData<PagedList<Post>> mediatorLiveData = new MediatorLiveData<>();
 
             bgWorkers.execute(() -> {
-                Post post = isPublic ? PublicContentCache.getInstance().getPost(originalPostId) : contentDb.getPost(originalPostId);
+                Post post = getPost(originalPostId);
 
                 if (post != null && post.senderUserId.isMe()) {
-                    KatchupPostsDataSource.Factory postsDataSourceFactory = new KatchupPostsDataSource.Factory(contentDb, KatchupPostsDataSource.POST_TYPE_MY_ARCHIVE, originalPostId);
+                    KatchupPostsDataSource.Factory postsDataSourceFactory = new KatchupPostsDataSource.Factory(contentDb, KatchupPostsDataSource.POST_TYPE_MY_ARCHIVE, originalPostId, true);
                     LiveData<PagedList<Post>> postListLiveData = new LivePagedListBuilder<>(postsDataSourceFactory, new PagedList.Config.Builder().setPageSize(5).setEnablePlaceholders(false).build()).build();
 
                     mainThreadExecutor.execute(() -> mediatorLiveData.addSource(postListLiveData, mediatorLiveData::postValue));
-                } else if (post != null) {
-                    // TODO(stefan): after archives for other users is done
+                } else if (post != null && postIdList != null) {
+                    ArrayList<Post> posts = new ArrayList<>(postIdList.size());
+                    for (String postId : postIdList) {
+                        Post postItem = getPost(postId);
+
+                        if (postItem != null) {
+                            posts.add(postItem);
+                        }
+                    }
+
+                    Collections.sort(posts, (post1, post2) -> {
+                        if (post1.timestamp > post2.timestamp) {
+                            return 1;
+                        } else if (post1.timestamp < post2.timestamp) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
+
+                    mediatorLiveData.postValue(pagedList(posts));
                 }
             });
 
             return mediatorLiveData;
         } else {
-            MutableLiveData<PagedList<Post>> postLiveData = new MutableLiveData<>();
+            MutableLiveData<PagedList<Post>> postsLiveData = new MutableLiveData<>();
 
             bgWorkers.execute(() -> {
-                Post post = isPublic ? PublicContentCache.getInstance().getPost(originalPostId) : contentDb.getPost(originalPostId);
+                Post post = getPost(originalPostId);
 
                 if (post != null) {
-                    postLiveData.postValue(singletonPagedList(post));
+                    postsLiveData.postValue(pagedList(Collections.singletonList(post)));
                 }
             });
 
-            return postLiveData;
+            return postsLiveData;
         }
     }
 
+    public boolean isPublic() {
+        return publicPostIdSet.contains(getCurrentPostId());
+    }
+
+    public boolean isPublic(String postId) {
+        return publicPostIdSet.contains(postId);
+    }
+
+    @Nullable
+    protected Post getPost(@NonNull String postId) {
+        Post post = contentDb.getPost(postId);
+        if (post != null) {
+            return post;
+        }
+
+        post = PublicContentCache.getInstance().getPost(postId);
+        if (post != null) {
+            publicPostIdSet.add(postId);
+            return post;
+        }
+
+        return null;
+    }
+
     @NonNull
-    protected PagedList<Post> singletonPagedList(@NonNull Post post) {
+    protected PagedList<Post> pagedList(@NonNull List<Post> posts) {
         Executor mainThreadExecutor = new HandlerExecutor(getApplication().getMainLooper());
 
         return new PagedList.Builder<>(new PositionalDataSource<Post>() {
             @Override
             public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<Post> callback) {
-                callback.onResult(Collections.singletonList(post), 0, 1);
+                callback.onResult(posts, 0, posts.size());
             }
 
             @Override
             public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<Post> callback) {
                 callback.onResult(new ArrayList<>());
             }
-        }, 1).setNotifyExecutor(mainThreadExecutor).setFetchExecutor(mainThreadExecutor).build();
+        }, posts.size()).setNotifyExecutor(mainThreadExecutor).setFetchExecutor(mainThreadExecutor).build();
     }
 
     protected LiveData<PagedList<Comment>> createCommentsList() {
-        commentDataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
+        commentDataSourceFactory = new KatchupCommentDataSource.Factory(v -> isPublic(), contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
 
         return new LivePagedListBuilder<>(commentDataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
 
     protected LiveData<PagedList<Reaction>> createReactionsList() {
-        reactionDataSourceFactory = new KatchupReactionDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
+        reactionDataSourceFactory = new KatchupReactionDataSource.Factory(v -> isPublic(), contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
 
         return new LivePagedListBuilder<>(reactionDataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
@@ -290,9 +334,11 @@ public class CommentsViewModel extends AndroidViewModel {
     public LiveData<Boolean> onVideoReaction(File file, boolean canceled) {
         MutableLiveData<Boolean> sendSuccess = new MutableLiveData<>();
         if (canceled) {
-            bgWorkers.execute(() -> file.delete());
+            bgWorkers.execute(file::delete);
             sendSuccess.postValue(false);
         } else {
+            String postId = getCurrentPostId();
+            boolean isPublic = isPublic();
             final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_VIDEO));
             MediaTranscoderTask transcoderTask = new MediaTranscoderTask(new PrepareVideoReactionTask(file.getAbsolutePath(), targetFile.getAbsolutePath()));
             transcoderTask.setListener(new MediaTranscoderTask.DefaultListener() {
@@ -304,7 +350,7 @@ public class CommentsViewModel extends AndroidViewModel {
                     });
                     final Comment comment = new Comment(
                             0,
-                            getCurrentPostId(),
+                            postId,
                             UserId.ME,
                             RandomId.create(),
                             null,
@@ -360,7 +406,7 @@ public class CommentsViewModel extends AndroidViewModel {
                 true,
                 text);
         contentDb.addComment(comment);
-        if (isPublic) {
+        if (isPublic()) {
             publicContentCache.addComment(getCurrentPostId(), comment);
             invalidateLatestDataSource();
         }
@@ -382,7 +428,7 @@ public class CommentsViewModel extends AndroidViewModel {
                 text,
                 color);
         contentDb.addComment(comment);
-        if (isPublic) {
+        if (isPublic()) {
             publicContentCache.addComment(getCurrentPostId(), comment);
             invalidateLatestDataSource();
         }
@@ -471,18 +517,19 @@ public class CommentsViewModel extends AndroidViewModel {
             Log.i("CommentsViewModel/toggleLike null moment");
             return;
         }
+
         bgWorkers.execute(() -> {
             final Reaction existingReaction = contentDb.getMyKatchupPostReaction(post.id);
             if (existingReaction != null) {
                 contentDb.retractReaction(existingReaction, post);
-                if (isPublic) {
+                if (isPublic(post.id)) {
                     publicContentCache.removeReaction(existingReaction.contentId, existingReaction);
                     invalidateLatestDataSource();
                 }
             } else {
                 final Reaction newReaction = new Reaction(RandomId.create(), post.id, UserId.ME, Reaction.TYPE_KATCHUP_LIKE, System.currentTimeMillis());
                 contentDb.addReaction(newReaction, post);
-                if (isPublic) {
+                if (isPublic(post.id)) {
                     publicContentCache.addReaction(newReaction.contentId, newReaction);
                     invalidateLatestDataSource();
                 }
@@ -492,25 +539,26 @@ public class CommentsViewModel extends AndroidViewModel {
 
     public static class CommentsViewModelFactory implements ViewModelProvider.Factory {
 
-        private Application application;
+        private final Application application;
         private final String postId;
-        private final boolean isPublic;
+        private final List<String> postIdList;
         private final boolean fromStack;
         private final boolean fromArchive;
 
-        public CommentsViewModelFactory(@NonNull Application application, String postId, boolean isPublic, boolean fromStack, boolean fromArchive) {
+        public CommentsViewModelFactory(@NonNull Application application, String postId, List<String> postIdList, boolean fromStack, boolean fromArchive) {
             this.application = application;
             this.postId = postId;
-            this.isPublic = isPublic;
+            this.postIdList = postIdList;
             this.fromStack = fromStack;
             this.fromArchive = fromArchive;
         }
 
+        @NonNull
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(application, postId, isPublic, fromStack, fromArchive);
+                return (T) new CommentsViewModel(application, postId, postIdList, fromStack, fromArchive);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

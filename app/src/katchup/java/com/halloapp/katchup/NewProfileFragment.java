@@ -548,7 +548,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
         if (!post.senderUserId.isMe() && !ContentDb.getInstance().getMomentUnlockStatus().isUnlocked()) {
             BlurManager.getInstance().setupMomentBlur(blurView, imageContainer);
         } else {
-            archiveMomentView.setOnClickListener(v -> startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post.id, !isLocal, !isLocal, false)));
+            archiveMomentView.setOnClickListener(v -> startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post.id, !isLocal, false)));
         }
         date.setText(DateUtils.formatDateTime(requireContext(), post.notificationTimestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(archiveMomentView, 0);

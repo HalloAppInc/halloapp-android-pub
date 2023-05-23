@@ -115,6 +115,7 @@ import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -125,25 +126,25 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ViewKatchupCommentsActivity extends HalloActivity {
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post) {
-        return viewPost(context, post, false);
+        return viewPost(context, post.id);
     }
 
-    public static Intent viewPost(@NonNull Context context, @NonNull Post post, boolean isPublic) {
-        return viewPost(context, post.id, isPublic);
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId) {
+        return viewPost(context, postId, false, false);
     }
 
-    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic) {
-        return viewPost(context, postId, isPublic, false, false);
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean disableComments, boolean fromStack) {
+        return viewPost(context, postId, disableComments, fromStack, false, false);
     }
 
-    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack) {
-        return viewPost(context, postId, isPublic, disableComments, fromStack, false, false);
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused) {
+        return viewPost(context, postId, null, disableComments, fromStack, fromArchive, entryFocused);
     }
 
-    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused) {
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, @Nullable ArrayList<String> postIdList, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, postId);
-        i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
+        i.putStringArrayListExtra(EXTRA_POST_ID_LIST, postIdList);
         i.putExtra(EXTRA_DISABLE_COMMENTS, disableComments);
         i.putExtra(EXTRA_FROM_STACK, fromStack);
         i.putExtra(EXTRA_FROM_ARCHIVE, fromArchive);
@@ -156,7 +157,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final int REQUEST_CODE_REPORT = 2;
 
     private static final String EXTRA_POST_ID = "post_id";
-    private static final String EXTRA_IS_PUBLIC_POST = "is_public_post";
+    private static final String EXTRA_POST_ID_LIST = "post_id_list";
     private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
     private static final String EXTRA_FROM_STACK = "from_stack";
     private static final String EXTRA_FROM_ARCHIVE = "from_archive";
@@ -173,9 +174,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
-    private MediaThumbnailLoader mediaThumbnailLoader;
-    private ExternalSelfieLoader externalSelfieLoader = new ExternalSelfieLoader();
-    private GeotagLoader geotagLoader = new GeotagLoader();
+    private MediaThumbnailLoader localMediaThumbnailLoader;
+    private MediaThumbnailLoader externalMediaThumbnailLoader;
+    private final ExternalSelfieLoader externalSelfieLoader = new ExternalSelfieLoader();
+    private final GeotagLoader geotagLoader = new GeotagLoader();
 
     private CommentsViewModel viewModel;
 
@@ -190,7 +192,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private View coordinator;
     private ViewPager2 contentContainer;
-    private PostsAdapter postsAdapter = new PostsAdapter();
+    private final PostsAdapter postsAdapter = new PostsAdapter();
     private View scalableContainer;
     private View recordProtection;
     private EmojiKeyboardLayout emojiKeyboardLayout;
@@ -206,7 +208,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private View bottomSheetView;
     private BottomSheetBehavior bottomSheetBehavior;
 
-    private int selfieMargin;
     private int selfieVerticalMargin;
     private int selfieHorizontalMargin;
 
@@ -303,7 +304,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         reactionsRv.setLayoutManager(reactionLayoutManager);
         reactionsRv.setAdapter(reactionsAdapter);
 
-        selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
         selfieVerticalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_vertical_margin);
         selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
 
@@ -411,7 +411,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         });
         contentContainer.setAdapter(postsAdapter);
 
-        boolean isPublic = getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false);
         boolean fromStack = getIntent().getBooleanExtra(EXTRA_FROM_STACK, false);
         boolean fromArchive = getIntent().getBooleanExtra(EXTRA_FROM_ARCHIVE, false);
 
@@ -421,13 +420,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-        mediaThumbnailLoader = isPublic
-                ? new ExternalMediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)))
-                : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        localMediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        externalMediaThumbnailLoader = new ExternalMediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         String originalPostId = getIntent().getStringExtra(EXTRA_POST_ID);
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), originalPostId, isPublic, fromStack, fromArchive)).get(CommentsViewModel.class);
-        viewModel.getPost().observe(this, post -> bindPost(post, isPublic));
+        ArrayList<String> postIdList = getIntent().getStringArrayListExtra(EXTRA_POST_ID_LIST);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), originalPostId, postIdList, fromStack, fromArchive)).get(CommentsViewModel.class);
+        viewModel.getPost().observe(this, post -> bindPost(post));
         viewModel.getPostIsSelfReacted().observe(this, liked -> likeButton.setIsLiked(liked));
 
         bottomSheetView = findViewById(R.id.bottom_sheet);
@@ -1045,7 +1044,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         updateContentPlayingForProtection();
     }
 
-    private void bindPost(Post post, boolean isPublic) {
+    private void bindPost(Post post) {
         if (post == null) {
             finish();
             return;
@@ -1122,7 +1121,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         if (post.senderUserId.isMe()) {
             headerUsername.setText(Me.getInstance().getUsername());
         } else {
-            if (isPublic) {
+            if (viewModel.isPublic()) {
                 PublicContentCache.getInstance().subscribeToPost(post);
             }
             contactLoader.load(headerUsername, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
@@ -1219,7 +1218,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 if (content.type == Media.MEDIA_TYPE_VIDEO) {
                     bindContentVideo(content);
                 } else {
-                    bindContentPhoto(content);
+                    bindContentPhoto(post, content);
                 }
             }
 
@@ -1327,7 +1326,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             player.prepare();
         }
 
-        private void bindContentPhoto(Media content) {
+        private void bindContentPhoto(Post post, Media content) {
             if (contentPlayer != null) {
                 contentPlayer.destroy();
                 contentPlayer = null;
@@ -1335,7 +1334,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             postVideoView.setVisibility(View.GONE);
             postPhotoView.setVisibility(View.VISIBLE);
             contentLoadingView.setVisibility(View.VISIBLE);
-            mediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
+
+            if (viewModel.isPublic(post.id)) {
+                externalMediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
+            } else {
+                localMediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
+            }
         }
 
         private void moveSelfieToCorner() {

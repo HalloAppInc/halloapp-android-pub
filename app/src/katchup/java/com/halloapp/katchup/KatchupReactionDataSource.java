@@ -33,7 +33,7 @@ public abstract class KatchupReactionDataSource extends PositionalDataSource<Rea
         private final ContentDb contentDb;
         private final PublicContentCache publicContentCache;
         private final Function<Void, String> getId;
-        private final boolean isPublic;
+        private final Function<Void, Boolean> isPublic;
 
         private KatchupReactionDataSource latestSource;
 
@@ -41,7 +41,7 @@ public abstract class KatchupReactionDataSource extends PositionalDataSource<Rea
 
         private final List<Integer> unusedColors = new LinkedList<>();
 
-        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull Function<Void, String> getId) {
+        public Factory(Function<Void, Boolean> isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull Function<Void, String> getId) {
             this.contactsDb = contactsDb;
             this.contentDb = contentDb;
             this.publicContentCache = publicContentCache;
@@ -65,7 +65,7 @@ public abstract class KatchupReactionDataSource extends PositionalDataSource<Rea
 
         private void createInternal() {
             String postId = getId.apply(null);
-            latestSource = isPublic
+            latestSource = isPublic.apply(null)
                     ? new PublicKatchupReactionDataSource(contentDb, contactsDb, publicContentCache, postId, contactMap, unusedColors)
                     : new LocalKatchupReactionDataSource(contentDb, contactsDb, postId, contactMap, unusedColors);
         }

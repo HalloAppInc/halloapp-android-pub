@@ -410,7 +410,13 @@ public class ArchiveActivity extends HalloActivity {
                     }
                 }
 
-                dayView.setOnClickListener(view -> startActivity(ViewKatchupCommentsActivity.viewPost(view.getContext(), post.id, !isLocal, !isLocal, false, post.senderUserId.isMe(), false)));
+                List<KatchupPost> postList = viewModel.posts.getValue();
+                ArrayList<String> postIdList = new ArrayList<>(postList.size());
+                for (KatchupPost item : postList) {
+                    postIdList.add(item.id);
+                }
+
+                dayView.setOnClickListener(view -> startActivity(ViewKatchupCommentsActivity.viewPost(view.getContext(), post.id, postIdList, !isLocal, false, true, false)));
             }
             if (dayData.getDayNumber() != MonthDayData.PADDING_DAY) {
                 dayNumberView.setText(String.valueOf(getItem(position).getDayNumber()));

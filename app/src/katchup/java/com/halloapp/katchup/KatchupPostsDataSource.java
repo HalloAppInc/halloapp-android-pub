@@ -10,6 +10,7 @@ import com.halloapp.content.Post;
 import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
@@ -21,24 +22,28 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
     private final ContentDb contentDb;
     private final int postType;
     private final String postId;
+    private final boolean reversed;
     private Long keyTimestamp;
+
 
     public static class Factory extends DataSource.Factory<Long, Post> {
 
         private final ContentDb contentDb;
         private final int postType;
         private final String postId;
+        private final boolean reversed;
         private KatchupPostsDataSource latestSource;
 
         public Factory(@NonNull ContentDb contentDb, int postType) {
-            this(contentDb, postType, null);
+            this(contentDb, postType, null, false);
         }
 
-        public Factory(@NonNull ContentDb contentDb, int postType, @Nullable String postId) {
+        public Factory(@NonNull ContentDb contentDb, int postType, @Nullable String postId, boolean reversed) {
             this.contentDb = contentDb;
             this.postType = postType;
             this.postId = postId;
-            latestSource = new KatchupPostsDataSource(contentDb, postType, postId);
+            this.reversed = reversed;
+            latestSource = new KatchupPostsDataSource(contentDb, postType, postId, reversed);
         }
 
         @Override
@@ -46,7 +51,7 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
             Log.i("KatchupPostsDataSource.Factory.create");
             if (latestSource.isInvalid()) {
                 Log.i("KatchupPostsDataSource.Factory.create old source was invalidated; creating a new one");
-                latestSource = new KatchupPostsDataSource(contentDb, postType, postId);
+                latestSource = new KatchupPostsDataSource(contentDb, postType, postId, reversed);
             }
             return latestSource;
         }
@@ -57,10 +62,11 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
         }
     }
 
-    private KatchupPostsDataSource(@NonNull ContentDb contentDb, int postType, String postId) {
+    private KatchupPostsDataSource(@NonNull ContentDb contentDb, int postType, String postId, boolean reversed) {
         this.contentDb = contentDb;
         this.postType = postType;
         this.postId = postId;
+        this.reversed = reversed;
     }
 
     @Override
@@ -105,19 +111,36 @@ public class KatchupPostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
         Log.d("KatchupPostsDataSource.loadInitial: requestedInitialKey=" + params.requestedInitialKey + " requestedLoadSize:" + params.requestedLoadSize + " got " + posts.size() +
                 (posts.isEmpty() ? "" : " posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp));
+
+        if (reversed) {
+            Collections.reverse(posts);
+        }
+
         callback.onResult(posts);
     }
 
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Post> callback) {
         Log.d("KatchupPostsDataSource.loadAfter: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(getPosts(params.key, params.requestedLoadSize, true));
+        if (reversed) {
+            List<Post> posts = getPosts(params.key, params.requestedLoadSize, false);
+            Collections.reverse(posts);
+            callback.onResult(posts);
+        } else {
+            callback.onResult(getPosts(params.key, params.requestedLoadSize, true));
+        }
     }
 
     @Override
     public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Post> callback) {
         Log.d("KatchupPostsDataSource.loadBefore: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(getPosts(params.key, params.requestedLoadSize, false));
+        if (reversed) {
+            List<Post> posts = getPosts(params.key, params.requestedLoadSize, true);
+            Collections.reverse(posts);
+            callback.onResult(posts);
+        } else {
+            callback.onResult(getPosts(params.key, params.requestedLoadSize, false));
+        }
     }
 
     @NonNull

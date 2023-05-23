@@ -1851,7 +1851,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             kAvatarLoader.load(avatar, item.userId);
 
             itemView.setOnClickListener(v -> {
-                startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), item.postId, false));
+                startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), item.postId));
             });
 
             contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
