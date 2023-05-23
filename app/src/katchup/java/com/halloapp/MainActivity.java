@@ -144,17 +144,20 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             } else if (!checkResult.onboardingFollowingSetup) {
                 Log.i("MainActivity.onCreate.registrationStatus: onboarding following not setup");
+                Analytics.getInstance().setUserProperty("onboardingCompleted", true);
                 startActivity(new Intent(getBaseContext(), OnboardingFollowingActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
             } else if (!checkResult.onboardingGetStartedShown) {
                 Log.i("MainActivity.onCreate.registrationStatus: onboarding following not setup");
+                Analytics.getInstance().setUserProperty("onboardingCompleted", true);
                 startActivity(new Intent(getBaseContext(), GetStartedActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
             } else {
                 registrationIsDone = true;
+                Analytics.getInstance().setUserProperty("onboardingCompleted", true);
                 Analytics.getInstance().initUserProperties(getApplicationContext());
                 return;
             }

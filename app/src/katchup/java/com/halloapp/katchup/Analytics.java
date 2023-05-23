@@ -74,7 +74,6 @@ public class Analytics {
         context = application.getApplicationContext();
         if (BuildConfig.DEBUG) {
             amplitude = new Amplitude(new Configuration("279d791071ab6d93eba1e53ebd7abc4a", context));
-            // TODO(josh): remove when Amplitude stuff is done
             amplitude.getConfiguration().setFlushQueueSize(1);
         } else {
             amplitude = new Amplitude(new Configuration("6f6565a4685104d024a535a5ae9d97ac", context));
@@ -343,6 +342,7 @@ public class Analytics {
         KatchupPost kParentPost = (KatchupPost) parentPost;
         properties.put("post_type", getContentTypeString(kParentPost.contentType));
         properties.put("post_moment_notif_id", kParentPost.notificationId);
+        properties.put("moment_notif_id", Preferences.getInstance().getMomentNotificationId());
         properties.put("type", type);
         track("commented", properties);
     }
