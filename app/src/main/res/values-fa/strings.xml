@@ -2695,18 +2695,18 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="notification_daily_katchup_reminder_body">"از دوستانتان خبر بگیرید…"</string>
 
     <!-- body of the daily katchup reminder notification. %s is the username of someone who posted -->
-    <string name="notification_one_daily_katchup_reminder_body">"از s% خبر بگیرید…"</string>
+    <string name="notification_one_daily_katchup_reminder_body">"از %s خبر بگیرید…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted -->
-    <string name="notification_two_daily_katchup_reminder_body">"از s$1% و s$2%خبر بگیرید…"</string>
+    <string name="notification_two_daily_katchup_reminder_body">"از %1$s و %2$sخبر بگیرید…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s, %3$s are replaced with the usernames of those who posted -->
-    <string name="notification_three_daily_katchup_reminder_body">"از s$1%, s$2% و s$3% خبر بگیرید…"</string>
+    <string name="notification_three_daily_katchup_reminder_body">"از %1$s, %2$s و %3$s خبر بگیرید…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
     <plurals name="notification_many_daily_katchup_reminder_body_plural">
-        <item quantity="one">"از s$1%, s$2% و s$3% و بقیه خبر بگیرید…"</item>
-        <item quantity="other">"از s$1%, s$2% و s$3% و بقیه خبر بگیرید…"</item>
+        <item quantity="one">"از %1$s, %2$s و %3$s و بقیه خبر بگیرید…"</item>
+        <item quantity="other">"از %1$s, %2$s و %3$s و بقیه خبر بگیرید…"</item>
     </plurals>
 
     <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
