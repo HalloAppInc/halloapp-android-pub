@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ThreadUtils;
@@ -239,6 +240,7 @@ public class CustomAiActivity extends HalloActivity {
             generationError.postValue(false);
             generationRequestInFlight.postValue(true);
             generatedImage.postValue(null);
+            Analytics.getInstance().generatedAiImage("user");
             Connection.getInstance().sendAiImageRequest(text, 1, custom).onResponse(res -> {
                 if (res.success) {
                     pendingAiImageId = res.id;

@@ -53,6 +53,10 @@ public class Analytics {
     private boolean notificationsEnabled;
     private Context context;
 
+    private int numServerAiImagesGenerated;
+    private int numUserAiImagesGenerated;
+    private String mostRecentBackgroundType;
+
     public static Analytics getInstance() {
         if (instance == null) {
             synchronized (Analytics.class) {
@@ -320,6 +324,10 @@ public class Analytics {
         properties.put("type", getContentTypeString(contentType));
         properties.put("moment_notif_id", notificationId);
         properties.put("prompt", prompt);
+        properties.put("backgroundType", mostRecentBackgroundType);
+        properties.put("num_ai_images_generated", numServerAiImagesGenerated + numUserAiImagesGenerated);
+        properties.put("num_server_ai_images_generated", numServerAiImagesGenerated);
+        properties.put("num_user_ai_images_generated", numUserAiImagesGenerated);
         track("posted", properties);
     }
 
@@ -450,7 +458,25 @@ public class Analytics {
         track("tappedPostButtonFromFeaturedPosts");
     }
 
+    public void startedNewTextPost() {
+        // resets fields that accumulate data for "posted" event properties
+        numServerAiImagesGenerated = 1;
+        numUserAiImagesGenerated = 0;
+        mostRecentBackgroundType = "server_ai";
+    }
+
+    public void generatedAiImage(String type) {
+        if (type.equals("server")) {
+            numServerAiImagesGenerated++;
+        } else if (type.equals("user")) {
+            numUserAiImagesGenerated++;
+        } else {
+            throw new IllegalArgumentException("type must be \"server\" or \"user\"");
+        }
+    }
+
     public void changedPostBackground(String backgroundType) {
+        mostRecentBackgroundType = backgroundType;
         Map<String, Object> properties = new HashMap<>();
         properties.put("background_type", backgroundType);
         track("changedPostBackground", properties);

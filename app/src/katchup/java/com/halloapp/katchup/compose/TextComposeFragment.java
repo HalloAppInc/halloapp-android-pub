@@ -63,6 +63,8 @@ public class TextComposeFragment extends ComposeFragment {
         TextComposeFragment fragment = new TextComposeFragment();
         fragment.setArguments(args);
 
+        Analytics.getInstance().startedNewTextPost();
+
         return fragment;
     }
 
@@ -374,6 +376,7 @@ public class TextComposeFragment extends ComposeFragment {
             final View random = root.findViewById(R.id.random);
             random.setOnClickListener(v -> {
                 Analytics.getInstance().changedPostBackground("server_ai");
+                Analytics.getInstance().generatedAiImage("server");
                 viewModel.generateAiImage(editText.getEditableText().toString(), false);
                 dismiss();
             });
