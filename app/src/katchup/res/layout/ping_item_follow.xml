@@ -59,4 +59,15 @@
         android:textColor="@color/black"
         android:textSize="12sp"/>
 
+    <ImageView
+        android:id="@+id/seen"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:padding="1dp"
+        app:layout_constraintEnd_toEndOf="@id/avatar_container"
+        app:layout_constraintTop_toTopOf="@+id/avatar_container"
+        android:src="@drawable/ic_ping"
+        android:background="@drawable/ping_background"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

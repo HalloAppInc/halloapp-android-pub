@@ -1431,14 +1431,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             List<Comment> comments = contentDb.getIncomingCommentsHistory(250);
             for (Comment comment : comments) {
                 String text = comment.type == Comment.TYPE_STICKER && comment.text.length() > 7 ? comment.text.substring(7) : comment.text;
-                PingItem item = new PingItem(PingItem.PingType.Comment, comment.senderUserId, text, comment.timestamp);
+                PingItem item = new PingItem(PingItem.PingType.Comment, comment.senderUserId, text, comment.timestamp, comment.seen);
                 item.postId = comment.postId;
                 ret.add(item);
             }
 
             List<RelationshipInfo> infos = contactsDb.getFollowerHistory(250);
             for (RelationshipInfo info : infos) {
-                PingItem item = new PingItem(PingItem.PingType.Follow, info.userId, null, info.timestamp);
+                PingItem item = new PingItem(PingItem.PingType.Follow, info.userId, null, info.timestamp, info.seen);
                 item.showFollowBack = contactsDb.getRelationship(info.userId, RelationshipInfo.Type.FOLLOWING) == null;
                 ret.add(item);
             }
@@ -1765,12 +1765,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         long timestamp;
         boolean showFollowBack;
         String postId;
+        boolean seen;
 
-        public PingItem(PingType pingType, UserId userId, String text, long timestamp) {
+        public PingItem(PingType pingType, UserId userId, String text, long timestamp, boolean seen) {
             this.pingType = pingType;
             this.userId = userId;
             this.text = text;
             this.timestamp = timestamp;
+            this.seen = seen;
         }
     }
 
@@ -1787,6 +1789,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private ImageView avatar;
         private TextView text;
         private View followBack;
+        private View seen;
 
         public FollowViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -1794,6 +1797,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             avatar = itemView.findViewById(R.id.avatar);
             text = itemView.findViewById(R.id.text);
             followBack = itemView.findViewById(R.id.follow_back_button);
+            seen = itemView.findViewById(R.id.seen);
         }
 
         @Override
@@ -1803,6 +1807,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             itemView.setOnClickListener(v -> {
                 startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), item.userId));
             });
+
+            seen.setVisibility(item.seen ? View.GONE : View.VISIBLE);
 
             followBack.setVisibility(item.showFollowBack ? View.VISIBLE : View.GONE);
             followBack.setOnClickListener(v -> {
@@ -1836,12 +1842,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private class CommentViewHolder extends PingViewHolder {
         private ImageView avatar;
         private TextView text;
+        private View seen;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
 
             avatar = itemView.findViewById(R.id.avatar);
             text = itemView.findViewById(R.id.text);
+            seen = itemView.findViewById(R.id.seen);
         }
 
         @Override
@@ -1851,6 +1859,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             itemView.setOnClickListener(v -> {
                 startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), item.postId));
             });
+
+            seen.setVisibility(item.seen ? View.GONE : View.VISIBLE);
 
             contactLoader.load(text, item.userId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
