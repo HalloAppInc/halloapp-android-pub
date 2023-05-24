@@ -398,8 +398,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         swipeRefreshLayout = root.findViewById(R.id.swipe_refresh_layout);
-        int extraOffset = getResources().getDimensionPixelOffset(R.dimen.feed_protective_background_height);
-        swipeRefreshLayout.setProgressViewOffset(false, swipeRefreshLayout.getProgressViewStartOffset() + extraOffset, swipeRefreshLayout.getProgressViewEndOffset() + extraOffset);
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshPublicFeed());
         viewModel.refreshing.observe(getViewLifecycleOwner(), refreshing -> {
             swipeRefreshLayout.setRefreshing(Boolean.TRUE.equals(refreshing));
