@@ -8,21 +8,19 @@
     android:fitsSystemWindows="true"
     android:clipChildren="false">
 
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pings_tab"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feed_type_container"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/feed_tab_background"
         >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pings_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="@dimen/feed_protective_background_height"
             android:clipToPadding="false"
             />
 
@@ -32,8 +30,9 @@
         android:id="@+id/following_tab"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feed_type_container"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/feed_tab_background"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -253,7 +252,6 @@
             app:layout_constraintHeight_min="160dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/only_own_post"
-            android:paddingTop="@dimen/feed_protective_background_height"
             android:clipToPadding="false"
             />
 
@@ -287,8 +285,9 @@
         android:id="@+id/discover_tab"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feed_type_container"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/feed_tab_background"
         >
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -301,7 +300,6 @@
                 android:id="@+id/public_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="@dimen/feed_protective_background_height"
                 android:clipToPadding="false"
                 />
 
