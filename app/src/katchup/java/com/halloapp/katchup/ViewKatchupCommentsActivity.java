@@ -134,14 +134,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean disableComments, boolean fromStack) {
-        return viewPost(context, postId, disableComments, fromStack, false, false);
-    }
-
-    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused) {
-        return viewPost(context, postId, null, disableComments, fromStack, fromArchive, entryFocused);
+        return viewPost(context, postId, null, disableComments, fromStack, false, false);
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull String postId, @Nullable ArrayList<String> postIdList, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused) {
+        return viewPost(context, postId, postIdList, disableComments, fromStack, fromArchive, entryFocused, false);
+    }
+
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, @Nullable ArrayList<String> postIdList, boolean disableComments, boolean fromStack, boolean fromArchive, boolean entryFocused, boolean commentsExpanded) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, postId);
         i.putStringArrayListExtra(EXTRA_POST_ID_LIST, postIdList);
@@ -149,6 +149,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         i.putExtra(EXTRA_FROM_STACK, fromStack);
         i.putExtra(EXTRA_FROM_ARCHIVE, fromArchive);
         i.putExtra(EXTRA_ENTRY_FOCUSED, entryFocused);
+        i.putExtra(EXTRA_COMMENTS_EXPANDED, commentsExpanded);
 
         return i;
     }
@@ -161,6 +162,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
     private static final String EXTRA_FROM_STACK = "from_stack";
     private static final String EXTRA_FROM_ARCHIVE = "from_archive";
+    private static final String EXTRA_COMMENTS_EXPANDED = "comments_expanded";
 
     private static final float CONTENT_ASPECT_RATIO = 0.75f;
     private static final int MAX_RECORD_TIME_SECONDS = 15;
@@ -607,7 +609,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
             updateTabVisibility(list, viewModel.getReactionList().getValue());
             final PagedList<Reaction> reactions = viewModel.getReactionList().getValue();
-            if (list.size() > 0 && !fromStack && !fromArchive && !disableComments) {
+            final boolean expandComments = getIntent().getBooleanExtra(EXTRA_COMMENTS_EXPANDED, false);
+            if (expandComments && list.size() > 0 && !fromStack && !fromArchive && !disableComments) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
             commentsAdapter.submitList(list, () -> {
