@@ -2734,7 +2734,7 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
     <string name="ping_welcome">"%s bienvenido(a) katchup! &#127813;&#128293;"</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
-    <string name="ping_followed_you">"%s followed you"</string>
+    <string name="ping_followed_you">"%s te sigue"</string>
     <string name="notification_many_daily_katchup_reminder_body">"ponte al día con %1$s, %2$s, +%3$d otros ahora…"</string>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>

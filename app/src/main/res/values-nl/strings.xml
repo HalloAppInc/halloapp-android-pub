@@ -2422,7 +2422,7 @@ Je katchup-geschiedenis verwijderen van deze telefoon"</string>
     <string name="settings_notifications_mentions_option">"vermeldingen"</string>
 
     <!-- notifications settings on fire option -->
-    <string name="settings_notifications_on_fire_option">"on fire"</string>
+    <string name="settings_notifications_on_fire_option">"in vuur en vlam"</string>
 
     <!-- notifications settings new users option -->
     <string name="settings_notifications_new_users_option">"nieuwe gebruikers"</string>
@@ -2727,7 +2727,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="ping_welcome">"%s, welkom bij katchup! &#127813;&#128293;"</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
-    <string name="ping_followed_you">"%s followed you"</string>
+    <string name="ping_followed_you">"%s volgt je nu"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>

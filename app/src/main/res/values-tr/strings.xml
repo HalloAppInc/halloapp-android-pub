@@ -2600,7 +2600,7 @@ Katchup telefonundan silinir.
     <string name="share_via_lowercase">"… yoluyla paylaş"</string>
 
     <!-- title on a post share banner -->
-    <string name="share_banner_title">"sharing is flaring &#128293;"</string>
+    <string name="share_banner_title">"Paylaş, parla &#128171;"</string>
 
     <!-- Error shown in a snackbar when we fail to load a user's profile -->
     <string name="failed_to_load_profile">"Profil görüntülenemedi"</string>
@@ -2676,102 +2676,102 @@ Katchup telefonundan silinir.
     <string name="invite_add_button_sent">"Takip edildi"</string>
 
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_random">"new ai background"</string>
+    <string name="bg_option_random">"Yeni yapay zekâ arka planı"</string>
 
     <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
-    <string name="bg_option_custom">"custom ai background"</string>
+    <string name="bg_option_custom">"yapay zekâ arka planını ayarla"</string>
 
     <!-- warning shown in a snackbar when ai image generation has failed -->
-    <string name="ai_generation_failed">"generation failed, please try again"</string>
+    <string name="ai_generation_failed">"olmadı, lütfen tekrar dene"</string>
 
     <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
-    <string name="custom_ai_hint">"imagine"</string>
+    <string name="custom_ai_hint">"Hayal et"</string>
 
     <!-- menu option to use an image from your own gallery as the background -->
-    <string name="bg_option_gallery">"pick from gallery"</string>
+    <string name="bg_option_gallery">"Galeriden seç"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
-    <string name="add_background_title">"add background"</string>
+    <string name="add_background_title">"Arka plan ekle"</string>
 
     <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_explanation_me">"you're affiliated with %s "<![CDATA[<a href="remove">remove</a>]]></string>
+    <string name="geotag_explanation_me">"%s ile bağlantıdasın "<![CDATA[<a href="remove">remove</a>]]></string>
 
     <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_expanation_other">"%1$s's affiliated with %2$s"</string>
+    <string name="geotag_expanation_other">"%1$s, %2$s ile bağlantıda"</string>
 
     <!-- text shown on a user's own profile when they do not currently have a geotag -->
-    <string name="add_school">"+ add school"</string>
+    <string name="add_school">"+okul ekle"</string>
 
     <!-- title of the geotag location access request prompt -->
-    <string name="geotag_location_access_request_title">"Your campus is determined by your location"</string>
+    <string name="geotag_location_access_request_title">"Yerleşken, konumuna göre belirlenir"</string>
 
     <!-- text of geotag location permission access request prompt -->
-    <string name="geotag_location_access_request_rationale">"Enable location permissions to add your school."</string>
+    <string name="geotag_location_access_request_rationale">"Okulunu eklemek için konum erişimine izin ver"</string>
 
     <!-- text of geotag location permission access request prompt, but it has already been denied -->
-    <string name="geotag_location_access_request_rationale_denied">"Enable location permissions to add your school.
+    <string name="geotag_location_access_request_rationale_denied">"Okulunu eklemek için konum erişimine izin ver
 
-Open the app settings screen to modify app permissions."</string>
+Erişim iznini değiştirmek için uygulama ayarları ekranını aç"</string>
 
     <!-- error message in a snackbar when removing a geotag fails -->
-    <string name="failed_remove_geotag">"Failed to remove geotag, please try again"</string>
+    <string name="failed_remove_geotag">"Konum etiketi kaldırılamadı; lütfen tekrar dene"</string>
 
     <!-- error message in a snackbar when adding a geotag fails -->
-    <string name="failed_add_geotag">"Failed to add geotag, please try again"</string>
+    <string name="failed_add_geotag">"Konum etiketi eklenemedi; lütfen tekrar dene"</string>
 
     <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
-    <string name="failed_no_matching_geotag">"No geotag matched your current location. Please ensure you are on campus and try again."</string>
+    <string name="failed_no_matching_geotag">"Geçerli konumunla eşleşen konum etiketi yok. Lütfen kampüste olduğundan emin ol ve tekrar dene."</string>
 
     <!-- a text displayed on a loading spinner -->
-    <string name="loading_spinner">"loading…"</string>
+    <string name="loading_spinner">"Yükleniyor…"</string>
     <string name="app_name_katchup">"Katchup"</string>
-    <string name="katchup_notification_app_expired_title">"Katchup has expired"</string>
+    <string name="katchup_notification_app_expired_title">"Katchup'un süresi doldu"</string>
     <plurals name="katchup_notification_app_expiration_days_left_title">
-        <item quantity="one">"Katchup expires in %d day"</item>
-        <item quantity="other">"Katchup expires in %d day"</item>
+        <item quantity="one">"Katchup'ın süresi %d gün içinde doluyor"</item>
+        <item quantity="other">"Katchup'ın süresi %d gün içinde doluyor"</item>
     </plurals>
 
     <!-- label inviting a user to confirm username before account deletion -->
-    <string name="delete_account_username_confirm">"enter username to confirm"</string>
+    <string name="delete_account_username_confirm">"Onaylamak için kullanıcı adını gir"</string>
 
     <!-- hint on a field inviting a user to confirm username before account deletion -->
-    <string name="delete_account_username_confirm_hint">"username"</string>
+    <string name="delete_account_username_confirm_hint">"Kullanıcı adı"</string>
 
     <!-- body of the daily katchup reminder notification -->
-    <string name="notification_daily_katchup_reminder_body">"catch up with your friends now…"</string>
+    <string name="notification_daily_katchup_reminder_body">"Şimdi arkadaşlarınla kavuş…"</string>
 
     <!-- body of the daily katchup reminder notification. %s is the username of someone who posted -->
-    <string name="notification_one_daily_katchup_reminder_body">"catch up with %s now…"</string>
+    <string name="notification_one_daily_katchup_reminder_body">"%s ile kavuş…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted -->
-    <string name="notification_two_daily_katchup_reminder_body">"catch up with %1$s and %2$s now…"</string>
+    <string name="notification_two_daily_katchup_reminder_body">"Şimdi %1$s ve %2$s ile kavuş…"</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s, %3$s are replaced with the usernames of those who posted -->
-    <string name="notification_three_daily_katchup_reminder_body">"catch up with %1$s, %2$s, and %3$s now…"</string>
+    <string name="notification_three_daily_katchup_reminder_body">"Şimdi %1$s, %2$s ve %3$s ile kavuş… "</string>
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
     <plurals name="notification_many_daily_katchup_reminder_body_plural">
-        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
-        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="one">"Şimdi %1$s, %2$s vd.ne kavuş… "</item>
+        <item quantity="other">"Şimdi %1$s, %2$s vd.ne kavuş… "</item>
     </plurals>
 
     <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
-    <string name="calendar_last_30_days_note">"displaying last 30 days"</string>
+    <string name="calendar_last_30_days_note">"Son 30 gün gösteriliyor"</string>
 
     <!-- Error shown in a snackbar when request for archive data fails -->
-    <string name="failed_to_request_archive">"Failed to load calendar"</string>
+    <string name="failed_to_request_archive">"Takvim yüklenemedi"</string>
 
     <!-- Option for user to skip adding their phone number when registering -->
-    <string name="katchup_add_phone_later">"add later"</string>
+    <string name="katchup_add_phone_later">"Daha sonra ekle"</string>
 
     <!-- Tab to show activity notifications -->
     <string name="feed_type_activity">"pings"</string>
 
     <!-- Message shown in the pings tab to welcome the user -->
-    <string name="ping_welcome">"%s welcome to katchup! &#127813;&#128293;"</string>
+    <string name="ping_welcome">"%s Katchup'a hoş geldin! &#127813;&#128293;"</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
-    <string name="ping_followed_you">"%s followed you"</string>
+    <string name="ping_followed_you">"%s seni takip etti"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"Yeni yapay zeka arka planı oluştur"</string>
     <string name="settings_feedback_title">"feedback"</string>

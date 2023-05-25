@@ -2692,27 +2692,27 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- body of the daily katchup reminder notification. %1$s, %2$s are replaced with the usernames of those who posted and %3$d is the number of additional users who posted -->
     <plurals name="notification_many_daily_katchup_reminder_body_plural">
-        <item quantity="one">"catch up with %1$s, %2$s, +%3$d other now…"</item>
-        <item quantity="other">"catch up with %1$s, %2$s, +%3$d other now…"</item>
+        <item quantity="one">"Converse com %1$s, %2$s, +%3$d outro agora…"</item>
+        <item quantity="other">"Converse com %1$s, %2$s, +%3$d outros agora…"</item>
     </plurals>
 
     <!-- Text shown at the bottom of the archive to let users know that only data for the last 30 days is displayed -->
-    <string name="calendar_last_30_days_note">"displaying last 30 days"</string>
+    <string name="calendar_last_30_days_note">"Exibindo últimos 30 dias"</string>
 
     <!-- Error shown in a snackbar when request for archive data fails -->
-    <string name="failed_to_request_archive">"Failed to load calendar"</string>
+    <string name="failed_to_request_archive">"Falha ao carregar o calendário"</string>
 
     <!-- Option for user to skip adding their phone number when registering -->
-    <string name="katchup_add_phone_later">"add later"</string>
+    <string name="katchup_add_phone_later">"Adicionar depois"</string>
 
     <!-- Tab to show activity notifications -->
-    <string name="feed_type_activity">"pings"</string>
+    <string name="feed_type_activity">"alertas"</string>
 
     <!-- Message shown in the pings tab to welcome the user -->
-    <string name="ping_welcome">"%s welcome to katchup! &#127813;&#128293;"</string>
+    <string name="ping_welcome">"%s Bem-vindo ao Katchup! &#127813;&#128293;"</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
-    <string name="ping_followed_you">"%s followed you"</string>
+    <string name="ping_followed_you">"%s começou a seguir você"</string>
     <string name="notification_many_daily_katchup_reminder_body">"Atualize-se com %1$s, %2$s, +%3$d outros agora…"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
