@@ -468,7 +468,9 @@ public class KatchupConnectionObserver extends Connection.Observer {
             } else {
                 Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, false, notificationId, momentNotification.getPrompt(), null, momentNotification.getReminder());
             }
-            contentDb.expirePostsOlderThanNotificationId(notificationId);
+            if (!momentNotification.getReminder()) {
+                contentDb.expirePostsOlderThanNotificationId(notificationId);
+            }
         }
         connection.sendAck(ackId);
     }
