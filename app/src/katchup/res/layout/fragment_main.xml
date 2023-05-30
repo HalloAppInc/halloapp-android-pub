@@ -52,7 +52,7 @@
                 android:layout_marginBottom="20dp"
                 android:text="@string/no_new_katchups_today"
                 android:textSize="20sp"
-                android:textColor="@color/black_40"
+                android:textColor="@color/white_40"
                 />
 
             <TextView
