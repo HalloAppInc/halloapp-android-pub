@@ -80,7 +80,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/avatars"
                 android:layout_marginBottom="12dp"
                 android:text="@string/find_people_katchup"
-                android:textColor="@color/black_40"
+                android:textColor="@color/white_40"
                 />
 
             <LinearLayout
