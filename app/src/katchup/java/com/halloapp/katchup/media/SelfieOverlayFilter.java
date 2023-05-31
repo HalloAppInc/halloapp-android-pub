@@ -18,10 +18,10 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
     private float width;
     private float height;
 
-    private Mp4FrameExtractor.Frame[] frames;
+    private final Mp4FrameExtractor.Frame[] frames;
     private int currentFrame = 0;
 
-    private Paint outlinePaint;
+    private final Paint outlinePaint;
 
     public SelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y) {
         this.positionX = x;

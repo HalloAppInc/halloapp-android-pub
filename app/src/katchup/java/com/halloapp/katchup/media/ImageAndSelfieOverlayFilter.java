@@ -14,16 +14,18 @@ import com.halloapp.R;
 
 public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
-    private Bitmap image;
+    private final Bitmap image;
 
-    private Paint paint = new Paint();
+    private final Paint paint = new Paint();
 
-    private String url;
+    private final String url;
+    private final boolean isTextInside;
 
-    public ImageAndSelfieOverlayFilter(Bitmap img, Mp4FrameExtractor.Frame[] frames, float x, float y, boolean isSharingMedia) {
+    public ImageAndSelfieOverlayFilter(Bitmap img, Mp4FrameExtractor.Frame[] frames, float x, float y, boolean isSharingMedia, boolean isTextInside) {
         super(frames, x, y);
 
         this.image = img;
+        this.isTextInside = isTextInside;
 
         paint.setAntiAlias(true);
         paint.setColor(Constants.EXTERNAL_SHARE_FOOTER_TEXT_COLOR);
@@ -49,19 +51,20 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
         int bitmapHeight = image.getHeight();
 
         int scaledHeight = (int)(canvasWidth * ((float)bitmapHeight / (float)bitmapWidth));
+        int remainingHeight = canvasHeight - scaledHeight;
         float textPaddingBottom = Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE / 2;
         float textPaddingRight = Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE;
+        float textY = isTextInside ? (scaledHeight - textPaddingBottom) : (scaledHeight + (Math.max(remainingHeight, 0) / 6f));
 
         dst.right = canvasWidth;
-        int remainingHeight = canvasHeight - scaledHeight;
         dst.bottom = scaledHeight;
 
         canvas.save();
         canvas.translate(0, Math.max(remainingHeight / 3, 0));
 
         canvas.drawBitmap(image, null, dst, null);
+        canvas.drawText(url, canvasWidth - textPaddingRight, textY, paint);
 
-        canvas.drawText(url, canvasWidth - textPaddingRight, scaledHeight - textPaddingBottom, paint);
         super.drawCanvas(canvas);
         canvas.restore();
     }

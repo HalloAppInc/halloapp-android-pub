@@ -37,7 +37,8 @@ public class TranscodeExternalShareVideoTask extends Mp4Composer {
                     Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y,
                     0,
                     Constants.EXTERNAL_SHARE_VIDEO_HEIGHT,
-                    isSharingMedia
+                    isSharingMedia,
+                    true
             );
         } else {
             Size videoSize = MediaUtils.getVideoDimensions(videoSrc);
@@ -62,7 +63,8 @@ public class TranscodeExternalShareVideoTask extends Mp4Composer {
                     Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y,
                     translateY,
                     scaledHeight,
-                    isSharingMedia
+                    isSharingMedia,
+                    false
             );
         }
 

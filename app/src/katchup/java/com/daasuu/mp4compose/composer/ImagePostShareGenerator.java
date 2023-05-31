@@ -100,7 +100,7 @@ public class ImagePostShareGenerator {
 
         selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
 
-        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y, isSharingMedia);
+        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y, isSharingMedia, isCenterCrop);
 
         logger = new AndroidLogger();
         this.width = width;

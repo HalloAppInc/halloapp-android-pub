@@ -12,8 +12,12 @@ import com.halloapp.R;
 
 public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
-    public VideoAndSelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y, float translateY, float videoHeight, boolean isSharingMedia) {
+    private final boolean isTextInside;
+
+    public VideoAndSelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y, float translateY, float videoHeight, boolean isSharingMedia, boolean isTextInside) {
         super(frames, x, y);
+
+        this.isTextInside = isTextInside;
 
         paint.setAntiAlias(true);
         paint.setColor(Constants.EXTERNAL_SHARE_FOOTER_TEXT_COLOR);
@@ -41,14 +45,17 @@ public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
     @Override
     protected void drawCanvas(Canvas canvas) {
         int canvasWidth = canvas.getWidth();
+        int canvasHeight = canvas.getHeight();
 
         float textPaddingBottom = Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE / 2;
         float textPaddingRight = Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE;
+        float remainingHeight = canvasHeight - videoHeight;
+        float textY = isTextInside ? (videoHeight - textPaddingBottom) : (videoHeight + (Math.max(remainingHeight, 0) / 6f));
 
         canvas.save();
         canvas.translate(0, translateY);
 
-        canvas.drawText(url, canvasWidth - textPaddingRight, videoHeight - textPaddingBottom, paint);
+        canvas.drawText(url, canvasWidth - textPaddingRight, textY, paint);
         super.drawCanvas(canvas);
         canvas.restore();
     }
