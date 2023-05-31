@@ -97,7 +97,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     public static final String EXTRA_COMPOSER_TRANSITION = "composer-transition";
 
-    public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt, String notificationDate) {
+    public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt, String notificationDate, int maxGallerySelection, int minGallerySelection) {
         Intent i = new Intent(context, SelfiePostComposerActivity.class);
         i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
         if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
@@ -106,6 +106,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
         } else if (type == MomentNotification.Type.ALBUM_POST_VALUE) {
             i.putExtra(EXTRA_TYPE, Type.ALBUM_COMPOSE);
+        } else if (type == MomentNotification.Type.ALBUM_DUMP_VALUE) {
+            i.putExtra(EXTRA_TYPE, Type.ALBUM_DUMP_COMPOSE);
+            i.putExtra(EXTRA_MAX_GALLERY_SELECTION, maxGallerySelection);
+            i.putExtra(EXTRA_MIN_GALLERY_SELECTION, minGallerySelection);
         } else {
             i.putExtra(EXTRA_TYPE, Type.TEXT_COMPOSE);
         }
@@ -115,6 +119,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
         i.putExtra(EXTRA_NOTIFICATION_DATE, notificationDate);
         return i;
+    }
+
+    public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt, String notificationDate) {
+        return startFromNotification(context, notificationId, notificationTime, type, prompt, notificationDate, MAX_GALLERY_SELECTION_DEFAULT, MIN_GALLERY_SELECTION_DEFAULT);
     }
 
     @WorkerThread
@@ -134,6 +142,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private static final String EXTRA_NOTIFICATION_TIME = "notification_time";
     private static final String EXTRA_NOTIFICATION_DATE = "notification_date";
     private static final String EXTRA_PROMPT = "notification_prompt";
+    private static final String EXTRA_MAX_GALLERY_SELECTION = "max_gallery_selection";
+    private static final String EXTRA_MIN_GALLERY_SELECTION = "min_gallery_selection";
 
     private static final int SELFIE_COUNTDOWN_DURATION_MS = 3000;
     private static final int SELFIE_CAPTURE_DURATION_MS = 1000;
@@ -148,13 +158,16 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private static final float DISTANCE_THRESHOLD_METERS = 50;
     private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
+    private static final int MAX_GALLERY_SELECTION_DEFAULT = 7;
+    private static final int MIN_GALLERY_SELECTION_DEFAULT = 3;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE, Type.ALBUM_COMPOSE})
+    @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE, Type.ALBUM_COMPOSE, Type.ALBUM_DUMP_COMPOSE})
     public @interface Type {
         int LIVE_CAPTURE = 1;
         int TEXT_COMPOSE = 2;
         int ALBUM_COMPOSE = 3;
+        int ALBUM_DUMP_COMPOSE = 4;
     }
 
     private HalloCamera camera;
@@ -301,11 +314,11 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         albumPrompt = findViewById(R.id.album_prompt);
         albumGalleryButton = findViewById(R.id.album_gallery);
         albumGalleryButton.setOnClickListener(v -> {
-            final Intent intent = IntentUtils.createPhotoPickerIntent(false);
+            final Intent intent = IntentUtils.createPhotoPickerIntent(composeType == Type.ALBUM_DUMP_COMPOSE);
             startActivityForResult(intent, REQUEST_CODE_CHOOSE_PHOTO);
         });
 
-        if (composeType == Type.ALBUM_COMPOSE) {
+        if (composeType == Type.ALBUM_COMPOSE || composeType == Type.ALBUM_DUMP_COMPOSE) {
             genericHeader.setVisibility(View.GONE);
             albumSpecificHeader.setVisibility(View.VISIBLE);
             albumPrompt.setText(prompt);
@@ -383,6 +396,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         viewModel.getComposerState().observe(this, this::configureViewsForState);
         viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0), getIntent().getStringExtra(EXTRA_NOTIFICATION_DATE));
         viewModel.setLocationIsUsed(hasLocationPermission());
+        viewModel.setMaxGallerySelection(getIntent().getIntExtra(EXTRA_MAX_GALLERY_SELECTION, MAX_GALLERY_SELECTION_DEFAULT));
+        viewModel.setMinGallerySelection(getIntent().getIntExtra(EXTRA_MIN_GALLERY_SELECTION, MIN_GALLERY_SELECTION_DEFAULT));
 
         viewModel.getLocationIsUsed().observe(this, locationIsUsed -> {
             formatLocationText(locationIsUsed, viewModel.getLocationText().getValue());
@@ -415,7 +430,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         //makeSelfieDraggable();
 
         requestCameraAndAudioPermission();
-        if (composeType == Type.ALBUM_COMPOSE) {
+        if (composeType == Type.ALBUM_COMPOSE || composeType == Type.ALBUM_DUMP_COMPOSE) {
             requestStoragePermissions();
         }
 
@@ -505,6 +520,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             Analytics.getInstance().openScreen("composeText");
         } else if (composeType == Type.ALBUM_COMPOSE) {
             Analytics.getInstance().openScreen("composeAlbum");
+        } else if (composeType == Type.ALBUM_DUMP_COMPOSE) {
+            Analytics.getInstance().openScreen("composeAlbumDump");
         } else {
             Analytics.getInstance().openScreen("composeUnknown");
         }
@@ -543,7 +560,12 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
                 }
             }
             if (!uris.isEmpty()) {
-                viewModel.onSelectedMedia(uris.get(uris.size() - 1));
+                if (composeType == Type.ALBUM_DUMP_COMPOSE) {
+                    int size = Math.min(uris.size(), viewModel.getMaxGallerySelection());
+                    viewModel.onComposedDump(uris.subList(0, size));
+                } else {
+                    viewModel.onSelectedMedia(uris.get(uris.size() - 1));
+                }
             } else {
                 Log.e("SelfiePostComposerActivity.onActivityResult.REQUEST_CODE_CHOOSE_PHOTO: no uri");
                 SnackbarHelper.showWarning(this, R.string.bad_image);
@@ -577,6 +599,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             composerFragment = TextComposeFragment.newInstance(prompt);
         } else if (composeType == Type.ALBUM_COMPOSE) {
             composerFragment = GalleryComposeFragment.newInstance(prompt);
+        } else if (composeType == Type.ALBUM_DUMP_COMPOSE) {
+            composerFragment = GalleryComposeFragment.newInstance(prompt, true);
         } else {
             composerFragment = CameraComposeFragment.newInstance(prompt);
         }

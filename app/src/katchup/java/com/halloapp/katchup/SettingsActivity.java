@@ -312,6 +312,7 @@ public class SettingsActivity extends HalloActivity {
                 names.add("TEXT");
                 names.add("CAMERA");
                 names.add("ALBUM");
+                names.add("ALBUM DUMP");
                 CharSequence[] arr = new CharSequence[0];
                 dialogBuilder.setTitle("Pick type")
                         .setItems(names.toArray(arr), (dialog, which) -> {
@@ -322,6 +323,8 @@ public class SettingsActivity extends HalloActivity {
                                 type = MomentNotification.Type.LIVE_CAMERA;
                             } else if (which == 2) {
                                 type = MomentNotification.Type.ALBUM_POST;
+                            } else if (which == 3) {
+                                type = MomentNotification.Type.ALBUM_DUMP;
                             } else {
                                 throw new RuntimeException("Unepxected type " + which);
                             }

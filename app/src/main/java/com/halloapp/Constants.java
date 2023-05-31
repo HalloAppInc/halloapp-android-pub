@@ -76,6 +76,8 @@ public class Constants {
     public static final int STICKER_MAX_CHARS_PER_LINE = 10;
     public static final int MAX_REACTION_RECORD_TIME_SECONDS = 15;
 
+    public static final int ALBUM_DUMP_VIDEO_WIDTH = 720;
+    public static final int ALBUM_DUMP_VIDEO_HEIGHT = 960;
     public static final int EXTERNAL_SHARE_VIDEO_WIDTH = 720;
     public static final int EXTERNAL_SHARE_VIDEO_HEIGHT = 1280;
     public static final int EXTERNAL_SAVE_VIDEO_HEIGHT = 960;

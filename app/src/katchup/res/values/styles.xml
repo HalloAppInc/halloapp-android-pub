@@ -57,4 +57,9 @@
         <item name="cornerSize">20dp</item>
     </style>
 
+    <style name="RoundedGallerySelectedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">6dp</item>
+    </style>
+
 </resources>

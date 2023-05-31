@@ -1,6 +1,7 @@
 package com.halloapp.katchup.compose;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.ControlDispatcher;
@@ -60,12 +62,20 @@ import com.halloapp.widget.CropPhotoView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class GalleryComposeFragment extends ComposeFragment {
 
     public static GalleryComposeFragment newInstance(String prompt) {
+        return newInstance(prompt, false);
+    }
+
+    public static GalleryComposeFragment newInstance(String prompt, boolean allowMultipleSelection) {
         Bundle args = new Bundle();
         args.putString(EXTRA_PROMPT, prompt);
+        args.putBoolean(EXTRA_ALLOW_MULTIPLE, allowMultipleSelection);
 
         GalleryComposeFragment fragment = new GalleryComposeFragment();
         fragment.setArguments(args);
@@ -74,6 +84,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private static final String EXTRA_PROMPT = "prompt";
+    private static final String EXTRA_ALLOW_MULTIPLE = "allow_multiple";
 
     private static final int ITEMS_PER_ROW = 3;
 
@@ -82,11 +93,13 @@ public class GalleryComposeFragment extends ComposeFragment {
     private TextView previewPromptTextView;
 
     private ImageView mediaPreviewView;
+    private RecyclerView mediaView;
 
     private SelfiePostComposerActivity host;
 
     private SelfieComposerViewModel viewModel;
-    private MediaItemsAdapter adapter = new MediaItemsAdapter();
+    private final MediaItemsAdapter adapter = new MediaItemsAdapter();
+    private final SelectionAdapter selectionAdapter = new SelectionAdapter();
     private GalleryThumbnailLoader thumbnailLoader;
     private MediaThumbnailLoader mediaLoader;
 
@@ -101,7 +114,9 @@ public class GalleryComposeFragment extends ComposeFragment {
     private SimpleExoPlayer videoPlayer;
 
     private String prompt;
+    private boolean isMultipleSelectionAllowed = false;
     private int headerHeight;
+    private TextView nextBtnView;
 
     int verticalOffset = 0;
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
@@ -123,6 +138,7 @@ public class GalleryComposeFragment extends ComposeFragment {
         mediaPreviewView = root.findViewById(R.id.media_preview);
         videoPlayerView = root.findViewById(R.id.video_player);
         previewPromptTextView = root.findViewById(R.id.preview_prompt_text);
+        nextBtnView = root.findViewById(R.id.next);
 
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
@@ -165,6 +181,7 @@ public class GalleryComposeFragment extends ComposeFragment {
         Bundle args = getArguments();
         if (args != null) {
             prompt = args.getString(EXTRA_PROMPT, null);
+            isMultipleSelectionAllowed = args.getBoolean(EXTRA_ALLOW_MULTIPLE, false);
         }
         previewPromptTextView.setText(prompt);
 
@@ -178,7 +195,7 @@ public class GalleryComposeFragment extends ComposeFragment {
                 return 1;
             }
         });
-        final RecyclerView mediaView = root.findViewById(android.R.id.list);
+        mediaView = root.findViewById(android.R.id.list);
         mediaView.setLayoutManager(layoutManager);
         mediaView.addItemDecoration(new RecyclerView.ItemDecoration() {
             final int spacing = getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing);
@@ -196,17 +213,33 @@ public class GalleryComposeFragment extends ComposeFragment {
         mediaView.setAdapter(adapter);
         mediaView.setOnScrollListener(scrollListener);
 
+        LinearLayoutManager selectionLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView selectionView = root.findViewById(R.id.selection);
+        selectionView.setLayoutManager(selectionLayoutManager);
+        selectionView.setAdapter(selectionAdapter);
+        selectionView.setVisibility(isMultipleSelectionAllowed ? View.VISIBLE : View.GONE);
+
         viewModel.getMediaList().observe(getViewLifecycleOwner(), mediaItems -> {
             adapter.setPagedList(mediaItems);
 //            progressView.setVisibility(View.GONE);
 //            emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
+        viewModel.getGallerySelection().observe(getViewLifecycleOwner(), items -> {
+            adapter.notifyDataSetChanged();
+            selectionAdapter.setSelectionList(items);
+            enableNextButton(viewModel.isGallerySelectionReady());
+        });
+
+        nextBtnView.setVisibility(isMultipleSelectionAllowed ? View.VISIBLE : View.GONE);
+        nextBtnView.setOnClickListener(v -> onNext());
+        enableNextButton(false);
+
         return root;
     }
 
     private void openPicker() {
-        final Intent intent = IntentUtils.createPhotoPickerIntent(false);
+        final Intent intent = IntentUtils.createPhotoPickerIntent(isMultipleSelectionAllowed);
         requireActivity().startActivityForResult(intent, SelfiePostComposerActivity.REQUEST_CODE_CHOOSE_PHOTO);
     }
 
@@ -224,6 +257,31 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     private void showToolbarPrompt() {
         ((SelfiePostComposerActivity) requireActivity()).showToolbarPrompt();
+    }
+
+    private void enableNextButton(boolean enabled) {
+        nextBtnView.setEnabled(enabled);
+        nextBtnView.setAlpha(enabled ? 1f : 0.7f);
+    }
+
+    private ProgressDialog progressDialog;
+    private void onNext() {
+        if (!viewModel.isGallerySelectionReady()) {
+            return;
+        }
+
+        List<GalleryItem> selection = viewModel.getGallerySelection().getValue();
+
+        ArrayList<Uri> content = new ArrayList<>(selection.size());
+        for (GalleryItem item : selection) {
+            content.add(getUri(item));
+        }
+
+        enableNextButton(false);
+        progressDialog = ProgressDialog.show(requireContext(), null, getString(R.string.loading_spinner));
+        progressDialog.show();
+
+        viewModel.onComposedDump(content);
     }
 
     @Override
@@ -250,8 +308,21 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void handleSelection(@NonNull GalleryItem galleryItem) {
-         Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
-         viewModel.onSelectedMedia(uri);
+        if (isMultipleSelectionAllowed) {
+            if (viewModel.isSelectedInGallery(galleryItem) || viewModel.canSelectMoreFromGallery()) {
+                viewModel.toggleGallerySelection(galleryItem);
+            }
+        } else {
+            viewModel.onSelectedMedia(getUri(galleryItem));
+        }
+    }
+
+    private Uri getUri(@NonNull GalleryItem item) {
+        return ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), item.id);
+    }
+
+    private void scrollToITem(@NonNull GalleryItem galleryItem) {
+        mediaView.smoothScrollToPosition(adapter.items.indexOf(galleryItem));
     }
 
     private void showSelectionView() {
@@ -299,9 +370,22 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showPreviewView() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+            enableNextButton(true);
+        }
+
         previewPromptTextView.setVisibility(View.VISIBLE);
         gallerySelectionContainer.setVisibility(View.GONE);
         mediaPreviewContainer.setVisibility(View.VISIBLE);
+
+        if (isMultipleSelectionAllowed) {
+            captureFile = viewModel.getImageDump();
+            captureType = Media.MEDIA_TYPE_VIDEO;
+            previewPromptTextView.setVisibility(View.GONE);
+        }
+
         if (captureFile != null) {
             host.getMediaThumbnailLoader().load(mediaPreviewView, Media.createFromFile(captureType, captureFile));
             if (captureType == Media.MEDIA_TYPE_VIDEO) {
@@ -322,6 +406,12 @@ public class GalleryComposeFragment extends ComposeFragment {
             galleryPopupWindow.dismiss();
             galleryPopupWindow = null;
         }
+        if (captureType == Media.MEDIA_TYPE_IMAGE) {
+            savePreview();
+        }
+    }
+
+    private void savePreview() {
         mediaPreviewContainer.post(() -> {
             mediaPreviewContainer.setDrawingCacheEnabled(true);
             final Bitmap b = Bitmap.createBitmap(mediaPreviewContainer.getDrawingCache());
@@ -334,14 +424,14 @@ public class GalleryComposeFragment extends ComposeFragment {
                     return;
                 }
                 if (!createdImage.delete()) {
-                    Log.e("TextComposeFragment/savePreview failed to delete file");
+                    Log.e("GalleryComposeFragment/savePreview failed to delete file");
                 }
                 try (FileOutputStream out = new FileOutputStream(createdImage)) {
                     if (!b.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, out)) {
-                        Log.e("TextComposeFragment/savePreview failed to compress");
+                        Log.e("GalleryComposeFragment/savePreview failed to compress");
                     }
                 } catch (IOException e) {
-                    Log.e("TextComposeFragment/savePreview failed", e);
+                    Log.e("GalleryComposeFragment/savePreview failed", e);
                 }
             });
         });
@@ -456,7 +546,7 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     @Override
     public Media getComposedMedia() {
-        return Media.createFromFile(Media.MEDIA_TYPE_IMAGE, createdImage);
+        return Media.createFromFile(captureType, captureType == Media.MEDIA_TYPE_IMAGE ? createdImage : captureFile);
     }
 
     @Override
@@ -468,7 +558,7 @@ public class GalleryComposeFragment extends ComposeFragment {
         private static final int VIEW_TYPE_HEADER = 1;
         private static final int VIEW_TYPE_MEDIA = 2;
 
-        private PagedList<GalleryItem> items;
+        PagedList<GalleryItem> items;
 
         private final PagedList.Callback pagedListCallback = new PagedList.Callback() {
             @Override
@@ -536,6 +626,42 @@ public class GalleryComposeFragment extends ComposeFragment {
         }
     }
 
+    public class SelectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private List<GalleryItem> items;
+
+        public void setSelectionList(List<GalleryItem> items) {
+            this.items = items;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemCount() {
+            return viewModel.getMaxGallerySelection();
+        }
+
+        @Override
+        public @NonNull
+        RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new SelectionItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_selected_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof SelectionItemViewHolder) {
+                ((SelectionItemViewHolder) holder).bindTo(position < items.size() ? items.get(position) : null);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            if (items != null && position < items.size()) {
+                return Preconditions.checkNotNull(items.get(position)).id;
+            }
+
+            return -1;
+        }
+    }
+
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
         public HeaderViewHolder(@NonNull View itemView) {
@@ -594,7 +720,20 @@ public class GalleryComposeFragment extends ComposeFragment {
                 duration.setVisibility(View.GONE);
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
-            selectionIndicator.setVisibility(View.GONE);
+
+            if (isMultipleSelectionAllowed && viewModel.isSelectedInGallery(galleryItem)) {
+                selectionIndicator.setVisibility(View.GONE);
+                selectionCounter.setVisibility(View.VISIBLE);
+                selectionCounter.setText(String.format(Locale.getDefault(), "%d", viewModel.galleryIndexOf(galleryItem) + 1));
+            } else if (isMultipleSelectionAllowed && viewModel.canSelectMoreFromGallery()) {
+                selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
+                selectionIndicator.setVisibility(View.VISIBLE);
+                selectionCounter.setVisibility(View.GONE);
+            } else {
+                selectionIndicator.setVisibility(View.GONE);
+                selectionCounter.setVisibility(View.GONE);
+            }
+
             thumbnailFrame.setPadding(0, 0, 0, 0);
             thumbnailView.setSelected(false);
             thumbnailLoader.load(thumbnailView, galleryItem);
@@ -602,6 +741,38 @@ public class GalleryComposeFragment extends ComposeFragment {
 
         private void onItemClicked() {
             handleSelection(galleryItem);
+        }
+    }
+
+    public class SelectionItemViewHolder extends RecyclerView.ViewHolder {
+
+        final ImageView imageView;
+
+        GalleryItem galleryItem;
+
+        @SuppressLint("ClickableViewAccessibility")
+        SelectionItemViewHolder(final @NonNull View v) {
+            super(v);
+            imageView = v.findViewById(R.id.image);
+
+            if (imageView != null) {
+                imageView.setOnClickListener(tv -> onItemClicked());
+            }
+        }
+
+        void bindTo(final @Nullable GalleryItem galleryItem) {
+            this.galleryItem = galleryItem;
+
+            if (galleryItem == null) {
+                imageView.setImageDrawable(null);
+                imageView.setBackgroundColor(getResources().getColor(R.color.white_20));
+            } else {
+                thumbnailLoader.load(imageView, galleryItem);
+            }
+        }
+
+        private void onItemClicked() {
+            scrollToITem(galleryItem);
         }
     }
 

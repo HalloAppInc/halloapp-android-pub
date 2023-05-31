@@ -143,6 +143,8 @@ public class Analytics {
             return "text";
         } else if (MomentInfo.ContentType.ALBUM_IMAGE.equals(contentType)) {
             return "album_image";
+        } else if (MomentInfo.ContentType.ALBUM_DUMP.equals(contentType)) {
+            return "album_dump";
         } else {
             return "";
         }

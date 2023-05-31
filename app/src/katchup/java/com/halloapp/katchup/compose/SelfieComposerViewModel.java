@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.daasuu.mp4compose.composer.ImageDumpGenerator;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -65,6 +66,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private static final int AI_IMAGE_BATCH_SIZE = 1;
     private static final int MAX_TRANSCODE_RETRY_COUNT = 2;
 
+
     public SelfieComposerViewModel(@NonNull Application application, int contentType) {
         super(application);
         startTime = System.currentTimeMillis();
@@ -96,6 +98,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> locationError = new MutableLiveData<>(false);
     private final GalleryDataSource.Factory dataSourceFactory;
     private final LiveData<PagedList<GalleryItem>> mediaList;
+    private final MutableLiveData<List<GalleryItem>> gallerySelection = new MutableLiveData<>(new ArrayList<>());
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -116,6 +119,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private String lastAiRequestText;
 
     private File selfieFile;
+    private File imageDump;
 
     public LiveData<Integer> getComposerState() {
         return currentState;
@@ -149,6 +153,14 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         return locationError;
     }
 
+    public LiveData<List<GalleryItem>> getGallerySelection() {
+        return gallerySelection;
+    }
+
+    public File getImageDump() {
+        return imageDump;
+    }
+
     private float selfieX;
     private float selfieY;
 
@@ -161,6 +173,8 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private int contentType;
     private Location location;
     public RectF cropRect;
+    private int maxGallerySelection;
+    private int minGallerySelection;
 
     private MediaTranscoderTask mediaTranscoderTask;
 
@@ -251,6 +265,33 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     public void onComposedText(@NonNull String text, @ColorInt int color) {
         currentState.setValue(ComposeState.COMPOSING_SELFIE);
+        numTakes++;
+    }
+
+    public void onComposedDump(@NonNull List<Uri> content) {
+        BgWorkers.getInstance().execute(() -> {
+            ArrayList<File> dump = new ArrayList<>(content.size());
+
+            for (Uri uri : content) {
+                File file = FileStore.getInstance().getTmpFileForUri(uri, null);
+                FileUtils.uriToFile(getApplication(), uri, file);
+                dump.add(file);
+            }
+
+            File outFile = FileStore.getInstance().getMediaFile(RandomId.create());
+
+            try {
+                ImageDumpGenerator.generateAlbumDumpVideo(dump, outFile);
+            } catch (IOException e) {
+                Log.e("GalleryComposeFragment/onNext failed generate image dump", e);
+                return;
+            }
+
+            imageDump = outFile;
+
+            currentState.postValue(ComposeState.COMPOSING_SELFIE);
+        });
+
         numTakes++;
     }
 
@@ -416,6 +457,8 @@ public class SelfieComposerViewModel extends AndroidViewModel {
                         post.contentType = MomentInfo.ContentType.IMAGE;
                     } else if (this.contentType == SelfiePostComposerActivity.Type.ALBUM_COMPOSE) {
                         post.contentType = MomentInfo.ContentType.ALBUM_IMAGE;
+                    } else if (this.contentType == SelfiePostComposerActivity.Type.ALBUM_DUMP_COMPOSE) {
+                        post.contentType = MomentInfo.ContentType.ALBUM_DUMP;
                     } else {
                         post.contentType = MomentInfo.ContentType.TEXT;
                     }
@@ -478,6 +521,48 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         });
 
         return result;
+    }
+
+    public void toggleGallerySelection(@NonNull GalleryItem item) {
+        List<GalleryItem> list = gallerySelection.getValue();
+
+        if (list.contains(item)) {
+            list.remove(item);
+        } else {
+            list.add(item);
+        }
+
+        gallerySelection.postValue(list);
+    }
+
+    public boolean isSelectedInGallery(@NonNull GalleryItem item) {
+        return gallerySelection.getValue().contains(item);
+    }
+
+    public int galleryIndexOf(@NonNull GalleryItem item) {
+        return gallerySelection.getValue().indexOf(item);
+    }
+
+    public boolean canSelectMoreFromGallery() {
+        List<GalleryItem> selection = gallerySelection.getValue();
+        return selection == null || selection.size() < maxGallerySelection;
+    }
+
+    public boolean isGallerySelectionReady() {
+        List<GalleryItem> selection = getGallerySelection().getValue();
+        return selection != null && minGallerySelection <= selection.size() && selection.size() <= maxGallerySelection;
+    }
+
+    public int getMaxGallerySelection() {
+        return maxGallerySelection;
+    }
+
+    public void setMaxGallerySelection(int maxGallerySelection) {
+        this.maxGallerySelection = maxGallerySelection;
+    }
+
+    public void setMinGallerySelection(int minGallerySelection) {
+        this.minGallerySelection = minGallerySelection;
     }
 
     @Override

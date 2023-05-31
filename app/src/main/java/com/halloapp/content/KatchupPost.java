@@ -51,13 +51,14 @@ public class KatchupPost extends Post {
     public static final int SCREENSHOT_YES = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({CONTENT_TYPE_UNKNOWN, CONTENT_TYPE_IMAGE, CONTENT_TYPE_VIDEO, CONTENT_TYPE_TEXT, CONTENT_TYPE_ALBUM_IMAGE})
+    @IntDef({CONTENT_TYPE_UNKNOWN, CONTENT_TYPE_IMAGE, CONTENT_TYPE_VIDEO, CONTENT_TYPE_TEXT, CONTENT_TYPE_ALBUM_IMAGE, CONTENT_TYPE_ALBUM_DUMP})
     public @interface ContentType {}
     public static final int CONTENT_TYPE_UNKNOWN = -1;
     public static final int CONTENT_TYPE_IMAGE = 0;
     public static final int CONTENT_TYPE_VIDEO = 1;
     public static final int CONTENT_TYPE_TEXT = 2;
     public static final int CONTENT_TYPE_ALBUM_IMAGE = 3;
+    public static final int CONTENT_TYPE_ALBUM_DUMP = 4;
 
     public static @ContentType int fromProtoContentType(MomentInfo.ContentType contentType) {
         if (contentType == MomentInfo.ContentType.IMAGE) {
@@ -68,6 +69,8 @@ public class KatchupPost extends Post {
             return CONTENT_TYPE_TEXT;
         } else if (contentType == MomentInfo.ContentType.ALBUM_IMAGE) {
             return CONTENT_TYPE_ALBUM_IMAGE;
+        } else if (contentType == MomentInfo.ContentType.ALBUM_DUMP) {
+            return CONTENT_TYPE_ALBUM_DUMP;
         }
         Log.w("Unrecognized content type " + contentType);
         return CONTENT_TYPE_UNKNOWN;
@@ -82,6 +85,8 @@ public class KatchupPost extends Post {
             return MomentInfo.ContentType.IMAGE;
         } else if (contentType == CONTENT_TYPE_ALBUM_IMAGE) {
             return MomentInfo.ContentType.ALBUM_IMAGE;
+        } else if (contentType == CONTENT_TYPE_ALBUM_DUMP) {
+            return MomentInfo.ContentType.ALBUM_DUMP;
         }
         return MomentInfo.ContentType.UNRECOGNIZED;
     }
