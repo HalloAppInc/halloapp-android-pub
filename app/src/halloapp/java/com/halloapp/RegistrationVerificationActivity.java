@@ -442,7 +442,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            return viewModel.registration.verifyPhoneNumber(phone, code, campaignId, groupInviteToken);
+            return viewModel.registration.verifyPhoneNumber(phone, code, campaignId, groupInviteToken, null);
         }
 
         @Override

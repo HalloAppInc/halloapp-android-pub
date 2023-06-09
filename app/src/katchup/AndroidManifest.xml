@@ -311,6 +311,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".katchup.ProfileAddPhoneActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".katchup.ProfileVerifyPhoneActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".katchup.SettingsActivity"
             android:theme="@style/AppTheme.Black.NoActionBar" />
 

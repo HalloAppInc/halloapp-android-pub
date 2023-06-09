@@ -69,11 +69,13 @@ public class ProfileEditActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_EDIT_PICTURE = 3;
     private static final int REQUEST_CODE_EDIT_BIO = 4;
     private static final int REQUEST_CODE_EDIT_LINKS = 5;
+    private static final int REQUEST_CODE_PHONE = 6;
 
     private ProfileEditViewModel viewModel;
     private ImageView profilePicture;
     private EditText usernameView;
     private EditText nameView;
+    private EditText phoneView;
 
     private final TextWatcher nameTextChangedListener = new TextWatcher() {
         @Override
@@ -140,6 +142,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         nameView = findViewById(R.id.name);
         EditText bioView = findViewById(R.id.bio);
         TextView linksView = findViewById(R.id.links);
+        phoneView = findViewById(R.id.phone);
 
         nameView.addTextChangedListener(nameTextChangedListener);
         usernameView.addTextChangedListener(usernameTextChangedListener);
@@ -178,6 +181,11 @@ public class ProfileEditActivity extends AppCompatActivity {
             } else {
                 linksView.setText(R.string.links_hint);
             }
+
+            if (profile.phone != null) {
+                phoneView.setText(profile.phone);
+                phoneView.setOnClickListener(null);
+            }
         });
 
         viewModel.isUsernameValid.observe(this, valid -> {
@@ -206,6 +214,14 @@ public class ProfileEditActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_EDIT_LINKS);
             }
         });
+
+        phoneView.setOnClickListener(v -> {
+            UserProfileInfo profileInfo = viewModel.profile.getValue();
+
+            if (profileInfo != null && profileInfo.phone == null) {
+                startActivityForResult(new Intent(getBaseContext(), ProfileAddPhoneActivity.class), REQUEST_CODE_PHONE);
+            }
+        });
     }
 
     @Override
@@ -219,6 +235,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != Activity.RESULT_OK || data == null) {
+            if (requestCode == REQUEST_CODE_PHONE) {
+                Me.getInstance().savePhone(null);
+            }
             return;
         }
 
@@ -246,6 +265,9 @@ public class ProfileEditActivity extends AppCompatActivity {
             String snapchat = data.getStringExtra(ProfileLinksActivity.EXTRA_SNAPCHAT);
 
             viewModel.setLinks(link, tiktok, instagram, snapchat);
+        } else if (requestCode == REQUEST_CODE_PHONE) {
+            String phone = data.getStringExtra(ProfileAddPhoneActivity.EXTRA_PHONE);
+            viewModel.setPhone(phone);
         }
     }
 
@@ -292,8 +314,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         private String tiktok;
         private String instagram;
         private String snapchat;
+        private String phone;
 
-        public UserProfileInfo(@NonNull UserId userId, @Nullable String avatarId, String name, String username, String bio, String link, String tiktok, String instagram, String snapchat) {
+        public UserProfileInfo(@NonNull UserId userId, @Nullable String avatarId, String name, String username, String bio, String link, String tiktok, String instagram, String snapchat, String phone) {
             this.userId = userId;
             this.avatarId = avatarId;
             this.name = name;
@@ -303,6 +326,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             this.tiktok = tiktok;
             this.instagram = instagram;
             this.snapchat = snapchat;
+            this.phone = phone;
         }
 
         public int getLinkCount() {
@@ -635,6 +659,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     String username = userProfile.getUsername();
                     String bio = userProfile.getBio();
                     String link = null, instagram = null, snapchat = null, tiktok = null;
+                    String phone = me.getPhone();
 
                     for (Link linkItem : userProfile.getLinksList()) {
                         if (linkItem.getType() == Link.Type.TIKTOK) {
@@ -648,8 +673,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                         }
                     }
 
-                    originalProfile = new UserProfileInfo(userId, userProfile.getAvatarId(), name, username, bio, link, tiktok, instagram, snapchat);
-                    profile.postValue(new UserProfileInfo(userId, userProfile.getAvatarId(), name, username, bio, link, tiktok, instagram, snapchat));
+                    originalProfile = new UserProfileInfo(userId, userProfile.getAvatarId(), name, username, bio, link, tiktok, instagram, snapchat, phone);
+                    profile.postValue(new UserProfileInfo(userId, userProfile.getAvatarId(), name, username, bio, link, tiktok, instagram, snapchat, phone));
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);
                 });
@@ -722,6 +747,15 @@ public class ProfileEditActivity extends AppCompatActivity {
                 profileInfo.tiktok = tiktok;
                 profileInfo.instagram = instagram;
                 profileInfo.snapchat = snapchat;
+                profile.postValue(profileInfo);
+            }
+        }
+
+        public void setPhone(String phone) {
+            UserProfileInfo profileInfo = profile.getValue();
+
+            if (profileInfo != null) {
+                profileInfo.phone = phone;
                 profile.postValue(profileInfo);
             }
         }

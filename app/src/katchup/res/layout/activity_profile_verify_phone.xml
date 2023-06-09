@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background_dark"
+    android:fitsSystemWindows="true"
+    tools:context=".katchup.ProfileVerifyPhoneActivity">
+
+    <LinearLayout
+        android:id="@+id/heading"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/prev"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_close_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary_light"
+            tools:ignore="ContentDescription" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/entry_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/heading"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="22sp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:text="@string/verify_phone_code_prompt" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/code_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="21sp"
+                    android:textColor="@color/white_50"
+                    android:text="@string/code_hint"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:importantForAutofill="no"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="21sp"
+                    android:textColor="@color/white_50"
+                    android:textColorHint="@color/reg_hint_color"
+                    android:singleLine="true"
+                    android:background="@null" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/otp_request_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/resend_sms"
+                    app:layout_constraintTop_toBottomOf="@id/code"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white_70"
+                        android:textSize="15sp"
+                        android:text="@string/katchup_resend_sms"/>
+
+                    <TextView
+                        android:id="@+id/resent_sms_timer"
+                        app:layout_constraintTop_toTopOf="@id/resend_sms"
+                        app:layout_constraintBottom_toBottomOf="@id/resend_sms"
+                        app:layout_constraintStart_toEndOf="@id/resend_sms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:textColor="@color/white_50"
+                        tools:text="1:30"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/call_me"
+                    app:layout_constraintTop_toBottomOf="@id/resend_sms"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white_70"
+                        android:textSize="15sp"
+                        android:text="@string/katchup_request_call"/>
+
+                    <TextView
+                        android:id="@+id/call_me_timer"
+                        app:layout_constraintTop_toTopOf="@id/call_me"
+                        app:layout_constraintBottom_toBottomOf="@id/call_me"
+                        app:layout_constraintStart_toEndOf="@id/call_me"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:textColor="@color/white_50"
+                        tools:text="1:30"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/wrong_number"
+                    app:layout_constraintTop_toBottomOf="@id/call_me"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white_70"
+                        android:textSize="15sp"
+                        android:text="@string/katchup_wrong_number"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

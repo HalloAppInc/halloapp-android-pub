@@ -216,4 +216,38 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="22dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:text="@string/profile_phone" />
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:backgroundTint="@color/white_40"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:hint="@string/phone_hint"
+            android:textColorHint="@color/white_50"
+            android:editable="false"
+            android:focusable="false" />
+
+    </LinearLayout>
+
 </LinearLayout>

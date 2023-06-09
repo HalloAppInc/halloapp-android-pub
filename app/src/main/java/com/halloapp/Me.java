@@ -227,7 +227,7 @@ public class Me {
     }
 
     @WorkerThread
-    public synchronized void savePhone(@NonNull String phone) {
+    public synchronized void savePhone(@Nullable String phone) {
         Log.i("Me.savePhone: " + phone);
         if (!getPreferences().edit().putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.savePhone: failed");

@@ -507,4 +507,8 @@ public class Analytics {
     public void reregistered() {
         track("reregistered");
     }
+
+    public void addedPhone() {
+        track("addedPhone");
+    }
 }

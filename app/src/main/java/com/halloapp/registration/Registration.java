@@ -383,14 +383,14 @@ public class Registration {
         if (hashcashResult == null) {
             return null;
         }
-        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(null, null, null, null, me.getName(), hashcashResult);
+        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(null, null, null, null, me.getName(), hashcashResult, null);
         processRegistrationVerificationResult(verificationResult);
         return verificationResult;
     }
 
     @WorkerThread
-    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken) {
-        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, groupInviteToken, me.getName(), null);
+    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken, @Nullable String existingUid) {
+        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, groupInviteToken, me.getName(), null, existingUid);
         processRegistrationVerificationResult(verificationResult);
         return verificationResult;
     }
@@ -425,7 +425,7 @@ public class Registration {
     }
 
     @WorkerThread
-    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@Nullable String phone, @Nullable String code, @Nullable String campaignId, @Nullable String groupInviteToken, @Nullable String name, @Nullable HashcashResult hashcashResult) {
+    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@Nullable String phone, @Nullable String code, @Nullable String campaignId, @Nullable String groupInviteToken, @Nullable String name, @Nullable HashcashResult hashcashResult, @Nullable String existingUid) {
         ThreadUtils.setSocketTag();
         if (!encryptedKeyStore.clientPrivateKeysSet()) {
             encryptedKeyStore.edit().generateClientPrivateKeys().apply();
@@ -480,6 +480,9 @@ public class Registration {
         }
         if (campaignId != null) {
             verifyOtpRequestBuilder.setCampaignId(campaignId);
+        }
+        if (existingUid != null) {
+            verifyOtpRequestBuilder.setUid(Long.parseLong(existingUid));
         }
 
         byte[] keypair = CryptoUtils.generateEd25519KeyPair();

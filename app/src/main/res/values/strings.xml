@@ -1721,8 +1721,20 @@
     <string name="profile_bio">Bio</string>
     <!-- links label on profile update screen -->
     <string name="profile_links">Links</string>
+    <!-- phone number label on profile update screen -->
+    <string name="profile_phone">Phone 🔒 </string>
     <!-- hint inviting users to add links on profile update screen -->
     <string name="links_hint">add links</string>
+    <!-- hint inviting users to add their phone number on profile update screen -->
+    <string name="phone_hint">add phone number</string>
+    <!-- phone number label on profile add phone screen -->
+    <string name="phone">phone</string>
+    <!-- prompt for entering the phone verification code -->
+    <string name="verify_phone_code_prompt">enter the code we sent</string>
+    <!-- hint for the phone verification code -->
+    <string name="code_hint">000000</string>
+    <!-- label explaining the use of phone number in the app -->
+    <string name="phone_description">&#9432; to recover and to help verify your acount. only you can see your phone number.</string>
     <!-- label for TikTok handle on profile -->
     <string name="tiktok">TikTok</string>
     <!-- label for Instagram handle on profile -->
