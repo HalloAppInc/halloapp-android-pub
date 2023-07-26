@@ -224,15 +224,19 @@ public class IntentUtils {
     }
 
     public static void openPlayOrMarket(@NonNull View view) {
+        openPlayOrMarketForPackage(view, BuildConfig.APPLICATION_ID);
+    }
+
+    public static void openPlayOrMarketForPackage(@NonNull View view, @NonNull String packageName) {
         try {
             final Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(Constants.PLAY_STORE_URL));
+            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + packageName));
             intent.setPackage("com.android.vending");
             view.getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.i("Play Store Not Installed", e);
             try {
-                final Intent intent = Intent.parseUri("market://details?id=" + BuildConfig.APPLICATION_ID, 0);
+                final Intent intent = Intent.parseUri("market://details?id=" + packageName, 0);
                 view.getContext().startActivity(intent);
             } catch (URISyntaxException | ActivityNotFoundException e2) {
                 Log.w("Failed to open any market", e2);

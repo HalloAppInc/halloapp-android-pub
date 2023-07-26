@@ -465,7 +465,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:paddingBottom="14dp"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/halloapp_banner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="horizontal"
@@ -537,6 +537,22 @@
             app:layout_constraintTop_toTopOf="@+id/discover"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/halloapp_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintBottom_toTopOf="@+id/feed_type_container"
+        android:background="@drawable/selected_feed_type_background"
+        android:layout_margin="4dp"
+        android:padding="4dp"
+        android:paddingHorizontal="12dp"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="Katchup is shutting down. Please tap to try our other app, HalloApp."
+        />
 
     <View
         android:id="@+id/record_protection"

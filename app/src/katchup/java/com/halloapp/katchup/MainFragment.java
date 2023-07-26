@@ -94,6 +94,7 @@ import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
@@ -372,6 +373,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 viewModel.maybeRefreshPublicFeed();
             }
             viewModel.setSelectedTab(MainViewModel.Tab.ForYou);
+        });
+
+        View halloappBanner = root.findViewById(R.id.halloapp_banner);
+        halloappBanner.setOnClickListener(v -> {
+            IntentUtils.openPlayOrMarketForPackage(v, "com.halloapp");
         });
 
         viewModel = new ViewModelProvider(requireActivity(), new MainViewModel.MainViewModelFactory(getActivity().getApplication(), externalMediaThumbnailLoader)).get(MainViewModel.class);
