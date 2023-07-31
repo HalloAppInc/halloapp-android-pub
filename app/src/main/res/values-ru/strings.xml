@@ -1508,10 +1508,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Label for a moment in a reply that is expired -->
     <string name="expired_moment">"Истекший момент"</string>
 
-    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
-    <string name="unlock_moment_subtitle">"Чтобы увидеть момент %s, поделитесь своим"</string>
-
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Моменты исчезают через 24 часа, и их можно просмотреть только один раз."</string>
@@ -1994,9 +1990,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"Камера"</string>
-
-    <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">"Чтобы увидеть моменты, поделитесь своими"</string>
 
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
@@ -2902,6 +2895,26 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
     <string name="ping_followed_you">"%s followed you"</string>
+
+    <!-- phone number label on profile update screen -->
+    <string name="profile_phone">"Phone &#128274;"</string>
+
+    <!-- hint inviting users to add their phone number on profile update screen -->
+    <string name="phone_hint">"add phone number"</string>
+
+    <!-- phone number label on profile add phone screen -->
+    <string name="phone">"phone"</string>
+
+    <!-- prompt for entering the phone verification code -->
+    <string name="verify_phone_code_prompt">"enter the code we sent"</string>
+
+    <!-- hint for the phone verification code -->
+    <string name="code_hint">"000000"</string>
+
+    <!-- label explaining the use of phone number in the app -->
+    <string name="phone_description">"ⓘ to recover and to help verify your acount. only you can see your phone number."</string>
+    <string name="unlock_moment_subtitle">"Чтобы увидеть момент %s, поделитесь своим"</string>
+    <string name="unlock_all_moment_subtitle">"Чтобы увидеть моменты, поделитесь своими"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"Отзывы"</string>

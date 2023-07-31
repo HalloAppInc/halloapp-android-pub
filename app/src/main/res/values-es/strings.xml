@@ -1390,10 +1390,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Label for a moment in a reply that is expired -->
     <string name="expired_moment">"Momento caducado"</string>
 
-    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
-
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Para ver los momentos por 24 horas, comparte los tuyos"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1849,9 +1847,6 @@ privada"</string>
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"Cámara"</string>
 
-    <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">"Para ver momentos, comparte los tuyos"</string>
-
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
     <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; te agregó al grupo &lt;b&gt;%2$s&lt;/b&gt;"</string>
@@ -1985,7 +1980,7 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- title for screen where user is composing a post -->
     <!-- Fuzzy -->
-    <string name="selfie_post_header">"ahora o después"</string>
+    <string name="selfie_post_header">"ahora mejor que luego"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
@@ -2045,8 +2040,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="notification_daily_moment_live_text">"Tienes 2 minutos para describir un momento"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <!-- Fuzzy -->
-    <string name="new_from">"nuevo de %s"</string>
+    <string name="new_from">"novedad de %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
     <string name="late_minutes">"%dm tarde"</string>
@@ -2735,6 +2729,26 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
     <string name="ping_followed_you">"%s te sigue"</string>
+
+    <!-- phone number label on profile update screen -->
+    <string name="profile_phone">"Teléfono &#128274;"</string>
+
+    <!-- hint inviting users to add their phone number on profile update screen -->
+    <string name="phone_hint">"agregar número de teléfono"</string>
+
+    <!-- phone number label on profile add phone screen -->
+    <string name="phone">"teléfono"</string>
+
+    <!-- prompt for entering the phone verification code -->
+    <string name="verify_phone_code_prompt">"ingresa el código enviado"</string>
+
+    <!-- hint for the phone verification code -->
+    <string name="code_hint">"000000"</string>
+
+    <!-- label explaining the use of phone number in the app -->
+    <string name="phone_description">"ⓘ para recuperar y ayudar a verificar tu cuenta. sólo tú puedes ver tu número de teléfono."</string>
+    <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
+    <string name="unlock_all_moment_subtitle">"Para ver momentos, comparte los tuyos"</string>
     <string name="notification_many_daily_katchup_reminder_body">"ponte al día con %1$s, %2$s, +%3$d otros ahora…"</string>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>

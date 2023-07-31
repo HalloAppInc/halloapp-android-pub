@@ -32,9 +32,7 @@
     <string name="verify_registration_title">"%s numarasına gönderdiğimiz kodu gir"</string>
     <string name="contact_permission_title">"Son bir şey"</string>
     <string name="registration_code_invalid">"Geçersiz kod, tekrar dene"</string>
-
-    <!-- Fuzzy -->
-    <string name="registration_failed">"Telefon numarası kaydedilemedi, tekrar dene"</string>
+    <string name="registration_failed">"Kayıt yapılamadı, lütfen tekrar dene"</string>
     <string name="registration_failed_no_friends">"Şu anda yalnızca davet sistemiyle çalışıyoruz. HalloApp kullanan bir aile üyen veya arkadaşın varsa, telefon numaranı kullanarak sana davet göndermelerini isteyebilirsin."</string>
     <string name="registration_failed_no_friends_title">"Tüh!"</string>
     <string name="type_a_message_hint">"Mesaj yaz"</string>
@@ -146,7 +144,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="alert_discard_changes_message">"Değişiklikleri iptal et?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <!-- Fuzzy -->
     <string name="action_discard">"İptal et"</string>
     <string name="new_post_notification">"%s, yeni bir gönderi paylaştı"</string>
     <plurals name="new_posts_notification">
@@ -186,9 +183,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="comment_retracted_placeholder">"Bu yorum silinmiş"</string>
     <string name="retract">"Sil"</string>
     <string name="retract_post_confirmation">"Gönderini silmek mi istiyorsun?"</string>
-
-    <!-- Fuzzy -->
-    <string name="retract_comment_confirmation">"Yorumunu silmek mi istiyorsun?"</string>
+    <string name="retract_comment_confirmation">"Yorumunu herkesten silmek mi istiyorsun?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Bu sohbeti silmek mi istiyorsun?"</item>
         <item quantity="other">"Seçtiğin %d sohbeti silmek mi istiyorsun?"</item>
@@ -240,9 +235,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
 
     <!-- Will the second %s here be a link? -->
     <string name="invite_text_with_name_and_number">"Merhaba %1$s! Seni, sevdiklerimizle gerçek bağlantılar kurabildiğimiz bir uygulama olan HalloApp'e davet ediyorum. Kaydolmak için %2$s numarasını kullan. %3$s adresinden uygulamayı indir."</string>
-
-    <!-- Fuzzy -->
-    <string name="name_hint">"Adın"</string>
+    <string name="name_hint">"Adın ya da lakabın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Beklemede"</string>
@@ -250,11 +243,9 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="profile_updated">"Profil güncellendi"</string>
     <string name="flip">"Çevir"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
-Lüften sorununu yukarıda açıkla.
+Lütfen yukarıdaki alana geri bildirim bırak veya sorunun açıklamasını yaz. Teknik sorunları çözmek için günlüklerinizi bu e-postaya ekliyoruz.
 uid: %1$s
 version: %2$s
 ----------------------------------------
@@ -477,15 +468,12 @@ version: %2$s
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"HalloApp sürümün, bu tür mesajları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"HalloApp sürümün, bu tür gönderileri desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"HalloApp sürümün, bu tür yorumları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -553,8 +541,6 @@ HalloApp'i kullanmak için lütfen bu telefonda bir miktar depolama alanı boşa
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"%s ilişimine dokunarak HalloApp grubuma katıl"</string>
-
-    <!-- Fuzzy -->
     <string name="voice_note">"Sesli not"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -676,12 +662,10 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="no_longer_group_member">"Artık bu grubun bir üyesi değilsin."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <!-- Fuzzy -->
-    <string name="voice_note_record_audio_permission_rationale">"Sesli mesaj kaydedebilmen için mikrofon erişimine izin vermelisin."</string>
+    <string name="voice_note_record_audio_permission_rationale">"Sesli mesaj kaydedebilmek için mikrofon erişimine izin vermelisin."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <!-- Fuzzy -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"Sesli mesaj kaydedebilmen için mikrofon erişimine izin vermelisin.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Sesli mesaj kaydedebilmek için mikrofon erişimine izin vermelisin.
 
 Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</string>
 
@@ -731,8 +715,7 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="return_to_registration">"Kayda dön."</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"30 günlük süresi dolan gönderilerin burada görünecek"</string>
+    <string name="archive_empty">"Süresi dolan gönderilerin burada görünecek"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Desteklenmeyen içerik"</string>
@@ -763,7 +746,6 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="title_settings_dialog">"İzinler gerekli"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <!-- Fuzzy -->
     <string name="voice_note_preview">"Sesli mesaj (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
@@ -854,7 +836,6 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="groups_in_common">"Ortak gruplar"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <!-- Fuzzy -->
     <string name="slide_to_cancel">"İptal için kaydır"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
@@ -1217,12 +1198,10 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
     <string name="preparing_logs">"Geri bildirim hazırlanıyor…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <!-- Fuzzy -->
-    <string name="post_tombstone_placeholder">"Gönderi bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Gönderi bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <!-- Fuzzy -->
-    <string name="comment_tombstone_placeholder">"Yorum bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Yorum bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Cevapsız arama bildirimleri"</string>
@@ -1297,8 +1276,7 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
     <string name="favorites_nux_call_to_action">"Şimdi yakın kişilerin için bir liste yarat ve HalloApp gönderilerini yalnızca onlarla paylaş. "</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"HalloApp'e katılan kişilerin, süresi dolmamış gönderilerini görebilir."</string>
+    <string name="my_contacts_disclaimer">"HalloApp'e yeni katılan kişilerin, gelecekteki gönderilerini görebilir."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Kişilerim"</string>
@@ -1328,8 +1306,7 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
     <string name="halloapp_about_thanks">"HalloApp'i kullandığın ve çevrendekilerle paylaştığın için teşekkürler! Her hafta gelişmeye devam ediyoruz. "</string>
 
     <!-- Feedback or support line in about -->
-    <!-- Fuzzy -->
-    <string name="halloapp_about_support">"Herhangi bir soru ve/veya geribildirim için bize &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt; adresinden e-posta gönder."</string>
+    <string name="halloapp_about_support">"Herhangi bir soru ve/veya geri bildirim için bize &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt; adresinden e-posta gönder."</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Hakkında"</string>
@@ -1366,8 +1343,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Gör"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <!-- Fuzzy -->
-    <string name="instant_post_from">"%s, anlık paylaştı"</string>
+    <string name="instant_post_from">"%s kişisinin anlığı"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"Anlık paylaştın"</string>
@@ -1388,15 +1364,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Kendini arayamazsın"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_my_contacts">"Gönderin 30 gün sonra kaybolacak. HalloApp'e katılan kişilerin, süresi dolmamış gönderilerini görebilir."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Gönderin 30 gün sonra kaybolacak. "</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"Gönderin Yakınlarla paylaşıldı ve 30 gün sonra kaybolacak."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"Anlığın, kişilerinle paylaşıldı. Anlıklar yalnızca 1 kez görüntülenebilir ve 24 saat içinde kaybolur."</string>
+    <string name="seen_by_post_expiration_moments">"Anlığın, kişilerinle paylaşıldı. Anlıklar 24 saat içinde kaybolur."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"%s kişisinden yeni anlık"</string>
@@ -1419,13 +1393,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Label for a moment in a reply that is expired -->
     <string name="expired_moment">"Anlık süresi doldu"</string>
 
-    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
-    <string name="unlock_moment_subtitle">"%s kişisinin anlığını görebilmek için kendinkini paylaş"</string>
-
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Anlıkların kilidini 24 saatliğine açmak için kendi anlığını paylaş"</string>
+    <string name="share_moment_subtitle">"Anlıkları 24 saat görebilmek için kendi anlığını paylaş"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Bağlantı kesiliyor…"</string>
@@ -1465,20 +1435,16 @@ Bunu istediğin zaman değiştirebilirsin."</string>
     <string name="new_moment_replace">"Bu yeni anlığın, eskisinin yerine geçecek"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <!-- Fuzzy -->
-    <string name="new_moment_unlock_notification">"%s, seninkinin kilidini açarak yeni bir anlık paylaştı"</string>
+    <string name="new_moment_unlock_notification">"%s, senin anlığını görebilmek için anlık paylaştı"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="two_new_moment_unlock_notification">"%1$s ve %2$s seninkinin kilidini açarak yeni birer anlık paylaştı"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s ve %2$s,  senin anlığını görebilmek için anlık paylaştılar"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s ve %3$s seninkinin kilidini açarak yeni birer anlık paylaştı"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s ve %3$s, senin anlığını görebilmek için anlık paylaştılar"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s vd., seninkinin kilidini açarak yeni birer anlık paylaştı"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s vd., senin anlığını görebilmek için anlık paylaştılar"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Anlık bildirimleri"</string>
@@ -1882,9 +1848,6 @@ Bunu istediğin zaman değiştirebilirsin."</string>
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"Kamera"</string>
 
-    <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">"Anlıkları görebilmek için sen de anlık paylaş"</string>
-
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
     <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; seni &lt;b&gt;%2$s&lt;/b&gt; grubuna ekledi"</string>
@@ -2014,18 +1977,15 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; gönderine %2$s bıraktı"</string>
 
     <!-- Header for selfie countdown -->
-    <!-- Fuzzy -->
     <string name="selfie_countdown_header">"∞ canlı özçekim"</string>
 
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
     <string name="selfie_post_header">"Şimdi ya da asla "</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"arkadaşlar ya da arkadaşlar"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
     <string name="invite_add_button">"Takip et &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
@@ -2041,8 +2001,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="feed_type_following">"Takip edilenler"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <!-- Fuzzy -->
-    <string name="user_list_type_add">"Ekle"</string>
+    <string name="user_list_type_add">"Öneriler"</string>
 
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">"Takip edilenler"</string>
@@ -2081,7 +2040,6 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="notification_daily_moment_live_text">"Anlık açıklaması için 2 dakikan var"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <!-- Fuzzy -->
     <string name="new_from">"%s kişisinden yeni"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
@@ -2091,8 +2049,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="late_hours">"%dh geç"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <!-- Fuzzy -->
-    <string name="calendar">"takvim"</string>
+    <string name="calendar">"Takvimi gör"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"Öne çıkanlar"</string>
@@ -2110,7 +2067,6 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="contacts_permission_text">"Listendeki arkadaşlarla katchup "</string>
 
     <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
-    <!-- Fuzzy -->
     <string name="contacts_permission_cta">"Kişilerini gör"</string>
 
     <!-- Contact permission request title -->
@@ -2198,7 +2154,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="mutuals_who_follow_user_others">"+%d diğer"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <string name="agreement_notice"><![CDATA[by continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
+    <string name="agreement_notice"><![CDATA[devam ederek <a href="terms">Kullanım Şartları</a> and <a href="privacy">Privacy Policy</a>]]>"mızı onaylamış oluyorsun"</string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
     <string name="katchup_expired_explanation">"Katchup'un bu sürümü çok eski, artık kullanılamaz. Lütfen Google Play Store'a git ve son sürümü yükle. "</string>
@@ -2294,12 +2250,12 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="contacts_access_request_rationale">"\"Katchup\", kişilerine erişmek istiyor. Bu, Katchup'ta arkadaşlarınla bağlantı kurman ve gönderilerini görmeni sağlar. "</string>
 
     <!-- text of location permission access request prompt -->
-    <!-- Fuzzy -->
-    <string name="location_access_request_rationale">"\"Katchup\" konumuna erişmek istiyor. Bu, yakınındaki kişilerin neler yaptığını görmesine ve gönderilerini daha alakalı bir hedef kitleyle paylaşmana imkan verir."</string>
+    <string name="location_access_request_rationale">"\"Katchup\" konumuna erişmek istiyor.
+Bu, genel konumunu paylaşmana ve bölgendeki insanların Katchup'taki gönderilerini görmene olanak tanır."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <!-- Fuzzy -->
-    <string name="location_access_request_rationale_denied">"\"Katchup\" konumuna erişmek istiyor. Bu, yakınındaki kişilerin neler yaptığını görmesine ve gönderilerini daha alakalı bir hedef kitleyle paylaşmana imkan verir.
+    <string name="location_access_request_rationale_denied">"\"Katchup\" konumuna erişmek istiyor.
+Bu, genel konumunu paylaşmana ve bölgendeki insanların Katchup'taki gönderilerini görmene olanak tanır.
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç. "</string>
 
@@ -2466,7 +2422,6 @@ Katchup telefonundan silinir.
     <string name="settings_notifications_mentions_option">"Bahsetmeler"</string>
 
     <!-- notifications settings on fire option -->
-    <!-- Fuzzy -->
     <string name="settings_notifications_on_fire_option">"gündemde"</string>
 
     <!-- notifications settings new users option -->
@@ -2483,8 +2438,7 @@ Katchup telefonundan silinir.
     <string name="next_lowercase">"İleri"</string>
 
     <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
-    <!-- Fuzzy -->
-    <string name="only_own_empty_text">"Şimdilik yeni bir şey yok; Katchup'layacak birilerini bul"</string>
+    <string name="only_own_empty_text">"Şimdilik yeni bir şey yok; Katchup'layacak birilerini bul!"</string>
 
     <!-- text explaining core functionality of the app that the users can utilise -->
     <string name="onboarding_welcome_info">"Canlı özçekimli, video tepkili, etiket yorumlu gönderiler paylaş!"</string>
@@ -2511,8 +2465,7 @@ Katchup telefonundan silinir.
     <string name="notification_screenshot_title">"katchup ekran görüntüsü"</string>
 
     <!-- title of the daily katchup notification -->
-    <!-- Fuzzy -->
-    <string name="notification_daily_katchup_title">"arkadaşlarınla katchup"</string>
+    <string name="notification_daily_katchup_title">"katchup"</string>
 
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">"Yeni katchup"</string>
@@ -2765,13 +2718,33 @@ Erişim iznini değiştirmek için uygulama ayarları ekranını aç"</string>
     <string name="katchup_add_phone_later">"Daha sonra ekle"</string>
 
     <!-- Tab to show activity notifications -->
-    <string name="feed_type_activity">"pings"</string>
+    <string name="feed_type_activity">"Haberler"</string>
 
     <!-- Message shown in the pings tab to welcome the user -->
     <string name="ping_welcome">"%s Katchup'a hoş geldin! &#127813;&#128293;"</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
     <string name="ping_followed_you">"%s seni takip etti"</string>
+
+    <!-- phone number label on profile update screen -->
+    <string name="profile_phone">"Cep No &#128274;"</string>
+
+    <!-- hint inviting users to add their phone number on profile update screen -->
+    <string name="phone_hint">"Cep No ekle"</string>
+
+    <!-- phone number label on profile add phone screen -->
+    <string name="phone">"Cep No"</string>
+
+    <!-- prompt for entering the phone verification code -->
+    <string name="verify_phone_code_prompt">"Gönderdiğimiz kodu gir"</string>
+
+    <!-- hint for the phone verification code -->
+    <string name="code_hint">"000000"</string>
+
+    <!-- label explaining the use of phone number in the app -->
+    <string name="phone_description">"hesabını doğrulamak için. Numaranı yalnızca sen görebilirsin."</string>
+    <string name="unlock_moment_subtitle">"%s kişisinin anlığını görebilmek için kendinkini paylaş"</string>
+    <string name="unlock_all_moment_subtitle">"Anlıkları görebilmek için sen de anlık paylaş"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
     <string name="bg_option_generate">"Yeni yapay zeka arka planı oluştur"</string>
     <string name="settings_feedback_title">"feedback"</string>

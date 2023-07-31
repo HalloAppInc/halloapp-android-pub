@@ -1373,10 +1373,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Label for a moment in a reply that is expired -->
     <string name="expired_moment">"Momento expirado"</string>
 
-    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
-
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Para ver Moments por 24 horas, compartilhe seus próprios"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1831,9 +1829,6 @@ privada"</string>
 
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"Câmera"</string>
-
-    <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">"Para ver momentos, compartilhe seus próprios"</string>
 
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
@@ -2716,6 +2711,26 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Message shown in the pings tab when someone has followed you -->
     <string name="ping_followed_you">"%s seguiu você"</string>
+
+    <!-- phone number label on profile update screen -->
+    <string name="profile_phone">"Telefone &#128274;"</string>
+
+    <!-- hint inviting users to add their phone number on profile update screen -->
+    <string name="phone_hint">"adicionar número de telefone"</string>
+
+    <!-- phone number label on profile add phone screen -->
+    <string name="phone">"telefone"</string>
+
+    <!-- prompt for entering the phone verification code -->
+    <string name="verify_phone_code_prompt">"digite o código que enviamos"</string>
+
+    <!-- hint for the phone verification code -->
+    <string name="code_hint">"000000"</string>
+
+    <!-- label explaining the use of phone number in the app -->
+    <string name="phone_description">"ⓘ para recuperar e ajudar a verificar sua conta. só você pode ver o seu número de telefone."</string>
+    <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
+    <string name="unlock_all_moment_subtitle">"Para ver momentos, compartilhe seus próprios"</string>
     <string name="notification_many_daily_katchup_reminder_body">"converse com %1$s, %2$s, +%3$d outros agora…"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
