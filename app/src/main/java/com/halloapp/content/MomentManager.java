@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.BuildConfig;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.Preconditions;
 
 public class MomentManager {
 
@@ -63,6 +64,7 @@ public class MomentManager {
     }
 
     private MomentManager(@NonNull BgWorkers bgWorkers, @NonNull ContentDb contentDb) {
+        Preconditions.checkState(BuildConfig.IS_KATCHUP, "HalloApp does not require unlocking");
         this.bgWorkers = bgWorkers;
         this.contentDb = contentDb;
 

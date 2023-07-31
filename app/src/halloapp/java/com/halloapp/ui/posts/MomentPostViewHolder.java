@@ -19,9 +19,7 @@ import com.google.android.material.button.MaterialButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Media;
-import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentPost;
-import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.MomentViewerActivity;
@@ -53,17 +51,13 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
     private final PostViewHolder.PostViewHolderParent parent;
 
     private final TextView shareTextView;
-    private final TextView shareSubtitleTextView;
 
     private MomentPost moment;
-
-    private MomentUnlockStatus momentUnlockStatus;
 
     private final BlurView blurView;
 
     private final SimpleDateFormat dayFormatter;
 
-    private final Observer<MomentUnlockStatus> unlockedObserver;
 
     private final View unlockContainer;
 
@@ -88,7 +82,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         unlockButton = itemView.findViewById(R.id.unlock);
         shareTextView = itemView.findViewById(R.id.share_text);
-        shareSubtitleTextView = itemView.findViewById(R.id.share_subtitle_text);
 
         LinearLayout blurContent = itemView.findViewById(R.id.blur_content);
         blurView = itemView.findViewById(R.id.blurView);
@@ -111,17 +104,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         unlockContainer = itemView.findViewById(R.id.unlock_container);
 
-        Drawable lockedIcon = unlockButton.getResources().getDrawable(R.drawable.ic_eye_slash);
-        unlockedObserver = unlockStatus -> {
-            this.momentUnlockStatus = unlockStatus;
-            boolean unlocked = unlockStatus.isUnlocked();
-            boolean seen = moment != null && (moment.seen == Post.SEEN_YES_PENDING || moment.seen == Post.SEEN_YES);
-            unlockButton.setIcon(unlocked ? null : lockedIcon);
-            shareSubtitleTextView.setVisibility(unlocked ? View.GONE : View.VISIBLE);
-            unlockContainer.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
-            blurView.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
-        };
-
         float mediaRadius = itemView.getResources().getDimension(R.dimen.moment_media_corner_radius);
         View imageContainer = itemView.findViewById(R.id.image_container);
         imageContainer.setClipToOutline(true);
@@ -137,13 +119,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 return;
             }
 
-            boolean unlocked = momentUnlockStatus != null && momentUnlockStatus.isUnlocked();
-            boolean seen = moment.seen == Post.SEEN_YES_PENDING || moment.seen == Post.SEEN_YES;
-
-            if (moment.isIncoming() && (!unlocked || !seen)) {
-                return;
-            }
-
             Activity activity = ContextUtils.getActivity(v.getContext());
             if (activity != null) {
                 MomentViewerActivity.viewMomentWithTransition(activity, moment.id, imageContainer);
@@ -153,38 +128,17 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         });
         unlockButton.setOnClickListener(v -> {
             if (moment != null) {
-                if (momentUnlockStatus.unlockingMomentId != null) {
-                    unlockContainer.setVisibility(View.GONE);
-                    blurView.setVisibility(View.GONE);
+                unlockContainer.setVisibility(View.GONE);
+                blurView.setVisibility(View.GONE);
 
-                    Activity activity = ContextUtils.getActivity(v.getContext());
-                    if (activity != null) {
-                        MomentViewerActivity.viewMomentWithTransition(activity, moment.id, imageContainer);
-                    } else {
-                        v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), moment.id));
-                    }
+                Activity activity = ContextUtils.getActivity(v.getContext());
+                if (activity != null) {
+                    MomentViewerActivity.viewMomentWithTransition(activity, moment.id, imageContainer);
                 } else {
-                    Intent i = new Intent(v.getContext(), CameraActivity.class);
-                    i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
-                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT, moment.id);
-                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_SENDER_NAME, senderName);
-                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_USER_ID, moment.senderUserId);
-                    v.getContext().startActivity(i);
+                    v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), moment.id));
                 }
             }
         });
-    }
-
-    @Override
-    public void markAttach() {
-        super.markAttach();
-        MomentManager.getInstance().isUnlockedLiveData().observe(this, unlockedObserver);
-    }
-
-    @Override
-    public void markDetach() {
-        super.markDetach();
-        MomentManager.getInstance().isUnlockedLiveData().removeObserver(unlockedObserver);
     }
 
     public void bindTo(Post post) {
@@ -220,11 +174,10 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (moment.isIncoming()) {
-            boolean unlocked = momentUnlockStatus != null && momentUnlockStatus.isUnlocked();
             boolean seen = moment.seen == Post.SEEN_YES_PENDING || moment.seen == Post.SEEN_YES;
 
-            unlockContainer.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
-            blurView.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
+            unlockContainer.setVisibility(seen ? View.GONE : View.VISIBLE);
+            blurView.setVisibility(seen ? View.GONE : View.VISIBLE);
             lineOne.setVisibility(View.VISIBLE);
             seenByLayout.setVisibility(View.GONE);
             seenByBtn.setVisibility(View.GONE);
@@ -236,7 +189,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                         senderName = result.getShortName(showTilde);
                         String name = result.getDisplayName(showTilde);
                         view.setText(view.getContext().getString(R.string.instant_post_from, name));
-                        shareSubtitleTextView.setText(view.getContext().getString(R.string.unlock_all_moment_subtitle));
                     }
                 }
 
@@ -256,7 +208,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             unlockContainer.setVisibility(View.GONE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
-            shareSubtitleTextView.setVisibility(View.GONE);
             blurView.setVisibility(View.GONE);
             lineOne.setVisibility(View.GONE);
             if (moment.seenByCount > 0) {

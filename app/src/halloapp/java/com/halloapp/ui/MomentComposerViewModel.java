@@ -21,7 +21,6 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
-import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
@@ -69,7 +68,6 @@ public class MomentComposerViewModel extends AndroidViewModel {
         this.unlockUserId = unlockUserId;
         this.selfieMediaIndex = selfieMediaIndex;
         load(uris);
-        MomentManager.getInstance().refresh();
 
         contactsCount = new ComputableLiveData<Integer>() {
             @Override

@@ -230,12 +230,8 @@
     <string name="moment">Moment</string>
     <!-- Label for a moment in a reply that is expired -->
     <string name="expired_moment">Expired moment</string>
-    <!-- Label for subtitle in camera telling users how to see the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">To see %s\'s moment, share your own</string>
-    <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">To see moments, share your own</string>
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">To see Moments for 24 hours, share your own</string>
+    <string name="share_moment_subtitle">Moments last for 24 hours</string>
     <plurals name="max_post_media_items">
         <item quantity="one">You can select up to %d media item per post</item>
         <item quantity="other">You can select up to %d media items per post</item>

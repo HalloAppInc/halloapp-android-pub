@@ -146,24 +146,7 @@
                             android:textSize="20dp"
                             android:textAlignment="center"
                             app:cornerRadius="30dp"
-                            app:icon="@drawable/ic_eye_slash"
                             />
-
-                        <TextView
-                            android:id="@+id/share_subtitle_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="20dp"
-                            android:layout_marginTop="4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:textColor="@color/white_80"
-                            android:textSize="13dp"
-                            android:maxLines="2"
-                            android:ellipsize="end"
-                            android:shadowColor="@color/black_30"
-                            android:shadowRadius="10"
-                            tools:text="To see moments, share your own" />
 
                     </LinearLayout>
 

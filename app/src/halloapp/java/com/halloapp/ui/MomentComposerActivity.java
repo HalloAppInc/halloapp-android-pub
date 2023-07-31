@@ -44,7 +44,6 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
-import com.halloapp.content.MomentManager;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
@@ -251,7 +250,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
             boolean warned = Boolean.TRUE.equals(viewModel.warnedAboutReplacingMoment.getValue());
             Editable psa = psaTagEditText.getText();
             String psaTag = psa == null ? null : psa.toString();
-            if (!warned && MomentManager.getInstance().isUnlockedLiveData().getValue().isUnlocked() && !showPsaTag) {
+            if (!warned && !showPsaTag) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MomentComposerActivity.this);
                 builder.setTitle(R.string.heads_up_title);
                 builder.setMessage(R.string.new_moment_replace);

@@ -96,7 +96,6 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_PURPOSE = "purpose";
     public static final String EXTRA_TARGET_MOMENT = "target_moment";
-    public static final String EXTRA_TARGET_MOMENT_SENDER_NAME = "target_moment_sender_name";
     public static final String EXTRA_TARGET_MOMENT_USER_ID = "target_moment_user_id";
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
@@ -609,13 +608,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private void setupViewForMoments() {
         actionBar.setTitle(R.string.moment_title);
         actionBar.setDisplayShowTitleEnabled(true);
-        String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
+        actionBar.setSubtitle(R.string.share_moment_subtitle);
 
-        if (TextUtils.isEmpty(momentSenderName)) {
-            actionBar.setSubtitle(R.string.share_moment_subtitle);
-        } else {
-            actionBar.setSubtitle(getString(R.string.unlock_moment_subtitle, momentSenderName));
-        }
         flipCameraButton.setBackground(null);
 
         final Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);

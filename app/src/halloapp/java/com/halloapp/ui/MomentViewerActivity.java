@@ -605,41 +605,17 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     }
 
     private void updateViewUnlockState() {
-        Post post = viewModel.getCurrent().getValue();
-        Post unlockingPost = viewModel.unlockingMoment.getLiveData().getValue();
-
-        boolean unlocked = false;
-        if (post != null && post.isOutgoing()) {
-            unlocked = true;
-        } else if (unlockingPost != null && unlockingPost.transferred == Post.TRANSFERRED_YES && post != null && post.isAllMediaTransferred()) {
-            unlocked = true;
+        topCardHolder.showCover(false);
+        if (bottomCardHolder != null) {
+            bottomCardHolder.showCover(false);
         }
-        if (unlocked) {
-            topCardHolder.showCover(false);
-            if (bottomCardHolder != null) {
-                bottomCardHolder.showCover(false);
-            }
-
-            viewModel.setUncovered();
-            uploadingProgress.setVisibility(View.GONE);
-            uploadingDone.setVisibility(View.VISIBLE);
-            if (uploadingContainer.getVisibility() == View.VISIBLE && uploadingCover.getVisibility() == View.VISIBLE) {
-                fadeOutUploadingCover();
-            } else if (uploadingContainer.getVisibility() == View.VISIBLE) {
-                fadeOutUploadingContainer();
-            }
-        } else {
-            if (unlockingPost != null) {
-                if (uploadingContainer.isLaidOut()) {
-                    TransitionManager.beginDelayedTransition(uploadingContainer);
-                }
-                uploadingContainer.setVisibility(View.VISIBLE);
-            }
-
-            topCardHolder.showCover(true);
-            if (bottomCardHolder != null) {
-                bottomCardHolder.showCover(true);
-            }
+        viewModel.setUncovered();
+        uploadingProgress.setVisibility(View.GONE);
+        uploadingDone.setVisibility(View.VISIBLE);
+        if (uploadingContainer.getVisibility() == View.VISIBLE && uploadingCover.getVisibility() == View.VISIBLE) {
+            fadeOutUploadingCover();
+        } else if (uploadingContainer.getVisibility() == View.VISIBLE) {
+            fadeOutUploadingContainer();
         }
     }
 
