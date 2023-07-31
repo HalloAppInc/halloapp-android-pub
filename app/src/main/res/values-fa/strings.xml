@@ -2717,10 +2717,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="feed_type_activity">"پینگ‌ها"</string>
 
     <!-- Message shown in the pings tab to welcome the user -->
-    <string name="ping_welcome">"s% به کچاب خوش‌آمدید! &#127813;&#128293;"</string>
+    <string name="ping_welcome">"%s به کچاب خوش‌آمدید! &#127813;&#128293;"</string>
 
     <!-- Message shown in the pings tab when someone has followed you -->
-    <string name="ping_followed_you">"s% شما را دنبال کرد"</string>
+    <string name="ping_followed_you">"%s شما را دنبال کرد"</string>
 
     <!-- phone number label on profile update screen -->
     <string name="profile_phone">"تلفن&#128274;"</string>
