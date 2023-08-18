@@ -124,7 +124,9 @@ public class BackgroundImagePicker extends HalloActivity implements EasyPermissi
     }
 
     private void requestStoragePermissions() {
-        final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        final String[] perms = Build.VERSION.SDK_INT >= 31
+                ? new String[] {Manifest.permission.READ_MEDIA_IMAGES}
+                : new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
                     REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);

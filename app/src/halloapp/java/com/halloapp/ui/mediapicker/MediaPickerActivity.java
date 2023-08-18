@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
@@ -356,7 +357,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void requestPermissions() {
-        final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        final String[] perms = Build.VERSION.SDK_INT >= 31
+                ? new String[] {Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}
+                : new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
                     REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);
