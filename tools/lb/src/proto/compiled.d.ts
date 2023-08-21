@@ -10437,6 +10437,33 @@ export namespace server {
 
         /** Iq registerResponse */
         registerResponse?: (server.IRegisterResponse|null);
+
+        /** Iq halloappSearchRequest */
+        halloappSearchRequest?: (server.IHalloappSearchRequest|null);
+
+        /** Iq halloappSearchResponse */
+        halloappSearchResponse?: (server.IHalloappSearchResponse|null);
+
+        /** Iq friendshipRequest */
+        friendshipRequest?: (server.IFriendshipRequest|null);
+
+        /** Iq friendshipResponse */
+        friendshipResponse?: (server.IFriendshipResponse|null);
+
+        /** Iq friendListRequest */
+        friendListRequest?: (server.IFriendListRequest|null);
+
+        /** Iq friendListResponse */
+        friendListResponse?: (server.IFriendListResponse|null);
+
+        /** Iq album */
+        album?: (server.IAlbum|null);
+
+        /** Iq albumResult */
+        albumResult?: (server.IAlbumResult|null);
+
+        /** Iq getAlbums */
+        getAlbums?: (server.IGetAlbums|null);
     }
 
     /** Represents an Iq. */
@@ -10664,8 +10691,35 @@ export namespace server {
         /** Iq registerResponse. */
         public registerResponse?: (server.IRegisterResponse|null);
 
+        /** Iq halloappSearchRequest. */
+        public halloappSearchRequest?: (server.IHalloappSearchRequest|null);
+
+        /** Iq halloappSearchResponse. */
+        public halloappSearchResponse?: (server.IHalloappSearchResponse|null);
+
+        /** Iq friendshipRequest. */
+        public friendshipRequest?: (server.IFriendshipRequest|null);
+
+        /** Iq friendshipResponse. */
+        public friendshipResponse?: (server.IFriendshipResponse|null);
+
+        /** Iq friendListRequest. */
+        public friendListRequest?: (server.IFriendListRequest|null);
+
+        /** Iq friendListResponse. */
+        public friendListResponse?: (server.IFriendListResponse|null);
+
+        /** Iq album. */
+        public album?: (server.IAlbum|null);
+
+        /** Iq albumResult. */
+        public albumResult?: (server.IAlbumResult|null);
+
+        /** Iq getAlbums. */
+        public getAlbums?: (server.IGetAlbums|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|"halloappSearchRequest"|"halloappSearchResponse"|"friendshipRequest"|"friendshipResponse"|"friendListRequest"|"friendListResponse"|"album"|"albumResult"|"getAlbums");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -10914,6 +10968,12 @@ export namespace server {
         /** Msg aiImage */
         aiImage?: (server.IAiImage|null);
 
+        /** Msg halloappProfileUpdate */
+        halloappProfileUpdate?: (server.IHalloappProfileUpdate|null);
+
+        /** Msg album */
+        album?: (server.IAlbum|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -11092,6 +11152,12 @@ export namespace server {
         /** Msg aiImage. */
         public aiImage?: (server.IAiImage|null);
 
+        /** Msg halloappProfileUpdate. */
+        public halloappProfileUpdate?: (server.IHalloappProfileUpdate|null);
+
+        /** Msg album. */
+        public album?: (server.IAlbum|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -11099,7 +11165,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|"halloappProfileUpdate"|"album");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -19637,6 +19703,1779 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** AlbumAccess enum. */
+    enum AlbumAccess {
+        INVITE_ONLY = 0,
+        EVERYONE = 1
+    }
+
+    /** Properties of a TimeRange. */
+    interface ITimeRange {
+
+        /** TimeRange startTimestamp */
+        startTimestamp?: (number|Long|null);
+
+        /** TimeRange endTimestamp */
+        endTimestamp?: (number|Long|null);
+
+        /** TimeRange utcOffset */
+        utcOffset?: (number|Long|null);
+    }
+
+    /** Represents a TimeRange. */
+    class TimeRange implements ITimeRange {
+
+        /**
+         * Constructs a new TimeRange.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ITimeRange);
+
+        /** TimeRange startTimestamp. */
+        public startTimestamp: (number|Long);
+
+        /** TimeRange endTimestamp. */
+        public endTimestamp: (number|Long);
+
+        /** TimeRange utcOffset. */
+        public utcOffset: (number|Long);
+
+        /**
+         * Creates a new TimeRange instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeRange instance
+         */
+        public static create(properties?: server.ITimeRange): server.TimeRange;
+
+        /**
+         * Encodes the specified TimeRange message. Does not implicitly {@link server.TimeRange.verify|verify} messages.
+         * @param message TimeRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ITimeRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TimeRange message, length delimited. Does not implicitly {@link server.TimeRange.verify|verify} messages.
+         * @param message TimeRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ITimeRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeRange message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.TimeRange;
+
+        /**
+         * Decodes a TimeRange message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TimeRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.TimeRange;
+
+        /**
+         * Verifies a TimeRange message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TimeRange message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeRange
+         */
+        public static fromObject(object: { [k: string]: any }): server.TimeRange;
+
+        /**
+         * Creates a plain object from a TimeRange message. Also converts values to other types if specified.
+         * @param message TimeRange
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.TimeRange, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeRange to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an Album. */
+    interface IAlbum {
+
+        /** Album id */
+        id?: (string|null);
+
+        /** Album action */
+        action?: (server.Album.Action|null);
+
+        /** Album name */
+        name?: (string|null);
+
+        /** Album owner */
+        owner?: (number|Long|null);
+
+        /** Album timeRange */
+        timeRange?: (server.ITimeRange|null);
+
+        /** Album location */
+        location?: (server.IGpsLocation|null);
+
+        /** Album canView */
+        canView?: (server.AlbumAccess|null);
+
+        /** Album canContribute */
+        canContribute?: (server.AlbumAccess|null);
+
+        /** Album members */
+        members?: (server.IAlbumMember[]|null);
+
+        /** Album mediaItems */
+        mediaItems?: (server.IMediaItem[]|null);
+
+        /** Album cursor */
+        cursor?: (string|null);
+    }
+
+    /** Represents an Album. */
+    class Album implements IAlbum {
+
+        /**
+         * Constructs a new Album.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAlbum);
+
+        /** Album id. */
+        public id: string;
+
+        /** Album action. */
+        public action: server.Album.Action;
+
+        /** Album name. */
+        public name: string;
+
+        /** Album owner. */
+        public owner: (number|Long);
+
+        /** Album timeRange. */
+        public timeRange?: (server.ITimeRange|null);
+
+        /** Album location. */
+        public location?: (server.IGpsLocation|null);
+
+        /** Album canView. */
+        public canView: server.AlbumAccess;
+
+        /** Album canContribute. */
+        public canContribute: server.AlbumAccess;
+
+        /** Album members. */
+        public members: server.IAlbumMember[];
+
+        /** Album mediaItems. */
+        public mediaItems: server.IMediaItem[];
+
+        /** Album cursor. */
+        public cursor: string;
+
+        /**
+         * Creates a new Album instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Album instance
+         */
+        public static create(properties?: server.IAlbum): server.Album;
+
+        /**
+         * Encodes the specified Album message. Does not implicitly {@link server.Album.verify|verify} messages.
+         * @param message Album message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAlbum, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Album message, length delimited. Does not implicitly {@link server.Album.verify|verify} messages.
+         * @param message Album message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAlbum, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an Album message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Album
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.Album;
+
+        /**
+         * Decodes an Album message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Album
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.Album;
+
+        /**
+         * Verifies an Album message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an Album message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Album
+         */
+        public static fromObject(object: { [k: string]: any }): server.Album;
+
+        /**
+         * Creates a plain object from an Album message. Also converts values to other types if specified.
+         * @param message Album
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.Album, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Album to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace Album {
+
+        /** Action enum. */
+        enum Action {
+            CREATE = 0,
+            CHANGE_NAME = 1,
+            CHANGE_LOCATION = 2,
+            CHANGE_TIME = 3,
+            CHANGE_VIEW_ACCESS = 4,
+            CHANGE_CONTRIBUTE_ACCESS = 5,
+            MODIFY_MEMBERS = 6,
+            ADD_MEDIA = 7,
+            REMOVE_MEDIA = 8,
+            MEDIA_UPDATE = 9,
+            GET_INFO = 10,
+            GET_MEDIA = 11,
+            GET = 12,
+            DELETE = 13
+        }
+    }
+
+    /** Properties of an AlbumResult. */
+    interface IAlbumResult {
+
+        /** AlbumResult result */
+        result?: (server.AlbumResult.Result|null);
+
+        /** AlbumResult reason */
+        reason?: (server.AlbumResult.Reason|null);
+
+        /** AlbumResult album */
+        album?: (server.IAlbum|null);
+    }
+
+    /** Represents an AlbumResult. */
+    class AlbumResult implements IAlbumResult {
+
+        /**
+         * Constructs a new AlbumResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAlbumResult);
+
+        /** AlbumResult result. */
+        public result: server.AlbumResult.Result;
+
+        /** AlbumResult reason. */
+        public reason: server.AlbumResult.Reason;
+
+        /** AlbumResult album. */
+        public album?: (server.IAlbum|null);
+
+        /**
+         * Creates a new AlbumResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AlbumResult instance
+         */
+        public static create(properties?: server.IAlbumResult): server.AlbumResult;
+
+        /**
+         * Encodes the specified AlbumResult message. Does not implicitly {@link server.AlbumResult.verify|verify} messages.
+         * @param message AlbumResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAlbumResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AlbumResult message, length delimited. Does not implicitly {@link server.AlbumResult.verify|verify} messages.
+         * @param message AlbumResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAlbumResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AlbumResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AlbumResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.AlbumResult;
+
+        /**
+         * Decodes an AlbumResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AlbumResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.AlbumResult;
+
+        /**
+         * Verifies an AlbumResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AlbumResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AlbumResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.AlbumResult;
+
+        /**
+         * Creates a plain object from an AlbumResult message. Also converts values to other types if specified.
+         * @param message AlbumResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.AlbumResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AlbumResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace AlbumResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN = 0,
+            BAD_ALBUM_ID = 1,
+            NOT_ALLOWED = 2,
+            TOO_MANY_MEMBERS = 3
+        }
+    }
+
+    /** Properties of an AlbumMember. */
+    interface IAlbumMember {
+
+        /** AlbumMember uid */
+        uid?: (number|Long|null);
+
+        /** AlbumMember action */
+        action?: (server.AlbumMember.Action|null);
+
+        /** AlbumMember name */
+        name?: (string|null);
+
+        /** AlbumMember username */
+        username?: (string|null);
+
+        /** AlbumMember avatarId */
+        avatarId?: (string|null);
+
+        /** AlbumMember role */
+        role?: (server.AlbumMember.Role|null);
+
+        /** AlbumMember pending */
+        pending?: (boolean|null);
+
+        /** AlbumMember removeMedia */
+        removeMedia?: (boolean|null);
+    }
+
+    /** Represents an AlbumMember. */
+    class AlbumMember implements IAlbumMember {
+
+        /**
+         * Constructs a new AlbumMember.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAlbumMember);
+
+        /** AlbumMember uid. */
+        public uid: (number|Long);
+
+        /** AlbumMember action. */
+        public action: server.AlbumMember.Action;
+
+        /** AlbumMember name. */
+        public name: string;
+
+        /** AlbumMember username. */
+        public username: string;
+
+        /** AlbumMember avatarId. */
+        public avatarId: string;
+
+        /** AlbumMember role. */
+        public role: server.AlbumMember.Role;
+
+        /** AlbumMember pending. */
+        public pending: boolean;
+
+        /** AlbumMember removeMedia. */
+        public removeMedia: boolean;
+
+        /**
+         * Creates a new AlbumMember instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AlbumMember instance
+         */
+        public static create(properties?: server.IAlbumMember): server.AlbumMember;
+
+        /**
+         * Encodes the specified AlbumMember message. Does not implicitly {@link server.AlbumMember.verify|verify} messages.
+         * @param message AlbumMember message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAlbumMember, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AlbumMember message, length delimited. Does not implicitly {@link server.AlbumMember.verify|verify} messages.
+         * @param message AlbumMember message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAlbumMember, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AlbumMember message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AlbumMember
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.AlbumMember;
+
+        /**
+         * Decodes an AlbumMember message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AlbumMember
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.AlbumMember;
+
+        /**
+         * Verifies an AlbumMember message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AlbumMember message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AlbumMember
+         */
+        public static fromObject(object: { [k: string]: any }): server.AlbumMember;
+
+        /**
+         * Creates a plain object from an AlbumMember message. Also converts values to other types if specified.
+         * @param message AlbumMember
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.AlbumMember, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AlbumMember to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace AlbumMember {
+
+        /** Action enum. */
+        enum Action {
+            NONE = 0,
+            ACCEPT_INVITE = 1,
+            REJECT_INVITE = 2,
+            JOIN = 3,
+            LEAVE = 4,
+            UN_INVITE = 5,
+            REMOVE = 6,
+            INVITE = 7,
+            PROMOTE = 8,
+            DEMOTE = 9
+        }
+
+        /** Role enum. */
+        enum Role {
+            VIEWER = 0,
+            CONTRIBUTOR = 1,
+            ADMIN = 2,
+            OWNER = 3
+        }
+    }
+
+    /** Properties of a GetAlbums. */
+    interface IGetAlbums {
+
+        /** GetAlbums type */
+        type?: (server.GetAlbums.Type|null);
+
+        /** GetAlbums albumIds */
+        albumIds?: (string[]|null);
+    }
+
+    /** Represents a GetAlbums. */
+    class GetAlbums implements IGetAlbums {
+
+        /**
+         * Constructs a new GetAlbums.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGetAlbums);
+
+        /** GetAlbums type. */
+        public type: server.GetAlbums.Type;
+
+        /** GetAlbums albumIds. */
+        public albumIds: string[];
+
+        /**
+         * Creates a new GetAlbums instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetAlbums instance
+         */
+        public static create(properties?: server.IGetAlbums): server.GetAlbums;
+
+        /**
+         * Encodes the specified GetAlbums message. Does not implicitly {@link server.GetAlbums.verify|verify} messages.
+         * @param message GetAlbums message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGetAlbums, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetAlbums message, length delimited. Does not implicitly {@link server.GetAlbums.verify|verify} messages.
+         * @param message GetAlbums message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGetAlbums, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetAlbums message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetAlbums
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GetAlbums;
+
+        /**
+         * Decodes a GetAlbums message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetAlbums
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GetAlbums;
+
+        /**
+         * Verifies a GetAlbums message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetAlbums message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetAlbums
+         */
+        public static fromObject(object: { [k: string]: any }): server.GetAlbums;
+
+        /**
+         * Creates a plain object from a GetAlbums message. Also converts values to other types if specified.
+         * @param message GetAlbums
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GetAlbums, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetAlbums to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GetAlbums {
+
+        /** Type enum. */
+        enum Type {
+            ALL = 0,
+            MEMBER = 1,
+            INVITED = 2
+        }
+    }
+
+    /** Properties of a MediaItem. */
+    interface IMediaItem {
+
+        /** MediaItem id */
+        id?: (string|null);
+
+        /** MediaItem publisherUid */
+        publisherUid?: (number|Long|null);
+
+        /** MediaItem publisherName */
+        publisherName?: (string|null);
+
+        /** MediaItem publisherUsername */
+        publisherUsername?: (string|null);
+
+        /** MediaItem albumId */
+        albumId?: (string|null);
+
+        /** MediaItem payload */
+        payload?: (Uint8Array|null);
+
+        /** MediaItem deviceCaptureTimestampMs */
+        deviceCaptureTimestampMs?: (number|Long|null);
+
+        /** MediaItem uploadTimestampMs */
+        uploadTimestampMs?: (number|Long|null);
+
+        /** MediaItem parentMediaId */
+        parentMediaId?: (string|null);
+    }
+
+    /** Represents a MediaItem. */
+    class MediaItem implements IMediaItem {
+
+        /**
+         * Constructs a new MediaItem.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMediaItem);
+
+        /** MediaItem id. */
+        public id: string;
+
+        /** MediaItem publisherUid. */
+        public publisherUid: (number|Long);
+
+        /** MediaItem publisherName. */
+        public publisherName: string;
+
+        /** MediaItem publisherUsername. */
+        public publisherUsername: string;
+
+        /** MediaItem albumId. */
+        public albumId: string;
+
+        /** MediaItem payload. */
+        public payload: Uint8Array;
+
+        /** MediaItem deviceCaptureTimestampMs. */
+        public deviceCaptureTimestampMs: (number|Long);
+
+        /** MediaItem uploadTimestampMs. */
+        public uploadTimestampMs: (number|Long);
+
+        /** MediaItem parentMediaId. */
+        public parentMediaId: string;
+
+        /**
+         * Creates a new MediaItem instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MediaItem instance
+         */
+        public static create(properties?: server.IMediaItem): server.MediaItem;
+
+        /**
+         * Encodes the specified MediaItem message. Does not implicitly {@link server.MediaItem.verify|verify} messages.
+         * @param message MediaItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMediaItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MediaItem message, length delimited. Does not implicitly {@link server.MediaItem.verify|verify} messages.
+         * @param message MediaItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMediaItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MediaItem message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MediaItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MediaItem;
+
+        /**
+         * Decodes a MediaItem message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MediaItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MediaItem;
+
+        /**
+         * Verifies a MediaItem message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MediaItem message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MediaItem
+         */
+        public static fromObject(object: { [k: string]: any }): server.MediaItem;
+
+        /**
+         * Creates a plain object from a MediaItem message. Also converts values to other types if specified.
+         * @param message MediaItem
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MediaItem, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MediaItem to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a FriendshipRequest. */
+    interface IFriendshipRequest {
+
+        /** FriendshipRequest action */
+        action?: (server.FriendshipRequest.Action|null);
+
+        /** FriendshipRequest uid */
+        uid?: (number|Long|null);
+    }
+
+    /** Represents a FriendshipRequest. */
+    class FriendshipRequest implements IFriendshipRequest {
+
+        /**
+         * Constructs a new FriendshipRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFriendshipRequest);
+
+        /** FriendshipRequest action. */
+        public action: server.FriendshipRequest.Action;
+
+        /** FriendshipRequest uid. */
+        public uid: (number|Long);
+
+        /**
+         * Creates a new FriendshipRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FriendshipRequest instance
+         */
+        public static create(properties?: server.IFriendshipRequest): server.FriendshipRequest;
+
+        /**
+         * Encodes the specified FriendshipRequest message. Does not implicitly {@link server.FriendshipRequest.verify|verify} messages.
+         * @param message FriendshipRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFriendshipRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FriendshipRequest message, length delimited. Does not implicitly {@link server.FriendshipRequest.verify|verify} messages.
+         * @param message FriendshipRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFriendshipRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FriendshipRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FriendshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FriendshipRequest;
+
+        /**
+         * Decodes a FriendshipRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FriendshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FriendshipRequest;
+
+        /**
+         * Verifies a FriendshipRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FriendshipRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FriendshipRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.FriendshipRequest;
+
+        /**
+         * Creates a plain object from a FriendshipRequest message. Also converts values to other types if specified.
+         * @param message FriendshipRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FriendshipRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FriendshipRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FriendshipRequest {
+
+        /** Action enum. */
+        enum Action {
+            ADD_FRIEND = 0,
+            ACCEPT_FRIEND = 1,
+            REMOVE_FRIEND = 2,
+            BLOCK = 3,
+            UNBLOCK = 4,
+            REJECT_SUGGESTION = 5
+        }
+    }
+
+    /** Properties of a FriendshipResponse. */
+    interface IFriendshipResponse {
+
+        /** FriendshipResponse result */
+        result?: (server.FriendshipResponse.Result|null);
+
+        /** FriendshipResponse profile */
+        profile?: (server.IHalloappUserProfile|null);
+    }
+
+    /** Represents a FriendshipResponse. */
+    class FriendshipResponse implements IFriendshipResponse {
+
+        /**
+         * Constructs a new FriendshipResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFriendshipResponse);
+
+        /** FriendshipResponse result. */
+        public result: server.FriendshipResponse.Result;
+
+        /** FriendshipResponse profile. */
+        public profile?: (server.IHalloappUserProfile|null);
+
+        /**
+         * Creates a new FriendshipResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FriendshipResponse instance
+         */
+        public static create(properties?: server.IFriendshipResponse): server.FriendshipResponse;
+
+        /**
+         * Encodes the specified FriendshipResponse message. Does not implicitly {@link server.FriendshipResponse.verify|verify} messages.
+         * @param message FriendshipResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFriendshipResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FriendshipResponse message, length delimited. Does not implicitly {@link server.FriendshipResponse.verify|verify} messages.
+         * @param message FriendshipResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFriendshipResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FriendshipResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FriendshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FriendshipResponse;
+
+        /**
+         * Decodes a FriendshipResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FriendshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FriendshipResponse;
+
+        /**
+         * Verifies a FriendshipResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FriendshipResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FriendshipResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.FriendshipResponse;
+
+        /**
+         * Creates a plain object from a FriendshipResponse message. Also converts values to other types if specified.
+         * @param message FriendshipResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FriendshipResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FriendshipResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FriendshipResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+    }
+
+    /** FriendshipStatus enum. */
+    enum FriendshipStatus {
+        NONE_STATUS = 0,
+        INCOMING_PENDING = 1,
+        OUTGOING_PENDING = 2,
+        FRIENDS = 3
+    }
+
+    /** Properties of a HalloappUserProfile. */
+    interface IHalloappUserProfile {
+
+        /** HalloappUserProfile uid */
+        uid?: (number|Long|null);
+
+        /** HalloappUserProfile username */
+        username?: (string|null);
+
+        /** HalloappUserProfile name */
+        name?: (string|null);
+
+        /** HalloappUserProfile avatarId */
+        avatarId?: (string|null);
+
+        /** HalloappUserProfile status */
+        status?: (server.FriendshipStatus|null);
+
+        /** HalloappUserProfile blocked */
+        blocked?: (boolean|null);
+    }
+
+    /** Represents a HalloappUserProfile. */
+    class HalloappUserProfile implements IHalloappUserProfile {
+
+        /**
+         * Constructs a new HalloappUserProfile.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHalloappUserProfile);
+
+        /** HalloappUserProfile uid. */
+        public uid: (number|Long);
+
+        /** HalloappUserProfile username. */
+        public username: string;
+
+        /** HalloappUserProfile name. */
+        public name: string;
+
+        /** HalloappUserProfile avatarId. */
+        public avatarId: string;
+
+        /** HalloappUserProfile status. */
+        public status: server.FriendshipStatus;
+
+        /** HalloappUserProfile blocked. */
+        public blocked: boolean;
+
+        /**
+         * Creates a new HalloappUserProfile instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HalloappUserProfile instance
+         */
+        public static create(properties?: server.IHalloappUserProfile): server.HalloappUserProfile;
+
+        /**
+         * Encodes the specified HalloappUserProfile message. Does not implicitly {@link server.HalloappUserProfile.verify|verify} messages.
+         * @param message HalloappUserProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHalloappUserProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HalloappUserProfile message, length delimited. Does not implicitly {@link server.HalloappUserProfile.verify|verify} messages.
+         * @param message HalloappUserProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHalloappUserProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HalloappUserProfile message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HalloappUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HalloappUserProfile;
+
+        /**
+         * Decodes a HalloappUserProfile message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HalloappUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HalloappUserProfile;
+
+        /**
+         * Verifies a HalloappUserProfile message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HalloappUserProfile message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HalloappUserProfile
+         */
+        public static fromObject(object: { [k: string]: any }): server.HalloappUserProfile;
+
+        /**
+         * Creates a plain object from a HalloappUserProfile message. Also converts values to other types if specified.
+         * @param message HalloappUserProfile
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HalloappUserProfile, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HalloappUserProfile to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a HalloappProfileUpdate. */
+    interface IHalloappProfileUpdate {
+
+        /** HalloappProfileUpdate type */
+        type?: (server.HalloappProfileUpdate.Type|null);
+
+        /** HalloappProfileUpdate profile */
+        profile?: (server.IHalloappUserProfile|null);
+    }
+
+    /** Represents a HalloappProfileUpdate. */
+    class HalloappProfileUpdate implements IHalloappProfileUpdate {
+
+        /**
+         * Constructs a new HalloappProfileUpdate.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHalloappProfileUpdate);
+
+        /** HalloappProfileUpdate type. */
+        public type: server.HalloappProfileUpdate.Type;
+
+        /** HalloappProfileUpdate profile. */
+        public profile?: (server.IHalloappUserProfile|null);
+
+        /**
+         * Creates a new HalloappProfileUpdate instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HalloappProfileUpdate instance
+         */
+        public static create(properties?: server.IHalloappProfileUpdate): server.HalloappProfileUpdate;
+
+        /**
+         * Encodes the specified HalloappProfileUpdate message. Does not implicitly {@link server.HalloappProfileUpdate.verify|verify} messages.
+         * @param message HalloappProfileUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHalloappProfileUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HalloappProfileUpdate message, length delimited. Does not implicitly {@link server.HalloappProfileUpdate.verify|verify} messages.
+         * @param message HalloappProfileUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHalloappProfileUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HalloappProfileUpdate message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HalloappProfileUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HalloappProfileUpdate;
+
+        /**
+         * Decodes a HalloappProfileUpdate message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HalloappProfileUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HalloappProfileUpdate;
+
+        /**
+         * Verifies a HalloappProfileUpdate message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HalloappProfileUpdate message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HalloappProfileUpdate
+         */
+        public static fromObject(object: { [k: string]: any }): server.HalloappProfileUpdate;
+
+        /**
+         * Creates a plain object from a HalloappProfileUpdate message. Also converts values to other types if specified.
+         * @param message HalloappProfileUpdate
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HalloappProfileUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HalloappProfileUpdate to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace HalloappProfileUpdate {
+
+        /** Type enum. */
+        enum Type {
+            NORMAL = 0,
+            FRIEND_NOTICE = 1,
+            INCOMING_FRIEND_REQUEST = 2
+        }
+    }
+
+    /** Properties of a HalloappSearchRequest. */
+    interface IHalloappSearchRequest {
+
+        /** HalloappSearchRequest usernameString */
+        usernameString?: (string|null);
+    }
+
+    /** Represents a HalloappSearchRequest. */
+    class HalloappSearchRequest implements IHalloappSearchRequest {
+
+        /**
+         * Constructs a new HalloappSearchRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHalloappSearchRequest);
+
+        /** HalloappSearchRequest usernameString. */
+        public usernameString: string;
+
+        /**
+         * Creates a new HalloappSearchRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HalloappSearchRequest instance
+         */
+        public static create(properties?: server.IHalloappSearchRequest): server.HalloappSearchRequest;
+
+        /**
+         * Encodes the specified HalloappSearchRequest message. Does not implicitly {@link server.HalloappSearchRequest.verify|verify} messages.
+         * @param message HalloappSearchRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHalloappSearchRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HalloappSearchRequest message, length delimited. Does not implicitly {@link server.HalloappSearchRequest.verify|verify} messages.
+         * @param message HalloappSearchRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHalloappSearchRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HalloappSearchRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HalloappSearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HalloappSearchRequest;
+
+        /**
+         * Decodes a HalloappSearchRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HalloappSearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HalloappSearchRequest;
+
+        /**
+         * Verifies a HalloappSearchRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HalloappSearchRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HalloappSearchRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.HalloappSearchRequest;
+
+        /**
+         * Creates a plain object from a HalloappSearchRequest message. Also converts values to other types if specified.
+         * @param message HalloappSearchRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HalloappSearchRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HalloappSearchRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a HalloappSearchResponse. */
+    interface IHalloappSearchResponse {
+
+        /** HalloappSearchResponse result */
+        result?: (server.HalloappSearchResponse.Result|null);
+
+        /** HalloappSearchResponse searchResult */
+        searchResult?: (server.IHalloappUserProfile[]|null);
+    }
+
+    /** Represents a HalloappSearchResponse. */
+    class HalloappSearchResponse implements IHalloappSearchResponse {
+
+        /**
+         * Constructs a new HalloappSearchResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHalloappSearchResponse);
+
+        /** HalloappSearchResponse result. */
+        public result: server.HalloappSearchResponse.Result;
+
+        /** HalloappSearchResponse searchResult. */
+        public searchResult: server.IHalloappUserProfile[];
+
+        /**
+         * Creates a new HalloappSearchResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HalloappSearchResponse instance
+         */
+        public static create(properties?: server.IHalloappSearchResponse): server.HalloappSearchResponse;
+
+        /**
+         * Encodes the specified HalloappSearchResponse message. Does not implicitly {@link server.HalloappSearchResponse.verify|verify} messages.
+         * @param message HalloappSearchResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHalloappSearchResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HalloappSearchResponse message, length delimited. Does not implicitly {@link server.HalloappSearchResponse.verify|verify} messages.
+         * @param message HalloappSearchResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHalloappSearchResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HalloappSearchResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HalloappSearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HalloappSearchResponse;
+
+        /**
+         * Decodes a HalloappSearchResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HalloappSearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HalloappSearchResponse;
+
+        /**
+         * Verifies a HalloappSearchResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HalloappSearchResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HalloappSearchResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.HalloappSearchResponse;
+
+        /**
+         * Creates a plain object from a HalloappSearchResponse message. Also converts values to other types if specified.
+         * @param message HalloappSearchResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HalloappSearchResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HalloappSearchResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace HalloappSearchResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+    }
+
+    /** Properties of a FriendListRequest. */
+    interface IFriendListRequest {
+
+        /** FriendListRequest action */
+        action?: (server.FriendListRequest.Action|null);
+
+        /** FriendListRequest cursor */
+        cursor?: (string|null);
+    }
+
+    /** Represents a FriendListRequest. */
+    class FriendListRequest implements IFriendListRequest {
+
+        /**
+         * Constructs a new FriendListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFriendListRequest);
+
+        /** FriendListRequest action. */
+        public action: server.FriendListRequest.Action;
+
+        /** FriendListRequest cursor. */
+        public cursor: string;
+
+        /**
+         * Creates a new FriendListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FriendListRequest instance
+         */
+        public static create(properties?: server.IFriendListRequest): server.FriendListRequest;
+
+        /**
+         * Encodes the specified FriendListRequest message. Does not implicitly {@link server.FriendListRequest.verify|verify} messages.
+         * @param message FriendListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFriendListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FriendListRequest message, length delimited. Does not implicitly {@link server.FriendListRequest.verify|verify} messages.
+         * @param message FriendListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFriendListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FriendListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FriendListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FriendListRequest;
+
+        /**
+         * Decodes a FriendListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FriendListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FriendListRequest;
+
+        /**
+         * Verifies a FriendListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FriendListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FriendListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.FriendListRequest;
+
+        /**
+         * Creates a plain object from a FriendListRequest message. Also converts values to other types if specified.
+         * @param message FriendListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FriendListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FriendListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FriendListRequest {
+
+        /** Action enum. */
+        enum Action {
+            GET_FRIENDS = 0,
+            GET_INCOMING_PENDING = 1,
+            GET_OUTGOING_PENDING = 2,
+            GET_SUGGESTIONS = 3
+        }
+    }
+
+    /** Properties of a FriendProfile. */
+    interface IFriendProfile {
+
+        /** FriendProfile userProfile */
+        userProfile?: (server.IHalloappUserProfile|null);
+
+        /** FriendProfile reason */
+        reason?: (server.FriendProfile.Reason|null);
+
+        /** FriendProfile rank */
+        rank?: (number|null);
+    }
+
+    /** Represents a FriendProfile. */
+    class FriendProfile implements IFriendProfile {
+
+        /**
+         * Constructs a new FriendProfile.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFriendProfile);
+
+        /** FriendProfile userProfile. */
+        public userProfile?: (server.IHalloappUserProfile|null);
+
+        /** FriendProfile reason. */
+        public reason: server.FriendProfile.Reason;
+
+        /** FriendProfile rank. */
+        public rank: number;
+
+        /**
+         * Creates a new FriendProfile instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FriendProfile instance
+         */
+        public static create(properties?: server.IFriendProfile): server.FriendProfile;
+
+        /**
+         * Encodes the specified FriendProfile message. Does not implicitly {@link server.FriendProfile.verify|verify} messages.
+         * @param message FriendProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFriendProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FriendProfile message, length delimited. Does not implicitly {@link server.FriendProfile.verify|verify} messages.
+         * @param message FriendProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFriendProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FriendProfile message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FriendProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FriendProfile;
+
+        /**
+         * Decodes a FriendProfile message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FriendProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FriendProfile;
+
+        /**
+         * Verifies a FriendProfile message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FriendProfile message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FriendProfile
+         */
+        public static fromObject(object: { [k: string]: any }): server.FriendProfile;
+
+        /**
+         * Creates a plain object from a FriendProfile message. Also converts values to other types if specified.
+         * @param message FriendProfile
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FriendProfile, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FriendProfile to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FriendProfile {
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            DIRECT_CONTACT = 1,
+            INCOMING_PENDING = 2,
+            FRIENDS_OF_FRIENDS = 3
+        }
+    }
+
+    /** Properties of a FriendListResponse. */
+    interface IFriendListResponse {
+
+        /** FriendListResponse result */
+        result?: (server.FriendListResponse.Result|null);
+
+        /** FriendListResponse cursor */
+        cursor?: (string|null);
+
+        /** FriendListResponse friendProfiles */
+        friendProfiles?: (server.IFriendProfile[]|null);
+    }
+
+    /** Represents a FriendListResponse. */
+    class FriendListResponse implements IFriendListResponse {
+
+        /**
+         * Constructs a new FriendListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFriendListResponse);
+
+        /** FriendListResponse result. */
+        public result: server.FriendListResponse.Result;
+
+        /** FriendListResponse cursor. */
+        public cursor: string;
+
+        /** FriendListResponse friendProfiles. */
+        public friendProfiles: server.IFriendProfile[];
+
+        /**
+         * Creates a new FriendListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FriendListResponse instance
+         */
+        public static create(properties?: server.IFriendListResponse): server.FriendListResponse;
+
+        /**
+         * Encodes the specified FriendListResponse message. Does not implicitly {@link server.FriendListResponse.verify|verify} messages.
+         * @param message FriendListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFriendListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FriendListResponse message, length delimited. Does not implicitly {@link server.FriendListResponse.verify|verify} messages.
+         * @param message FriendListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFriendListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FriendListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FriendListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FriendListResponse;
+
+        /**
+         * Decodes a FriendListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FriendListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FriendListResponse;
+
+        /**
+         * Verifies a FriendListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FriendListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FriendListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.FriendListResponse;
+
+        /**
+         * Creates a plain object from a FriendListResponse message. Also converts values to other types if specified.
+         * @param message FriendListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FriendListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FriendListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FriendListResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
     }
 
     /** Properties of an EventData. */

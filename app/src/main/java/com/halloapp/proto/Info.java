@@ -1,5 +1,5 @@
 package com.halloapp.proto;
 
 public final class Info {
-	public static final String COMMIT = "a71cb718d8de6a62512c053fe544d1c036dd8e04";
+	public static final String COMMIT = "ca6bf388e93c372eced6dd243739d1adc0005416";
 }

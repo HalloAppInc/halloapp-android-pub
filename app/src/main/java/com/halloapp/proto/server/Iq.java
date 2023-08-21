@@ -194,6 +194,15 @@ public  final class Iq extends
     GEO_TAG_RESPONSE(73),
     REGISTER_REQUEST(74),
     REGISTER_RESPONSE(75),
+    HALLOAPP_SEARCH_REQUEST(76),
+    HALLOAPP_SEARCH_RESPONSE(77),
+    FRIENDSHIP_REQUEST(78),
+    FRIENDSHIP_RESPONSE(79),
+    FRIEND_LIST_REQUEST(80),
+    FRIEND_LIST_RESPONSE(81),
+    ALBUM(82),
+    ALBUM_RESULT(83),
+    GET_ALBUMS(84),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -279,6 +288,15 @@ public  final class Iq extends
         case 73: return GEO_TAG_RESPONSE;
         case 74: return REGISTER_REQUEST;
         case 75: return REGISTER_RESPONSE;
+        case 76: return HALLOAPP_SEARCH_REQUEST;
+        case 77: return HALLOAPP_SEARCH_RESPONSE;
+        case 78: return FRIENDSHIP_REQUEST;
+        case 79: return FRIENDSHIP_RESPONSE;
+        case 80: return FRIEND_LIST_REQUEST;
+        case 81: return FRIEND_LIST_RESPONSE;
+        case 82: return ALBUM;
+        case 83: return ALBUM_RESULT;
+        case 84: return GET_ALBUMS;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3929,6 +3947,456 @@ public  final class Iq extends
     }
   }
 
+  public static final int HALLOAPP_SEARCH_REQUEST_FIELD_NUMBER = 76;
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   */
+  @java.lang.Override
+  public boolean hasHalloappSearchRequest() {
+    return payloadCase_ == 76;
+  }
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HalloappSearchRequest getHalloappSearchRequest() {
+    if (payloadCase_ == 76) {
+       return (com.halloapp.proto.server.HalloappSearchRequest) payload_;
+    }
+    return com.halloapp.proto.server.HalloappSearchRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   */
+  private void setHalloappSearchRequest(com.halloapp.proto.server.HalloappSearchRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 76;
+  }
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   */
+  private void mergeHalloappSearchRequest(com.halloapp.proto.server.HalloappSearchRequest value) {
+    value.getClass();
+  if (payloadCase_ == 76 &&
+        payload_ != com.halloapp.proto.server.HalloappSearchRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HalloappSearchRequest.newBuilder((com.halloapp.proto.server.HalloappSearchRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 76;
+  }
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   */
+  private void clearHalloappSearchRequest() {
+    if (payloadCase_ == 76) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HALLOAPP_SEARCH_RESPONSE_FIELD_NUMBER = 77;
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   */
+  @java.lang.Override
+  public boolean hasHalloappSearchResponse() {
+    return payloadCase_ == 77;
+  }
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HalloappSearchResponse getHalloappSearchResponse() {
+    if (payloadCase_ == 77) {
+       return (com.halloapp.proto.server.HalloappSearchResponse) payload_;
+    }
+    return com.halloapp.proto.server.HalloappSearchResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   */
+  private void setHalloappSearchResponse(com.halloapp.proto.server.HalloappSearchResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 77;
+  }
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   */
+  private void mergeHalloappSearchResponse(com.halloapp.proto.server.HalloappSearchResponse value) {
+    value.getClass();
+  if (payloadCase_ == 77 &&
+        payload_ != com.halloapp.proto.server.HalloappSearchResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HalloappSearchResponse.newBuilder((com.halloapp.proto.server.HalloappSearchResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 77;
+  }
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   */
+  private void clearHalloappSearchResponse() {
+    if (payloadCase_ == 77) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FRIENDSHIP_REQUEST_FIELD_NUMBER = 78;
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   */
+  @java.lang.Override
+  public boolean hasFriendshipRequest() {
+    return payloadCase_ == 78;
+  }
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FriendshipRequest getFriendshipRequest() {
+    if (payloadCase_ == 78) {
+       return (com.halloapp.proto.server.FriendshipRequest) payload_;
+    }
+    return com.halloapp.proto.server.FriendshipRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   */
+  private void setFriendshipRequest(com.halloapp.proto.server.FriendshipRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 78;
+  }
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   */
+  private void mergeFriendshipRequest(com.halloapp.proto.server.FriendshipRequest value) {
+    value.getClass();
+  if (payloadCase_ == 78 &&
+        payload_ != com.halloapp.proto.server.FriendshipRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FriendshipRequest.newBuilder((com.halloapp.proto.server.FriendshipRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 78;
+  }
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   */
+  private void clearFriendshipRequest() {
+    if (payloadCase_ == 78) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FRIENDSHIP_RESPONSE_FIELD_NUMBER = 79;
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   */
+  @java.lang.Override
+  public boolean hasFriendshipResponse() {
+    return payloadCase_ == 79;
+  }
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FriendshipResponse getFriendshipResponse() {
+    if (payloadCase_ == 79) {
+       return (com.halloapp.proto.server.FriendshipResponse) payload_;
+    }
+    return com.halloapp.proto.server.FriendshipResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   */
+  private void setFriendshipResponse(com.halloapp.proto.server.FriendshipResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 79;
+  }
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   */
+  private void mergeFriendshipResponse(com.halloapp.proto.server.FriendshipResponse value) {
+    value.getClass();
+  if (payloadCase_ == 79 &&
+        payload_ != com.halloapp.proto.server.FriendshipResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FriendshipResponse.newBuilder((com.halloapp.proto.server.FriendshipResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 79;
+  }
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   */
+  private void clearFriendshipResponse() {
+    if (payloadCase_ == 79) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FRIEND_LIST_REQUEST_FIELD_NUMBER = 80;
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   */
+  @java.lang.Override
+  public boolean hasFriendListRequest() {
+    return payloadCase_ == 80;
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FriendListRequest getFriendListRequest() {
+    if (payloadCase_ == 80) {
+       return (com.halloapp.proto.server.FriendListRequest) payload_;
+    }
+    return com.halloapp.proto.server.FriendListRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   */
+  private void setFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 80;
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   */
+  private void mergeFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+    value.getClass();
+  if (payloadCase_ == 80 &&
+        payload_ != com.halloapp.proto.server.FriendListRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FriendListRequest.newBuilder((com.halloapp.proto.server.FriendListRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 80;
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   */
+  private void clearFriendListRequest() {
+    if (payloadCase_ == 80) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FRIEND_LIST_RESPONSE_FIELD_NUMBER = 81;
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   */
+  @java.lang.Override
+  public boolean hasFriendListResponse() {
+    return payloadCase_ == 81;
+  }
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FriendListResponse getFriendListResponse() {
+    if (payloadCase_ == 81) {
+       return (com.halloapp.proto.server.FriendListResponse) payload_;
+    }
+    return com.halloapp.proto.server.FriendListResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   */
+  private void setFriendListResponse(com.halloapp.proto.server.FriendListResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 81;
+  }
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   */
+  private void mergeFriendListResponse(com.halloapp.proto.server.FriendListResponse value) {
+    value.getClass();
+  if (payloadCase_ == 81 &&
+        payload_ != com.halloapp.proto.server.FriendListResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FriendListResponse.newBuilder((com.halloapp.proto.server.FriendListResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 81;
+  }
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   */
+  private void clearFriendListResponse() {
+    if (payloadCase_ == 81) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ALBUM_FIELD_NUMBER = 82;
+  /**
+   * <code>.server.Album album = 82;</code>
+   */
+  @java.lang.Override
+  public boolean hasAlbum() {
+    return payloadCase_ == 82;
+  }
+  /**
+   * <code>.server.Album album = 82;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Album getAlbum() {
+    if (payloadCase_ == 82) {
+       return (com.halloapp.proto.server.Album) payload_;
+    }
+    return com.halloapp.proto.server.Album.getDefaultInstance();
+  }
+  /**
+   * <code>.server.Album album = 82;</code>
+   */
+  private void setAlbum(com.halloapp.proto.server.Album value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 82;
+  }
+  /**
+   * <code>.server.Album album = 82;</code>
+   */
+  private void mergeAlbum(com.halloapp.proto.server.Album value) {
+    value.getClass();
+  if (payloadCase_ == 82 &&
+        payload_ != com.halloapp.proto.server.Album.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.Album.newBuilder((com.halloapp.proto.server.Album) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 82;
+  }
+  /**
+   * <code>.server.Album album = 82;</code>
+   */
+  private void clearAlbum() {
+    if (payloadCase_ == 82) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ALBUM_RESULT_FIELD_NUMBER = 83;
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   */
+  @java.lang.Override
+  public boolean hasAlbumResult() {
+    return payloadCase_ == 83;
+  }
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AlbumResult getAlbumResult() {
+    if (payloadCase_ == 83) {
+       return (com.halloapp.proto.server.AlbumResult) payload_;
+    }
+    return com.halloapp.proto.server.AlbumResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   */
+  private void setAlbumResult(com.halloapp.proto.server.AlbumResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 83;
+  }
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   */
+  private void mergeAlbumResult(com.halloapp.proto.server.AlbumResult value) {
+    value.getClass();
+  if (payloadCase_ == 83 &&
+        payload_ != com.halloapp.proto.server.AlbumResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.AlbumResult.newBuilder((com.halloapp.proto.server.AlbumResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 83;
+  }
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   */
+  private void clearAlbumResult() {
+    if (payloadCase_ == 83) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GET_ALBUMS_FIELD_NUMBER = 84;
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   */
+  @java.lang.Override
+  public boolean hasGetAlbums() {
+    return payloadCase_ == 84;
+  }
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GetAlbums getGetAlbums() {
+    if (payloadCase_ == 84) {
+       return (com.halloapp.proto.server.GetAlbums) payload_;
+    }
+    return com.halloapp.proto.server.GetAlbums.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   */
+  private void setGetAlbums(com.halloapp.proto.server.GetAlbums value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 84;
+  }
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   */
+  private void mergeGetAlbums(com.halloapp.proto.server.GetAlbums value) {
+    value.getClass();
+  if (payloadCase_ == 84 &&
+        payload_ != com.halloapp.proto.server.GetAlbums.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GetAlbums.newBuilder((com.halloapp.proto.server.GetAlbums) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 84;
+  }
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   */
+  private void clearGetAlbums() {
+    if (payloadCase_ == 84) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -7539,6 +8007,438 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+     */
+    @java.lang.Override
+    public boolean hasHalloappSearchRequest() {
+      return instance.hasHalloappSearchRequest();
+    }
+    /**
+     * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HalloappSearchRequest getHalloappSearchRequest() {
+      return instance.getHalloappSearchRequest();
+    }
+    /**
+     * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+     */
+    public Builder setHalloappSearchRequest(com.halloapp.proto.server.HalloappSearchRequest value) {
+      copyOnWrite();
+      instance.setHalloappSearchRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+     */
+    public Builder setHalloappSearchRequest(
+        com.halloapp.proto.server.HalloappSearchRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHalloappSearchRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+     */
+    public Builder mergeHalloappSearchRequest(com.halloapp.proto.server.HalloappSearchRequest value) {
+      copyOnWrite();
+      instance.mergeHalloappSearchRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+     */
+    public Builder clearHalloappSearchRequest() {
+      copyOnWrite();
+      instance.clearHalloappSearchRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+     */
+    @java.lang.Override
+    public boolean hasHalloappSearchResponse() {
+      return instance.hasHalloappSearchResponse();
+    }
+    /**
+     * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HalloappSearchResponse getHalloappSearchResponse() {
+      return instance.getHalloappSearchResponse();
+    }
+    /**
+     * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+     */
+    public Builder setHalloappSearchResponse(com.halloapp.proto.server.HalloappSearchResponse value) {
+      copyOnWrite();
+      instance.setHalloappSearchResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+     */
+    public Builder setHalloappSearchResponse(
+        com.halloapp.proto.server.HalloappSearchResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHalloappSearchResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+     */
+    public Builder mergeHalloappSearchResponse(com.halloapp.proto.server.HalloappSearchResponse value) {
+      copyOnWrite();
+      instance.mergeHalloappSearchResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+     */
+    public Builder clearHalloappSearchResponse() {
+      copyOnWrite();
+      instance.clearHalloappSearchResponse();
+      return this;
+    }
+
+    /**
+     * <code>.server.FriendshipRequest friendship_request = 78;</code>
+     */
+    @java.lang.Override
+    public boolean hasFriendshipRequest() {
+      return instance.hasFriendshipRequest();
+    }
+    /**
+     * <code>.server.FriendshipRequest friendship_request = 78;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FriendshipRequest getFriendshipRequest() {
+      return instance.getFriendshipRequest();
+    }
+    /**
+     * <code>.server.FriendshipRequest friendship_request = 78;</code>
+     */
+    public Builder setFriendshipRequest(com.halloapp.proto.server.FriendshipRequest value) {
+      copyOnWrite();
+      instance.setFriendshipRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendshipRequest friendship_request = 78;</code>
+     */
+    public Builder setFriendshipRequest(
+        com.halloapp.proto.server.FriendshipRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFriendshipRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FriendshipRequest friendship_request = 78;</code>
+     */
+    public Builder mergeFriendshipRequest(com.halloapp.proto.server.FriendshipRequest value) {
+      copyOnWrite();
+      instance.mergeFriendshipRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendshipRequest friendship_request = 78;</code>
+     */
+    public Builder clearFriendshipRequest() {
+      copyOnWrite();
+      instance.clearFriendshipRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.FriendshipResponse friendship_response = 79;</code>
+     */
+    @java.lang.Override
+    public boolean hasFriendshipResponse() {
+      return instance.hasFriendshipResponse();
+    }
+    /**
+     * <code>.server.FriendshipResponse friendship_response = 79;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FriendshipResponse getFriendshipResponse() {
+      return instance.getFriendshipResponse();
+    }
+    /**
+     * <code>.server.FriendshipResponse friendship_response = 79;</code>
+     */
+    public Builder setFriendshipResponse(com.halloapp.proto.server.FriendshipResponse value) {
+      copyOnWrite();
+      instance.setFriendshipResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendshipResponse friendship_response = 79;</code>
+     */
+    public Builder setFriendshipResponse(
+        com.halloapp.proto.server.FriendshipResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFriendshipResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FriendshipResponse friendship_response = 79;</code>
+     */
+    public Builder mergeFriendshipResponse(com.halloapp.proto.server.FriendshipResponse value) {
+      copyOnWrite();
+      instance.mergeFriendshipResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendshipResponse friendship_response = 79;</code>
+     */
+    public Builder clearFriendshipResponse() {
+      copyOnWrite();
+      instance.clearFriendshipResponse();
+      return this;
+    }
+
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 80;</code>
+     */
+    @java.lang.Override
+    public boolean hasFriendListRequest() {
+      return instance.hasFriendListRequest();
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 80;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FriendListRequest getFriendListRequest() {
+      return instance.getFriendListRequest();
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 80;</code>
+     */
+    public Builder setFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+      copyOnWrite();
+      instance.setFriendListRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 80;</code>
+     */
+    public Builder setFriendListRequest(
+        com.halloapp.proto.server.FriendListRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFriendListRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 80;</code>
+     */
+    public Builder mergeFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+      copyOnWrite();
+      instance.mergeFriendListRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 80;</code>
+     */
+    public Builder clearFriendListRequest() {
+      copyOnWrite();
+      instance.clearFriendListRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.FriendListResponse friend_list_response = 81;</code>
+     */
+    @java.lang.Override
+    public boolean hasFriendListResponse() {
+      return instance.hasFriendListResponse();
+    }
+    /**
+     * <code>.server.FriendListResponse friend_list_response = 81;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FriendListResponse getFriendListResponse() {
+      return instance.getFriendListResponse();
+    }
+    /**
+     * <code>.server.FriendListResponse friend_list_response = 81;</code>
+     */
+    public Builder setFriendListResponse(com.halloapp.proto.server.FriendListResponse value) {
+      copyOnWrite();
+      instance.setFriendListResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendListResponse friend_list_response = 81;</code>
+     */
+    public Builder setFriendListResponse(
+        com.halloapp.proto.server.FriendListResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFriendListResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FriendListResponse friend_list_response = 81;</code>
+     */
+    public Builder mergeFriendListResponse(com.halloapp.proto.server.FriendListResponse value) {
+      copyOnWrite();
+      instance.mergeFriendListResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendListResponse friend_list_response = 81;</code>
+     */
+    public Builder clearFriendListResponse() {
+      copyOnWrite();
+      instance.clearFriendListResponse();
+      return this;
+    }
+
+    /**
+     * <code>.server.Album album = 82;</code>
+     */
+    @java.lang.Override
+    public boolean hasAlbum() {
+      return instance.hasAlbum();
+    }
+    /**
+     * <code>.server.Album album = 82;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Album getAlbum() {
+      return instance.getAlbum();
+    }
+    /**
+     * <code>.server.Album album = 82;</code>
+     */
+    public Builder setAlbum(com.halloapp.proto.server.Album value) {
+      copyOnWrite();
+      instance.setAlbum(value);
+      return this;
+    }
+    /**
+     * <code>.server.Album album = 82;</code>
+     */
+    public Builder setAlbum(
+        com.halloapp.proto.server.Album.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAlbum(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.Album album = 82;</code>
+     */
+    public Builder mergeAlbum(com.halloapp.proto.server.Album value) {
+      copyOnWrite();
+      instance.mergeAlbum(value);
+      return this;
+    }
+    /**
+     * <code>.server.Album album = 82;</code>
+     */
+    public Builder clearAlbum() {
+      copyOnWrite();
+      instance.clearAlbum();
+      return this;
+    }
+
+    /**
+     * <code>.server.AlbumResult album_result = 83;</code>
+     */
+    @java.lang.Override
+    public boolean hasAlbumResult() {
+      return instance.hasAlbumResult();
+    }
+    /**
+     * <code>.server.AlbumResult album_result = 83;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AlbumResult getAlbumResult() {
+      return instance.getAlbumResult();
+    }
+    /**
+     * <code>.server.AlbumResult album_result = 83;</code>
+     */
+    public Builder setAlbumResult(com.halloapp.proto.server.AlbumResult value) {
+      copyOnWrite();
+      instance.setAlbumResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.AlbumResult album_result = 83;</code>
+     */
+    public Builder setAlbumResult(
+        com.halloapp.proto.server.AlbumResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAlbumResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.AlbumResult album_result = 83;</code>
+     */
+    public Builder mergeAlbumResult(com.halloapp.proto.server.AlbumResult value) {
+      copyOnWrite();
+      instance.mergeAlbumResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.AlbumResult album_result = 83;</code>
+     */
+    public Builder clearAlbumResult() {
+      copyOnWrite();
+      instance.clearAlbumResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.GetAlbums get_albums = 84;</code>
+     */
+    @java.lang.Override
+    public boolean hasGetAlbums() {
+      return instance.hasGetAlbums();
+    }
+    /**
+     * <code>.server.GetAlbums get_albums = 84;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GetAlbums getGetAlbums() {
+      return instance.getGetAlbums();
+    }
+    /**
+     * <code>.server.GetAlbums get_albums = 84;</code>
+     */
+    public Builder setGetAlbums(com.halloapp.proto.server.GetAlbums value) {
+      copyOnWrite();
+      instance.setGetAlbums(value);
+      return this;
+    }
+    /**
+     * <code>.server.GetAlbums get_albums = 84;</code>
+     */
+    public Builder setGetAlbums(
+        com.halloapp.proto.server.GetAlbums.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGetAlbums(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GetAlbums get_albums = 84;</code>
+     */
+    public Builder mergeGetAlbums(com.halloapp.proto.server.GetAlbums value) {
+      copyOnWrite();
+      instance.mergeGetAlbums(value);
+      return this;
+    }
+    /**
+     * <code>.server.GetAlbums get_albums = 84;</code>
+     */
+    public Builder clearGetAlbums() {
+      copyOnWrite();
+      instance.clearGetAlbums();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -7629,9 +8529,18 @@ public  final class Iq extends
             com.halloapp.proto.server.GeoTagResponse.class,
             com.halloapp.proto.server.RegisterRequest.class,
             com.halloapp.proto.server.RegisterResponse.class,
+            com.halloapp.proto.server.HalloappSearchRequest.class,
+            com.halloapp.proto.server.HalloappSearchResponse.class,
+            com.halloapp.proto.server.FriendshipRequest.class,
+            com.halloapp.proto.server.FriendshipResponse.class,
+            com.halloapp.proto.server.FriendListRequest.class,
+            com.halloapp.proto.server.FriendListResponse.class,
+            com.halloapp.proto.server.Album.class,
+            com.halloapp.proto.server.AlbumResult.class,
+            com.halloapp.proto.server.GetAlbums.class,
           };
           java.lang.String info =
-              "\u0000H\u0001\u0000\u0001KH\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000Q\u0001\u0000\u0001TQ\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
@@ -7640,7 +8549,7 @@ public  final class Iq extends
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
               "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
               "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000H<\u0000I<\u0000J<\u0000K<\u0000" +
-              "";
+              "L<\u0000M<\u0000N<\u0000O<\u0000P<\u0000Q<\u0000R<\u0000S<\u0000T<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

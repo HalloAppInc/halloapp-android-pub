@@ -27406,6 +27406,15 @@ $root.server = (function() {
          * @property {server.IGeoTagResponse|null} [geoTagResponse] Iq geoTagResponse
          * @property {server.IRegisterRequest|null} [registerRequest] Iq registerRequest
          * @property {server.IRegisterResponse|null} [registerResponse] Iq registerResponse
+         * @property {server.IHalloappSearchRequest|null} [halloappSearchRequest] Iq halloappSearchRequest
+         * @property {server.IHalloappSearchResponse|null} [halloappSearchResponse] Iq halloappSearchResponse
+         * @property {server.IFriendshipRequest|null} [friendshipRequest] Iq friendshipRequest
+         * @property {server.IFriendshipResponse|null} [friendshipResponse] Iq friendshipResponse
+         * @property {server.IFriendListRequest|null} [friendListRequest] Iq friendListRequest
+         * @property {server.IFriendListResponse|null} [friendListResponse] Iq friendListResponse
+         * @property {server.IAlbum|null} [album] Iq album
+         * @property {server.IAlbumResult|null} [albumResult] Iq albumResult
+         * @property {server.IGetAlbums|null} [getAlbums] Iq getAlbums
          */
 
         /**
@@ -27999,17 +28008,89 @@ $root.server = (function() {
          */
         Iq.prototype.registerResponse = null;
 
+        /**
+         * Iq halloappSearchRequest.
+         * @member {server.IHalloappSearchRequest|null|undefined} halloappSearchRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.halloappSearchRequest = null;
+
+        /**
+         * Iq halloappSearchResponse.
+         * @member {server.IHalloappSearchResponse|null|undefined} halloappSearchResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.halloappSearchResponse = null;
+
+        /**
+         * Iq friendshipRequest.
+         * @member {server.IFriendshipRequest|null|undefined} friendshipRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.friendshipRequest = null;
+
+        /**
+         * Iq friendshipResponse.
+         * @member {server.IFriendshipResponse|null|undefined} friendshipResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.friendshipResponse = null;
+
+        /**
+         * Iq friendListRequest.
+         * @member {server.IFriendListRequest|null|undefined} friendListRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.friendListRequest = null;
+
+        /**
+         * Iq friendListResponse.
+         * @member {server.IFriendListResponse|null|undefined} friendListResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.friendListResponse = null;
+
+        /**
+         * Iq album.
+         * @member {server.IAlbum|null|undefined} album
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.album = null;
+
+        /**
+         * Iq albumResult.
+         * @member {server.IAlbumResult|null|undefined} albumResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.albumResult = null;
+
+        /**
+         * Iq getAlbums.
+         * @member {server.IGetAlbums|null|undefined} getAlbums
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.getAlbums = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|"halloappSearchRequest"|"halloappSearchResponse"|"friendshipRequest"|"friendshipResponse"|"friendListRequest"|"friendListResponse"|"album"|"albumResult"|"getAlbums"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse", "registerRequest", "registerResponse"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse", "registerRequest", "registerResponse", "halloappSearchRequest", "halloappSearchResponse", "friendshipRequest", "friendshipResponse", "friendListRequest", "friendListResponse", "album", "albumResult", "getAlbums"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -28181,6 +28262,24 @@ $root.server = (function() {
                 $root.server.RegisterRequest.encode(message.registerRequest, writer.uint32(/* id 74, wireType 2 =*/594).fork()).ldelim();
             if (message.registerResponse != null && Object.hasOwnProperty.call(message, "registerResponse"))
                 $root.server.RegisterResponse.encode(message.registerResponse, writer.uint32(/* id 75, wireType 2 =*/602).fork()).ldelim();
+            if (message.halloappSearchRequest != null && Object.hasOwnProperty.call(message, "halloappSearchRequest"))
+                $root.server.HalloappSearchRequest.encode(message.halloappSearchRequest, writer.uint32(/* id 76, wireType 2 =*/610).fork()).ldelim();
+            if (message.halloappSearchResponse != null && Object.hasOwnProperty.call(message, "halloappSearchResponse"))
+                $root.server.HalloappSearchResponse.encode(message.halloappSearchResponse, writer.uint32(/* id 77, wireType 2 =*/618).fork()).ldelim();
+            if (message.friendshipRequest != null && Object.hasOwnProperty.call(message, "friendshipRequest"))
+                $root.server.FriendshipRequest.encode(message.friendshipRequest, writer.uint32(/* id 78, wireType 2 =*/626).fork()).ldelim();
+            if (message.friendshipResponse != null && Object.hasOwnProperty.call(message, "friendshipResponse"))
+                $root.server.FriendshipResponse.encode(message.friendshipResponse, writer.uint32(/* id 79, wireType 2 =*/634).fork()).ldelim();
+            if (message.friendListRequest != null && Object.hasOwnProperty.call(message, "friendListRequest"))
+                $root.server.FriendListRequest.encode(message.friendListRequest, writer.uint32(/* id 80, wireType 2 =*/642).fork()).ldelim();
+            if (message.friendListResponse != null && Object.hasOwnProperty.call(message, "friendListResponse"))
+                $root.server.FriendListResponse.encode(message.friendListResponse, writer.uint32(/* id 81, wireType 2 =*/650).fork()).ldelim();
+            if (message.album != null && Object.hasOwnProperty.call(message, "album"))
+                $root.server.Album.encode(message.album, writer.uint32(/* id 82, wireType 2 =*/658).fork()).ldelim();
+            if (message.albumResult != null && Object.hasOwnProperty.call(message, "albumResult"))
+                $root.server.AlbumResult.encode(message.albumResult, writer.uint32(/* id 83, wireType 2 =*/666).fork()).ldelim();
+            if (message.getAlbums != null && Object.hasOwnProperty.call(message, "getAlbums"))
+                $root.server.GetAlbums.encode(message.getAlbums, writer.uint32(/* id 84, wireType 2 =*/674).fork()).ldelim();
             return writer;
         };
 
@@ -28430,6 +28529,33 @@ $root.server = (function() {
                     break;
                 case 75:
                     message.registerResponse = $root.server.RegisterResponse.decode(reader, reader.uint32());
+                    break;
+                case 76:
+                    message.halloappSearchRequest = $root.server.HalloappSearchRequest.decode(reader, reader.uint32());
+                    break;
+                case 77:
+                    message.halloappSearchResponse = $root.server.HalloappSearchResponse.decode(reader, reader.uint32());
+                    break;
+                case 78:
+                    message.friendshipRequest = $root.server.FriendshipRequest.decode(reader, reader.uint32());
+                    break;
+                case 79:
+                    message.friendshipResponse = $root.server.FriendshipResponse.decode(reader, reader.uint32());
+                    break;
+                case 80:
+                    message.friendListRequest = $root.server.FriendListRequest.decode(reader, reader.uint32());
+                    break;
+                case 81:
+                    message.friendListResponse = $root.server.FriendListResponse.decode(reader, reader.uint32());
+                    break;
+                case 82:
+                    message.album = $root.server.Album.decode(reader, reader.uint32());
+                    break;
+                case 83:
+                    message.albumResult = $root.server.AlbumResult.decode(reader, reader.uint32());
+                    break;
+                case 84:
+                    message.getAlbums = $root.server.GetAlbums.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -29178,6 +29304,96 @@ $root.server = (function() {
                         return "registerResponse." + error;
                 }
             }
+            if (message.halloappSearchRequest != null && message.hasOwnProperty("halloappSearchRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HalloappSearchRequest.verify(message.halloappSearchRequest);
+                    if (error)
+                        return "halloappSearchRequest." + error;
+                }
+            }
+            if (message.halloappSearchResponse != null && message.hasOwnProperty("halloappSearchResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HalloappSearchResponse.verify(message.halloappSearchResponse);
+                    if (error)
+                        return "halloappSearchResponse." + error;
+                }
+            }
+            if (message.friendshipRequest != null && message.hasOwnProperty("friendshipRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FriendshipRequest.verify(message.friendshipRequest);
+                    if (error)
+                        return "friendshipRequest." + error;
+                }
+            }
+            if (message.friendshipResponse != null && message.hasOwnProperty("friendshipResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FriendshipResponse.verify(message.friendshipResponse);
+                    if (error)
+                        return "friendshipResponse." + error;
+                }
+            }
+            if (message.friendListRequest != null && message.hasOwnProperty("friendListRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FriendListRequest.verify(message.friendListRequest);
+                    if (error)
+                        return "friendListRequest." + error;
+                }
+            }
+            if (message.friendListResponse != null && message.hasOwnProperty("friendListResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FriendListResponse.verify(message.friendListResponse);
+                    if (error)
+                        return "friendListResponse." + error;
+                }
+            }
+            if (message.album != null && message.hasOwnProperty("album")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.Album.verify(message.album);
+                    if (error)
+                        return "album." + error;
+                }
+            }
+            if (message.albumResult != null && message.hasOwnProperty("albumResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.AlbumResult.verify(message.albumResult);
+                    if (error)
+                        return "albumResult." + error;
+                }
+            }
+            if (message.getAlbums != null && message.hasOwnProperty("getAlbums")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GetAlbums.verify(message.getAlbums);
+                    if (error)
+                        return "getAlbums." + error;
+                }
+            }
             return null;
         };
 
@@ -29563,6 +29779,51 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.registerResponse: object expected");
                 message.registerResponse = $root.server.RegisterResponse.fromObject(object.registerResponse);
             }
+            if (object.halloappSearchRequest != null) {
+                if (typeof object.halloappSearchRequest !== "object")
+                    throw TypeError(".server.Iq.halloappSearchRequest: object expected");
+                message.halloappSearchRequest = $root.server.HalloappSearchRequest.fromObject(object.halloappSearchRequest);
+            }
+            if (object.halloappSearchResponse != null) {
+                if (typeof object.halloappSearchResponse !== "object")
+                    throw TypeError(".server.Iq.halloappSearchResponse: object expected");
+                message.halloappSearchResponse = $root.server.HalloappSearchResponse.fromObject(object.halloappSearchResponse);
+            }
+            if (object.friendshipRequest != null) {
+                if (typeof object.friendshipRequest !== "object")
+                    throw TypeError(".server.Iq.friendshipRequest: object expected");
+                message.friendshipRequest = $root.server.FriendshipRequest.fromObject(object.friendshipRequest);
+            }
+            if (object.friendshipResponse != null) {
+                if (typeof object.friendshipResponse !== "object")
+                    throw TypeError(".server.Iq.friendshipResponse: object expected");
+                message.friendshipResponse = $root.server.FriendshipResponse.fromObject(object.friendshipResponse);
+            }
+            if (object.friendListRequest != null) {
+                if (typeof object.friendListRequest !== "object")
+                    throw TypeError(".server.Iq.friendListRequest: object expected");
+                message.friendListRequest = $root.server.FriendListRequest.fromObject(object.friendListRequest);
+            }
+            if (object.friendListResponse != null) {
+                if (typeof object.friendListResponse !== "object")
+                    throw TypeError(".server.Iq.friendListResponse: object expected");
+                message.friendListResponse = $root.server.FriendListResponse.fromObject(object.friendListResponse);
+            }
+            if (object.album != null) {
+                if (typeof object.album !== "object")
+                    throw TypeError(".server.Iq.album: object expected");
+                message.album = $root.server.Album.fromObject(object.album);
+            }
+            if (object.albumResult != null) {
+                if (typeof object.albumResult !== "object")
+                    throw TypeError(".server.Iq.albumResult: object expected");
+                message.albumResult = $root.server.AlbumResult.fromObject(object.albumResult);
+            }
+            if (object.getAlbums != null) {
+                if (typeof object.getAlbums !== "object")
+                    throw TypeError(".server.Iq.getAlbums: object expected");
+                message.getAlbums = $root.server.GetAlbums.fromObject(object.getAlbums);
+            }
             return message;
         };
 
@@ -29937,6 +30198,51 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "registerResponse";
             }
+            if (message.halloappSearchRequest != null && message.hasOwnProperty("halloappSearchRequest")) {
+                object.halloappSearchRequest = $root.server.HalloappSearchRequest.toObject(message.halloappSearchRequest, options);
+                if (options.oneofs)
+                    object.payload = "halloappSearchRequest";
+            }
+            if (message.halloappSearchResponse != null && message.hasOwnProperty("halloappSearchResponse")) {
+                object.halloappSearchResponse = $root.server.HalloappSearchResponse.toObject(message.halloappSearchResponse, options);
+                if (options.oneofs)
+                    object.payload = "halloappSearchResponse";
+            }
+            if (message.friendshipRequest != null && message.hasOwnProperty("friendshipRequest")) {
+                object.friendshipRequest = $root.server.FriendshipRequest.toObject(message.friendshipRequest, options);
+                if (options.oneofs)
+                    object.payload = "friendshipRequest";
+            }
+            if (message.friendshipResponse != null && message.hasOwnProperty("friendshipResponse")) {
+                object.friendshipResponse = $root.server.FriendshipResponse.toObject(message.friendshipResponse, options);
+                if (options.oneofs)
+                    object.payload = "friendshipResponse";
+            }
+            if (message.friendListRequest != null && message.hasOwnProperty("friendListRequest")) {
+                object.friendListRequest = $root.server.FriendListRequest.toObject(message.friendListRequest, options);
+                if (options.oneofs)
+                    object.payload = "friendListRequest";
+            }
+            if (message.friendListResponse != null && message.hasOwnProperty("friendListResponse")) {
+                object.friendListResponse = $root.server.FriendListResponse.toObject(message.friendListResponse, options);
+                if (options.oneofs)
+                    object.payload = "friendListResponse";
+            }
+            if (message.album != null && message.hasOwnProperty("album")) {
+                object.album = $root.server.Album.toObject(message.album, options);
+                if (options.oneofs)
+                    object.payload = "album";
+            }
+            if (message.albumResult != null && message.hasOwnProperty("albumResult")) {
+                object.albumResult = $root.server.AlbumResult.toObject(message.albumResult, options);
+                if (options.oneofs)
+                    object.payload = "albumResult";
+            }
+            if (message.getAlbums != null && message.hasOwnProperty("getAlbums")) {
+                object.getAlbums = $root.server.GetAlbums.toObject(message.getAlbums, options);
+                if (options.oneofs)
+                    object.payload = "getAlbums";
+            }
             return object;
         };
 
@@ -30032,6 +30338,8 @@ $root.server = (function() {
          * @property {server.IProfileUpdate|null} [profileUpdate] Msg profileUpdate
          * @property {server.IPublicFeedUpdate|null} [publicFeedUpdate] Msg publicFeedUpdate
          * @property {server.IAiImage|null} [aiImage] Msg aiImage
+         * @property {server.IHalloappProfileUpdate|null} [halloappProfileUpdate] Msg halloappProfileUpdate
+         * @property {server.IAlbum|null} [album] Msg album
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -30484,6 +30792,22 @@ $root.server = (function() {
         Msg.prototype.aiImage = null;
 
         /**
+         * Msg halloappProfileUpdate.
+         * @member {server.IHalloappProfileUpdate|null|undefined} halloappProfileUpdate
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.halloappProfileUpdate = null;
+
+        /**
+         * Msg album.
+         * @member {server.IAlbum|null|undefined} album
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.album = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -30504,12 +30828,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|"halloappProfileUpdate"|"album"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate", "aiImage"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate", "aiImage", "halloappProfileUpdate", "album"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -30649,6 +30973,10 @@ $root.server = (function() {
                 $root.server.PublicFeedUpdate.encode(message.publicFeedUpdate, writer.uint32(/* id 55, wireType 2 =*/442).fork()).ldelim();
             if (message.aiImage != null && Object.hasOwnProperty.call(message, "aiImage"))
                 $root.server.AiImage.encode(message.aiImage, writer.uint32(/* id 56, wireType 2 =*/450).fork()).ldelim();
+            if (message.halloappProfileUpdate != null && Object.hasOwnProperty.call(message, "halloappProfileUpdate"))
+                $root.server.HalloappProfileUpdate.encode(message.halloappProfileUpdate, writer.uint32(/* id 57, wireType 2 =*/458).fork()).ldelim();
+            if (message.album != null && Object.hasOwnProperty.call(message, "album"))
+                $root.server.Album.encode(message.album, writer.uint32(/* id 58, wireType 2 =*/466).fork()).ldelim();
             return writer;
         };
 
@@ -30844,6 +31172,12 @@ $root.server = (function() {
                     break;
                 case 56:
                     message.aiImage = $root.server.AiImage.decode(reader, reader.uint32());
+                    break;
+                case 57:
+                    message.halloappProfileUpdate = $root.server.HalloappProfileUpdate.decode(reader, reader.uint32());
+                    break;
+                case 58:
+                    message.album = $root.server.Album.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -31406,6 +31740,26 @@ $root.server = (function() {
                         return "aiImage." + error;
                 }
             }
+            if (message.halloappProfileUpdate != null && message.hasOwnProperty("halloappProfileUpdate")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HalloappProfileUpdate.verify(message.halloappProfileUpdate);
+                    if (error)
+                        return "halloappProfileUpdate." + error;
+                }
+            }
+            if (message.album != null && message.hasOwnProperty("album")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.Album.verify(message.album);
+                    if (error)
+                        return "album." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -31723,6 +32077,16 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.aiImage: object expected");
                 message.aiImage = $root.server.AiImage.fromObject(object.aiImage);
             }
+            if (object.halloappProfileUpdate != null) {
+                if (typeof object.halloappProfileUpdate !== "object")
+                    throw TypeError(".server.Msg.halloappProfileUpdate: object expected");
+                message.halloappProfileUpdate = $root.server.HalloappProfileUpdate.fromObject(object.halloappProfileUpdate);
+            }
+            if (object.album != null) {
+                if (typeof object.album !== "object")
+                    throw TypeError(".server.Msg.album: object expected");
+                message.album = $root.server.Album.fromObject(object.album);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -32026,6 +32390,16 @@ $root.server = (function() {
                 object.aiImage = $root.server.AiImage.toObject(message.aiImage, options);
                 if (options.oneofs)
                     object.payload = "aiImage";
+            }
+            if (message.halloappProfileUpdate != null && message.hasOwnProperty("halloappProfileUpdate")) {
+                object.halloappProfileUpdate = $root.server.HalloappProfileUpdate.toObject(message.halloappProfileUpdate, options);
+                if (options.oneofs)
+                    object.payload = "halloappProfileUpdate";
+            }
+            if (message.album != null && message.hasOwnProperty("album")) {
+                object.album = $root.server.Album.toObject(message.album, options);
+                if (options.oneofs)
+                    object.payload = "album";
             }
             return object;
         };
@@ -53578,6 +53952,4745 @@ $root.server = (function() {
         };
 
         return AiImage;
+    })();
+
+    /**
+     * AlbumAccess enum.
+     * @name server.AlbumAccess
+     * @enum {number}
+     * @property {number} INVITE_ONLY=0 INVITE_ONLY value
+     * @property {number} EVERYONE=1 EVERYONE value
+     */
+    server.AlbumAccess = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "INVITE_ONLY"] = 0;
+        values[valuesById[1] = "EVERYONE"] = 1;
+        return values;
+    })();
+
+    server.TimeRange = (function() {
+
+        /**
+         * Properties of a TimeRange.
+         * @memberof server
+         * @interface ITimeRange
+         * @property {number|Long|null} [startTimestamp] TimeRange startTimestamp
+         * @property {number|Long|null} [endTimestamp] TimeRange endTimestamp
+         * @property {number|Long|null} [utcOffset] TimeRange utcOffset
+         */
+
+        /**
+         * Constructs a new TimeRange.
+         * @memberof server
+         * @classdesc Represents a TimeRange.
+         * @implements ITimeRange
+         * @constructor
+         * @param {server.ITimeRange=} [properties] Properties to set
+         */
+        function TimeRange(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * TimeRange startTimestamp.
+         * @member {number|Long} startTimestamp
+         * @memberof server.TimeRange
+         * @instance
+         */
+        TimeRange.prototype.startTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * TimeRange endTimestamp.
+         * @member {number|Long} endTimestamp
+         * @memberof server.TimeRange
+         * @instance
+         */
+        TimeRange.prototype.endTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * TimeRange utcOffset.
+         * @member {number|Long} utcOffset
+         * @memberof server.TimeRange
+         * @instance
+         */
+        TimeRange.prototype.utcOffset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new TimeRange instance using the specified properties.
+         * @function create
+         * @memberof server.TimeRange
+         * @static
+         * @param {server.ITimeRange=} [properties] Properties to set
+         * @returns {server.TimeRange} TimeRange instance
+         */
+        TimeRange.create = function create(properties) {
+            return new TimeRange(properties);
+        };
+
+        /**
+         * Encodes the specified TimeRange message. Does not implicitly {@link server.TimeRange.verify|verify} messages.
+         * @function encode
+         * @memberof server.TimeRange
+         * @static
+         * @param {server.ITimeRange} message TimeRange message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        TimeRange.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.startTimestamp != null && Object.hasOwnProperty.call(message, "startTimestamp"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.startTimestamp);
+            if (message.endTimestamp != null && Object.hasOwnProperty.call(message, "endTimestamp"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.endTimestamp);
+            if (message.utcOffset != null && Object.hasOwnProperty.call(message, "utcOffset"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.utcOffset);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified TimeRange message, length delimited. Does not implicitly {@link server.TimeRange.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.TimeRange
+         * @static
+         * @param {server.ITimeRange} message TimeRange message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        TimeRange.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a TimeRange message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.TimeRange
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.TimeRange} TimeRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        TimeRange.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.TimeRange();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.startTimestamp = reader.int64();
+                    break;
+                case 2:
+                    message.endTimestamp = reader.int64();
+                    break;
+                case 3:
+                    message.utcOffset = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a TimeRange message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.TimeRange
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.TimeRange} TimeRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        TimeRange.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a TimeRange message.
+         * @function verify
+         * @memberof server.TimeRange
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        TimeRange.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.startTimestamp != null && message.hasOwnProperty("startTimestamp"))
+                if (!$util.isInteger(message.startTimestamp) && !(message.startTimestamp && $util.isInteger(message.startTimestamp.low) && $util.isInteger(message.startTimestamp.high)))
+                    return "startTimestamp: integer|Long expected";
+            if (message.endTimestamp != null && message.hasOwnProperty("endTimestamp"))
+                if (!$util.isInteger(message.endTimestamp) && !(message.endTimestamp && $util.isInteger(message.endTimestamp.low) && $util.isInteger(message.endTimestamp.high)))
+                    return "endTimestamp: integer|Long expected";
+            if (message.utcOffset != null && message.hasOwnProperty("utcOffset"))
+                if (!$util.isInteger(message.utcOffset) && !(message.utcOffset && $util.isInteger(message.utcOffset.low) && $util.isInteger(message.utcOffset.high)))
+                    return "utcOffset: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a TimeRange message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.TimeRange
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.TimeRange} TimeRange
+         */
+        TimeRange.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.TimeRange)
+                return object;
+            var message = new $root.server.TimeRange();
+            if (object.startTimestamp != null)
+                if ($util.Long)
+                    (message.startTimestamp = $util.Long.fromValue(object.startTimestamp)).unsigned = false;
+                else if (typeof object.startTimestamp === "string")
+                    message.startTimestamp = parseInt(object.startTimestamp, 10);
+                else if (typeof object.startTimestamp === "number")
+                    message.startTimestamp = object.startTimestamp;
+                else if (typeof object.startTimestamp === "object")
+                    message.startTimestamp = new $util.LongBits(object.startTimestamp.low >>> 0, object.startTimestamp.high >>> 0).toNumber();
+            if (object.endTimestamp != null)
+                if ($util.Long)
+                    (message.endTimestamp = $util.Long.fromValue(object.endTimestamp)).unsigned = false;
+                else if (typeof object.endTimestamp === "string")
+                    message.endTimestamp = parseInt(object.endTimestamp, 10);
+                else if (typeof object.endTimestamp === "number")
+                    message.endTimestamp = object.endTimestamp;
+                else if (typeof object.endTimestamp === "object")
+                    message.endTimestamp = new $util.LongBits(object.endTimestamp.low >>> 0, object.endTimestamp.high >>> 0).toNumber();
+            if (object.utcOffset != null)
+                if ($util.Long)
+                    (message.utcOffset = $util.Long.fromValue(object.utcOffset)).unsigned = false;
+                else if (typeof object.utcOffset === "string")
+                    message.utcOffset = parseInt(object.utcOffset, 10);
+                else if (typeof object.utcOffset === "number")
+                    message.utcOffset = object.utcOffset;
+                else if (typeof object.utcOffset === "object")
+                    message.utcOffset = new $util.LongBits(object.utcOffset.low >>> 0, object.utcOffset.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a TimeRange message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.TimeRange
+         * @static
+         * @param {server.TimeRange} message TimeRange
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        TimeRange.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.startTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.startTimestamp = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.endTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.endTimestamp = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.utcOffset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.utcOffset = options.longs === String ? "0" : 0;
+            }
+            if (message.startTimestamp != null && message.hasOwnProperty("startTimestamp"))
+                if (typeof message.startTimestamp === "number")
+                    object.startTimestamp = options.longs === String ? String(message.startTimestamp) : message.startTimestamp;
+                else
+                    object.startTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.startTimestamp) : options.longs === Number ? new $util.LongBits(message.startTimestamp.low >>> 0, message.startTimestamp.high >>> 0).toNumber() : message.startTimestamp;
+            if (message.endTimestamp != null && message.hasOwnProperty("endTimestamp"))
+                if (typeof message.endTimestamp === "number")
+                    object.endTimestamp = options.longs === String ? String(message.endTimestamp) : message.endTimestamp;
+                else
+                    object.endTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.endTimestamp) : options.longs === Number ? new $util.LongBits(message.endTimestamp.low >>> 0, message.endTimestamp.high >>> 0).toNumber() : message.endTimestamp;
+            if (message.utcOffset != null && message.hasOwnProperty("utcOffset"))
+                if (typeof message.utcOffset === "number")
+                    object.utcOffset = options.longs === String ? String(message.utcOffset) : message.utcOffset;
+                else
+                    object.utcOffset = options.longs === String ? $util.Long.prototype.toString.call(message.utcOffset) : options.longs === Number ? new $util.LongBits(message.utcOffset.low >>> 0, message.utcOffset.high >>> 0).toNumber() : message.utcOffset;
+            return object;
+        };
+
+        /**
+         * Converts this TimeRange to JSON.
+         * @function toJSON
+         * @memberof server.TimeRange
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        TimeRange.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return TimeRange;
+    })();
+
+    server.Album = (function() {
+
+        /**
+         * Properties of an Album.
+         * @memberof server
+         * @interface IAlbum
+         * @property {string|null} [id] Album id
+         * @property {server.Album.Action|null} [action] Album action
+         * @property {string|null} [name] Album name
+         * @property {number|Long|null} [owner] Album owner
+         * @property {server.ITimeRange|null} [timeRange] Album timeRange
+         * @property {server.IGpsLocation|null} [location] Album location
+         * @property {server.AlbumAccess|null} [canView] Album canView
+         * @property {server.AlbumAccess|null} [canContribute] Album canContribute
+         * @property {Array.<server.IAlbumMember>|null} [members] Album members
+         * @property {Array.<server.IMediaItem>|null} [mediaItems] Album mediaItems
+         * @property {string|null} [cursor] Album cursor
+         */
+
+        /**
+         * Constructs a new Album.
+         * @memberof server
+         * @classdesc Represents an Album.
+         * @implements IAlbum
+         * @constructor
+         * @param {server.IAlbum=} [properties] Properties to set
+         */
+        function Album(properties) {
+            this.members = [];
+            this.mediaItems = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Album id.
+         * @member {string} id
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.id = "";
+
+        /**
+         * Album action.
+         * @member {server.Album.Action} action
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.action = 0;
+
+        /**
+         * Album name.
+         * @member {string} name
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.name = "";
+
+        /**
+         * Album owner.
+         * @member {number|Long} owner
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.owner = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Album timeRange.
+         * @member {server.ITimeRange|null|undefined} timeRange
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.timeRange = null;
+
+        /**
+         * Album location.
+         * @member {server.IGpsLocation|null|undefined} location
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.location = null;
+
+        /**
+         * Album canView.
+         * @member {server.AlbumAccess} canView
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.canView = 0;
+
+        /**
+         * Album canContribute.
+         * @member {server.AlbumAccess} canContribute
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.canContribute = 0;
+
+        /**
+         * Album members.
+         * @member {Array.<server.IAlbumMember>} members
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.members = $util.emptyArray;
+
+        /**
+         * Album mediaItems.
+         * @member {Array.<server.IMediaItem>} mediaItems
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.mediaItems = $util.emptyArray;
+
+        /**
+         * Album cursor.
+         * @member {string} cursor
+         * @memberof server.Album
+         * @instance
+         */
+        Album.prototype.cursor = "";
+
+        /**
+         * Creates a new Album instance using the specified properties.
+         * @function create
+         * @memberof server.Album
+         * @static
+         * @param {server.IAlbum=} [properties] Properties to set
+         * @returns {server.Album} Album instance
+         */
+        Album.create = function create(properties) {
+            return new Album(properties);
+        };
+
+        /**
+         * Encodes the specified Album message. Does not implicitly {@link server.Album.verify|verify} messages.
+         * @function encode
+         * @memberof server.Album
+         * @static
+         * @param {server.IAlbum} message Album message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Album.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.action);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
+            if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.owner);
+            if (message.timeRange != null && Object.hasOwnProperty.call(message, "timeRange"))
+                $root.server.TimeRange.encode(message.timeRange, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.location != null && Object.hasOwnProperty.call(message, "location"))
+                $root.server.GpsLocation.encode(message.location, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            if (message.canView != null && Object.hasOwnProperty.call(message, "canView"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.canView);
+            if (message.canContribute != null && Object.hasOwnProperty.call(message, "canContribute"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int32(message.canContribute);
+            if (message.members != null && message.members.length)
+                for (var i = 0; i < message.members.length; ++i)
+                    $root.server.AlbumMember.encode(message.members[i], writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+            if (message.mediaItems != null && message.mediaItems.length)
+                for (var i = 0; i < message.mediaItems.length; ++i)
+                    $root.server.MediaItem.encode(message.mediaItems[i], writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+            if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                writer.uint32(/* id 11, wireType 2 =*/90).string(message.cursor);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Album message, length delimited. Does not implicitly {@link server.Album.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.Album
+         * @static
+         * @param {server.IAlbum} message Album message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Album.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an Album message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.Album
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.Album} Album
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Album.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.Album();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.action = reader.int32();
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                case 4:
+                    message.owner = reader.int64();
+                    break;
+                case 5:
+                    message.timeRange = $root.server.TimeRange.decode(reader, reader.uint32());
+                    break;
+                case 6:
+                    message.location = $root.server.GpsLocation.decode(reader, reader.uint32());
+                    break;
+                case 7:
+                    message.canView = reader.int32();
+                    break;
+                case 8:
+                    message.canContribute = reader.int32();
+                    break;
+                case 9:
+                    if (!(message.members && message.members.length))
+                        message.members = [];
+                    message.members.push($root.server.AlbumMember.decode(reader, reader.uint32()));
+                    break;
+                case 10:
+                    if (!(message.mediaItems && message.mediaItems.length))
+                        message.mediaItems = [];
+                    message.mediaItems.push($root.server.MediaItem.decode(reader, reader.uint32()));
+                    break;
+                case 11:
+                    message.cursor = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an Album message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.Album
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.Album} Album
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Album.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an Album message.
+         * @function verify
+         * @memberof server.Album
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Album.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                    break;
+                }
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                if (!$util.isInteger(message.owner) && !(message.owner && $util.isInteger(message.owner.low) && $util.isInteger(message.owner.high)))
+                    return "owner: integer|Long expected";
+            if (message.timeRange != null && message.hasOwnProperty("timeRange")) {
+                var error = $root.server.TimeRange.verify(message.timeRange);
+                if (error)
+                    return "timeRange." + error;
+            }
+            if (message.location != null && message.hasOwnProperty("location")) {
+                var error = $root.server.GpsLocation.verify(message.location);
+                if (error)
+                    return "location." + error;
+            }
+            if (message.canView != null && message.hasOwnProperty("canView"))
+                switch (message.canView) {
+                default:
+                    return "canView: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.canContribute != null && message.hasOwnProperty("canContribute"))
+                switch (message.canContribute) {
+                default:
+                    return "canContribute: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.members != null && message.hasOwnProperty("members")) {
+                if (!Array.isArray(message.members))
+                    return "members: array expected";
+                for (var i = 0; i < message.members.length; ++i) {
+                    var error = $root.server.AlbumMember.verify(message.members[i]);
+                    if (error)
+                        return "members." + error;
+                }
+            }
+            if (message.mediaItems != null && message.hasOwnProperty("mediaItems")) {
+                if (!Array.isArray(message.mediaItems))
+                    return "mediaItems: array expected";
+                for (var i = 0; i < message.mediaItems.length; ++i) {
+                    var error = $root.server.MediaItem.verify(message.mediaItems[i]);
+                    if (error)
+                        return "mediaItems." + error;
+                }
+            }
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                if (!$util.isString(message.cursor))
+                    return "cursor: string expected";
+            return null;
+        };
+
+        /**
+         * Creates an Album message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.Album
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.Album} Album
+         */
+        Album.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.Album)
+                return object;
+            var message = new $root.server.Album();
+            if (object.id != null)
+                message.id = String(object.id);
+            switch (object.action) {
+            case "CREATE":
+            case 0:
+                message.action = 0;
+                break;
+            case "CHANGE_NAME":
+            case 1:
+                message.action = 1;
+                break;
+            case "CHANGE_LOCATION":
+            case 2:
+                message.action = 2;
+                break;
+            case "CHANGE_TIME":
+            case 3:
+                message.action = 3;
+                break;
+            case "CHANGE_VIEW_ACCESS":
+            case 4:
+                message.action = 4;
+                break;
+            case "CHANGE_CONTRIBUTE_ACCESS":
+            case 5:
+                message.action = 5;
+                break;
+            case "MODIFY_MEMBERS":
+            case 6:
+                message.action = 6;
+                break;
+            case "ADD_MEDIA":
+            case 7:
+                message.action = 7;
+                break;
+            case "REMOVE_MEDIA":
+            case 8:
+                message.action = 8;
+                break;
+            case "MEDIA_UPDATE":
+            case 9:
+                message.action = 9;
+                break;
+            case "GET_INFO":
+            case 10:
+                message.action = 10;
+                break;
+            case "GET_MEDIA":
+            case 11:
+                message.action = 11;
+                break;
+            case "GET":
+            case 12:
+                message.action = 12;
+                break;
+            case "DELETE":
+            case 13:
+                message.action = 13;
+                break;
+            }
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.owner != null)
+                if ($util.Long)
+                    (message.owner = $util.Long.fromValue(object.owner)).unsigned = false;
+                else if (typeof object.owner === "string")
+                    message.owner = parseInt(object.owner, 10);
+                else if (typeof object.owner === "number")
+                    message.owner = object.owner;
+                else if (typeof object.owner === "object")
+                    message.owner = new $util.LongBits(object.owner.low >>> 0, object.owner.high >>> 0).toNumber();
+            if (object.timeRange != null) {
+                if (typeof object.timeRange !== "object")
+                    throw TypeError(".server.Album.timeRange: object expected");
+                message.timeRange = $root.server.TimeRange.fromObject(object.timeRange);
+            }
+            if (object.location != null) {
+                if (typeof object.location !== "object")
+                    throw TypeError(".server.Album.location: object expected");
+                message.location = $root.server.GpsLocation.fromObject(object.location);
+            }
+            switch (object.canView) {
+            case "INVITE_ONLY":
+            case 0:
+                message.canView = 0;
+                break;
+            case "EVERYONE":
+            case 1:
+                message.canView = 1;
+                break;
+            }
+            switch (object.canContribute) {
+            case "INVITE_ONLY":
+            case 0:
+                message.canContribute = 0;
+                break;
+            case "EVERYONE":
+            case 1:
+                message.canContribute = 1;
+                break;
+            }
+            if (object.members) {
+                if (!Array.isArray(object.members))
+                    throw TypeError(".server.Album.members: array expected");
+                message.members = [];
+                for (var i = 0; i < object.members.length; ++i) {
+                    if (typeof object.members[i] !== "object")
+                        throw TypeError(".server.Album.members: object expected");
+                    message.members[i] = $root.server.AlbumMember.fromObject(object.members[i]);
+                }
+            }
+            if (object.mediaItems) {
+                if (!Array.isArray(object.mediaItems))
+                    throw TypeError(".server.Album.mediaItems: array expected");
+                message.mediaItems = [];
+                for (var i = 0; i < object.mediaItems.length; ++i) {
+                    if (typeof object.mediaItems[i] !== "object")
+                        throw TypeError(".server.Album.mediaItems: object expected");
+                    message.mediaItems[i] = $root.server.MediaItem.fromObject(object.mediaItems[i]);
+                }
+            }
+            if (object.cursor != null)
+                message.cursor = String(object.cursor);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an Album message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.Album
+         * @static
+         * @param {server.Album} message Album
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Album.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults) {
+                object.members = [];
+                object.mediaItems = [];
+            }
+            if (options.defaults) {
+                object.id = "";
+                object.action = options.enums === String ? "CREATE" : 0;
+                object.name = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.owner = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.owner = options.longs === String ? "0" : 0;
+                object.timeRange = null;
+                object.location = null;
+                object.canView = options.enums === String ? "INVITE_ONLY" : 0;
+                object.canContribute = options.enums === String ? "INVITE_ONLY" : 0;
+                object.cursor = "";
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.Album.Action[message.action] : message.action;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                if (typeof message.owner === "number")
+                    object.owner = options.longs === String ? String(message.owner) : message.owner;
+                else
+                    object.owner = options.longs === String ? $util.Long.prototype.toString.call(message.owner) : options.longs === Number ? new $util.LongBits(message.owner.low >>> 0, message.owner.high >>> 0).toNumber() : message.owner;
+            if (message.timeRange != null && message.hasOwnProperty("timeRange"))
+                object.timeRange = $root.server.TimeRange.toObject(message.timeRange, options);
+            if (message.location != null && message.hasOwnProperty("location"))
+                object.location = $root.server.GpsLocation.toObject(message.location, options);
+            if (message.canView != null && message.hasOwnProperty("canView"))
+                object.canView = options.enums === String ? $root.server.AlbumAccess[message.canView] : message.canView;
+            if (message.canContribute != null && message.hasOwnProperty("canContribute"))
+                object.canContribute = options.enums === String ? $root.server.AlbumAccess[message.canContribute] : message.canContribute;
+            if (message.members && message.members.length) {
+                object.members = [];
+                for (var j = 0; j < message.members.length; ++j)
+                    object.members[j] = $root.server.AlbumMember.toObject(message.members[j], options);
+            }
+            if (message.mediaItems && message.mediaItems.length) {
+                object.mediaItems = [];
+                for (var j = 0; j < message.mediaItems.length; ++j)
+                    object.mediaItems[j] = $root.server.MediaItem.toObject(message.mediaItems[j], options);
+            }
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                object.cursor = message.cursor;
+            return object;
+        };
+
+        /**
+         * Converts this Album to JSON.
+         * @function toJSON
+         * @memberof server.Album
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Album.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.Album.Action
+         * @enum {number}
+         * @property {number} CREATE=0 CREATE value
+         * @property {number} CHANGE_NAME=1 CHANGE_NAME value
+         * @property {number} CHANGE_LOCATION=2 CHANGE_LOCATION value
+         * @property {number} CHANGE_TIME=3 CHANGE_TIME value
+         * @property {number} CHANGE_VIEW_ACCESS=4 CHANGE_VIEW_ACCESS value
+         * @property {number} CHANGE_CONTRIBUTE_ACCESS=5 CHANGE_CONTRIBUTE_ACCESS value
+         * @property {number} MODIFY_MEMBERS=6 MODIFY_MEMBERS value
+         * @property {number} ADD_MEDIA=7 ADD_MEDIA value
+         * @property {number} REMOVE_MEDIA=8 REMOVE_MEDIA value
+         * @property {number} MEDIA_UPDATE=9 MEDIA_UPDATE value
+         * @property {number} GET_INFO=10 GET_INFO value
+         * @property {number} GET_MEDIA=11 GET_MEDIA value
+         * @property {number} GET=12 GET value
+         * @property {number} DELETE=13 DELETE value
+         */
+        Album.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "CREATE"] = 0;
+            values[valuesById[1] = "CHANGE_NAME"] = 1;
+            values[valuesById[2] = "CHANGE_LOCATION"] = 2;
+            values[valuesById[3] = "CHANGE_TIME"] = 3;
+            values[valuesById[4] = "CHANGE_VIEW_ACCESS"] = 4;
+            values[valuesById[5] = "CHANGE_CONTRIBUTE_ACCESS"] = 5;
+            values[valuesById[6] = "MODIFY_MEMBERS"] = 6;
+            values[valuesById[7] = "ADD_MEDIA"] = 7;
+            values[valuesById[8] = "REMOVE_MEDIA"] = 8;
+            values[valuesById[9] = "MEDIA_UPDATE"] = 9;
+            values[valuesById[10] = "GET_INFO"] = 10;
+            values[valuesById[11] = "GET_MEDIA"] = 11;
+            values[valuesById[12] = "GET"] = 12;
+            values[valuesById[13] = "DELETE"] = 13;
+            return values;
+        })();
+
+        return Album;
+    })();
+
+    server.AlbumResult = (function() {
+
+        /**
+         * Properties of an AlbumResult.
+         * @memberof server
+         * @interface IAlbumResult
+         * @property {server.AlbumResult.Result|null} [result] AlbumResult result
+         * @property {server.AlbumResult.Reason|null} [reason] AlbumResult reason
+         * @property {server.IAlbum|null} [album] AlbumResult album
+         */
+
+        /**
+         * Constructs a new AlbumResult.
+         * @memberof server
+         * @classdesc Represents an AlbumResult.
+         * @implements IAlbumResult
+         * @constructor
+         * @param {server.IAlbumResult=} [properties] Properties to set
+         */
+        function AlbumResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AlbumResult result.
+         * @member {server.AlbumResult.Result} result
+         * @memberof server.AlbumResult
+         * @instance
+         */
+        AlbumResult.prototype.result = 0;
+
+        /**
+         * AlbumResult reason.
+         * @member {server.AlbumResult.Reason} reason
+         * @memberof server.AlbumResult
+         * @instance
+         */
+        AlbumResult.prototype.reason = 0;
+
+        /**
+         * AlbumResult album.
+         * @member {server.IAlbum|null|undefined} album
+         * @memberof server.AlbumResult
+         * @instance
+         */
+        AlbumResult.prototype.album = null;
+
+        /**
+         * Creates a new AlbumResult instance using the specified properties.
+         * @function create
+         * @memberof server.AlbumResult
+         * @static
+         * @param {server.IAlbumResult=} [properties] Properties to set
+         * @returns {server.AlbumResult} AlbumResult instance
+         */
+        AlbumResult.create = function create(properties) {
+            return new AlbumResult(properties);
+        };
+
+        /**
+         * Encodes the specified AlbumResult message. Does not implicitly {@link server.AlbumResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.AlbumResult
+         * @static
+         * @param {server.IAlbumResult} message AlbumResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AlbumResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.album != null && Object.hasOwnProperty.call(message, "album"))
+                $root.server.Album.encode(message.album, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AlbumResult message, length delimited. Does not implicitly {@link server.AlbumResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.AlbumResult
+         * @static
+         * @param {server.IAlbumResult} message AlbumResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AlbumResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AlbumResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.AlbumResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.AlbumResult} AlbumResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AlbumResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.AlbumResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.album = $root.server.Album.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AlbumResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.AlbumResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.AlbumResult} AlbumResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AlbumResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AlbumResult message.
+         * @function verify
+         * @memberof server.AlbumResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AlbumResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.album != null && message.hasOwnProperty("album")) {
+                var error = $root.server.Album.verify(message.album);
+                if (error)
+                    return "album." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an AlbumResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.AlbumResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.AlbumResult} AlbumResult
+         */
+        AlbumResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.AlbumResult)
+                return object;
+            var message = new $root.server.AlbumResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN":
+            case 0:
+                message.reason = 0;
+                break;
+            case "BAD_ALBUM_ID":
+            case 1:
+                message.reason = 1;
+                break;
+            case "NOT_ALLOWED":
+            case 2:
+                message.reason = 2;
+                break;
+            case "TOO_MANY_MEMBERS":
+            case 3:
+                message.reason = 3;
+                break;
+            }
+            if (object.album != null) {
+                if (typeof object.album !== "object")
+                    throw TypeError(".server.AlbumResult.album: object expected");
+                message.album = $root.server.Album.fromObject(object.album);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AlbumResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.AlbumResult
+         * @static
+         * @param {server.AlbumResult} message AlbumResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AlbumResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN" : 0;
+                object.album = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.AlbumResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.AlbumResult.Reason[message.reason] : message.reason;
+            if (message.album != null && message.hasOwnProperty("album"))
+                object.album = $root.server.Album.toObject(message.album, options);
+            return object;
+        };
+
+        /**
+         * Converts this AlbumResult to JSON.
+         * @function toJSON
+         * @memberof server.AlbumResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AlbumResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.AlbumResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        AlbumResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.AlbumResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} BAD_ALBUM_ID=1 BAD_ALBUM_ID value
+         * @property {number} NOT_ALLOWED=2 NOT_ALLOWED value
+         * @property {number} TOO_MANY_MEMBERS=3 TOO_MANY_MEMBERS value
+         */
+        AlbumResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "BAD_ALBUM_ID"] = 1;
+            values[valuesById[2] = "NOT_ALLOWED"] = 2;
+            values[valuesById[3] = "TOO_MANY_MEMBERS"] = 3;
+            return values;
+        })();
+
+        return AlbumResult;
+    })();
+
+    server.AlbumMember = (function() {
+
+        /**
+         * Properties of an AlbumMember.
+         * @memberof server
+         * @interface IAlbumMember
+         * @property {number|Long|null} [uid] AlbumMember uid
+         * @property {server.AlbumMember.Action|null} [action] AlbumMember action
+         * @property {string|null} [name] AlbumMember name
+         * @property {string|null} [username] AlbumMember username
+         * @property {string|null} [avatarId] AlbumMember avatarId
+         * @property {server.AlbumMember.Role|null} [role] AlbumMember role
+         * @property {boolean|null} [pending] AlbumMember pending
+         * @property {boolean|null} [removeMedia] AlbumMember removeMedia
+         */
+
+        /**
+         * Constructs a new AlbumMember.
+         * @memberof server
+         * @classdesc Represents an AlbumMember.
+         * @implements IAlbumMember
+         * @constructor
+         * @param {server.IAlbumMember=} [properties] Properties to set
+         */
+        function AlbumMember(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AlbumMember uid.
+         * @member {number|Long} uid
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * AlbumMember action.
+         * @member {server.AlbumMember.Action} action
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.action = 0;
+
+        /**
+         * AlbumMember name.
+         * @member {string} name
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.name = "";
+
+        /**
+         * AlbumMember username.
+         * @member {string} username
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.username = "";
+
+        /**
+         * AlbumMember avatarId.
+         * @member {string} avatarId
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.avatarId = "";
+
+        /**
+         * AlbumMember role.
+         * @member {server.AlbumMember.Role} role
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.role = 0;
+
+        /**
+         * AlbumMember pending.
+         * @member {boolean} pending
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.pending = false;
+
+        /**
+         * AlbumMember removeMedia.
+         * @member {boolean} removeMedia
+         * @memberof server.AlbumMember
+         * @instance
+         */
+        AlbumMember.prototype.removeMedia = false;
+
+        /**
+         * Creates a new AlbumMember instance using the specified properties.
+         * @function create
+         * @memberof server.AlbumMember
+         * @static
+         * @param {server.IAlbumMember=} [properties] Properties to set
+         * @returns {server.AlbumMember} AlbumMember instance
+         */
+        AlbumMember.create = function create(properties) {
+            return new AlbumMember(properties);
+        };
+
+        /**
+         * Encodes the specified AlbumMember message. Does not implicitly {@link server.AlbumMember.verify|verify} messages.
+         * @function encode
+         * @memberof server.AlbumMember
+         * @static
+         * @param {server.IAlbumMember} message AlbumMember message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AlbumMember.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.uid);
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.action);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.username);
+            if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.avatarId);
+            if (message.role != null && Object.hasOwnProperty.call(message, "role"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.role);
+            if (message.pending != null && Object.hasOwnProperty.call(message, "pending"))
+                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.pending);
+            if (message.removeMedia != null && Object.hasOwnProperty.call(message, "removeMedia"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.removeMedia);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AlbumMember message, length delimited. Does not implicitly {@link server.AlbumMember.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.AlbumMember
+         * @static
+         * @param {server.IAlbumMember} message AlbumMember message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AlbumMember.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AlbumMember message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.AlbumMember
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.AlbumMember} AlbumMember
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AlbumMember.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.AlbumMember();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.int64();
+                    break;
+                case 2:
+                    message.action = reader.int32();
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                case 4:
+                    message.username = reader.string();
+                    break;
+                case 5:
+                    message.avatarId = reader.string();
+                    break;
+                case 6:
+                    message.role = reader.int32();
+                    break;
+                case 7:
+                    message.pending = reader.bool();
+                    break;
+                case 8:
+                    message.removeMedia = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AlbumMember message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.AlbumMember
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.AlbumMember} AlbumMember
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AlbumMember.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AlbumMember message.
+         * @function verify
+         * @memberof server.AlbumMember
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AlbumMember.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    break;
+                }
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                if (!$util.isString(message.avatarId))
+                    return "avatarId: string expected";
+            if (message.role != null && message.hasOwnProperty("role"))
+                switch (message.role) {
+                default:
+                    return "role: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.pending != null && message.hasOwnProperty("pending"))
+                if (typeof message.pending !== "boolean")
+                    return "pending: boolean expected";
+            if (message.removeMedia != null && message.hasOwnProperty("removeMedia"))
+                if (typeof message.removeMedia !== "boolean")
+                    return "removeMedia: boolean expected";
+            return null;
+        };
+
+        /**
+         * Creates an AlbumMember message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.AlbumMember
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.AlbumMember} AlbumMember
+         */
+        AlbumMember.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.AlbumMember)
+                return object;
+            var message = new $root.server.AlbumMember();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            switch (object.action) {
+            case "NONE":
+            case 0:
+                message.action = 0;
+                break;
+            case "ACCEPT_INVITE":
+            case 1:
+                message.action = 1;
+                break;
+            case "REJECT_INVITE":
+            case 2:
+                message.action = 2;
+                break;
+            case "JOIN":
+            case 3:
+                message.action = 3;
+                break;
+            case "LEAVE":
+            case 4:
+                message.action = 4;
+                break;
+            case "UN_INVITE":
+            case 5:
+                message.action = 5;
+                break;
+            case "REMOVE":
+            case 6:
+                message.action = 6;
+                break;
+            case "INVITE":
+            case 7:
+                message.action = 7;
+                break;
+            case "PROMOTE":
+            case 8:
+                message.action = 8;
+                break;
+            case "DEMOTE":
+            case 9:
+                message.action = 9;
+                break;
+            }
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.avatarId != null)
+                message.avatarId = String(object.avatarId);
+            switch (object.role) {
+            case "VIEWER":
+            case 0:
+                message.role = 0;
+                break;
+            case "CONTRIBUTOR":
+            case 1:
+                message.role = 1;
+                break;
+            case "ADMIN":
+            case 2:
+                message.role = 2;
+                break;
+            case "OWNER":
+            case 3:
+                message.role = 3;
+                break;
+            }
+            if (object.pending != null)
+                message.pending = Boolean(object.pending);
+            if (object.removeMedia != null)
+                message.removeMedia = Boolean(object.removeMedia);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AlbumMember message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.AlbumMember
+         * @static
+         * @param {server.AlbumMember} message AlbumMember
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AlbumMember.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+                object.action = options.enums === String ? "NONE" : 0;
+                object.name = "";
+                object.username = "";
+                object.avatarId = "";
+                object.role = options.enums === String ? "VIEWER" : 0;
+                object.pending = false;
+                object.removeMedia = false;
+            }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.AlbumMember.Action[message.action] : message.action;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                object.avatarId = message.avatarId;
+            if (message.role != null && message.hasOwnProperty("role"))
+                object.role = options.enums === String ? $root.server.AlbumMember.Role[message.role] : message.role;
+            if (message.pending != null && message.hasOwnProperty("pending"))
+                object.pending = message.pending;
+            if (message.removeMedia != null && message.hasOwnProperty("removeMedia"))
+                object.removeMedia = message.removeMedia;
+            return object;
+        };
+
+        /**
+         * Converts this AlbumMember to JSON.
+         * @function toJSON
+         * @memberof server.AlbumMember
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AlbumMember.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.AlbumMember.Action
+         * @enum {number}
+         * @property {number} NONE=0 NONE value
+         * @property {number} ACCEPT_INVITE=1 ACCEPT_INVITE value
+         * @property {number} REJECT_INVITE=2 REJECT_INVITE value
+         * @property {number} JOIN=3 JOIN value
+         * @property {number} LEAVE=4 LEAVE value
+         * @property {number} UN_INVITE=5 UN_INVITE value
+         * @property {number} REMOVE=6 REMOVE value
+         * @property {number} INVITE=7 INVITE value
+         * @property {number} PROMOTE=8 PROMOTE value
+         * @property {number} DEMOTE=9 DEMOTE value
+         */
+        AlbumMember.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "NONE"] = 0;
+            values[valuesById[1] = "ACCEPT_INVITE"] = 1;
+            values[valuesById[2] = "REJECT_INVITE"] = 2;
+            values[valuesById[3] = "JOIN"] = 3;
+            values[valuesById[4] = "LEAVE"] = 4;
+            values[valuesById[5] = "UN_INVITE"] = 5;
+            values[valuesById[6] = "REMOVE"] = 6;
+            values[valuesById[7] = "INVITE"] = 7;
+            values[valuesById[8] = "PROMOTE"] = 8;
+            values[valuesById[9] = "DEMOTE"] = 9;
+            return values;
+        })();
+
+        /**
+         * Role enum.
+         * @name server.AlbumMember.Role
+         * @enum {number}
+         * @property {number} VIEWER=0 VIEWER value
+         * @property {number} CONTRIBUTOR=1 CONTRIBUTOR value
+         * @property {number} ADMIN=2 ADMIN value
+         * @property {number} OWNER=3 OWNER value
+         */
+        AlbumMember.Role = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "VIEWER"] = 0;
+            values[valuesById[1] = "CONTRIBUTOR"] = 1;
+            values[valuesById[2] = "ADMIN"] = 2;
+            values[valuesById[3] = "OWNER"] = 3;
+            return values;
+        })();
+
+        return AlbumMember;
+    })();
+
+    server.GetAlbums = (function() {
+
+        /**
+         * Properties of a GetAlbums.
+         * @memberof server
+         * @interface IGetAlbums
+         * @property {server.GetAlbums.Type|null} [type] GetAlbums type
+         * @property {Array.<string>|null} [albumIds] GetAlbums albumIds
+         */
+
+        /**
+         * Constructs a new GetAlbums.
+         * @memberof server
+         * @classdesc Represents a GetAlbums.
+         * @implements IGetAlbums
+         * @constructor
+         * @param {server.IGetAlbums=} [properties] Properties to set
+         */
+        function GetAlbums(properties) {
+            this.albumIds = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetAlbums type.
+         * @member {server.GetAlbums.Type} type
+         * @memberof server.GetAlbums
+         * @instance
+         */
+        GetAlbums.prototype.type = 0;
+
+        /**
+         * GetAlbums albumIds.
+         * @member {Array.<string>} albumIds
+         * @memberof server.GetAlbums
+         * @instance
+         */
+        GetAlbums.prototype.albumIds = $util.emptyArray;
+
+        /**
+         * Creates a new GetAlbums instance using the specified properties.
+         * @function create
+         * @memberof server.GetAlbums
+         * @static
+         * @param {server.IGetAlbums=} [properties] Properties to set
+         * @returns {server.GetAlbums} GetAlbums instance
+         */
+        GetAlbums.create = function create(properties) {
+            return new GetAlbums(properties);
+        };
+
+        /**
+         * Encodes the specified GetAlbums message. Does not implicitly {@link server.GetAlbums.verify|verify} messages.
+         * @function encode
+         * @memberof server.GetAlbums
+         * @static
+         * @param {server.IGetAlbums} message GetAlbums message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetAlbums.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.albumIds != null && message.albumIds.length)
+                for (var i = 0; i < message.albumIds.length; ++i)
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.albumIds[i]);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GetAlbums message, length delimited. Does not implicitly {@link server.GetAlbums.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GetAlbums
+         * @static
+         * @param {server.IGetAlbums} message GetAlbums message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetAlbums.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GetAlbums message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GetAlbums
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GetAlbums} GetAlbums
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetAlbums.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GetAlbums();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.type = reader.int32();
+                    break;
+                case 2:
+                    if (!(message.albumIds && message.albumIds.length))
+                        message.albumIds = [];
+                    message.albumIds.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GetAlbums message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GetAlbums
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GetAlbums} GetAlbums
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetAlbums.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GetAlbums message.
+         * @function verify
+         * @memberof server.GetAlbums
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GetAlbums.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.albumIds != null && message.hasOwnProperty("albumIds")) {
+                if (!Array.isArray(message.albumIds))
+                    return "albumIds: array expected";
+                for (var i = 0; i < message.albumIds.length; ++i)
+                    if (!$util.isString(message.albumIds[i]))
+                        return "albumIds: string[] expected";
+            }
+            return null;
+        };
+
+        /**
+         * Creates a GetAlbums message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GetAlbums
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GetAlbums} GetAlbums
+         */
+        GetAlbums.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GetAlbums)
+                return object;
+            var message = new $root.server.GetAlbums();
+            switch (object.type) {
+            case "ALL":
+            case 0:
+                message.type = 0;
+                break;
+            case "MEMBER":
+            case 1:
+                message.type = 1;
+                break;
+            case "INVITED":
+            case 2:
+                message.type = 2;
+                break;
+            }
+            if (object.albumIds) {
+                if (!Array.isArray(object.albumIds))
+                    throw TypeError(".server.GetAlbums.albumIds: array expected");
+                message.albumIds = [];
+                for (var i = 0; i < object.albumIds.length; ++i)
+                    message.albumIds[i] = String(object.albumIds[i]);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetAlbums message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GetAlbums
+         * @static
+         * @param {server.GetAlbums} message GetAlbums
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetAlbums.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.albumIds = [];
+            if (options.defaults)
+                object.type = options.enums === String ? "ALL" : 0;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.GetAlbums.Type[message.type] : message.type;
+            if (message.albumIds && message.albumIds.length) {
+                object.albumIds = [];
+                for (var j = 0; j < message.albumIds.length; ++j)
+                    object.albumIds[j] = message.albumIds[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this GetAlbums to JSON.
+         * @function toJSON
+         * @memberof server.GetAlbums
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetAlbums.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.GetAlbums.Type
+         * @enum {number}
+         * @property {number} ALL=0 ALL value
+         * @property {number} MEMBER=1 MEMBER value
+         * @property {number} INVITED=2 INVITED value
+         */
+        GetAlbums.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ALL"] = 0;
+            values[valuesById[1] = "MEMBER"] = 1;
+            values[valuesById[2] = "INVITED"] = 2;
+            return values;
+        })();
+
+        return GetAlbums;
+    })();
+
+    server.MediaItem = (function() {
+
+        /**
+         * Properties of a MediaItem.
+         * @memberof server
+         * @interface IMediaItem
+         * @property {string|null} [id] MediaItem id
+         * @property {number|Long|null} [publisherUid] MediaItem publisherUid
+         * @property {string|null} [publisherName] MediaItem publisherName
+         * @property {string|null} [publisherUsername] MediaItem publisherUsername
+         * @property {string|null} [albumId] MediaItem albumId
+         * @property {Uint8Array|null} [payload] MediaItem payload
+         * @property {number|Long|null} [deviceCaptureTimestampMs] MediaItem deviceCaptureTimestampMs
+         * @property {number|Long|null} [uploadTimestampMs] MediaItem uploadTimestampMs
+         * @property {string|null} [parentMediaId] MediaItem parentMediaId
+         */
+
+        /**
+         * Constructs a new MediaItem.
+         * @memberof server
+         * @classdesc Represents a MediaItem.
+         * @implements IMediaItem
+         * @constructor
+         * @param {server.IMediaItem=} [properties] Properties to set
+         */
+        function MediaItem(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MediaItem id.
+         * @member {string} id
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.id = "";
+
+        /**
+         * MediaItem publisherUid.
+         * @member {number|Long} publisherUid
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.publisherUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * MediaItem publisherName.
+         * @member {string} publisherName
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.publisherName = "";
+
+        /**
+         * MediaItem publisherUsername.
+         * @member {string} publisherUsername
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.publisherUsername = "";
+
+        /**
+         * MediaItem albumId.
+         * @member {string} albumId
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.albumId = "";
+
+        /**
+         * MediaItem payload.
+         * @member {Uint8Array} payload
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.payload = $util.newBuffer([]);
+
+        /**
+         * MediaItem deviceCaptureTimestampMs.
+         * @member {number|Long} deviceCaptureTimestampMs
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.deviceCaptureTimestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * MediaItem uploadTimestampMs.
+         * @member {number|Long} uploadTimestampMs
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.uploadTimestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * MediaItem parentMediaId.
+         * @member {string} parentMediaId
+         * @memberof server.MediaItem
+         * @instance
+         */
+        MediaItem.prototype.parentMediaId = "";
+
+        /**
+         * Creates a new MediaItem instance using the specified properties.
+         * @function create
+         * @memberof server.MediaItem
+         * @static
+         * @param {server.IMediaItem=} [properties] Properties to set
+         * @returns {server.MediaItem} MediaItem instance
+         */
+        MediaItem.create = function create(properties) {
+            return new MediaItem(properties);
+        };
+
+        /**
+         * Encodes the specified MediaItem message. Does not implicitly {@link server.MediaItem.verify|verify} messages.
+         * @function encode
+         * @memberof server.MediaItem
+         * @static
+         * @param {server.IMediaItem} message MediaItem message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaItem.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.publisherUid != null && Object.hasOwnProperty.call(message, "publisherUid"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.publisherUid);
+            if (message.publisherName != null && Object.hasOwnProperty.call(message, "publisherName"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.publisherName);
+            if (message.publisherUsername != null && Object.hasOwnProperty.call(message, "publisherUsername"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.publisherUsername);
+            if (message.albumId != null && Object.hasOwnProperty.call(message, "albumId"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.albumId);
+            if (message.payload != null && Object.hasOwnProperty.call(message, "payload"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.payload);
+            if (message.deviceCaptureTimestampMs != null && Object.hasOwnProperty.call(message, "deviceCaptureTimestampMs"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int64(message.deviceCaptureTimestampMs);
+            if (message.uploadTimestampMs != null && Object.hasOwnProperty.call(message, "uploadTimestampMs"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int64(message.uploadTimestampMs);
+            if (message.parentMediaId != null && Object.hasOwnProperty.call(message, "parentMediaId"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.parentMediaId);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MediaItem message, length delimited. Does not implicitly {@link server.MediaItem.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MediaItem
+         * @static
+         * @param {server.IMediaItem} message MediaItem message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaItem.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MediaItem message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MediaItem
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MediaItem} MediaItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaItem.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MediaItem();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.publisherUid = reader.int64();
+                    break;
+                case 3:
+                    message.publisherName = reader.string();
+                    break;
+                case 4:
+                    message.publisherUsername = reader.string();
+                    break;
+                case 5:
+                    message.albumId = reader.string();
+                    break;
+                case 6:
+                    message.payload = reader.bytes();
+                    break;
+                case 7:
+                    message.deviceCaptureTimestampMs = reader.int64();
+                    break;
+                case 8:
+                    message.uploadTimestampMs = reader.int64();
+                    break;
+                case 9:
+                    message.parentMediaId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MediaItem message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MediaItem
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MediaItem} MediaItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaItem.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MediaItem message.
+         * @function verify
+         * @memberof server.MediaItem
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MediaItem.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.publisherUid != null && message.hasOwnProperty("publisherUid"))
+                if (!$util.isInteger(message.publisherUid) && !(message.publisherUid && $util.isInteger(message.publisherUid.low) && $util.isInteger(message.publisherUid.high)))
+                    return "publisherUid: integer|Long expected";
+            if (message.publisherName != null && message.hasOwnProperty("publisherName"))
+                if (!$util.isString(message.publisherName))
+                    return "publisherName: string expected";
+            if (message.publisherUsername != null && message.hasOwnProperty("publisherUsername"))
+                if (!$util.isString(message.publisherUsername))
+                    return "publisherUsername: string expected";
+            if (message.albumId != null && message.hasOwnProperty("albumId"))
+                if (!$util.isString(message.albumId))
+                    return "albumId: string expected";
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                if (!(message.payload && typeof message.payload.length === "number" || $util.isString(message.payload)))
+                    return "payload: buffer expected";
+            if (message.deviceCaptureTimestampMs != null && message.hasOwnProperty("deviceCaptureTimestampMs"))
+                if (!$util.isInteger(message.deviceCaptureTimestampMs) && !(message.deviceCaptureTimestampMs && $util.isInteger(message.deviceCaptureTimestampMs.low) && $util.isInteger(message.deviceCaptureTimestampMs.high)))
+                    return "deviceCaptureTimestampMs: integer|Long expected";
+            if (message.uploadTimestampMs != null && message.hasOwnProperty("uploadTimestampMs"))
+                if (!$util.isInteger(message.uploadTimestampMs) && !(message.uploadTimestampMs && $util.isInteger(message.uploadTimestampMs.low) && $util.isInteger(message.uploadTimestampMs.high)))
+                    return "uploadTimestampMs: integer|Long expected";
+            if (message.parentMediaId != null && message.hasOwnProperty("parentMediaId"))
+                if (!$util.isString(message.parentMediaId))
+                    return "parentMediaId: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a MediaItem message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MediaItem
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MediaItem} MediaItem
+         */
+        MediaItem.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MediaItem)
+                return object;
+            var message = new $root.server.MediaItem();
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.publisherUid != null)
+                if ($util.Long)
+                    (message.publisherUid = $util.Long.fromValue(object.publisherUid)).unsigned = false;
+                else if (typeof object.publisherUid === "string")
+                    message.publisherUid = parseInt(object.publisherUid, 10);
+                else if (typeof object.publisherUid === "number")
+                    message.publisherUid = object.publisherUid;
+                else if (typeof object.publisherUid === "object")
+                    message.publisherUid = new $util.LongBits(object.publisherUid.low >>> 0, object.publisherUid.high >>> 0).toNumber();
+            if (object.publisherName != null)
+                message.publisherName = String(object.publisherName);
+            if (object.publisherUsername != null)
+                message.publisherUsername = String(object.publisherUsername);
+            if (object.albumId != null)
+                message.albumId = String(object.albumId);
+            if (object.payload != null)
+                if (typeof object.payload === "string")
+                    $util.base64.decode(object.payload, message.payload = $util.newBuffer($util.base64.length(object.payload)), 0);
+                else if (object.payload.length)
+                    message.payload = object.payload;
+            if (object.deviceCaptureTimestampMs != null)
+                if ($util.Long)
+                    (message.deviceCaptureTimestampMs = $util.Long.fromValue(object.deviceCaptureTimestampMs)).unsigned = false;
+                else if (typeof object.deviceCaptureTimestampMs === "string")
+                    message.deviceCaptureTimestampMs = parseInt(object.deviceCaptureTimestampMs, 10);
+                else if (typeof object.deviceCaptureTimestampMs === "number")
+                    message.deviceCaptureTimestampMs = object.deviceCaptureTimestampMs;
+                else if (typeof object.deviceCaptureTimestampMs === "object")
+                    message.deviceCaptureTimestampMs = new $util.LongBits(object.deviceCaptureTimestampMs.low >>> 0, object.deviceCaptureTimestampMs.high >>> 0).toNumber();
+            if (object.uploadTimestampMs != null)
+                if ($util.Long)
+                    (message.uploadTimestampMs = $util.Long.fromValue(object.uploadTimestampMs)).unsigned = false;
+                else if (typeof object.uploadTimestampMs === "string")
+                    message.uploadTimestampMs = parseInt(object.uploadTimestampMs, 10);
+                else if (typeof object.uploadTimestampMs === "number")
+                    message.uploadTimestampMs = object.uploadTimestampMs;
+                else if (typeof object.uploadTimestampMs === "object")
+                    message.uploadTimestampMs = new $util.LongBits(object.uploadTimestampMs.low >>> 0, object.uploadTimestampMs.high >>> 0).toNumber();
+            if (object.parentMediaId != null)
+                message.parentMediaId = String(object.parentMediaId);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MediaItem message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MediaItem
+         * @static
+         * @param {server.MediaItem} message MediaItem
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MediaItem.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.publisherUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.publisherUid = options.longs === String ? "0" : 0;
+                object.publisherName = "";
+                object.publisherUsername = "";
+                object.albumId = "";
+                if (options.bytes === String)
+                    object.payload = "";
+                else {
+                    object.payload = [];
+                    if (options.bytes !== Array)
+                        object.payload = $util.newBuffer(object.payload);
+                }
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.deviceCaptureTimestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.deviceCaptureTimestampMs = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uploadTimestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uploadTimestampMs = options.longs === String ? "0" : 0;
+                object.parentMediaId = "";
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.publisherUid != null && message.hasOwnProperty("publisherUid"))
+                if (typeof message.publisherUid === "number")
+                    object.publisherUid = options.longs === String ? String(message.publisherUid) : message.publisherUid;
+                else
+                    object.publisherUid = options.longs === String ? $util.Long.prototype.toString.call(message.publisherUid) : options.longs === Number ? new $util.LongBits(message.publisherUid.low >>> 0, message.publisherUid.high >>> 0).toNumber() : message.publisherUid;
+            if (message.publisherName != null && message.hasOwnProperty("publisherName"))
+                object.publisherName = message.publisherName;
+            if (message.publisherUsername != null && message.hasOwnProperty("publisherUsername"))
+                object.publisherUsername = message.publisherUsername;
+            if (message.albumId != null && message.hasOwnProperty("albumId"))
+                object.albumId = message.albumId;
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                object.payload = options.bytes === String ? $util.base64.encode(message.payload, 0, message.payload.length) : options.bytes === Array ? Array.prototype.slice.call(message.payload) : message.payload;
+            if (message.deviceCaptureTimestampMs != null && message.hasOwnProperty("deviceCaptureTimestampMs"))
+                if (typeof message.deviceCaptureTimestampMs === "number")
+                    object.deviceCaptureTimestampMs = options.longs === String ? String(message.deviceCaptureTimestampMs) : message.deviceCaptureTimestampMs;
+                else
+                    object.deviceCaptureTimestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.deviceCaptureTimestampMs) : options.longs === Number ? new $util.LongBits(message.deviceCaptureTimestampMs.low >>> 0, message.deviceCaptureTimestampMs.high >>> 0).toNumber() : message.deviceCaptureTimestampMs;
+            if (message.uploadTimestampMs != null && message.hasOwnProperty("uploadTimestampMs"))
+                if (typeof message.uploadTimestampMs === "number")
+                    object.uploadTimestampMs = options.longs === String ? String(message.uploadTimestampMs) : message.uploadTimestampMs;
+                else
+                    object.uploadTimestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.uploadTimestampMs) : options.longs === Number ? new $util.LongBits(message.uploadTimestampMs.low >>> 0, message.uploadTimestampMs.high >>> 0).toNumber() : message.uploadTimestampMs;
+            if (message.parentMediaId != null && message.hasOwnProperty("parentMediaId"))
+                object.parentMediaId = message.parentMediaId;
+            return object;
+        };
+
+        /**
+         * Converts this MediaItem to JSON.
+         * @function toJSON
+         * @memberof server.MediaItem
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MediaItem.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return MediaItem;
+    })();
+
+    server.FriendshipRequest = (function() {
+
+        /**
+         * Properties of a FriendshipRequest.
+         * @memberof server
+         * @interface IFriendshipRequest
+         * @property {server.FriendshipRequest.Action|null} [action] FriendshipRequest action
+         * @property {number|Long|null} [uid] FriendshipRequest uid
+         */
+
+        /**
+         * Constructs a new FriendshipRequest.
+         * @memberof server
+         * @classdesc Represents a FriendshipRequest.
+         * @implements IFriendshipRequest
+         * @constructor
+         * @param {server.IFriendshipRequest=} [properties] Properties to set
+         */
+        function FriendshipRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FriendshipRequest action.
+         * @member {server.FriendshipRequest.Action} action
+         * @memberof server.FriendshipRequest
+         * @instance
+         */
+        FriendshipRequest.prototype.action = 0;
+
+        /**
+         * FriendshipRequest uid.
+         * @member {number|Long} uid
+         * @memberof server.FriendshipRequest
+         * @instance
+         */
+        FriendshipRequest.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new FriendshipRequest instance using the specified properties.
+         * @function create
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {server.IFriendshipRequest=} [properties] Properties to set
+         * @returns {server.FriendshipRequest} FriendshipRequest instance
+         */
+        FriendshipRequest.create = function create(properties) {
+            return new FriendshipRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FriendshipRequest message. Does not implicitly {@link server.FriendshipRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {server.IFriendshipRequest} message FriendshipRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendshipRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.uid);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FriendshipRequest message, length delimited. Does not implicitly {@link server.FriendshipRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {server.IFriendshipRequest} message FriendshipRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendshipRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FriendshipRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FriendshipRequest} FriendshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendshipRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FriendshipRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.uid = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FriendshipRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FriendshipRequest} FriendshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendshipRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FriendshipRequest message.
+         * @function verify
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FriendshipRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    break;
+                }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a FriendshipRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FriendshipRequest} FriendshipRequest
+         */
+        FriendshipRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FriendshipRequest)
+                return object;
+            var message = new $root.server.FriendshipRequest();
+            switch (object.action) {
+            case "ADD_FRIEND":
+            case 0:
+                message.action = 0;
+                break;
+            case "ACCEPT_FRIEND":
+            case 1:
+                message.action = 1;
+                break;
+            case "REMOVE_FRIEND":
+            case 2:
+                message.action = 2;
+                break;
+            case "BLOCK":
+            case 3:
+                message.action = 3;
+                break;
+            case "UNBLOCK":
+            case 4:
+                message.action = 4;
+                break;
+            case "REJECT_SUGGESTION":
+            case 5:
+                message.action = 5;
+                break;
+            }
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FriendshipRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FriendshipRequest
+         * @static
+         * @param {server.FriendshipRequest} message FriendshipRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FriendshipRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "ADD_FRIEND" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.FriendshipRequest.Action[message.action] : message.action;
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            return object;
+        };
+
+        /**
+         * Converts this FriendshipRequest to JSON.
+         * @function toJSON
+         * @memberof server.FriendshipRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FriendshipRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.FriendshipRequest.Action
+         * @enum {number}
+         * @property {number} ADD_FRIEND=0 ADD_FRIEND value
+         * @property {number} ACCEPT_FRIEND=1 ACCEPT_FRIEND value
+         * @property {number} REMOVE_FRIEND=2 REMOVE_FRIEND value
+         * @property {number} BLOCK=3 BLOCK value
+         * @property {number} UNBLOCK=4 UNBLOCK value
+         * @property {number} REJECT_SUGGESTION=5 REJECT_SUGGESTION value
+         */
+        FriendshipRequest.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ADD_FRIEND"] = 0;
+            values[valuesById[1] = "ACCEPT_FRIEND"] = 1;
+            values[valuesById[2] = "REMOVE_FRIEND"] = 2;
+            values[valuesById[3] = "BLOCK"] = 3;
+            values[valuesById[4] = "UNBLOCK"] = 4;
+            values[valuesById[5] = "REJECT_SUGGESTION"] = 5;
+            return values;
+        })();
+
+        return FriendshipRequest;
+    })();
+
+    server.FriendshipResponse = (function() {
+
+        /**
+         * Properties of a FriendshipResponse.
+         * @memberof server
+         * @interface IFriendshipResponse
+         * @property {server.FriendshipResponse.Result|null} [result] FriendshipResponse result
+         * @property {server.IHalloappUserProfile|null} [profile] FriendshipResponse profile
+         */
+
+        /**
+         * Constructs a new FriendshipResponse.
+         * @memberof server
+         * @classdesc Represents a FriendshipResponse.
+         * @implements IFriendshipResponse
+         * @constructor
+         * @param {server.IFriendshipResponse=} [properties] Properties to set
+         */
+        function FriendshipResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FriendshipResponse result.
+         * @member {server.FriendshipResponse.Result} result
+         * @memberof server.FriendshipResponse
+         * @instance
+         */
+        FriendshipResponse.prototype.result = 0;
+
+        /**
+         * FriendshipResponse profile.
+         * @member {server.IHalloappUserProfile|null|undefined} profile
+         * @memberof server.FriendshipResponse
+         * @instance
+         */
+        FriendshipResponse.prototype.profile = null;
+
+        /**
+         * Creates a new FriendshipResponse instance using the specified properties.
+         * @function create
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {server.IFriendshipResponse=} [properties] Properties to set
+         * @returns {server.FriendshipResponse} FriendshipResponse instance
+         */
+        FriendshipResponse.create = function create(properties) {
+            return new FriendshipResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FriendshipResponse message. Does not implicitly {@link server.FriendshipResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {server.IFriendshipResponse} message FriendshipResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendshipResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
+                $root.server.HalloappUserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FriendshipResponse message, length delimited. Does not implicitly {@link server.FriendshipResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {server.IFriendshipResponse} message FriendshipResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendshipResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FriendshipResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FriendshipResponse} FriendshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendshipResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FriendshipResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.profile = $root.server.HalloappUserProfile.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FriendshipResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FriendshipResponse} FriendshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendshipResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FriendshipResponse message.
+         * @function verify
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FriendshipResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.profile != null && message.hasOwnProperty("profile")) {
+                var error = $root.server.HalloappUserProfile.verify(message.profile);
+                if (error)
+                    return "profile." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a FriendshipResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FriendshipResponse} FriendshipResponse
+         */
+        FriendshipResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FriendshipResponse)
+                return object;
+            var message = new $root.server.FriendshipResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.profile != null) {
+                if (typeof object.profile !== "object")
+                    throw TypeError(".server.FriendshipResponse.profile: object expected");
+                message.profile = $root.server.HalloappUserProfile.fromObject(object.profile);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FriendshipResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FriendshipResponse
+         * @static
+         * @param {server.FriendshipResponse} message FriendshipResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FriendshipResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.profile = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.FriendshipResponse.Result[message.result] : message.result;
+            if (message.profile != null && message.hasOwnProperty("profile"))
+                object.profile = $root.server.HalloappUserProfile.toObject(message.profile, options);
+            return object;
+        };
+
+        /**
+         * Converts this FriendshipResponse to JSON.
+         * @function toJSON
+         * @memberof server.FriendshipResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FriendshipResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.FriendshipResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        FriendshipResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return FriendshipResponse;
+    })();
+
+    /**
+     * FriendshipStatus enum.
+     * @name server.FriendshipStatus
+     * @enum {number}
+     * @property {number} NONE_STATUS=0 NONE_STATUS value
+     * @property {number} INCOMING_PENDING=1 INCOMING_PENDING value
+     * @property {number} OUTGOING_PENDING=2 OUTGOING_PENDING value
+     * @property {number} FRIENDS=3 FRIENDS value
+     */
+    server.FriendshipStatus = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "NONE_STATUS"] = 0;
+        values[valuesById[1] = "INCOMING_PENDING"] = 1;
+        values[valuesById[2] = "OUTGOING_PENDING"] = 2;
+        values[valuesById[3] = "FRIENDS"] = 3;
+        return values;
+    })();
+
+    server.HalloappUserProfile = (function() {
+
+        /**
+         * Properties of a HalloappUserProfile.
+         * @memberof server
+         * @interface IHalloappUserProfile
+         * @property {number|Long|null} [uid] HalloappUserProfile uid
+         * @property {string|null} [username] HalloappUserProfile username
+         * @property {string|null} [name] HalloappUserProfile name
+         * @property {string|null} [avatarId] HalloappUserProfile avatarId
+         * @property {server.FriendshipStatus|null} [status] HalloappUserProfile status
+         * @property {boolean|null} [blocked] HalloappUserProfile blocked
+         */
+
+        /**
+         * Constructs a new HalloappUserProfile.
+         * @memberof server
+         * @classdesc Represents a HalloappUserProfile.
+         * @implements IHalloappUserProfile
+         * @constructor
+         * @param {server.IHalloappUserProfile=} [properties] Properties to set
+         */
+        function HalloappUserProfile(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HalloappUserProfile uid.
+         * @member {number|Long} uid
+         * @memberof server.HalloappUserProfile
+         * @instance
+         */
+        HalloappUserProfile.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * HalloappUserProfile username.
+         * @member {string} username
+         * @memberof server.HalloappUserProfile
+         * @instance
+         */
+        HalloappUserProfile.prototype.username = "";
+
+        /**
+         * HalloappUserProfile name.
+         * @member {string} name
+         * @memberof server.HalloappUserProfile
+         * @instance
+         */
+        HalloappUserProfile.prototype.name = "";
+
+        /**
+         * HalloappUserProfile avatarId.
+         * @member {string} avatarId
+         * @memberof server.HalloappUserProfile
+         * @instance
+         */
+        HalloappUserProfile.prototype.avatarId = "";
+
+        /**
+         * HalloappUserProfile status.
+         * @member {server.FriendshipStatus} status
+         * @memberof server.HalloappUserProfile
+         * @instance
+         */
+        HalloappUserProfile.prototype.status = 0;
+
+        /**
+         * HalloappUserProfile blocked.
+         * @member {boolean} blocked
+         * @memberof server.HalloappUserProfile
+         * @instance
+         */
+        HalloappUserProfile.prototype.blocked = false;
+
+        /**
+         * Creates a new HalloappUserProfile instance using the specified properties.
+         * @function create
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {server.IHalloappUserProfile=} [properties] Properties to set
+         * @returns {server.HalloappUserProfile} HalloappUserProfile instance
+         */
+        HalloappUserProfile.create = function create(properties) {
+            return new HalloappUserProfile(properties);
+        };
+
+        /**
+         * Encodes the specified HalloappUserProfile message. Does not implicitly {@link server.HalloappUserProfile.verify|verify} messages.
+         * @function encode
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {server.IHalloappUserProfile} message HalloappUserProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappUserProfile.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.uid);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
+            if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.avatarId);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.status);
+            if (message.blocked != null && Object.hasOwnProperty.call(message, "blocked"))
+                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.blocked);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HalloappUserProfile message, length delimited. Does not implicitly {@link server.HalloappUserProfile.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {server.IHalloappUserProfile} message HalloappUserProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappUserProfile.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HalloappUserProfile message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HalloappUserProfile} HalloappUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappUserProfile.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HalloappUserProfile();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.int64();
+                    break;
+                case 2:
+                    message.username = reader.string();
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                case 4:
+                    message.avatarId = reader.string();
+                    break;
+                case 5:
+                    message.status = reader.int32();
+                    break;
+                case 6:
+                    message.blocked = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HalloappUserProfile message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HalloappUserProfile} HalloappUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappUserProfile.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HalloappUserProfile message.
+         * @function verify
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HalloappUserProfile.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                if (!$util.isString(message.avatarId))
+                    return "avatarId: string expected";
+            if (message.status != null && message.hasOwnProperty("status"))
+                switch (message.status) {
+                default:
+                    return "status: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.blocked != null && message.hasOwnProperty("blocked"))
+                if (typeof message.blocked !== "boolean")
+                    return "blocked: boolean expected";
+            return null;
+        };
+
+        /**
+         * Creates a HalloappUserProfile message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HalloappUserProfile} HalloappUserProfile
+         */
+        HalloappUserProfile.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HalloappUserProfile)
+                return object;
+            var message = new $root.server.HalloappUserProfile();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.avatarId != null)
+                message.avatarId = String(object.avatarId);
+            switch (object.status) {
+            case "NONE_STATUS":
+            case 0:
+                message.status = 0;
+                break;
+            case "INCOMING_PENDING":
+            case 1:
+                message.status = 1;
+                break;
+            case "OUTGOING_PENDING":
+            case 2:
+                message.status = 2;
+                break;
+            case "FRIENDS":
+            case 3:
+                message.status = 3;
+                break;
+            }
+            if (object.blocked != null)
+                message.blocked = Boolean(object.blocked);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HalloappUserProfile message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HalloappUserProfile
+         * @static
+         * @param {server.HalloappUserProfile} message HalloappUserProfile
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HalloappUserProfile.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+                object.username = "";
+                object.name = "";
+                object.avatarId = "";
+                object.status = options.enums === String ? "NONE_STATUS" : 0;
+                object.blocked = false;
+            }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                object.avatarId = message.avatarId;
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = options.enums === String ? $root.server.FriendshipStatus[message.status] : message.status;
+            if (message.blocked != null && message.hasOwnProperty("blocked"))
+                object.blocked = message.blocked;
+            return object;
+        };
+
+        /**
+         * Converts this HalloappUserProfile to JSON.
+         * @function toJSON
+         * @memberof server.HalloappUserProfile
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HalloappUserProfile.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return HalloappUserProfile;
+    })();
+
+    server.HalloappProfileUpdate = (function() {
+
+        /**
+         * Properties of a HalloappProfileUpdate.
+         * @memberof server
+         * @interface IHalloappProfileUpdate
+         * @property {server.HalloappProfileUpdate.Type|null} [type] HalloappProfileUpdate type
+         * @property {server.IHalloappUserProfile|null} [profile] HalloappProfileUpdate profile
+         */
+
+        /**
+         * Constructs a new HalloappProfileUpdate.
+         * @memberof server
+         * @classdesc Represents a HalloappProfileUpdate.
+         * @implements IHalloappProfileUpdate
+         * @constructor
+         * @param {server.IHalloappProfileUpdate=} [properties] Properties to set
+         */
+        function HalloappProfileUpdate(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HalloappProfileUpdate type.
+         * @member {server.HalloappProfileUpdate.Type} type
+         * @memberof server.HalloappProfileUpdate
+         * @instance
+         */
+        HalloappProfileUpdate.prototype.type = 0;
+
+        /**
+         * HalloappProfileUpdate profile.
+         * @member {server.IHalloappUserProfile|null|undefined} profile
+         * @memberof server.HalloappProfileUpdate
+         * @instance
+         */
+        HalloappProfileUpdate.prototype.profile = null;
+
+        /**
+         * Creates a new HalloappProfileUpdate instance using the specified properties.
+         * @function create
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {server.IHalloappProfileUpdate=} [properties] Properties to set
+         * @returns {server.HalloappProfileUpdate} HalloappProfileUpdate instance
+         */
+        HalloappProfileUpdate.create = function create(properties) {
+            return new HalloappProfileUpdate(properties);
+        };
+
+        /**
+         * Encodes the specified HalloappProfileUpdate message. Does not implicitly {@link server.HalloappProfileUpdate.verify|verify} messages.
+         * @function encode
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {server.IHalloappProfileUpdate} message HalloappProfileUpdate message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappProfileUpdate.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
+                $root.server.HalloappUserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HalloappProfileUpdate message, length delimited. Does not implicitly {@link server.HalloappProfileUpdate.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {server.IHalloappProfileUpdate} message HalloappProfileUpdate message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappProfileUpdate.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HalloappProfileUpdate message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HalloappProfileUpdate} HalloappProfileUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappProfileUpdate.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HalloappProfileUpdate();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.type = reader.int32();
+                    break;
+                case 2:
+                    message.profile = $root.server.HalloappUserProfile.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HalloappProfileUpdate message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HalloappProfileUpdate} HalloappProfileUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappProfileUpdate.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HalloappProfileUpdate message.
+         * @function verify
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HalloappProfileUpdate.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.profile != null && message.hasOwnProperty("profile")) {
+                var error = $root.server.HalloappUserProfile.verify(message.profile);
+                if (error)
+                    return "profile." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a HalloappProfileUpdate message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HalloappProfileUpdate} HalloappProfileUpdate
+         */
+        HalloappProfileUpdate.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HalloappProfileUpdate)
+                return object;
+            var message = new $root.server.HalloappProfileUpdate();
+            switch (object.type) {
+            case "NORMAL":
+            case 0:
+                message.type = 0;
+                break;
+            case "FRIEND_NOTICE":
+            case 1:
+                message.type = 1;
+                break;
+            case "INCOMING_FRIEND_REQUEST":
+            case 2:
+                message.type = 2;
+                break;
+            }
+            if (object.profile != null) {
+                if (typeof object.profile !== "object")
+                    throw TypeError(".server.HalloappProfileUpdate.profile: object expected");
+                message.profile = $root.server.HalloappUserProfile.fromObject(object.profile);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HalloappProfileUpdate message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HalloappProfileUpdate
+         * @static
+         * @param {server.HalloappProfileUpdate} message HalloappProfileUpdate
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HalloappProfileUpdate.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.type = options.enums === String ? "NORMAL" : 0;
+                object.profile = null;
+            }
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.HalloappProfileUpdate.Type[message.type] : message.type;
+            if (message.profile != null && message.hasOwnProperty("profile"))
+                object.profile = $root.server.HalloappUserProfile.toObject(message.profile, options);
+            return object;
+        };
+
+        /**
+         * Converts this HalloappProfileUpdate to JSON.
+         * @function toJSON
+         * @memberof server.HalloappProfileUpdate
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HalloappProfileUpdate.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.HalloappProfileUpdate.Type
+         * @enum {number}
+         * @property {number} NORMAL=0 NORMAL value
+         * @property {number} FRIEND_NOTICE=1 FRIEND_NOTICE value
+         * @property {number} INCOMING_FRIEND_REQUEST=2 INCOMING_FRIEND_REQUEST value
+         */
+        HalloappProfileUpdate.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "NORMAL"] = 0;
+            values[valuesById[1] = "FRIEND_NOTICE"] = 1;
+            values[valuesById[2] = "INCOMING_FRIEND_REQUEST"] = 2;
+            return values;
+        })();
+
+        return HalloappProfileUpdate;
+    })();
+
+    server.HalloappSearchRequest = (function() {
+
+        /**
+         * Properties of a HalloappSearchRequest.
+         * @memberof server
+         * @interface IHalloappSearchRequest
+         * @property {string|null} [usernameString] HalloappSearchRequest usernameString
+         */
+
+        /**
+         * Constructs a new HalloappSearchRequest.
+         * @memberof server
+         * @classdesc Represents a HalloappSearchRequest.
+         * @implements IHalloappSearchRequest
+         * @constructor
+         * @param {server.IHalloappSearchRequest=} [properties] Properties to set
+         */
+        function HalloappSearchRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HalloappSearchRequest usernameString.
+         * @member {string} usernameString
+         * @memberof server.HalloappSearchRequest
+         * @instance
+         */
+        HalloappSearchRequest.prototype.usernameString = "";
+
+        /**
+         * Creates a new HalloappSearchRequest instance using the specified properties.
+         * @function create
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {server.IHalloappSearchRequest=} [properties] Properties to set
+         * @returns {server.HalloappSearchRequest} HalloappSearchRequest instance
+         */
+        HalloappSearchRequest.create = function create(properties) {
+            return new HalloappSearchRequest(properties);
+        };
+
+        /**
+         * Encodes the specified HalloappSearchRequest message. Does not implicitly {@link server.HalloappSearchRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {server.IHalloappSearchRequest} message HalloappSearchRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappSearchRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.usernameString != null && Object.hasOwnProperty.call(message, "usernameString"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.usernameString);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HalloappSearchRequest message, length delimited. Does not implicitly {@link server.HalloappSearchRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {server.IHalloappSearchRequest} message HalloappSearchRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappSearchRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HalloappSearchRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HalloappSearchRequest} HalloappSearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappSearchRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HalloappSearchRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.usernameString = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HalloappSearchRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HalloappSearchRequest} HalloappSearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappSearchRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HalloappSearchRequest message.
+         * @function verify
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HalloappSearchRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.usernameString != null && message.hasOwnProperty("usernameString"))
+                if (!$util.isString(message.usernameString))
+                    return "usernameString: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a HalloappSearchRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HalloappSearchRequest} HalloappSearchRequest
+         */
+        HalloappSearchRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HalloappSearchRequest)
+                return object;
+            var message = new $root.server.HalloappSearchRequest();
+            if (object.usernameString != null)
+                message.usernameString = String(object.usernameString);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HalloappSearchRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HalloappSearchRequest
+         * @static
+         * @param {server.HalloappSearchRequest} message HalloappSearchRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HalloappSearchRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.usernameString = "";
+            if (message.usernameString != null && message.hasOwnProperty("usernameString"))
+                object.usernameString = message.usernameString;
+            return object;
+        };
+
+        /**
+         * Converts this HalloappSearchRequest to JSON.
+         * @function toJSON
+         * @memberof server.HalloappSearchRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HalloappSearchRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return HalloappSearchRequest;
+    })();
+
+    server.HalloappSearchResponse = (function() {
+
+        /**
+         * Properties of a HalloappSearchResponse.
+         * @memberof server
+         * @interface IHalloappSearchResponse
+         * @property {server.HalloappSearchResponse.Result|null} [result] HalloappSearchResponse result
+         * @property {Array.<server.IHalloappUserProfile>|null} [searchResult] HalloappSearchResponse searchResult
+         */
+
+        /**
+         * Constructs a new HalloappSearchResponse.
+         * @memberof server
+         * @classdesc Represents a HalloappSearchResponse.
+         * @implements IHalloappSearchResponse
+         * @constructor
+         * @param {server.IHalloappSearchResponse=} [properties] Properties to set
+         */
+        function HalloappSearchResponse(properties) {
+            this.searchResult = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HalloappSearchResponse result.
+         * @member {server.HalloappSearchResponse.Result} result
+         * @memberof server.HalloappSearchResponse
+         * @instance
+         */
+        HalloappSearchResponse.prototype.result = 0;
+
+        /**
+         * HalloappSearchResponse searchResult.
+         * @member {Array.<server.IHalloappUserProfile>} searchResult
+         * @memberof server.HalloappSearchResponse
+         * @instance
+         */
+        HalloappSearchResponse.prototype.searchResult = $util.emptyArray;
+
+        /**
+         * Creates a new HalloappSearchResponse instance using the specified properties.
+         * @function create
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {server.IHalloappSearchResponse=} [properties] Properties to set
+         * @returns {server.HalloappSearchResponse} HalloappSearchResponse instance
+         */
+        HalloappSearchResponse.create = function create(properties) {
+            return new HalloappSearchResponse(properties);
+        };
+
+        /**
+         * Encodes the specified HalloappSearchResponse message. Does not implicitly {@link server.HalloappSearchResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {server.IHalloappSearchResponse} message HalloappSearchResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappSearchResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.searchResult != null && message.searchResult.length)
+                for (var i = 0; i < message.searchResult.length; ++i)
+                    $root.server.HalloappUserProfile.encode(message.searchResult[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HalloappSearchResponse message, length delimited. Does not implicitly {@link server.HalloappSearchResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {server.IHalloappSearchResponse} message HalloappSearchResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappSearchResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HalloappSearchResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HalloappSearchResponse} HalloappSearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappSearchResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HalloappSearchResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    if (!(message.searchResult && message.searchResult.length))
+                        message.searchResult = [];
+                    message.searchResult.push($root.server.HalloappUserProfile.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HalloappSearchResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HalloappSearchResponse} HalloappSearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappSearchResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HalloappSearchResponse message.
+         * @function verify
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HalloappSearchResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.searchResult != null && message.hasOwnProperty("searchResult")) {
+                if (!Array.isArray(message.searchResult))
+                    return "searchResult: array expected";
+                for (var i = 0; i < message.searchResult.length; ++i) {
+                    var error = $root.server.HalloappUserProfile.verify(message.searchResult[i]);
+                    if (error)
+                        return "searchResult." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a HalloappSearchResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HalloappSearchResponse} HalloappSearchResponse
+         */
+        HalloappSearchResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HalloappSearchResponse)
+                return object;
+            var message = new $root.server.HalloappSearchResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.searchResult) {
+                if (!Array.isArray(object.searchResult))
+                    throw TypeError(".server.HalloappSearchResponse.searchResult: array expected");
+                message.searchResult = [];
+                for (var i = 0; i < object.searchResult.length; ++i) {
+                    if (typeof object.searchResult[i] !== "object")
+                        throw TypeError(".server.HalloappSearchResponse.searchResult: object expected");
+                    message.searchResult[i] = $root.server.HalloappUserProfile.fromObject(object.searchResult[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HalloappSearchResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HalloappSearchResponse
+         * @static
+         * @param {server.HalloappSearchResponse} message HalloappSearchResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HalloappSearchResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.searchResult = [];
+            if (options.defaults)
+                object.result = options.enums === String ? "OK" : 0;
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.HalloappSearchResponse.Result[message.result] : message.result;
+            if (message.searchResult && message.searchResult.length) {
+                object.searchResult = [];
+                for (var j = 0; j < message.searchResult.length; ++j)
+                    object.searchResult[j] = $root.server.HalloappUserProfile.toObject(message.searchResult[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this HalloappSearchResponse to JSON.
+         * @function toJSON
+         * @memberof server.HalloappSearchResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HalloappSearchResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.HalloappSearchResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        HalloappSearchResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return HalloappSearchResponse;
+    })();
+
+    server.FriendListRequest = (function() {
+
+        /**
+         * Properties of a FriendListRequest.
+         * @memberof server
+         * @interface IFriendListRequest
+         * @property {server.FriendListRequest.Action|null} [action] FriendListRequest action
+         * @property {string|null} [cursor] FriendListRequest cursor
+         */
+
+        /**
+         * Constructs a new FriendListRequest.
+         * @memberof server
+         * @classdesc Represents a FriendListRequest.
+         * @implements IFriendListRequest
+         * @constructor
+         * @param {server.IFriendListRequest=} [properties] Properties to set
+         */
+        function FriendListRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FriendListRequest action.
+         * @member {server.FriendListRequest.Action} action
+         * @memberof server.FriendListRequest
+         * @instance
+         */
+        FriendListRequest.prototype.action = 0;
+
+        /**
+         * FriendListRequest cursor.
+         * @member {string} cursor
+         * @memberof server.FriendListRequest
+         * @instance
+         */
+        FriendListRequest.prototype.cursor = "";
+
+        /**
+         * Creates a new FriendListRequest instance using the specified properties.
+         * @function create
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {server.IFriendListRequest=} [properties] Properties to set
+         * @returns {server.FriendListRequest} FriendListRequest instance
+         */
+        FriendListRequest.create = function create(properties) {
+            return new FriendListRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FriendListRequest message. Does not implicitly {@link server.FriendListRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {server.IFriendListRequest} message FriendListRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendListRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.cursor);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FriendListRequest message, length delimited. Does not implicitly {@link server.FriendListRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {server.IFriendListRequest} message FriendListRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendListRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FriendListRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FriendListRequest} FriendListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendListRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FriendListRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.cursor = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FriendListRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FriendListRequest} FriendListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendListRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FriendListRequest message.
+         * @function verify
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FriendListRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                if (!$util.isString(message.cursor))
+                    return "cursor: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a FriendListRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FriendListRequest} FriendListRequest
+         */
+        FriendListRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FriendListRequest)
+                return object;
+            var message = new $root.server.FriendListRequest();
+            switch (object.action) {
+            case "GET_FRIENDS":
+            case 0:
+                message.action = 0;
+                break;
+            case "GET_INCOMING_PENDING":
+            case 1:
+                message.action = 1;
+                break;
+            case "GET_OUTGOING_PENDING":
+            case 2:
+                message.action = 2;
+                break;
+            case "GET_SUGGESTIONS":
+            case 3:
+                message.action = 3;
+                break;
+            }
+            if (object.cursor != null)
+                message.cursor = String(object.cursor);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FriendListRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FriendListRequest
+         * @static
+         * @param {server.FriendListRequest} message FriendListRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FriendListRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "GET_FRIENDS" : 0;
+                object.cursor = "";
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.FriendListRequest.Action[message.action] : message.action;
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                object.cursor = message.cursor;
+            return object;
+        };
+
+        /**
+         * Converts this FriendListRequest to JSON.
+         * @function toJSON
+         * @memberof server.FriendListRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FriendListRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.FriendListRequest.Action
+         * @enum {number}
+         * @property {number} GET_FRIENDS=0 GET_FRIENDS value
+         * @property {number} GET_INCOMING_PENDING=1 GET_INCOMING_PENDING value
+         * @property {number} GET_OUTGOING_PENDING=2 GET_OUTGOING_PENDING value
+         * @property {number} GET_SUGGESTIONS=3 GET_SUGGESTIONS value
+         */
+        FriendListRequest.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "GET_FRIENDS"] = 0;
+            values[valuesById[1] = "GET_INCOMING_PENDING"] = 1;
+            values[valuesById[2] = "GET_OUTGOING_PENDING"] = 2;
+            values[valuesById[3] = "GET_SUGGESTIONS"] = 3;
+            return values;
+        })();
+
+        return FriendListRequest;
+    })();
+
+    server.FriendProfile = (function() {
+
+        /**
+         * Properties of a FriendProfile.
+         * @memberof server
+         * @interface IFriendProfile
+         * @property {server.IHalloappUserProfile|null} [userProfile] FriendProfile userProfile
+         * @property {server.FriendProfile.Reason|null} [reason] FriendProfile reason
+         * @property {number|null} [rank] FriendProfile rank
+         */
+
+        /**
+         * Constructs a new FriendProfile.
+         * @memberof server
+         * @classdesc Represents a FriendProfile.
+         * @implements IFriendProfile
+         * @constructor
+         * @param {server.IFriendProfile=} [properties] Properties to set
+         */
+        function FriendProfile(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FriendProfile userProfile.
+         * @member {server.IHalloappUserProfile|null|undefined} userProfile
+         * @memberof server.FriendProfile
+         * @instance
+         */
+        FriendProfile.prototype.userProfile = null;
+
+        /**
+         * FriendProfile reason.
+         * @member {server.FriendProfile.Reason} reason
+         * @memberof server.FriendProfile
+         * @instance
+         */
+        FriendProfile.prototype.reason = 0;
+
+        /**
+         * FriendProfile rank.
+         * @member {number} rank
+         * @memberof server.FriendProfile
+         * @instance
+         */
+        FriendProfile.prototype.rank = 0;
+
+        /**
+         * Creates a new FriendProfile instance using the specified properties.
+         * @function create
+         * @memberof server.FriendProfile
+         * @static
+         * @param {server.IFriendProfile=} [properties] Properties to set
+         * @returns {server.FriendProfile} FriendProfile instance
+         */
+        FriendProfile.create = function create(properties) {
+            return new FriendProfile(properties);
+        };
+
+        /**
+         * Encodes the specified FriendProfile message. Does not implicitly {@link server.FriendProfile.verify|verify} messages.
+         * @function encode
+         * @memberof server.FriendProfile
+         * @static
+         * @param {server.IFriendProfile} message FriendProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendProfile.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userProfile != null && Object.hasOwnProperty.call(message, "userProfile"))
+                $root.server.HalloappUserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.rank != null && Object.hasOwnProperty.call(message, "rank"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.rank);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FriendProfile message, length delimited. Does not implicitly {@link server.FriendProfile.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FriendProfile
+         * @static
+         * @param {server.IFriendProfile} message FriendProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendProfile.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FriendProfile message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FriendProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FriendProfile} FriendProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendProfile.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FriendProfile();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.userProfile = $root.server.HalloappUserProfile.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.rank = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FriendProfile message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FriendProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FriendProfile} FriendProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendProfile.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FriendProfile message.
+         * @function verify
+         * @memberof server.FriendProfile
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FriendProfile.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userProfile != null && message.hasOwnProperty("userProfile")) {
+                var error = $root.server.HalloappUserProfile.verify(message.userProfile);
+                if (error)
+                    return "userProfile." + error;
+            }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.rank != null && message.hasOwnProperty("rank"))
+                if (!$util.isInteger(message.rank))
+                    return "rank: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a FriendProfile message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FriendProfile
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FriendProfile} FriendProfile
+         */
+        FriendProfile.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FriendProfile)
+                return object;
+            var message = new $root.server.FriendProfile();
+            if (object.userProfile != null) {
+                if (typeof object.userProfile !== "object")
+                    throw TypeError(".server.FriendProfile.userProfile: object expected");
+                message.userProfile = $root.server.HalloappUserProfile.fromObject(object.userProfile);
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "DIRECT_CONTACT":
+            case 1:
+                message.reason = 1;
+                break;
+            case "INCOMING_PENDING":
+            case 2:
+                message.reason = 2;
+                break;
+            case "FRIENDS_OF_FRIENDS":
+            case 3:
+                message.reason = 3;
+                break;
+            }
+            if (object.rank != null)
+                message.rank = object.rank | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FriendProfile message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FriendProfile
+         * @static
+         * @param {server.FriendProfile} message FriendProfile
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FriendProfile.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.userProfile = null;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                object.rank = 0;
+            }
+            if (message.userProfile != null && message.hasOwnProperty("userProfile"))
+                object.userProfile = $root.server.HalloappUserProfile.toObject(message.userProfile, options);
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.FriendProfile.Reason[message.reason] : message.reason;
+            if (message.rank != null && message.hasOwnProperty("rank"))
+                object.rank = message.rank;
+            return object;
+        };
+
+        /**
+         * Converts this FriendProfile to JSON.
+         * @function toJSON
+         * @memberof server.FriendProfile
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FriendProfile.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Reason enum.
+         * @name server.FriendProfile.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} DIRECT_CONTACT=1 DIRECT_CONTACT value
+         * @property {number} INCOMING_PENDING=2 INCOMING_PENDING value
+         * @property {number} FRIENDS_OF_FRIENDS=3 FRIENDS_OF_FRIENDS value
+         */
+        FriendProfile.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "DIRECT_CONTACT"] = 1;
+            values[valuesById[2] = "INCOMING_PENDING"] = 2;
+            values[valuesById[3] = "FRIENDS_OF_FRIENDS"] = 3;
+            return values;
+        })();
+
+        return FriendProfile;
+    })();
+
+    server.FriendListResponse = (function() {
+
+        /**
+         * Properties of a FriendListResponse.
+         * @memberof server
+         * @interface IFriendListResponse
+         * @property {server.FriendListResponse.Result|null} [result] FriendListResponse result
+         * @property {string|null} [cursor] FriendListResponse cursor
+         * @property {Array.<server.IFriendProfile>|null} [friendProfiles] FriendListResponse friendProfiles
+         */
+
+        /**
+         * Constructs a new FriendListResponse.
+         * @memberof server
+         * @classdesc Represents a FriendListResponse.
+         * @implements IFriendListResponse
+         * @constructor
+         * @param {server.IFriendListResponse=} [properties] Properties to set
+         */
+        function FriendListResponse(properties) {
+            this.friendProfiles = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FriendListResponse result.
+         * @member {server.FriendListResponse.Result} result
+         * @memberof server.FriendListResponse
+         * @instance
+         */
+        FriendListResponse.prototype.result = 0;
+
+        /**
+         * FriendListResponse cursor.
+         * @member {string} cursor
+         * @memberof server.FriendListResponse
+         * @instance
+         */
+        FriendListResponse.prototype.cursor = "";
+
+        /**
+         * FriendListResponse friendProfiles.
+         * @member {Array.<server.IFriendProfile>} friendProfiles
+         * @memberof server.FriendListResponse
+         * @instance
+         */
+        FriendListResponse.prototype.friendProfiles = $util.emptyArray;
+
+        /**
+         * Creates a new FriendListResponse instance using the specified properties.
+         * @function create
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {server.IFriendListResponse=} [properties] Properties to set
+         * @returns {server.FriendListResponse} FriendListResponse instance
+         */
+        FriendListResponse.create = function create(properties) {
+            return new FriendListResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FriendListResponse message. Does not implicitly {@link server.FriendListResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {server.IFriendListResponse} message FriendListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendListResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.cursor);
+            if (message.friendProfiles != null && message.friendProfiles.length)
+                for (var i = 0; i < message.friendProfiles.length; ++i)
+                    $root.server.FriendProfile.encode(message.friendProfiles[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FriendListResponse message, length delimited. Does not implicitly {@link server.FriendListResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {server.IFriendListResponse} message FriendListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FriendListResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FriendListResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FriendListResponse} FriendListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendListResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FriendListResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.cursor = reader.string();
+                    break;
+                case 3:
+                    if (!(message.friendProfiles && message.friendProfiles.length))
+                        message.friendProfiles = [];
+                    message.friendProfiles.push($root.server.FriendProfile.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FriendListResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FriendListResponse} FriendListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FriendListResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FriendListResponse message.
+         * @function verify
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FriendListResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                if (!$util.isString(message.cursor))
+                    return "cursor: string expected";
+            if (message.friendProfiles != null && message.hasOwnProperty("friendProfiles")) {
+                if (!Array.isArray(message.friendProfiles))
+                    return "friendProfiles: array expected";
+                for (var i = 0; i < message.friendProfiles.length; ++i) {
+                    var error = $root.server.FriendProfile.verify(message.friendProfiles[i]);
+                    if (error)
+                        return "friendProfiles." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a FriendListResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FriendListResponse} FriendListResponse
+         */
+        FriendListResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FriendListResponse)
+                return object;
+            var message = new $root.server.FriendListResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.cursor != null)
+                message.cursor = String(object.cursor);
+            if (object.friendProfiles) {
+                if (!Array.isArray(object.friendProfiles))
+                    throw TypeError(".server.FriendListResponse.friendProfiles: array expected");
+                message.friendProfiles = [];
+                for (var i = 0; i < object.friendProfiles.length; ++i) {
+                    if (typeof object.friendProfiles[i] !== "object")
+                        throw TypeError(".server.FriendListResponse.friendProfiles: object expected");
+                    message.friendProfiles[i] = $root.server.FriendProfile.fromObject(object.friendProfiles[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FriendListResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FriendListResponse
+         * @static
+         * @param {server.FriendListResponse} message FriendListResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FriendListResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.friendProfiles = [];
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.cursor = "";
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.FriendListResponse.Result[message.result] : message.result;
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                object.cursor = message.cursor;
+            if (message.friendProfiles && message.friendProfiles.length) {
+                object.friendProfiles = [];
+                for (var j = 0; j < message.friendProfiles.length; ++j)
+                    object.friendProfiles[j] = $root.server.FriendProfile.toObject(message.friendProfiles[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FriendListResponse to JSON.
+         * @function toJSON
+         * @memberof server.FriendListResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FriendListResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.FriendListResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        FriendListResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return FriendListResponse;
     })();
 
     server.EventData = (function() {

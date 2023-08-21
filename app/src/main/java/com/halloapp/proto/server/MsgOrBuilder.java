@@ -641,6 +641,28 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.AiImage getAiImage();
 
   /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   * @return Whether the halloappProfileUpdate field is set.
+   */
+  boolean hasHalloappProfileUpdate();
+  /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   * @return The halloappProfileUpdate.
+   */
+  com.halloapp.proto.server.HalloappProfileUpdate getHalloappProfileUpdate();
+
+  /**
+   * <code>.server.Album album = 58;</code>
+   * @return Whether the album field is set.
+   */
+  boolean hasAlbum();
+  /**
+   * <code>.server.Album album = 58;</code>
+   * @return The album.
+   */
+  com.halloapp.proto.server.Album getAlbum();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

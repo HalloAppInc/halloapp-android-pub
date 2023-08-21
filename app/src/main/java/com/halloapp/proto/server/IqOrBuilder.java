@@ -816,5 +816,104 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.RegisterResponse getRegisterResponse();
 
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   * @return Whether the halloappSearchRequest field is set.
+   */
+  boolean hasHalloappSearchRequest();
+  /**
+   * <code>.server.HalloappSearchRequest halloapp_search_request = 76;</code>
+   * @return The halloappSearchRequest.
+   */
+  com.halloapp.proto.server.HalloappSearchRequest getHalloappSearchRequest();
+
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   * @return Whether the halloappSearchResponse field is set.
+   */
+  boolean hasHalloappSearchResponse();
+  /**
+   * <code>.server.HalloappSearchResponse halloapp_search_response = 77;</code>
+   * @return The halloappSearchResponse.
+   */
+  com.halloapp.proto.server.HalloappSearchResponse getHalloappSearchResponse();
+
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   * @return Whether the friendshipRequest field is set.
+   */
+  boolean hasFriendshipRequest();
+  /**
+   * <code>.server.FriendshipRequest friendship_request = 78;</code>
+   * @return The friendshipRequest.
+   */
+  com.halloapp.proto.server.FriendshipRequest getFriendshipRequest();
+
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   * @return Whether the friendshipResponse field is set.
+   */
+  boolean hasFriendshipResponse();
+  /**
+   * <code>.server.FriendshipResponse friendship_response = 79;</code>
+   * @return The friendshipResponse.
+   */
+  com.halloapp.proto.server.FriendshipResponse getFriendshipResponse();
+
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   * @return Whether the friendListRequest field is set.
+   */
+  boolean hasFriendListRequest();
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 80;</code>
+   * @return The friendListRequest.
+   */
+  com.halloapp.proto.server.FriendListRequest getFriendListRequest();
+
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   * @return Whether the friendListResponse field is set.
+   */
+  boolean hasFriendListResponse();
+  /**
+   * <code>.server.FriendListResponse friend_list_response = 81;</code>
+   * @return The friendListResponse.
+   */
+  com.halloapp.proto.server.FriendListResponse getFriendListResponse();
+
+  /**
+   * <code>.server.Album album = 82;</code>
+   * @return Whether the album field is set.
+   */
+  boolean hasAlbum();
+  /**
+   * <code>.server.Album album = 82;</code>
+   * @return The album.
+   */
+  com.halloapp.proto.server.Album getAlbum();
+
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   * @return Whether the albumResult field is set.
+   */
+  boolean hasAlbumResult();
+  /**
+   * <code>.server.AlbumResult album_result = 83;</code>
+   * @return The albumResult.
+   */
+  com.halloapp.proto.server.AlbumResult getAlbumResult();
+
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   * @return Whether the getAlbums field is set.
+   */
+  boolean hasGetAlbums();
+  /**
+   * <code>.server.GetAlbums get_albums = 84;</code>
+   * @return The getAlbums.
+   */
+  com.halloapp.proto.server.GetAlbums getGetAlbums();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

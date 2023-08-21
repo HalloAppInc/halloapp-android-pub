@@ -200,6 +200,8 @@ public  final class Msg extends
     PROFILE_UPDATE(54),
     PUBLIC_FEED_UPDATE(55),
     AI_IMAGE(56),
+    HALLOAPP_PROFILE_UPDATE(57),
+    ALBUM(58),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -265,6 +267,8 @@ public  final class Msg extends
         case 54: return PROFILE_UPDATE;
         case 55: return PUBLIC_FEED_UPDATE;
         case 56: return AI_IMAGE;
+        case 57: return HALLOAPP_PROFILE_UPDATE;
+        case 58: return ALBUM;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3042,6 +3046,106 @@ public  final class Msg extends
    */
   private void clearAiImage() {
     if (payloadCase_ == 56) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HALLOAPP_PROFILE_UPDATE_FIELD_NUMBER = 57;
+  /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   */
+  @java.lang.Override
+  public boolean hasHalloappProfileUpdate() {
+    return payloadCase_ == 57;
+  }
+  /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HalloappProfileUpdate getHalloappProfileUpdate() {
+    if (payloadCase_ == 57) {
+       return (com.halloapp.proto.server.HalloappProfileUpdate) payload_;
+    }
+    return com.halloapp.proto.server.HalloappProfileUpdate.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   */
+  private void setHalloappProfileUpdate(com.halloapp.proto.server.HalloappProfileUpdate value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 57;
+  }
+  /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   */
+  private void mergeHalloappProfileUpdate(com.halloapp.proto.server.HalloappProfileUpdate value) {
+    value.getClass();
+  if (payloadCase_ == 57 &&
+        payload_ != com.halloapp.proto.server.HalloappProfileUpdate.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HalloappProfileUpdate.newBuilder((com.halloapp.proto.server.HalloappProfileUpdate) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 57;
+  }
+  /**
+   * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+   */
+  private void clearHalloappProfileUpdate() {
+    if (payloadCase_ == 57) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ALBUM_FIELD_NUMBER = 58;
+  /**
+   * <code>.server.Album album = 58;</code>
+   */
+  @java.lang.Override
+  public boolean hasAlbum() {
+    return payloadCase_ == 58;
+  }
+  /**
+   * <code>.server.Album album = 58;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Album getAlbum() {
+    if (payloadCase_ == 58) {
+       return (com.halloapp.proto.server.Album) payload_;
+    }
+    return com.halloapp.proto.server.Album.getDefaultInstance();
+  }
+  /**
+   * <code>.server.Album album = 58;</code>
+   */
+  private void setAlbum(com.halloapp.proto.server.Album value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 58;
+  }
+  /**
+   * <code>.server.Album album = 58;</code>
+   */
+  private void mergeAlbum(com.halloapp.proto.server.Album value) {
+    value.getClass();
+  if (payloadCase_ == 58 &&
+        payload_ != com.halloapp.proto.server.Album.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.Album.newBuilder((com.halloapp.proto.server.Album) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 58;
+  }
+  /**
+   * <code>.server.Album album = 58;</code>
+   */
+  private void clearAlbum() {
+    if (payloadCase_ == 58) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5902,6 +6006,102 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+     */
+    @java.lang.Override
+    public boolean hasHalloappProfileUpdate() {
+      return instance.hasHalloappProfileUpdate();
+    }
+    /**
+     * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HalloappProfileUpdate getHalloappProfileUpdate() {
+      return instance.getHalloappProfileUpdate();
+    }
+    /**
+     * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+     */
+    public Builder setHalloappProfileUpdate(com.halloapp.proto.server.HalloappProfileUpdate value) {
+      copyOnWrite();
+      instance.setHalloappProfileUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+     */
+    public Builder setHalloappProfileUpdate(
+        com.halloapp.proto.server.HalloappProfileUpdate.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHalloappProfileUpdate(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+     */
+    public Builder mergeHalloappProfileUpdate(com.halloapp.proto.server.HalloappProfileUpdate value) {
+      copyOnWrite();
+      instance.mergeHalloappProfileUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileUpdate halloapp_profile_update = 57;</code>
+     */
+    public Builder clearHalloappProfileUpdate() {
+      copyOnWrite();
+      instance.clearHalloappProfileUpdate();
+      return this;
+    }
+
+    /**
+     * <code>.server.Album album = 58;</code>
+     */
+    @java.lang.Override
+    public boolean hasAlbum() {
+      return instance.hasAlbum();
+    }
+    /**
+     * <code>.server.Album album = 58;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Album getAlbum() {
+      return instance.getAlbum();
+    }
+    /**
+     * <code>.server.Album album = 58;</code>
+     */
+    public Builder setAlbum(com.halloapp.proto.server.Album value) {
+      copyOnWrite();
+      instance.setAlbum(value);
+      return this;
+    }
+    /**
+     * <code>.server.Album album = 58;</code>
+     */
+    public Builder setAlbum(
+        com.halloapp.proto.server.Album.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAlbum(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.Album album = 58;</code>
+     */
+    public Builder mergeAlbum(com.halloapp.proto.server.Album value) {
+      copyOnWrite();
+      instance.mergeAlbum(value);
+      return this;
+    }
+    /**
+     * <code>.server.Album album = 58;</code>
+     */
+    public Builder clearAlbum() {
+      copyOnWrite();
+      instance.clearAlbum();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -6031,16 +6231,18 @@ public  final class Msg extends
             com.halloapp.proto.server.ProfileUpdate.class,
             com.halloapp.proto.server.PublicFeedUpdate.class,
             com.halloapp.proto.server.AiImage.class,
+            com.halloapp.proto.server.HalloappProfileUpdate.class,
+            com.halloapp.proto.server.Album.class,
           };
           java.lang.String info =
-              "\u00008\u0001\u0000\u000188\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000:\u0001\u0000\u0001::\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "4<\u00005<\u00006<\u00007<\u00008<\u0000";
+              "4<\u00005<\u00006<\u00007<\u00008<\u00009<\u0000:<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
