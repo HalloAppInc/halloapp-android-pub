@@ -1386,8 +1386,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Verlopen moment"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Om Momenten voor 24 uur te zien, deel je je eigen Moment"</string>
+    <string name="share_moment_subtitle">"Momenten verlopen na 24 uur"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Verbinding verbreken…"</string>
