@@ -19,56 +19,120 @@ public  final class FriendshipRequest extends
   public enum Action
       implements com.google.protobuf.Internal.EnumLite {
     /**
+     * <pre>
+     * sending a friend request.
+     * </pre>
+     *
      * <code>ADD_FRIEND = 0;</code>
      */
     ADD_FRIEND(0),
     /**
+     * <pre>
+     * accepting the friend request.
+     * </pre>
+     *
      * <code>ACCEPT_FRIEND = 1;</code>
      */
     ACCEPT_FRIEND(1),
     /**
+     * <pre>
+     * remove the friend request after accepting.
+     * </pre>
+     *
      * <code>REMOVE_FRIEND = 2;</code>
      */
     REMOVE_FRIEND(2),
     /**
-     * <code>BLOCK = 3;</code>
+     * <pre>
+     * reject the friend request.
+     * </pre>
+     *
+     * <code>REJECT_FRIEND = 3;</code>
      */
-    BLOCK(3),
+    REJECT_FRIEND(3),
     /**
-     * <code>UNBLOCK = 4;</code>
+     * <pre>
+     * block the user.
+     * </pre>
+     *
+     * <code>BLOCK = 4;</code>
      */
-    UNBLOCK(4),
+    BLOCK(4),
     /**
-     * <code>REJECT_SUGGESTION = 5;</code>
+     * <pre>
+     * unblock user.
+     * </pre>
+     *
+     * <code>UNBLOCK = 5;</code>
      */
-    REJECT_SUGGESTION(5),
+    UNBLOCK(5),
+    /**
+     * <pre>
+     * reject friend suggestion.
+     * </pre>
+     *
+     * <code>REJECT_SUGGESTION = 6;</code>
+     */
+    REJECT_SUGGESTION(6),
     UNRECOGNIZED(-1),
     ;
 
     /**
+     * <pre>
+     * sending a friend request.
+     * </pre>
+     *
      * <code>ADD_FRIEND = 0;</code>
      */
     public static final int ADD_FRIEND_VALUE = 0;
     /**
+     * <pre>
+     * accepting the friend request.
+     * </pre>
+     *
      * <code>ACCEPT_FRIEND = 1;</code>
      */
     public static final int ACCEPT_FRIEND_VALUE = 1;
     /**
+     * <pre>
+     * remove the friend request after accepting.
+     * </pre>
+     *
      * <code>REMOVE_FRIEND = 2;</code>
      */
     public static final int REMOVE_FRIEND_VALUE = 2;
     /**
-     * <code>BLOCK = 3;</code>
+     * <pre>
+     * reject the friend request.
+     * </pre>
+     *
+     * <code>REJECT_FRIEND = 3;</code>
      */
-    public static final int BLOCK_VALUE = 3;
+    public static final int REJECT_FRIEND_VALUE = 3;
     /**
-     * <code>UNBLOCK = 4;</code>
+     * <pre>
+     * block the user.
+     * </pre>
+     *
+     * <code>BLOCK = 4;</code>
      */
-    public static final int UNBLOCK_VALUE = 4;
+    public static final int BLOCK_VALUE = 4;
     /**
-     * <code>REJECT_SUGGESTION = 5;</code>
+     * <pre>
+     * unblock user.
+     * </pre>
+     *
+     * <code>UNBLOCK = 5;</code>
      */
-    public static final int REJECT_SUGGESTION_VALUE = 5;
+    public static final int UNBLOCK_VALUE = 5;
+    /**
+     * <pre>
+     * reject friend suggestion.
+     * </pre>
+     *
+     * <code>REJECT_SUGGESTION = 6;</code>
+     */
+    public static final int REJECT_SUGGESTION_VALUE = 6;
 
 
     @java.lang.Override
@@ -95,9 +159,10 @@ public  final class FriendshipRequest extends
         case 0: return ADD_FRIEND;
         case 1: return ACCEPT_FRIEND;
         case 2: return REMOVE_FRIEND;
-        case 3: return BLOCK;
-        case 4: return UNBLOCK;
-        case 5: return REJECT_SUGGESTION;
+        case 3: return REJECT_FRIEND;
+        case 4: return BLOCK;
+        case 5: return UNBLOCK;
+        case 6: return REJECT_SUGGESTION;
         default: return null;
       }
     }

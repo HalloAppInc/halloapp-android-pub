@@ -27415,6 +27415,10 @@ $root.server = (function() {
          * @property {server.IAlbum|null} [album] Iq album
          * @property {server.IAlbumResult|null} [albumResult] Iq albumResult
          * @property {server.IGetAlbums|null} [getAlbums] Iq getAlbums
+         * @property {server.IHalloappProfileRequest|null} [halloappProfileRequest] Iq halloappProfileRequest
+         * @property {server.IHalloappProfileResult|null} [hallaoppProfileResult] Iq hallaoppProfileResult
+         * @property {server.IReverseGeocodeRequest|null} [reverseGeocodeRequest] Iq reverseGeocodeRequest
+         * @property {server.IReverseGeocodeResult|null} [reverseGeocodeResult] Iq reverseGeocodeResult
          */
 
         /**
@@ -28080,17 +28084,49 @@ $root.server = (function() {
          */
         Iq.prototype.getAlbums = null;
 
+        /**
+         * Iq halloappProfileRequest.
+         * @member {server.IHalloappProfileRequest|null|undefined} halloappProfileRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.halloappProfileRequest = null;
+
+        /**
+         * Iq hallaoppProfileResult.
+         * @member {server.IHalloappProfileResult|null|undefined} hallaoppProfileResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.hallaoppProfileResult = null;
+
+        /**
+         * Iq reverseGeocodeRequest.
+         * @member {server.IReverseGeocodeRequest|null|undefined} reverseGeocodeRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.reverseGeocodeRequest = null;
+
+        /**
+         * Iq reverseGeocodeResult.
+         * @member {server.IReverseGeocodeResult|null|undefined} reverseGeocodeResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.reverseGeocodeResult = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|"halloappSearchRequest"|"halloappSearchResponse"|"friendshipRequest"|"friendshipResponse"|"friendListRequest"|"friendListResponse"|"album"|"albumResult"|"getAlbums"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|"halloappSearchRequest"|"halloappSearchResponse"|"friendshipRequest"|"friendshipResponse"|"friendListRequest"|"friendListResponse"|"album"|"albumResult"|"getAlbums"|"halloappProfileRequest"|"hallaoppProfileResult"|"reverseGeocodeRequest"|"reverseGeocodeResult"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse", "registerRequest", "registerResponse", "halloappSearchRequest", "halloappSearchResponse", "friendshipRequest", "friendshipResponse", "friendListRequest", "friendListResponse", "album", "albumResult", "getAlbums"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse", "registerRequest", "registerResponse", "halloappSearchRequest", "halloappSearchResponse", "friendshipRequest", "friendshipResponse", "friendListRequest", "friendListResponse", "album", "albumResult", "getAlbums", "halloappProfileRequest", "hallaoppProfileResult", "reverseGeocodeRequest", "reverseGeocodeResult"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -28280,6 +28316,14 @@ $root.server = (function() {
                 $root.server.AlbumResult.encode(message.albumResult, writer.uint32(/* id 83, wireType 2 =*/666).fork()).ldelim();
             if (message.getAlbums != null && Object.hasOwnProperty.call(message, "getAlbums"))
                 $root.server.GetAlbums.encode(message.getAlbums, writer.uint32(/* id 84, wireType 2 =*/674).fork()).ldelim();
+            if (message.halloappProfileRequest != null && Object.hasOwnProperty.call(message, "halloappProfileRequest"))
+                $root.server.HalloappProfileRequest.encode(message.halloappProfileRequest, writer.uint32(/* id 85, wireType 2 =*/682).fork()).ldelim();
+            if (message.hallaoppProfileResult != null && Object.hasOwnProperty.call(message, "hallaoppProfileResult"))
+                $root.server.HalloappProfileResult.encode(message.hallaoppProfileResult, writer.uint32(/* id 86, wireType 2 =*/690).fork()).ldelim();
+            if (message.reverseGeocodeRequest != null && Object.hasOwnProperty.call(message, "reverseGeocodeRequest"))
+                $root.server.ReverseGeocodeRequest.encode(message.reverseGeocodeRequest, writer.uint32(/* id 87, wireType 2 =*/698).fork()).ldelim();
+            if (message.reverseGeocodeResult != null && Object.hasOwnProperty.call(message, "reverseGeocodeResult"))
+                $root.server.ReverseGeocodeResult.encode(message.reverseGeocodeResult, writer.uint32(/* id 88, wireType 2 =*/706).fork()).ldelim();
             return writer;
         };
 
@@ -28556,6 +28600,18 @@ $root.server = (function() {
                     break;
                 case 84:
                     message.getAlbums = $root.server.GetAlbums.decode(reader, reader.uint32());
+                    break;
+                case 85:
+                    message.halloappProfileRequest = $root.server.HalloappProfileRequest.decode(reader, reader.uint32());
+                    break;
+                case 86:
+                    message.hallaoppProfileResult = $root.server.HalloappProfileResult.decode(reader, reader.uint32());
+                    break;
+                case 87:
+                    message.reverseGeocodeRequest = $root.server.ReverseGeocodeRequest.decode(reader, reader.uint32());
+                    break;
+                case 88:
+                    message.reverseGeocodeResult = $root.server.ReverseGeocodeResult.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -29394,6 +29450,46 @@ $root.server = (function() {
                         return "getAlbums." + error;
                 }
             }
+            if (message.halloappProfileRequest != null && message.hasOwnProperty("halloappProfileRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HalloappProfileRequest.verify(message.halloappProfileRequest);
+                    if (error)
+                        return "halloappProfileRequest." + error;
+                }
+            }
+            if (message.hallaoppProfileResult != null && message.hasOwnProperty("hallaoppProfileResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HalloappProfileResult.verify(message.hallaoppProfileResult);
+                    if (error)
+                        return "hallaoppProfileResult." + error;
+                }
+            }
+            if (message.reverseGeocodeRequest != null && message.hasOwnProperty("reverseGeocodeRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ReverseGeocodeRequest.verify(message.reverseGeocodeRequest);
+                    if (error)
+                        return "reverseGeocodeRequest." + error;
+                }
+            }
+            if (message.reverseGeocodeResult != null && message.hasOwnProperty("reverseGeocodeResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ReverseGeocodeResult.verify(message.reverseGeocodeResult);
+                    if (error)
+                        return "reverseGeocodeResult." + error;
+                }
+            }
             return null;
         };
 
@@ -29824,6 +29920,26 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.getAlbums: object expected");
                 message.getAlbums = $root.server.GetAlbums.fromObject(object.getAlbums);
             }
+            if (object.halloappProfileRequest != null) {
+                if (typeof object.halloappProfileRequest !== "object")
+                    throw TypeError(".server.Iq.halloappProfileRequest: object expected");
+                message.halloappProfileRequest = $root.server.HalloappProfileRequest.fromObject(object.halloappProfileRequest);
+            }
+            if (object.hallaoppProfileResult != null) {
+                if (typeof object.hallaoppProfileResult !== "object")
+                    throw TypeError(".server.Iq.hallaoppProfileResult: object expected");
+                message.hallaoppProfileResult = $root.server.HalloappProfileResult.fromObject(object.hallaoppProfileResult);
+            }
+            if (object.reverseGeocodeRequest != null) {
+                if (typeof object.reverseGeocodeRequest !== "object")
+                    throw TypeError(".server.Iq.reverseGeocodeRequest: object expected");
+                message.reverseGeocodeRequest = $root.server.ReverseGeocodeRequest.fromObject(object.reverseGeocodeRequest);
+            }
+            if (object.reverseGeocodeResult != null) {
+                if (typeof object.reverseGeocodeResult !== "object")
+                    throw TypeError(".server.Iq.reverseGeocodeResult: object expected");
+                message.reverseGeocodeResult = $root.server.ReverseGeocodeResult.fromObject(object.reverseGeocodeResult);
+            }
             return message;
         };
 
@@ -30242,6 +30358,26 @@ $root.server = (function() {
                 object.getAlbums = $root.server.GetAlbums.toObject(message.getAlbums, options);
                 if (options.oneofs)
                     object.payload = "getAlbums";
+            }
+            if (message.halloappProfileRequest != null && message.hasOwnProperty("halloappProfileRequest")) {
+                object.halloappProfileRequest = $root.server.HalloappProfileRequest.toObject(message.halloappProfileRequest, options);
+                if (options.oneofs)
+                    object.payload = "halloappProfileRequest";
+            }
+            if (message.hallaoppProfileResult != null && message.hasOwnProperty("hallaoppProfileResult")) {
+                object.hallaoppProfileResult = $root.server.HalloappProfileResult.toObject(message.hallaoppProfileResult, options);
+                if (options.oneofs)
+                    object.payload = "hallaoppProfileResult";
+            }
+            if (message.reverseGeocodeRequest != null && message.hasOwnProperty("reverseGeocodeRequest")) {
+                object.reverseGeocodeRequest = $root.server.ReverseGeocodeRequest.toObject(message.reverseGeocodeRequest, options);
+                if (options.oneofs)
+                    object.payload = "reverseGeocodeRequest";
+            }
+            if (message.reverseGeocodeResult != null && message.hasOwnProperty("reverseGeocodeResult")) {
+                object.reverseGeocodeResult = $root.server.ReverseGeocodeResult.toObject(message.reverseGeocodeResult, options);
+                if (options.oneofs)
+                    object.payload = "reverseGeocodeResult";
             }
             return object;
         };
@@ -56469,6 +56605,7 @@ $root.server = (function() {
                 case 3:
                 case 4:
                 case 5:
+                case 6:
                     break;
                 }
             if (message.uid != null && message.hasOwnProperty("uid"))
@@ -56502,17 +56639,21 @@ $root.server = (function() {
             case 2:
                 message.action = 2;
                 break;
-            case "BLOCK":
+            case "REJECT_FRIEND":
             case 3:
                 message.action = 3;
                 break;
-            case "UNBLOCK":
+            case "BLOCK":
             case 4:
                 message.action = 4;
                 break;
-            case "REJECT_SUGGESTION":
+            case "UNBLOCK":
             case 5:
                 message.action = 5;
+                break;
+            case "REJECT_SUGGESTION":
+            case 6:
+                message.action = 6;
                 break;
             }
             if (object.uid != null)
@@ -56576,18 +56717,20 @@ $root.server = (function() {
          * @property {number} ADD_FRIEND=0 ADD_FRIEND value
          * @property {number} ACCEPT_FRIEND=1 ACCEPT_FRIEND value
          * @property {number} REMOVE_FRIEND=2 REMOVE_FRIEND value
-         * @property {number} BLOCK=3 BLOCK value
-         * @property {number} UNBLOCK=4 UNBLOCK value
-         * @property {number} REJECT_SUGGESTION=5 REJECT_SUGGESTION value
+         * @property {number} REJECT_FRIEND=3 REJECT_FRIEND value
+         * @property {number} BLOCK=4 BLOCK value
+         * @property {number} UNBLOCK=5 UNBLOCK value
+         * @property {number} REJECT_SUGGESTION=6 REJECT_SUGGESTION value
          */
         FriendshipRequest.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "ADD_FRIEND"] = 0;
             values[valuesById[1] = "ACCEPT_FRIEND"] = 1;
             values[valuesById[2] = "REMOVE_FRIEND"] = 2;
-            values[valuesById[3] = "BLOCK"] = 3;
-            values[valuesById[4] = "UNBLOCK"] = 4;
-            values[valuesById[5] = "REJECT_SUGGESTION"] = 5;
+            values[valuesById[3] = "REJECT_FRIEND"] = 3;
+            values[valuesById[4] = "BLOCK"] = 4;
+            values[valuesById[5] = "UNBLOCK"] = 5;
+            values[valuesById[6] = "REJECT_SUGGESTION"] = 6;
             return values;
         })();
 
@@ -57883,6 +58026,521 @@ $root.server = (function() {
         return HalloappSearchResponse;
     })();
 
+    server.HalloappProfileRequest = (function() {
+
+        /**
+         * Properties of a HalloappProfileRequest.
+         * @memberof server
+         * @interface IHalloappProfileRequest
+         * @property {number|Long|null} [uid] HalloappProfileRequest uid
+         * @property {string|null} [username] HalloappProfileRequest username
+         */
+
+        /**
+         * Constructs a new HalloappProfileRequest.
+         * @memberof server
+         * @classdesc Represents a HalloappProfileRequest.
+         * @implements IHalloappProfileRequest
+         * @constructor
+         * @param {server.IHalloappProfileRequest=} [properties] Properties to set
+         */
+        function HalloappProfileRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HalloappProfileRequest uid.
+         * @member {number|Long} uid
+         * @memberof server.HalloappProfileRequest
+         * @instance
+         */
+        HalloappProfileRequest.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * HalloappProfileRequest username.
+         * @member {string} username
+         * @memberof server.HalloappProfileRequest
+         * @instance
+         */
+        HalloappProfileRequest.prototype.username = "";
+
+        /**
+         * Creates a new HalloappProfileRequest instance using the specified properties.
+         * @function create
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {server.IHalloappProfileRequest=} [properties] Properties to set
+         * @returns {server.HalloappProfileRequest} HalloappProfileRequest instance
+         */
+        HalloappProfileRequest.create = function create(properties) {
+            return new HalloappProfileRequest(properties);
+        };
+
+        /**
+         * Encodes the specified HalloappProfileRequest message. Does not implicitly {@link server.HalloappProfileRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {server.IHalloappProfileRequest} message HalloappProfileRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappProfileRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.uid);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HalloappProfileRequest message, length delimited. Does not implicitly {@link server.HalloappProfileRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {server.IHalloappProfileRequest} message HalloappProfileRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappProfileRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HalloappProfileRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HalloappProfileRequest} HalloappProfileRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappProfileRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HalloappProfileRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.int64();
+                    break;
+                case 2:
+                    message.username = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HalloappProfileRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HalloappProfileRequest} HalloappProfileRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappProfileRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HalloappProfileRequest message.
+         * @function verify
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HalloappProfileRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a HalloappProfileRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HalloappProfileRequest} HalloappProfileRequest
+         */
+        HalloappProfileRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HalloappProfileRequest)
+                return object;
+            var message = new $root.server.HalloappProfileRequest();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            if (object.username != null)
+                message.username = String(object.username);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HalloappProfileRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HalloappProfileRequest
+         * @static
+         * @param {server.HalloappProfileRequest} message HalloappProfileRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HalloappProfileRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+                object.username = "";
+            }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            return object;
+        };
+
+        /**
+         * Converts this HalloappProfileRequest to JSON.
+         * @function toJSON
+         * @memberof server.HalloappProfileRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HalloappProfileRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return HalloappProfileRequest;
+    })();
+
+    server.HalloappProfileResult = (function() {
+
+        /**
+         * Properties of a HalloappProfileResult.
+         * @memberof server
+         * @interface IHalloappProfileResult
+         * @property {server.HalloappProfileResult.Result|null} [result] HalloappProfileResult result
+         * @property {server.HalloappProfileResult.Reason|null} [reason] HalloappProfileResult reason
+         * @property {server.IHalloappUserProfile|null} [profile] HalloappProfileResult profile
+         */
+
+        /**
+         * Constructs a new HalloappProfileResult.
+         * @memberof server
+         * @classdesc Represents a HalloappProfileResult.
+         * @implements IHalloappProfileResult
+         * @constructor
+         * @param {server.IHalloappProfileResult=} [properties] Properties to set
+         */
+        function HalloappProfileResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HalloappProfileResult result.
+         * @member {server.HalloappProfileResult.Result} result
+         * @memberof server.HalloappProfileResult
+         * @instance
+         */
+        HalloappProfileResult.prototype.result = 0;
+
+        /**
+         * HalloappProfileResult reason.
+         * @member {server.HalloappProfileResult.Reason} reason
+         * @memberof server.HalloappProfileResult
+         * @instance
+         */
+        HalloappProfileResult.prototype.reason = 0;
+
+        /**
+         * HalloappProfileResult profile.
+         * @member {server.IHalloappUserProfile|null|undefined} profile
+         * @memberof server.HalloappProfileResult
+         * @instance
+         */
+        HalloappProfileResult.prototype.profile = null;
+
+        /**
+         * Creates a new HalloappProfileResult instance using the specified properties.
+         * @function create
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {server.IHalloappProfileResult=} [properties] Properties to set
+         * @returns {server.HalloappProfileResult} HalloappProfileResult instance
+         */
+        HalloappProfileResult.create = function create(properties) {
+            return new HalloappProfileResult(properties);
+        };
+
+        /**
+         * Encodes the specified HalloappProfileResult message. Does not implicitly {@link server.HalloappProfileResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {server.IHalloappProfileResult} message HalloappProfileResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappProfileResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
+                $root.server.HalloappUserProfile.encode(message.profile, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HalloappProfileResult message, length delimited. Does not implicitly {@link server.HalloappProfileResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {server.IHalloappProfileResult} message HalloappProfileResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HalloappProfileResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HalloappProfileResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HalloappProfileResult} HalloappProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappProfileResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HalloappProfileResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.profile = $root.server.HalloappUserProfile.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HalloappProfileResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HalloappProfileResult} HalloappProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HalloappProfileResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HalloappProfileResult message.
+         * @function verify
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HalloappProfileResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.profile != null && message.hasOwnProperty("profile")) {
+                var error = $root.server.HalloappUserProfile.verify(message.profile);
+                if (error)
+                    return "profile." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a HalloappProfileResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HalloappProfileResult} HalloappProfileResult
+         */
+        HalloappProfileResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HalloappProfileResult)
+                return object;
+            var message = new $root.server.HalloappProfileResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "NO_USER":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            if (object.profile != null) {
+                if (typeof object.profile !== "object")
+                    throw TypeError(".server.HalloappProfileResult.profile: object expected");
+                message.profile = $root.server.HalloappUserProfile.fromObject(object.profile);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HalloappProfileResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HalloappProfileResult
+         * @static
+         * @param {server.HalloappProfileResult} message HalloappProfileResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HalloappProfileResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                object.profile = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.HalloappProfileResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.HalloappProfileResult.Reason[message.reason] : message.reason;
+            if (message.profile != null && message.hasOwnProperty("profile"))
+                object.profile = $root.server.HalloappUserProfile.toObject(message.profile, options);
+            return object;
+        };
+
+        /**
+         * Converts this HalloappProfileResult to JSON.
+         * @function toJSON
+         * @memberof server.HalloappProfileResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HalloappProfileResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.HalloappProfileResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        HalloappProfileResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.HalloappProfileResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} NO_USER=1 NO_USER value
+         */
+        HalloappProfileResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "NO_USER"] = 1;
+            return values;
+        })();
+
+        return HalloappProfileResult;
+    })();
+
     server.FriendListRequest = (function() {
 
         /**
@@ -58691,6 +59349,923 @@ $root.server = (function() {
         })();
 
         return FriendListResponse;
+    })();
+
+    server.ReverseGeocodeRequest = (function() {
+
+        /**
+         * Properties of a ReverseGeocodeRequest.
+         * @memberof server
+         * @interface IReverseGeocodeRequest
+         * @property {server.IGpsLocation|null} [location] ReverseGeocodeRequest location
+         */
+
+        /**
+         * Constructs a new ReverseGeocodeRequest.
+         * @memberof server
+         * @classdesc Represents a ReverseGeocodeRequest.
+         * @implements IReverseGeocodeRequest
+         * @constructor
+         * @param {server.IReverseGeocodeRequest=} [properties] Properties to set
+         */
+        function ReverseGeocodeRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ReverseGeocodeRequest location.
+         * @member {server.IGpsLocation|null|undefined} location
+         * @memberof server.ReverseGeocodeRequest
+         * @instance
+         */
+        ReverseGeocodeRequest.prototype.location = null;
+
+        /**
+         * Creates a new ReverseGeocodeRequest instance using the specified properties.
+         * @function create
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {server.IReverseGeocodeRequest=} [properties] Properties to set
+         * @returns {server.ReverseGeocodeRequest} ReverseGeocodeRequest instance
+         */
+        ReverseGeocodeRequest.create = function create(properties) {
+            return new ReverseGeocodeRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ReverseGeocodeRequest message. Does not implicitly {@link server.ReverseGeocodeRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {server.IReverseGeocodeRequest} message ReverseGeocodeRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ReverseGeocodeRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.location != null && Object.hasOwnProperty.call(message, "location"))
+                $root.server.GpsLocation.encode(message.location, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ReverseGeocodeRequest message, length delimited. Does not implicitly {@link server.ReverseGeocodeRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {server.IReverseGeocodeRequest} message ReverseGeocodeRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ReverseGeocodeRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ReverseGeocodeRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ReverseGeocodeRequest} ReverseGeocodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ReverseGeocodeRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ReverseGeocodeRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.location = $root.server.GpsLocation.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ReverseGeocodeRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ReverseGeocodeRequest} ReverseGeocodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ReverseGeocodeRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ReverseGeocodeRequest message.
+         * @function verify
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ReverseGeocodeRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.location != null && message.hasOwnProperty("location")) {
+                var error = $root.server.GpsLocation.verify(message.location);
+                if (error)
+                    return "location." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ReverseGeocodeRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ReverseGeocodeRequest} ReverseGeocodeRequest
+         */
+        ReverseGeocodeRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ReverseGeocodeRequest)
+                return object;
+            var message = new $root.server.ReverseGeocodeRequest();
+            if (object.location != null) {
+                if (typeof object.location !== "object")
+                    throw TypeError(".server.ReverseGeocodeRequest.location: object expected");
+                message.location = $root.server.GpsLocation.fromObject(object.location);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ReverseGeocodeRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ReverseGeocodeRequest
+         * @static
+         * @param {server.ReverseGeocodeRequest} message ReverseGeocodeRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ReverseGeocodeRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.location = null;
+            if (message.location != null && message.hasOwnProperty("location"))
+                object.location = $root.server.GpsLocation.toObject(message.location, options);
+            return object;
+        };
+
+        /**
+         * Converts this ReverseGeocodeRequest to JSON.
+         * @function toJSON
+         * @memberof server.ReverseGeocodeRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ReverseGeocodeRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ReverseGeocodeRequest;
+    })();
+
+    server.ReverseGeocodeLocation = (function() {
+
+        /**
+         * Properties of a ReverseGeocodeLocation.
+         * @memberof server
+         * @interface IReverseGeocodeLocation
+         * @property {string|null} [name] ReverseGeocodeLocation name
+         * @property {server.IGpsLocation|null} [location] ReverseGeocodeLocation location
+         * @property {string|null} [type] ReverseGeocodeLocation type
+         * @property {string|null} [address] ReverseGeocodeLocation address
+         * @property {string|null} [neighborhood] ReverseGeocodeLocation neighborhood
+         * @property {string|null} [postcode] ReverseGeocodeLocation postcode
+         * @property {string|null} [district] ReverseGeocodeLocation district
+         * @property {string|null} [region] ReverseGeocodeLocation region
+         * @property {string|null} [country] ReverseGeocodeLocation country
+         * @property {string|null} [place] ReverseGeocodeLocation place
+         */
+
+        /**
+         * Constructs a new ReverseGeocodeLocation.
+         * @memberof server
+         * @classdesc Represents a ReverseGeocodeLocation.
+         * @implements IReverseGeocodeLocation
+         * @constructor
+         * @param {server.IReverseGeocodeLocation=} [properties] Properties to set
+         */
+        function ReverseGeocodeLocation(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ReverseGeocodeLocation name.
+         * @member {string} name
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.name = "";
+
+        /**
+         * ReverseGeocodeLocation location.
+         * @member {server.IGpsLocation|null|undefined} location
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.location = null;
+
+        /**
+         * ReverseGeocodeLocation type.
+         * @member {string} type
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.type = "";
+
+        /**
+         * ReverseGeocodeLocation address.
+         * @member {string} address
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.address = "";
+
+        /**
+         * ReverseGeocodeLocation neighborhood.
+         * @member {string} neighborhood
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.neighborhood = "";
+
+        /**
+         * ReverseGeocodeLocation postcode.
+         * @member {string} postcode
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.postcode = "";
+
+        /**
+         * ReverseGeocodeLocation district.
+         * @member {string} district
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.district = "";
+
+        /**
+         * ReverseGeocodeLocation region.
+         * @member {string} region
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.region = "";
+
+        /**
+         * ReverseGeocodeLocation country.
+         * @member {string} country
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.country = "";
+
+        /**
+         * ReverseGeocodeLocation place.
+         * @member {string} place
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         */
+        ReverseGeocodeLocation.prototype.place = "";
+
+        /**
+         * Creates a new ReverseGeocodeLocation instance using the specified properties.
+         * @function create
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {server.IReverseGeocodeLocation=} [properties] Properties to set
+         * @returns {server.ReverseGeocodeLocation} ReverseGeocodeLocation instance
+         */
+        ReverseGeocodeLocation.create = function create(properties) {
+            return new ReverseGeocodeLocation(properties);
+        };
+
+        /**
+         * Encodes the specified ReverseGeocodeLocation message. Does not implicitly {@link server.ReverseGeocodeLocation.verify|verify} messages.
+         * @function encode
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {server.IReverseGeocodeLocation} message ReverseGeocodeLocation message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ReverseGeocodeLocation.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
+            if (message.location != null && Object.hasOwnProperty.call(message, "location"))
+                $root.server.GpsLocation.encode(message.location, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.type);
+            if (message.address != null && Object.hasOwnProperty.call(message, "address"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.address);
+            if (message.neighborhood != null && Object.hasOwnProperty.call(message, "neighborhood"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.neighborhood);
+            if (message.postcode != null && Object.hasOwnProperty.call(message, "postcode"))
+                writer.uint32(/* id 6, wireType 2 =*/50).string(message.postcode);
+            if (message.district != null && Object.hasOwnProperty.call(message, "district"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.district);
+            if (message.region != null && Object.hasOwnProperty.call(message, "region"))
+                writer.uint32(/* id 8, wireType 2 =*/66).string(message.region);
+            if (message.country != null && Object.hasOwnProperty.call(message, "country"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.country);
+            if (message.place != null && Object.hasOwnProperty.call(message, "place"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.place);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ReverseGeocodeLocation message, length delimited. Does not implicitly {@link server.ReverseGeocodeLocation.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {server.IReverseGeocodeLocation} message ReverseGeocodeLocation message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ReverseGeocodeLocation.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ReverseGeocodeLocation message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ReverseGeocodeLocation} ReverseGeocodeLocation
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ReverseGeocodeLocation.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ReverseGeocodeLocation();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.name = reader.string();
+                    break;
+                case 2:
+                    message.location = $root.server.GpsLocation.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.type = reader.string();
+                    break;
+                case 4:
+                    message.address = reader.string();
+                    break;
+                case 5:
+                    message.neighborhood = reader.string();
+                    break;
+                case 6:
+                    message.postcode = reader.string();
+                    break;
+                case 7:
+                    message.district = reader.string();
+                    break;
+                case 8:
+                    message.region = reader.string();
+                    break;
+                case 9:
+                    message.country = reader.string();
+                    break;
+                case 10:
+                    message.place = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ReverseGeocodeLocation message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ReverseGeocodeLocation} ReverseGeocodeLocation
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ReverseGeocodeLocation.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ReverseGeocodeLocation message.
+         * @function verify
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ReverseGeocodeLocation.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.location != null && message.hasOwnProperty("location")) {
+                var error = $root.server.GpsLocation.verify(message.location);
+                if (error)
+                    return "location." + error;
+            }
+            if (message.type != null && message.hasOwnProperty("type"))
+                if (!$util.isString(message.type))
+                    return "type: string expected";
+            if (message.address != null && message.hasOwnProperty("address"))
+                if (!$util.isString(message.address))
+                    return "address: string expected";
+            if (message.neighborhood != null && message.hasOwnProperty("neighborhood"))
+                if (!$util.isString(message.neighborhood))
+                    return "neighborhood: string expected";
+            if (message.postcode != null && message.hasOwnProperty("postcode"))
+                if (!$util.isString(message.postcode))
+                    return "postcode: string expected";
+            if (message.district != null && message.hasOwnProperty("district"))
+                if (!$util.isString(message.district))
+                    return "district: string expected";
+            if (message.region != null && message.hasOwnProperty("region"))
+                if (!$util.isString(message.region))
+                    return "region: string expected";
+            if (message.country != null && message.hasOwnProperty("country"))
+                if (!$util.isString(message.country))
+                    return "country: string expected";
+            if (message.place != null && message.hasOwnProperty("place"))
+                if (!$util.isString(message.place))
+                    return "place: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a ReverseGeocodeLocation message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ReverseGeocodeLocation} ReverseGeocodeLocation
+         */
+        ReverseGeocodeLocation.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ReverseGeocodeLocation)
+                return object;
+            var message = new $root.server.ReverseGeocodeLocation();
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.location != null) {
+                if (typeof object.location !== "object")
+                    throw TypeError(".server.ReverseGeocodeLocation.location: object expected");
+                message.location = $root.server.GpsLocation.fromObject(object.location);
+            }
+            if (object.type != null)
+                message.type = String(object.type);
+            if (object.address != null)
+                message.address = String(object.address);
+            if (object.neighborhood != null)
+                message.neighborhood = String(object.neighborhood);
+            if (object.postcode != null)
+                message.postcode = String(object.postcode);
+            if (object.district != null)
+                message.district = String(object.district);
+            if (object.region != null)
+                message.region = String(object.region);
+            if (object.country != null)
+                message.country = String(object.country);
+            if (object.place != null)
+                message.place = String(object.place);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ReverseGeocodeLocation message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ReverseGeocodeLocation
+         * @static
+         * @param {server.ReverseGeocodeLocation} message ReverseGeocodeLocation
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ReverseGeocodeLocation.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.name = "";
+                object.location = null;
+                object.type = "";
+                object.address = "";
+                object.neighborhood = "";
+                object.postcode = "";
+                object.district = "";
+                object.region = "";
+                object.country = "";
+                object.place = "";
+            }
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.location != null && message.hasOwnProperty("location"))
+                object.location = $root.server.GpsLocation.toObject(message.location, options);
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = message.type;
+            if (message.address != null && message.hasOwnProperty("address"))
+                object.address = message.address;
+            if (message.neighborhood != null && message.hasOwnProperty("neighborhood"))
+                object.neighborhood = message.neighborhood;
+            if (message.postcode != null && message.hasOwnProperty("postcode"))
+                object.postcode = message.postcode;
+            if (message.district != null && message.hasOwnProperty("district"))
+                object.district = message.district;
+            if (message.region != null && message.hasOwnProperty("region"))
+                object.region = message.region;
+            if (message.country != null && message.hasOwnProperty("country"))
+                object.country = message.country;
+            if (message.place != null && message.hasOwnProperty("place"))
+                object.place = message.place;
+            return object;
+        };
+
+        /**
+         * Converts this ReverseGeocodeLocation to JSON.
+         * @function toJSON
+         * @memberof server.ReverseGeocodeLocation
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ReverseGeocodeLocation.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ReverseGeocodeLocation;
+    })();
+
+    server.ReverseGeocodeResult = (function() {
+
+        /**
+         * Properties of a ReverseGeocodeResult.
+         * @memberof server
+         * @interface IReverseGeocodeResult
+         * @property {server.ReverseGeocodeResult.Result|null} [result] ReverseGeocodeResult result
+         * @property {server.ReverseGeocodeResult.Reason|null} [reason] ReverseGeocodeResult reason
+         * @property {number|Long|null} [backoff] ReverseGeocodeResult backoff
+         * @property {server.IReverseGeocodeLocation|null} [location] ReverseGeocodeResult location
+         */
+
+        /**
+         * Constructs a new ReverseGeocodeResult.
+         * @memberof server
+         * @classdesc Represents a ReverseGeocodeResult.
+         * @implements IReverseGeocodeResult
+         * @constructor
+         * @param {server.IReverseGeocodeResult=} [properties] Properties to set
+         */
+        function ReverseGeocodeResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ReverseGeocodeResult result.
+         * @member {server.ReverseGeocodeResult.Result} result
+         * @memberof server.ReverseGeocodeResult
+         * @instance
+         */
+        ReverseGeocodeResult.prototype.result = 0;
+
+        /**
+         * ReverseGeocodeResult reason.
+         * @member {server.ReverseGeocodeResult.Reason} reason
+         * @memberof server.ReverseGeocodeResult
+         * @instance
+         */
+        ReverseGeocodeResult.prototype.reason = 0;
+
+        /**
+         * ReverseGeocodeResult backoff.
+         * @member {number|Long} backoff
+         * @memberof server.ReverseGeocodeResult
+         * @instance
+         */
+        ReverseGeocodeResult.prototype.backoff = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * ReverseGeocodeResult location.
+         * @member {server.IReverseGeocodeLocation|null|undefined} location
+         * @memberof server.ReverseGeocodeResult
+         * @instance
+         */
+        ReverseGeocodeResult.prototype.location = null;
+
+        /**
+         * Creates a new ReverseGeocodeResult instance using the specified properties.
+         * @function create
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {server.IReverseGeocodeResult=} [properties] Properties to set
+         * @returns {server.ReverseGeocodeResult} ReverseGeocodeResult instance
+         */
+        ReverseGeocodeResult.create = function create(properties) {
+            return new ReverseGeocodeResult(properties);
+        };
+
+        /**
+         * Encodes the specified ReverseGeocodeResult message. Does not implicitly {@link server.ReverseGeocodeResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {server.IReverseGeocodeResult} message ReverseGeocodeResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ReverseGeocodeResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.backoff != null && Object.hasOwnProperty.call(message, "backoff"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.backoff);
+            if (message.location != null && Object.hasOwnProperty.call(message, "location"))
+                $root.server.ReverseGeocodeLocation.encode(message.location, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ReverseGeocodeResult message, length delimited. Does not implicitly {@link server.ReverseGeocodeResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {server.IReverseGeocodeResult} message ReverseGeocodeResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ReverseGeocodeResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ReverseGeocodeResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ReverseGeocodeResult} ReverseGeocodeResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ReverseGeocodeResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ReverseGeocodeResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.backoff = reader.int64();
+                    break;
+                case 4:
+                    message.location = $root.server.ReverseGeocodeLocation.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ReverseGeocodeResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ReverseGeocodeResult} ReverseGeocodeResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ReverseGeocodeResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ReverseGeocodeResult message.
+         * @function verify
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ReverseGeocodeResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.backoff != null && message.hasOwnProperty("backoff"))
+                if (!$util.isInteger(message.backoff) && !(message.backoff && $util.isInteger(message.backoff.low) && $util.isInteger(message.backoff.high)))
+                    return "backoff: integer|Long expected";
+            if (message.location != null && message.hasOwnProperty("location")) {
+                var error = $root.server.ReverseGeocodeLocation.verify(message.location);
+                if (error)
+                    return "location." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ReverseGeocodeResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ReverseGeocodeResult} ReverseGeocodeResult
+         */
+        ReverseGeocodeResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ReverseGeocodeResult)
+                return object;
+            var message = new $root.server.ReverseGeocodeResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN":
+            case 0:
+                message.reason = 0;
+                break;
+            case "TOO_SOON":
+            case 1:
+                message.reason = 1;
+                break;
+            case "INVALID_LAT_LONG":
+            case 2:
+                message.reason = 2;
+                break;
+            }
+            if (object.backoff != null)
+                if ($util.Long)
+                    (message.backoff = $util.Long.fromValue(object.backoff)).unsigned = false;
+                else if (typeof object.backoff === "string")
+                    message.backoff = parseInt(object.backoff, 10);
+                else if (typeof object.backoff === "number")
+                    message.backoff = object.backoff;
+                else if (typeof object.backoff === "object")
+                    message.backoff = new $util.LongBits(object.backoff.low >>> 0, object.backoff.high >>> 0).toNumber();
+            if (object.location != null) {
+                if (typeof object.location !== "object")
+                    throw TypeError(".server.ReverseGeocodeResult.location: object expected");
+                message.location = $root.server.ReverseGeocodeLocation.fromObject(object.location);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ReverseGeocodeResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ReverseGeocodeResult
+         * @static
+         * @param {server.ReverseGeocodeResult} message ReverseGeocodeResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ReverseGeocodeResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.backoff = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.backoff = options.longs === String ? "0" : 0;
+                object.location = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.ReverseGeocodeResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.ReverseGeocodeResult.Reason[message.reason] : message.reason;
+            if (message.backoff != null && message.hasOwnProperty("backoff"))
+                if (typeof message.backoff === "number")
+                    object.backoff = options.longs === String ? String(message.backoff) : message.backoff;
+                else
+                    object.backoff = options.longs === String ? $util.Long.prototype.toString.call(message.backoff) : options.longs === Number ? new $util.LongBits(message.backoff.low >>> 0, message.backoff.high >>> 0).toNumber() : message.backoff;
+            if (message.location != null && message.hasOwnProperty("location"))
+                object.location = $root.server.ReverseGeocodeLocation.toObject(message.location, options);
+            return object;
+        };
+
+        /**
+         * Converts this ReverseGeocodeResult to JSON.
+         * @function toJSON
+         * @memberof server.ReverseGeocodeResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ReverseGeocodeResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.ReverseGeocodeResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        ReverseGeocodeResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.ReverseGeocodeResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} TOO_SOON=1 TOO_SOON value
+         * @property {number} INVALID_LAT_LONG=2 INVALID_LAT_LONG value
+         */
+        ReverseGeocodeResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "TOO_SOON"] = 1;
+            values[valuesById[2] = "INVALID_LAT_LONG"] = 2;
+            return values;
+        })();
+
+        return ReverseGeocodeResult;
     })();
 
     server.EventData = (function() {

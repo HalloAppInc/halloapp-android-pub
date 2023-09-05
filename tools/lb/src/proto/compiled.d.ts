@@ -10464,6 +10464,18 @@ export namespace server {
 
         /** Iq getAlbums */
         getAlbums?: (server.IGetAlbums|null);
+
+        /** Iq halloappProfileRequest */
+        halloappProfileRequest?: (server.IHalloappProfileRequest|null);
+
+        /** Iq hallaoppProfileResult */
+        hallaoppProfileResult?: (server.IHalloappProfileResult|null);
+
+        /** Iq reverseGeocodeRequest */
+        reverseGeocodeRequest?: (server.IReverseGeocodeRequest|null);
+
+        /** Iq reverseGeocodeResult */
+        reverseGeocodeResult?: (server.IReverseGeocodeResult|null);
     }
 
     /** Represents an Iq. */
@@ -10718,8 +10730,20 @@ export namespace server {
         /** Iq getAlbums. */
         public getAlbums?: (server.IGetAlbums|null);
 
+        /** Iq halloappProfileRequest. */
+        public halloappProfileRequest?: (server.IHalloappProfileRequest|null);
+
+        /** Iq hallaoppProfileResult. */
+        public hallaoppProfileResult?: (server.IHalloappProfileResult|null);
+
+        /** Iq reverseGeocodeRequest. */
+        public reverseGeocodeRequest?: (server.IReverseGeocodeRequest|null);
+
+        /** Iq reverseGeocodeResult. */
+        public reverseGeocodeResult?: (server.IReverseGeocodeResult|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|"halloappSearchRequest"|"halloappSearchResponse"|"friendshipRequest"|"friendshipResponse"|"friendListRequest"|"friendListResponse"|"album"|"albumResult"|"getAlbums");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|"registerRequest"|"registerResponse"|"halloappSearchRequest"|"halloappSearchResponse"|"friendshipRequest"|"friendshipResponse"|"friendListRequest"|"friendListResponse"|"album"|"albumResult"|"getAlbums"|"halloappProfileRequest"|"hallaoppProfileResult"|"reverseGeocodeRequest"|"reverseGeocodeResult");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -20607,9 +20631,10 @@ export namespace server {
             ADD_FRIEND = 0,
             ACCEPT_FRIEND = 1,
             REMOVE_FRIEND = 2,
-            BLOCK = 3,
-            UNBLOCK = 4,
-            REJECT_SUGGESTION = 5
+            REJECT_FRIEND = 3,
+            BLOCK = 4,
+            UNBLOCK = 5,
+            REJECT_SUGGESTION = 6
         }
     }
 
@@ -21147,6 +21172,219 @@ export namespace server {
         }
     }
 
+    /** Properties of a HalloappProfileRequest. */
+    interface IHalloappProfileRequest {
+
+        /** HalloappProfileRequest uid */
+        uid?: (number|Long|null);
+
+        /** HalloappProfileRequest username */
+        username?: (string|null);
+    }
+
+    /** Represents a HalloappProfileRequest. */
+    class HalloappProfileRequest implements IHalloappProfileRequest {
+
+        /**
+         * Constructs a new HalloappProfileRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHalloappProfileRequest);
+
+        /** HalloappProfileRequest uid. */
+        public uid: (number|Long);
+
+        /** HalloappProfileRequest username. */
+        public username: string;
+
+        /**
+         * Creates a new HalloappProfileRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HalloappProfileRequest instance
+         */
+        public static create(properties?: server.IHalloappProfileRequest): server.HalloappProfileRequest;
+
+        /**
+         * Encodes the specified HalloappProfileRequest message. Does not implicitly {@link server.HalloappProfileRequest.verify|verify} messages.
+         * @param message HalloappProfileRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHalloappProfileRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HalloappProfileRequest message, length delimited. Does not implicitly {@link server.HalloappProfileRequest.verify|verify} messages.
+         * @param message HalloappProfileRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHalloappProfileRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HalloappProfileRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HalloappProfileRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HalloappProfileRequest;
+
+        /**
+         * Decodes a HalloappProfileRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HalloappProfileRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HalloappProfileRequest;
+
+        /**
+         * Verifies a HalloappProfileRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HalloappProfileRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HalloappProfileRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.HalloappProfileRequest;
+
+        /**
+         * Creates a plain object from a HalloappProfileRequest message. Also converts values to other types if specified.
+         * @param message HalloappProfileRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HalloappProfileRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HalloappProfileRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a HalloappProfileResult. */
+    interface IHalloappProfileResult {
+
+        /** HalloappProfileResult result */
+        result?: (server.HalloappProfileResult.Result|null);
+
+        /** HalloappProfileResult reason */
+        reason?: (server.HalloappProfileResult.Reason|null);
+
+        /** HalloappProfileResult profile */
+        profile?: (server.IHalloappUserProfile|null);
+    }
+
+    /** Represents a HalloappProfileResult. */
+    class HalloappProfileResult implements IHalloappProfileResult {
+
+        /**
+         * Constructs a new HalloappProfileResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHalloappProfileResult);
+
+        /** HalloappProfileResult result. */
+        public result: server.HalloappProfileResult.Result;
+
+        /** HalloappProfileResult reason. */
+        public reason: server.HalloappProfileResult.Reason;
+
+        /** HalloappProfileResult profile. */
+        public profile?: (server.IHalloappUserProfile|null);
+
+        /**
+         * Creates a new HalloappProfileResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HalloappProfileResult instance
+         */
+        public static create(properties?: server.IHalloappProfileResult): server.HalloappProfileResult;
+
+        /**
+         * Encodes the specified HalloappProfileResult message. Does not implicitly {@link server.HalloappProfileResult.verify|verify} messages.
+         * @param message HalloappProfileResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHalloappProfileResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HalloappProfileResult message, length delimited. Does not implicitly {@link server.HalloappProfileResult.verify|verify} messages.
+         * @param message HalloappProfileResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHalloappProfileResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HalloappProfileResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HalloappProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HalloappProfileResult;
+
+        /**
+         * Decodes a HalloappProfileResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HalloappProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HalloappProfileResult;
+
+        /**
+         * Verifies a HalloappProfileResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HalloappProfileResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HalloappProfileResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.HalloappProfileResult;
+
+        /**
+         * Creates a plain object from a HalloappProfileResult message. Also converts values to other types if specified.
+         * @param message HalloappProfileResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HalloappProfileResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HalloappProfileResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace HalloappProfileResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            NO_USER = 1
+        }
+    }
+
     /** Properties of a FriendListRequest. */
     interface IFriendListRequest {
 
@@ -21475,6 +21713,364 @@ export namespace server {
         enum Result {
             OK = 0,
             FAIL = 1
+        }
+    }
+
+    /** Properties of a ReverseGeocodeRequest. */
+    interface IReverseGeocodeRequest {
+
+        /** ReverseGeocodeRequest location */
+        location?: (server.IGpsLocation|null);
+    }
+
+    /** Represents a ReverseGeocodeRequest. */
+    class ReverseGeocodeRequest implements IReverseGeocodeRequest {
+
+        /**
+         * Constructs a new ReverseGeocodeRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IReverseGeocodeRequest);
+
+        /** ReverseGeocodeRequest location. */
+        public location?: (server.IGpsLocation|null);
+
+        /**
+         * Creates a new ReverseGeocodeRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReverseGeocodeRequest instance
+         */
+        public static create(properties?: server.IReverseGeocodeRequest): server.ReverseGeocodeRequest;
+
+        /**
+         * Encodes the specified ReverseGeocodeRequest message. Does not implicitly {@link server.ReverseGeocodeRequest.verify|verify} messages.
+         * @param message ReverseGeocodeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IReverseGeocodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReverseGeocodeRequest message, length delimited. Does not implicitly {@link server.ReverseGeocodeRequest.verify|verify} messages.
+         * @param message ReverseGeocodeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IReverseGeocodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReverseGeocodeRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReverseGeocodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ReverseGeocodeRequest;
+
+        /**
+         * Decodes a ReverseGeocodeRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReverseGeocodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ReverseGeocodeRequest;
+
+        /**
+         * Verifies a ReverseGeocodeRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReverseGeocodeRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReverseGeocodeRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.ReverseGeocodeRequest;
+
+        /**
+         * Creates a plain object from a ReverseGeocodeRequest message. Also converts values to other types if specified.
+         * @param message ReverseGeocodeRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ReverseGeocodeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReverseGeocodeRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ReverseGeocodeLocation. */
+    interface IReverseGeocodeLocation {
+
+        /** ReverseGeocodeLocation name */
+        name?: (string|null);
+
+        /** ReverseGeocodeLocation location */
+        location?: (server.IGpsLocation|null);
+
+        /** ReverseGeocodeLocation type */
+        type?: (string|null);
+
+        /** ReverseGeocodeLocation address */
+        address?: (string|null);
+
+        /** ReverseGeocodeLocation neighborhood */
+        neighborhood?: (string|null);
+
+        /** ReverseGeocodeLocation postcode */
+        postcode?: (string|null);
+
+        /** ReverseGeocodeLocation district */
+        district?: (string|null);
+
+        /** ReverseGeocodeLocation region */
+        region?: (string|null);
+
+        /** ReverseGeocodeLocation country */
+        country?: (string|null);
+
+        /** ReverseGeocodeLocation place */
+        place?: (string|null);
+    }
+
+    /** Represents a ReverseGeocodeLocation. */
+    class ReverseGeocodeLocation implements IReverseGeocodeLocation {
+
+        /**
+         * Constructs a new ReverseGeocodeLocation.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IReverseGeocodeLocation);
+
+        /** ReverseGeocodeLocation name. */
+        public name: string;
+
+        /** ReverseGeocodeLocation location. */
+        public location?: (server.IGpsLocation|null);
+
+        /** ReverseGeocodeLocation type. */
+        public type: string;
+
+        /** ReverseGeocodeLocation address. */
+        public address: string;
+
+        /** ReverseGeocodeLocation neighborhood. */
+        public neighborhood: string;
+
+        /** ReverseGeocodeLocation postcode. */
+        public postcode: string;
+
+        /** ReverseGeocodeLocation district. */
+        public district: string;
+
+        /** ReverseGeocodeLocation region. */
+        public region: string;
+
+        /** ReverseGeocodeLocation country. */
+        public country: string;
+
+        /** ReverseGeocodeLocation place. */
+        public place: string;
+
+        /**
+         * Creates a new ReverseGeocodeLocation instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReverseGeocodeLocation instance
+         */
+        public static create(properties?: server.IReverseGeocodeLocation): server.ReverseGeocodeLocation;
+
+        /**
+         * Encodes the specified ReverseGeocodeLocation message. Does not implicitly {@link server.ReverseGeocodeLocation.verify|verify} messages.
+         * @param message ReverseGeocodeLocation message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IReverseGeocodeLocation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReverseGeocodeLocation message, length delimited. Does not implicitly {@link server.ReverseGeocodeLocation.verify|verify} messages.
+         * @param message ReverseGeocodeLocation message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IReverseGeocodeLocation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReverseGeocodeLocation message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReverseGeocodeLocation
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ReverseGeocodeLocation;
+
+        /**
+         * Decodes a ReverseGeocodeLocation message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReverseGeocodeLocation
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ReverseGeocodeLocation;
+
+        /**
+         * Verifies a ReverseGeocodeLocation message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReverseGeocodeLocation message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReverseGeocodeLocation
+         */
+        public static fromObject(object: { [k: string]: any }): server.ReverseGeocodeLocation;
+
+        /**
+         * Creates a plain object from a ReverseGeocodeLocation message. Also converts values to other types if specified.
+         * @param message ReverseGeocodeLocation
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ReverseGeocodeLocation, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReverseGeocodeLocation to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ReverseGeocodeResult. */
+    interface IReverseGeocodeResult {
+
+        /** ReverseGeocodeResult result */
+        result?: (server.ReverseGeocodeResult.Result|null);
+
+        /** ReverseGeocodeResult reason */
+        reason?: (server.ReverseGeocodeResult.Reason|null);
+
+        /** ReverseGeocodeResult backoff */
+        backoff?: (number|Long|null);
+
+        /** ReverseGeocodeResult location */
+        location?: (server.IReverseGeocodeLocation|null);
+    }
+
+    /** Represents a ReverseGeocodeResult. */
+    class ReverseGeocodeResult implements IReverseGeocodeResult {
+
+        /**
+         * Constructs a new ReverseGeocodeResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IReverseGeocodeResult);
+
+        /** ReverseGeocodeResult result. */
+        public result: server.ReverseGeocodeResult.Result;
+
+        /** ReverseGeocodeResult reason. */
+        public reason: server.ReverseGeocodeResult.Reason;
+
+        /** ReverseGeocodeResult backoff. */
+        public backoff: (number|Long);
+
+        /** ReverseGeocodeResult location. */
+        public location?: (server.IReverseGeocodeLocation|null);
+
+        /**
+         * Creates a new ReverseGeocodeResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReverseGeocodeResult instance
+         */
+        public static create(properties?: server.IReverseGeocodeResult): server.ReverseGeocodeResult;
+
+        /**
+         * Encodes the specified ReverseGeocodeResult message. Does not implicitly {@link server.ReverseGeocodeResult.verify|verify} messages.
+         * @param message ReverseGeocodeResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IReverseGeocodeResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReverseGeocodeResult message, length delimited. Does not implicitly {@link server.ReverseGeocodeResult.verify|verify} messages.
+         * @param message ReverseGeocodeResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IReverseGeocodeResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReverseGeocodeResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReverseGeocodeResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ReverseGeocodeResult;
+
+        /**
+         * Decodes a ReverseGeocodeResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReverseGeocodeResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ReverseGeocodeResult;
+
+        /**
+         * Verifies a ReverseGeocodeResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReverseGeocodeResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReverseGeocodeResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.ReverseGeocodeResult;
+
+        /**
+         * Creates a plain object from a ReverseGeocodeResult message. Also converts values to other types if specified.
+         * @param message ReverseGeocodeResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ReverseGeocodeResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReverseGeocodeResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ReverseGeocodeResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN = 0,
+            TOO_SOON = 1,
+            INVALID_LAT_LONG = 2
         }
     }
 

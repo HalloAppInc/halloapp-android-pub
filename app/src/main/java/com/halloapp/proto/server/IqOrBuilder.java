@@ -915,5 +915,49 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.GetAlbums getGetAlbums();
 
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   * @return Whether the halloappProfileRequest field is set.
+   */
+  boolean hasHalloappProfileRequest();
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   * @return The halloappProfileRequest.
+   */
+  com.halloapp.proto.server.HalloappProfileRequest getHalloappProfileRequest();
+
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   * @return Whether the hallaoppProfileResult field is set.
+   */
+  boolean hasHallaoppProfileResult();
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   * @return The hallaoppProfileResult.
+   */
+  com.halloapp.proto.server.HalloappProfileResult getHallaoppProfileResult();
+
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   * @return Whether the reverseGeocodeRequest field is set.
+   */
+  boolean hasReverseGeocodeRequest();
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   * @return The reverseGeocodeRequest.
+   */
+  com.halloapp.proto.server.ReverseGeocodeRequest getReverseGeocodeRequest();
+
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   * @return Whether the reverseGeocodeResult field is set.
+   */
+  boolean hasReverseGeocodeResult();
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   * @return The reverseGeocodeResult.
+   */
+  com.halloapp.proto.server.ReverseGeocodeResult getReverseGeocodeResult();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

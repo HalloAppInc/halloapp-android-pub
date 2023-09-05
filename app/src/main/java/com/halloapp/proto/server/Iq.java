@@ -203,6 +203,10 @@ public  final class Iq extends
     ALBUM(82),
     ALBUM_RESULT(83),
     GET_ALBUMS(84),
+    HALLOAPP_PROFILE_REQUEST(85),
+    HALLAOPP_PROFILE_RESULT(86),
+    REVERSE_GEOCODE_REQUEST(87),
+    REVERSE_GEOCODE_RESULT(88),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -297,6 +301,10 @@ public  final class Iq extends
         case 82: return ALBUM;
         case 83: return ALBUM_RESULT;
         case 84: return GET_ALBUMS;
+        case 85: return HALLOAPP_PROFILE_REQUEST;
+        case 86: return HALLAOPP_PROFILE_RESULT;
+        case 87: return REVERSE_GEOCODE_REQUEST;
+        case 88: return REVERSE_GEOCODE_RESULT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -4397,6 +4405,206 @@ public  final class Iq extends
     }
   }
 
+  public static final int HALLOAPP_PROFILE_REQUEST_FIELD_NUMBER = 85;
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   */
+  @java.lang.Override
+  public boolean hasHalloappProfileRequest() {
+    return payloadCase_ == 85;
+  }
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HalloappProfileRequest getHalloappProfileRequest() {
+    if (payloadCase_ == 85) {
+       return (com.halloapp.proto.server.HalloappProfileRequest) payload_;
+    }
+    return com.halloapp.proto.server.HalloappProfileRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   */
+  private void setHalloappProfileRequest(com.halloapp.proto.server.HalloappProfileRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 85;
+  }
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   */
+  private void mergeHalloappProfileRequest(com.halloapp.proto.server.HalloappProfileRequest value) {
+    value.getClass();
+  if (payloadCase_ == 85 &&
+        payload_ != com.halloapp.proto.server.HalloappProfileRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HalloappProfileRequest.newBuilder((com.halloapp.proto.server.HalloappProfileRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 85;
+  }
+  /**
+   * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+   */
+  private void clearHalloappProfileRequest() {
+    if (payloadCase_ == 85) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HALLAOPP_PROFILE_RESULT_FIELD_NUMBER = 86;
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   */
+  @java.lang.Override
+  public boolean hasHallaoppProfileResult() {
+    return payloadCase_ == 86;
+  }
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HalloappProfileResult getHallaoppProfileResult() {
+    if (payloadCase_ == 86) {
+       return (com.halloapp.proto.server.HalloappProfileResult) payload_;
+    }
+    return com.halloapp.proto.server.HalloappProfileResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   */
+  private void setHallaoppProfileResult(com.halloapp.proto.server.HalloappProfileResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 86;
+  }
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   */
+  private void mergeHallaoppProfileResult(com.halloapp.proto.server.HalloappProfileResult value) {
+    value.getClass();
+  if (payloadCase_ == 86 &&
+        payload_ != com.halloapp.proto.server.HalloappProfileResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HalloappProfileResult.newBuilder((com.halloapp.proto.server.HalloappProfileResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 86;
+  }
+  /**
+   * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+   */
+  private void clearHallaoppProfileResult() {
+    if (payloadCase_ == 86) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int REVERSE_GEOCODE_REQUEST_FIELD_NUMBER = 87;
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   */
+  @java.lang.Override
+  public boolean hasReverseGeocodeRequest() {
+    return payloadCase_ == 87;
+  }
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ReverseGeocodeRequest getReverseGeocodeRequest() {
+    if (payloadCase_ == 87) {
+       return (com.halloapp.proto.server.ReverseGeocodeRequest) payload_;
+    }
+    return com.halloapp.proto.server.ReverseGeocodeRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   */
+  private void setReverseGeocodeRequest(com.halloapp.proto.server.ReverseGeocodeRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 87;
+  }
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   */
+  private void mergeReverseGeocodeRequest(com.halloapp.proto.server.ReverseGeocodeRequest value) {
+    value.getClass();
+  if (payloadCase_ == 87 &&
+        payload_ != com.halloapp.proto.server.ReverseGeocodeRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ReverseGeocodeRequest.newBuilder((com.halloapp.proto.server.ReverseGeocodeRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 87;
+  }
+  /**
+   * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+   */
+  private void clearReverseGeocodeRequest() {
+    if (payloadCase_ == 87) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int REVERSE_GEOCODE_RESULT_FIELD_NUMBER = 88;
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   */
+  @java.lang.Override
+  public boolean hasReverseGeocodeResult() {
+    return payloadCase_ == 88;
+  }
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ReverseGeocodeResult getReverseGeocodeResult() {
+    if (payloadCase_ == 88) {
+       return (com.halloapp.proto.server.ReverseGeocodeResult) payload_;
+    }
+    return com.halloapp.proto.server.ReverseGeocodeResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   */
+  private void setReverseGeocodeResult(com.halloapp.proto.server.ReverseGeocodeResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 88;
+  }
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   */
+  private void mergeReverseGeocodeResult(com.halloapp.proto.server.ReverseGeocodeResult value) {
+    value.getClass();
+  if (payloadCase_ == 88 &&
+        payload_ != com.halloapp.proto.server.ReverseGeocodeResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ReverseGeocodeResult.newBuilder((com.halloapp.proto.server.ReverseGeocodeResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 88;
+  }
+  /**
+   * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+   */
+  private void clearReverseGeocodeResult() {
+    if (payloadCase_ == 88) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -8439,6 +8647,198 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+     */
+    @java.lang.Override
+    public boolean hasHalloappProfileRequest() {
+      return instance.hasHalloappProfileRequest();
+    }
+    /**
+     * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HalloappProfileRequest getHalloappProfileRequest() {
+      return instance.getHalloappProfileRequest();
+    }
+    /**
+     * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+     */
+    public Builder setHalloappProfileRequest(com.halloapp.proto.server.HalloappProfileRequest value) {
+      copyOnWrite();
+      instance.setHalloappProfileRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+     */
+    public Builder setHalloappProfileRequest(
+        com.halloapp.proto.server.HalloappProfileRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHalloappProfileRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+     */
+    public Builder mergeHalloappProfileRequest(com.halloapp.proto.server.HalloappProfileRequest value) {
+      copyOnWrite();
+      instance.mergeHalloappProfileRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileRequest halloapp_profile_request = 85;</code>
+     */
+    public Builder clearHalloappProfileRequest() {
+      copyOnWrite();
+      instance.clearHalloappProfileRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+     */
+    @java.lang.Override
+    public boolean hasHallaoppProfileResult() {
+      return instance.hasHallaoppProfileResult();
+    }
+    /**
+     * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HalloappProfileResult getHallaoppProfileResult() {
+      return instance.getHallaoppProfileResult();
+    }
+    /**
+     * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+     */
+    public Builder setHallaoppProfileResult(com.halloapp.proto.server.HalloappProfileResult value) {
+      copyOnWrite();
+      instance.setHallaoppProfileResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+     */
+    public Builder setHallaoppProfileResult(
+        com.halloapp.proto.server.HalloappProfileResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHallaoppProfileResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+     */
+    public Builder mergeHallaoppProfileResult(com.halloapp.proto.server.HalloappProfileResult value) {
+      copyOnWrite();
+      instance.mergeHallaoppProfileResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.HalloappProfileResult hallaopp_profile_result = 86;</code>
+     */
+    public Builder clearHallaoppProfileResult() {
+      copyOnWrite();
+      instance.clearHallaoppProfileResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+     */
+    @java.lang.Override
+    public boolean hasReverseGeocodeRequest() {
+      return instance.hasReverseGeocodeRequest();
+    }
+    /**
+     * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ReverseGeocodeRequest getReverseGeocodeRequest() {
+      return instance.getReverseGeocodeRequest();
+    }
+    /**
+     * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+     */
+    public Builder setReverseGeocodeRequest(com.halloapp.proto.server.ReverseGeocodeRequest value) {
+      copyOnWrite();
+      instance.setReverseGeocodeRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+     */
+    public Builder setReverseGeocodeRequest(
+        com.halloapp.proto.server.ReverseGeocodeRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setReverseGeocodeRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+     */
+    public Builder mergeReverseGeocodeRequest(com.halloapp.proto.server.ReverseGeocodeRequest value) {
+      copyOnWrite();
+      instance.mergeReverseGeocodeRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReverseGeocodeRequest reverse_geocode_request = 87;</code>
+     */
+    public Builder clearReverseGeocodeRequest() {
+      copyOnWrite();
+      instance.clearReverseGeocodeRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+     */
+    @java.lang.Override
+    public boolean hasReverseGeocodeResult() {
+      return instance.hasReverseGeocodeResult();
+    }
+    /**
+     * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ReverseGeocodeResult getReverseGeocodeResult() {
+      return instance.getReverseGeocodeResult();
+    }
+    /**
+     * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+     */
+    public Builder setReverseGeocodeResult(com.halloapp.proto.server.ReverseGeocodeResult value) {
+      copyOnWrite();
+      instance.setReverseGeocodeResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+     */
+    public Builder setReverseGeocodeResult(
+        com.halloapp.proto.server.ReverseGeocodeResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setReverseGeocodeResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+     */
+    public Builder mergeReverseGeocodeResult(com.halloapp.proto.server.ReverseGeocodeResult value) {
+      copyOnWrite();
+      instance.mergeReverseGeocodeResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReverseGeocodeResult reverse_geocode_result = 88;</code>
+     */
+    public Builder clearReverseGeocodeResult() {
+      copyOnWrite();
+      instance.clearReverseGeocodeResult();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -8538,9 +8938,13 @@ public  final class Iq extends
             com.halloapp.proto.server.Album.class,
             com.halloapp.proto.server.AlbumResult.class,
             com.halloapp.proto.server.GetAlbums.class,
+            com.halloapp.proto.server.HalloappProfileRequest.class,
+            com.halloapp.proto.server.HalloappProfileResult.class,
+            com.halloapp.proto.server.ReverseGeocodeRequest.class,
+            com.halloapp.proto.server.ReverseGeocodeResult.class,
           };
           java.lang.String info =
-              "\u0000Q\u0001\u0000\u0001TQ\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000U\u0001\u0000\u0001XU\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
@@ -8549,7 +8953,8 @@ public  final class Iq extends
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
               "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
               "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000H<\u0000I<\u0000J<\u0000K<\u0000" +
-              "L<\u0000M<\u0000N<\u0000O<\u0000P<\u0000Q<\u0000R<\u0000S<\u0000T<\u0000";
+              "L<\u0000M<\u0000N<\u0000O<\u0000P<\u0000Q<\u0000R<\u0000S<\u0000T<\u0000U<\u0000" +
+              "V<\u0000W<\u0000X<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
