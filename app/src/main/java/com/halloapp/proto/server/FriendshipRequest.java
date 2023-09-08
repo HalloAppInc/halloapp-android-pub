@@ -74,6 +74,14 @@ public  final class FriendshipRequest extends
      * <code>REJECT_SUGGESTION = 6;</code>
      */
     REJECT_SUGGESTION(6),
+    /**
+     * <pre>
+     * withdraw pending friend request by sender.
+     * </pre>
+     *
+     * <code>WITHDRAW_FRIEND_REQUEST = 7;</code>
+     */
+    WITHDRAW_FRIEND_REQUEST(7),
     UNRECOGNIZED(-1),
     ;
 
@@ -133,6 +141,14 @@ public  final class FriendshipRequest extends
      * <code>REJECT_SUGGESTION = 6;</code>
      */
     public static final int REJECT_SUGGESTION_VALUE = 6;
+    /**
+     * <pre>
+     * withdraw pending friend request by sender.
+     * </pre>
+     *
+     * <code>WITHDRAW_FRIEND_REQUEST = 7;</code>
+     */
+    public static final int WITHDRAW_FRIEND_REQUEST_VALUE = 7;
 
 
     @java.lang.Override
@@ -163,6 +179,7 @@ public  final class FriendshipRequest extends
         case 4: return BLOCK;
         case 5: return UNBLOCK;
         case 6: return REJECT_SUGGESTION;
+        case 7: return WITHDRAW_FRIEND_REQUEST;
         default: return null;
       }
     }

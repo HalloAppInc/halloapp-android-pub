@@ -56606,6 +56606,7 @@ $root.server = (function() {
                 case 4:
                 case 5:
                 case 6:
+                case 7:
                     break;
                 }
             if (message.uid != null && message.hasOwnProperty("uid"))
@@ -56654,6 +56655,10 @@ $root.server = (function() {
             case "REJECT_SUGGESTION":
             case 6:
                 message.action = 6;
+                break;
+            case "WITHDRAW_FRIEND_REQUEST":
+            case 7:
+                message.action = 7;
                 break;
             }
             if (object.uid != null)
@@ -56721,6 +56726,7 @@ $root.server = (function() {
          * @property {number} BLOCK=4 BLOCK value
          * @property {number} UNBLOCK=5 UNBLOCK value
          * @property {number} REJECT_SUGGESTION=6 REJECT_SUGGESTION value
+         * @property {number} WITHDRAW_FRIEND_REQUEST=7 WITHDRAW_FRIEND_REQUEST value
          */
         FriendshipRequest.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -56731,6 +56737,7 @@ $root.server = (function() {
             values[valuesById[4] = "BLOCK"] = 4;
             values[valuesById[5] = "UNBLOCK"] = 5;
             values[valuesById[6] = "REJECT_SUGGESTION"] = 6;
+            values[valuesById[7] = "WITHDRAW_FRIEND_REQUEST"] = 7;
             return values;
         })();
 

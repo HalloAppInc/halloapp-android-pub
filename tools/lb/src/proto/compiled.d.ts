@@ -20634,7 +20634,8 @@ export namespace server {
             REJECT_FRIEND = 3,
             BLOCK = 4,
             UNBLOCK = 5,
-            REJECT_SUGGESTION = 6
+            REJECT_SUGGESTION = 6,
+            WITHDRAW_FRIEND_REQUEST = 7
         }
     }
 
