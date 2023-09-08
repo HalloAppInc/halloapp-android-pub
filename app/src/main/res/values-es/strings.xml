@@ -1992,7 +1992,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="invite_search_hint">"encontrar gente"</string>
 
     <!-- Call-to-action to share an invite link -->
-    <string name="invite_link_call_to_action">"Invita a tus amigos a katchup"</string>
+    <string name="invite_link_call_to_action">"Invita a tus amigos a Katchup"</string>
 
     <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
     <string name="invite_section_campus">"campus"</string>
