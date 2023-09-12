@@ -2743,6 +2743,9 @@ Erişim iznini değiştirmek için uygulama ayarları ekranını aç"</string>
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"hesabını doğrulamak için. Numaranı yalnızca sen görebilirsin."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Copy"</string>
     <string name="unlock_moment_subtitle">"%s kişisinin anlığını görebilmek için kendinkini paylaş"</string>
     <string name="unlock_all_moment_subtitle">"Anlıkları görebilmek için sen de anlık paylaş"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>

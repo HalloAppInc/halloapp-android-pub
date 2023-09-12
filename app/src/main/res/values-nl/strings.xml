@@ -2740,6 +2740,9 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"ⓘ om je account te herstellen en te verifiëren. alleen jij kan je telefoonnummer zien."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Kopiëren"</string>
     <string name="unlock_moment_subtitle">"Om het moment van %s te zien, deel je je eigen moment"</string>
     <string name="unlock_all_moment_subtitle">"Om momenten te zien, deel je je eigen moment"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>

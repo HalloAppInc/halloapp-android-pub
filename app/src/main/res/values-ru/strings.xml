@@ -2913,6 +2913,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"ⓘ to recover and to help verify your acount. only you can see your phone number."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Copy"</string>
     <string name="unlock_moment_subtitle">"Чтобы увидеть момент %s, поделитесь своим"</string>
     <string name="unlock_all_moment_subtitle">"Чтобы увидеть моменты, поделитесь своими"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>

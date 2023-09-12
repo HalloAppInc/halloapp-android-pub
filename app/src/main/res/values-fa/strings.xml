@@ -2739,6 +2739,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"ⓘ برای بازگیری و کمک در تأیید حساب‌کاربری‌اتان. فقط شما میتوانید شماره خود را ببینید."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Copy"</string>
     <string name="unlock_moment_subtitle">"برای مشاهده لحظه %s، لحظه خودتان را به اشتراک بگذارید"</string>
     <string name="unlock_all_moment_subtitle">"برای دیدن لحظه‌ها، لحظه خود را به اشتراک بگذارید"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>

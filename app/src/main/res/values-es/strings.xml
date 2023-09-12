@@ -2747,6 +2747,9 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"ⓘ para recuperar y ayudar a verificar tu cuenta. sólo tú puedes ver tu número de teléfono."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Copy"</string>
     <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
     <string name="unlock_all_moment_subtitle">"Para ver momentos, comparte los tuyos"</string>
     <string name="notification_many_daily_katchup_reminder_body">"ponte al día con %1$s, %2$s, +%3$d otros ahora…"</string>

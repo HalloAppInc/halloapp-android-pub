@@ -2672,6 +2672,9 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"ⓘ untuk memulihkan dan membantu verifikasi akun Anda. Hanya Anda yang bisa melihat nomor teleponnya."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Copy"</string>
     <string name="unlock_moment_subtitle">"Untuk melihat momen %s, bagikan momen Anda"</string>
     <string name="unlock_all_moment_subtitle">"Untuk melihat, bagikan momen Anda"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>

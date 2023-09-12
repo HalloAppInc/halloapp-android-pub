@@ -2729,6 +2729,9 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- label explaining the use of phone number in the app -->
     <string name="phone_description">"ⓘ para recuperar e ajudar a verificar sua conta. só você pode ver o seu número de telefone."</string>
+
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">"Copy"</string>
     <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
     <string name="unlock_all_moment_subtitle">"Para ver momentos, compartilhe seus próprios"</string>
     <string name="notification_many_daily_katchup_reminder_body">"converse com %1$s, %2$s, +%3$d outros agora…"</string>
