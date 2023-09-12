@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -69,6 +70,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
         voiceNotePlayer = new VoiceNotePlayer(application);
 
         replyComputableLiveData = new ComputableLiveData<Reply>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Reply compute() {
                 if (replyCommentId != null) {
@@ -95,6 +97,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
             }
         };
         unseenCommentCount = new ComputableLiveData<Pair<Long, Integer>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Pair<Long, Integer> compute() {
                 long rowId = contentDb.getFirstUnseenCommentRowId(postId);
@@ -104,6 +107,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
             }
         };
         navigationCommentPosition = new ComputableLiveData<Integer>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Integer compute() {
                 if (navCommentId == null) {

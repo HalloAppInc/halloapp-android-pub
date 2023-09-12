@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,7 @@ public class PostOptionsViewModel extends ViewModel {
 
     private PostOptionsViewModel(@NonNull String postId, boolean isArchived) {
         post = new ComputableLiveData<Post>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Post compute() {
                 return isArchived ? contentDb.getArchivePost(postId) : contentDb.getPost(postId);

@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Parcelable;
 
@@ -151,6 +152,7 @@ public class GroupListViewModel extends AndroidViewModel {
 
         groupPostLoader = new GroupPostLoader();
         groupsList = new ComputableLiveData<List<Group>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Group> compute() {
                 final List<Group> groups = contentDb.getGroups();

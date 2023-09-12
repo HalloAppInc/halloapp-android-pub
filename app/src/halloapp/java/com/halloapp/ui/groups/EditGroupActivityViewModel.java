@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -70,6 +71,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         this.groupId = groupId;
 
         groupNameLiveData = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 Group group = Preconditions.checkNotNull(ContentDb.getInstance().getGroupFeedOrChat(groupId));

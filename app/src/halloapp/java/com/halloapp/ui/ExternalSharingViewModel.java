@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -85,6 +86,7 @@ public class ExternalSharingViewModel extends ViewModel {
     private ExternalSharingViewModel(@NonNull String postId) {
         this.postId = postId;
         revocable = new ComputableLiveData<Boolean>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Boolean compute() {
                 ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
@@ -92,12 +94,14 @@ public class ExternalSharingViewModel extends ViewModel {
             }
         };
         title = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 return me.getName();
             }
         };
         description = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 Post post = contentDb.getPost(postId);

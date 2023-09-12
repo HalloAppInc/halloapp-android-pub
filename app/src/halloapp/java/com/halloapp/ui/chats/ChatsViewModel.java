@@ -1,5 +1,6 @@
 package com.halloapp.ui.chats;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Parcelable;
 import android.telephony.PhoneNumberUtils;
@@ -144,6 +145,7 @@ public class ChatsViewModel extends AndroidViewModel {
 
         contactsList = new ComputableLiveData<List<Contact>>() {
 
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getUniqueContactsWithPhones());
@@ -187,6 +189,7 @@ public class ChatsViewModel extends AndroidViewModel {
         showInviteList = new MutableLiveData<>();
         messageLoader = new MessageLoader(Preconditions.checkNotNull(application));
         chatsList = new ComputableLiveData<List<Chat>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Chat> compute() {
 

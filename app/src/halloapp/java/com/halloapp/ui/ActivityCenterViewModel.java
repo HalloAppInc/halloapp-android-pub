@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -167,6 +168,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         invitesApi = new InvitesApi(connection);
 
         socialHistory = new ComputableLiveData<SocialHistory>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected SocialHistory compute() {
                 return loadSocialHistory();

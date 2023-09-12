@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.util.Base64;
 
@@ -89,6 +90,7 @@ public class PostContentViewModel extends AndroidViewModel {
         voiceNotePlayer = new VoiceNotePlayer(application);
 
         isRegistered = new ComputableLiveData<Boolean>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Boolean compute() {
                 return Me.getInstance().isRegistered();
@@ -96,6 +98,7 @@ public class PostContentViewModel extends AndroidViewModel {
         };
 
         post = new ComputableLiveData<Post>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Post compute() {
                 if (postId != null) {

@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -84,18 +85,21 @@ public class MainViewModel extends AndroidViewModel {
         preferences = Preferences.getInstance();
 
         unseenChatsCount = new ComputableLiveData<Integer>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Integer compute() {
                 return contentDb.getUnseenChatsCount();
             }
         };
         unseenGroupsCount = new ComputableLiveData<Integer>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Integer compute() {
                 return contentDb.getUnseenGroups();
             }
         };
         registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected CheckRegistration.CheckResult compute() {
                 return CheckRegistration.checkRegistration(me, preferences);

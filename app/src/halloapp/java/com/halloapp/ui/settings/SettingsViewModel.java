@@ -1,5 +1,7 @@
 package com.halloapp.ui.settings;
 
+import android.annotation.SuppressLint;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -29,6 +31,7 @@ public class SettingsViewModel extends ViewModel {
 
     public SettingsViewModel() {
         blockListLiveData = new ComputableLiveData<List<UserId>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<UserId> compute() {
                 return blockListManager.getBlockList();
@@ -36,6 +39,7 @@ public class SettingsViewModel extends ViewModel {
         };
         blockListManager.addObserver(blockListObserver);
         feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected FeedPrivacy compute() {
                 return feedPrivacyManager.getFeedPrivacy();

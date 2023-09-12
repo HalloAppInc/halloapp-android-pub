@@ -1,5 +1,6 @@
 package com.halloapp.ui.privacy;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
         feedPrivacyManager.addObserver(feedPrivacyObserver);
 
         feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected FeedPrivacy compute() {
                 return feedPrivacyManager.getFeedPrivacy();

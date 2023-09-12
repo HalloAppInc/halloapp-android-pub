@@ -1990,4 +1990,6 @@
     <string name="ping_welcome">%s welcome to katchup! 🍅🔥</string>
     <!-- Message shown in the pings tab when someone has followed you -->
     <string name="ping_followed_you">%s followed you</string>
+    <!-- Message menu option to copy the selected message -->
+    <string name="copy">Copy</string>
 </resources>

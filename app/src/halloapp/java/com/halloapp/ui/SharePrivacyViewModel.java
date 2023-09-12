@@ -1,5 +1,7 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -58,6 +60,7 @@ public class SharePrivacyViewModel extends ViewModel {
     public SharePrivacyViewModel() {
         contentDb.addObserver(contentObserver);
         groupsList = new ComputableLiveData<List<Group>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Group> compute() {
                 final List<Group> groups = contentDb.getGroups();

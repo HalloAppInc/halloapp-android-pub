@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat.chat;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.net.Uri;
 import android.os.Handler;
@@ -206,6 +207,7 @@ public class ChatViewModel extends AndroidViewModel {
         messageList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
         contact = new ComputableLiveData<Contact>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Contact compute() {
                 if (chatId instanceof GroupId) {
@@ -216,6 +218,7 @@ public class ChatViewModel extends AndroidViewModel {
         };
 
         name = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 ContactsDb contactsDb = ContactsDb.getInstance();
@@ -233,6 +236,7 @@ public class ChatViewModel extends AndroidViewModel {
         };
 
         chat = new ComputableLiveData<Chat>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Chat compute() {
                 final Chat chat = contentDb.getChat(chatId);
@@ -246,6 +250,7 @@ public class ChatViewModel extends AndroidViewModel {
         };
 
         mentionableContacts = new ComputableLiveData<List<Contact>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 if (!(chatId instanceof GroupId)) {
@@ -264,6 +269,7 @@ public class ChatViewModel extends AndroidViewModel {
         };
 
         reply = new ComputableLiveData<Reply>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Reply compute() {
                 if (replyPostId != null) {
@@ -301,6 +307,7 @@ public class ChatViewModel extends AndroidViewModel {
         };
 
         blockListLiveData = new ComputableLiveData<List<UserId>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<UserId> compute() {
                 return blockListManager.getBlockList();

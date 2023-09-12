@@ -1,5 +1,6 @@
 package com.halloapp.ui.privacy;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.MainThread;
@@ -39,6 +40,7 @@ public class BlockListViewModel extends AndroidViewModel {
         blockListManager = BlockListManager.getInstance();
 
         blockListLiveData = new ComputableLiveData<List<Contact>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<UserId> blockedIds = blockListManager.getBlockList();

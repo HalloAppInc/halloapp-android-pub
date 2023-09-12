@@ -1,5 +1,6 @@
 package com.halloapp.ui.contacts;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,7 @@ public class ContactsViewModel extends AndroidViewModel {
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<Contact> contacts = contactsDb.getUsers();

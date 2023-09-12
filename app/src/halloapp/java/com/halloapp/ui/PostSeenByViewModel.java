@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -81,6 +82,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
 
         seenByList = new ComputableLiveData<List<SeenByContact>>() {
 
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<SeenByContact> compute() {
                 final List<SeenByInfo> seenByInfos = contentDb.getPostSeenByInfos(postId);
@@ -105,6 +107,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         };
 
         post = new ComputableLiveData<Post>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Post compute() {
                 return contentDb.getPost(postId);

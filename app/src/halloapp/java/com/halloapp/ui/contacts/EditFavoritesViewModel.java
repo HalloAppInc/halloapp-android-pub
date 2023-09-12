@@ -1,5 +1,6 @@
 package com.halloapp.ui.contacts;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,7 @@ public class EditFavoritesViewModel extends AndroidViewModel {
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<Contact> contacts = contactsDb.getUsers();
@@ -63,6 +65,7 @@ public class EditFavoritesViewModel extends AndroidViewModel {
         };
 
         favoritesList = new ComputableLiveData<FeedPrivacy>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected FeedPrivacy compute() {
                 return feedPrivacyManager.getFeedPrivacy();

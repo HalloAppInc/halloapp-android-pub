@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat.chat;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.util.Base64;
@@ -59,6 +60,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         this.userId = userId;
 
         name = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 return ContactsDb.getInstance().getContact(userId).getDisplayName();
@@ -66,6 +68,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         };
 
         verifiedSwitchState = new ComputableLiveData<Boolean>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Boolean compute() {
                 return encryptedKeyStore.getPeerVerified(userId);
@@ -73,6 +76,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         };
 
         keyVerificationData = new ComputableLiveData<KeyVerificationData>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected KeyVerificationData compute() {
                 PublicXECKey peerIdentityKey;

@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
@@ -139,6 +140,7 @@ public class ExportDataActivity extends HalloActivity {
             super(application);
 
             exportDataState = new ComputableLiveData<ExportDataState>() {
+                @SuppressLint("RestrictedApi")
                 @Override
                 protected ExportDataState compute() {
                     int localState = preferences.getExportDataState();

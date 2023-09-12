@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -70,6 +71,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
         load(uris);
 
         contactsCount = new ComputableLiveData<Integer>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Integer compute() {
                 return contactsDb.getContactsCount();

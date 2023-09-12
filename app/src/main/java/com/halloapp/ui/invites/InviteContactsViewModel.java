@@ -1,5 +1,6 @@
 package com.halloapp.ui.invites;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -71,6 +72,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getUniqueContactsWithPhones());

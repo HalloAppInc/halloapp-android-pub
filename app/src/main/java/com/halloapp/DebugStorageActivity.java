@@ -296,6 +296,7 @@ public class DebugStorageActivity extends HalloActivity {
             super(application);
 
             internalUsage = new ComputableLiveData<String>() {
+                @SuppressLint("RestrictedApi")
                 @Override
                 protected String compute() {
                     long homeUsage = 0;

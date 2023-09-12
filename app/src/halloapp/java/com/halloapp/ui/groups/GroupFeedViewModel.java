@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -138,6 +139,7 @@ public class GroupFeedViewModel extends ViewModel {
         postList = new LivePagedListBuilder<>(dataSourceFactory, ADAPTER_PAGE_SIZE).build();
 
         group = new ComputableLiveData<Group>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Group compute() {
                 return contentDb.getGroup(groupId);
@@ -145,6 +147,7 @@ public class GroupFeedViewModel extends ViewModel {
         };
 
         members = new ComputableLiveData<List<Contact>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<MemberInfo> memberInfos = contentDb.getGroupMembers(groupId);

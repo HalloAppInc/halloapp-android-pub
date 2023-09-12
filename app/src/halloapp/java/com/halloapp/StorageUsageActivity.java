@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -351,6 +352,7 @@ public class StorageUsageActivity extends HalloActivity {
             super(application);
 
             internalUsage = new ComputableLiveData<String>() {
+                @SuppressLint("RestrictedApi")
                 @Override
                 protected String compute() {
                     long homeUsage = 0;

@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -131,6 +132,7 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
         preferences = Preferences.getInstance();
 
         groupLiveData = new ComputableLiveData<Group>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Group compute() {
                 Group group = contentDb.getGroup(groupId);
@@ -147,6 +149,7 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
         groupLiveData.invalidate();
 
         membersLiveData = new ComputableLiveData<List<GroupMember>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<GroupMember> compute() {
                 List<GroupMember> groupMembers = new ArrayList<>();
@@ -183,6 +186,7 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
         membersLiveData.invalidate();
 
         historyStats = new ComputableLiveData<GroupHistoryDecryptStats>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected GroupHistoryDecryptStats compute() {
                 return contentDb.getGroupHistoryDecryptStats(groupId);

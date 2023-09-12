@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.SharedElementCallback;
@@ -297,6 +298,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private int minSoftKeyboardHeight;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
@@ -46,6 +47,7 @@ public class EditGroupDescriptionViewModel extends AndroidViewModel {
         this.groupId = groupId;
 
         groupNameDescriptionLiveData = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 Group group = Preconditions.checkNotNull(ContentDb.getInstance().getGroupFeedOrChat(groupId));

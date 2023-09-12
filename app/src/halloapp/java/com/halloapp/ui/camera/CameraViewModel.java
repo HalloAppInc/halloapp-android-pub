@@ -47,6 +47,7 @@ public class CameraViewModel extends AndroidViewModel {
         super(application);
         this.includeVideos = includeVideo;
         lastGalleryItemLiveData = new ComputableLiveData<GalleryItem>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected GalleryItem compute() {
                 try (final Cursor cursor = getCursor(1)) {

@@ -1,5 +1,7 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,6 +31,7 @@ public class GroupsInCommonViewModel extends ViewModel {
         this.userId = userId;
 
         groupsList = new ComputableLiveData<List<Group>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Group> compute() {
                 final HashSet<GroupId> groupIds = new HashSet<>(ContentDb.getInstance().getGroupsInCommon(userId));

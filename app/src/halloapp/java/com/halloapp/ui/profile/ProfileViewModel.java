@@ -1,5 +1,6 @@
 package com.halloapp.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -154,12 +155,14 @@ public class ProfileViewModel extends ViewModel {
         voiceNotePlayer = new VoiceNotePlayer((Application)AppContext.getInstance().get());
 
         hasGroupsInCommonLiveData = new ComputableLiveData<Boolean>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Boolean compute() {
                 return !ContentDb.getInstance().getGroupsInCommon(userId).isEmpty();
             }
         };
         subtitleLiveData = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 if (userId.isMe()) {
@@ -175,6 +178,7 @@ public class ProfileViewModel extends ViewModel {
             }
         };
         contactLiveData = new ComputableLiveData<Contact>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Contact compute() {
                 if (userId.isMe()) {

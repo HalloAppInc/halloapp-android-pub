@@ -1,5 +1,6 @@
 package com.halloapp.ui.contacts;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ public class SelectContactsViewModel extends AndroidViewModel {
     final ComputableLiveData<List<Contact>> contactList;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+        @SuppressLint("RestrictedApi")
         @Override
         public void onContactsChanged() {
             contactList.invalidate();
@@ -35,6 +37,7 @@ public class SelectContactsViewModel extends AndroidViewModel {
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 List<Contact> contacts = contactsDb.getUniqueContactsWithPhones();

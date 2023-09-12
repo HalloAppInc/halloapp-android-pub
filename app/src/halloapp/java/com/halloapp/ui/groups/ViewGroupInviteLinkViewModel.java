@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -65,6 +66,7 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
         inviteLinkPreview = new MutableLiveData<>();
 
         registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected CheckRegistration.CheckResult compute() {
                 return CheckRegistration.checkRegistration(me, preferences);

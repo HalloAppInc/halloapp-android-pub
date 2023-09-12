@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -71,6 +72,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
         private final ContentDb contentDb;
 
         private final ComputableLiveData<Bitmap> qrBitMap = new ComputableLiveData<Bitmap>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Bitmap compute() {
                 return QrUtils.encode(url);
@@ -78,6 +80,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
         };
 
         public final ComputableLiveData<String> groupName = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 return Preconditions.checkNotNull(contentDb.getGroup(groupId)).name;

@@ -1,5 +1,6 @@
 package com.halloapp.ui.mediaexplorer;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.net.Uri;
 import android.os.Parcel;
@@ -65,6 +66,7 @@ public class AlbumExplorerViewModel extends AndroidViewModel {
         this.position = position;
 
         name = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 if (chatId instanceof UserId) {

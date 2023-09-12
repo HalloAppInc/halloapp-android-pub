@@ -1,5 +1,7 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -16,6 +18,7 @@ public class MyProfileViewModel extends ViewModel {
 
     public MyProfileViewModel() {
         phoneNumberLiveData = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 return StringUtils.formatPhoneNumber(me.getPhone());

@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -87,6 +88,7 @@ public class MomentViewerViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance();
 
         unlockingMoment = new ComputableLiveData<Post>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Post compute() {
                 String postId = contentDb.getUnlockingMomentId();

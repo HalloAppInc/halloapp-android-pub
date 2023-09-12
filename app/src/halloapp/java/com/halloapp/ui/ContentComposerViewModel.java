@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -145,6 +146,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             copyVoiceDraftUri(voiceDraftUri);
         }
         shareTargetName = new ComputableLiveData<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
                 if (targetChatId != null) {
@@ -161,6 +163,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         };
         if (replyPostId != null) {
             replyPost = new ComputableLiveData<Post>() {
+                @SuppressLint("RestrictedApi")
                 @Override
                 protected Post compute() {
                     return contentDb.getPost(replyPostId);
@@ -170,6 +173,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             replyPost = null;
         }
         mentionableContacts = new ComputableLiveData<List<Contact>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 GroupId groupId = groupFeedId;

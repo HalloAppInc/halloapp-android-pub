@@ -1,5 +1,6 @@
 package com.halloapp.ui.share;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.text.format.DateUtils;
 
@@ -111,6 +112,7 @@ public class ShareViewModel extends AndroidViewModel {
         final Preferences preferences = Preferences.getInstance();
 
         destinationListAndRecency = new ComputableLiveData<DestinationListAndRecency>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected DestinationListAndRecency compute() {
                 final List<Contact> contacts = contactsDb.getUsers();
@@ -149,6 +151,7 @@ public class ShareViewModel extends AndroidViewModel {
         };
 
         frequentDestinationIdList = new ComputableLiveData<List<ChatId>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<ChatId> compute() {
                 final Map<ChatId, Integer> contactFrequencyMap = contentDb.computeContactFrequency(System.currentTimeMillis() - FREQUENCY_CUTOFF_PERIOD);
@@ -157,6 +160,7 @@ public class ShareViewModel extends AndroidViewModel {
         };
 
         feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected FeedPrivacy compute() {
                 return feedPrivacyManager.getFeedPrivacy();

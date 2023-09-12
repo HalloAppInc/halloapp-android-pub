@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat.chat;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -50,6 +51,7 @@ public class MessageInfoViewModel extends AndroidViewModel {
         contentDb.addObserver(observer);
 
         messageDeliveryData = new ComputableLiveData<List<MessageDeliveryState>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<MessageDeliveryState> compute() {
                 List<MessageDeliveryState> state = contentDb.getOutgoingMessageDeliveryStates(messageId);

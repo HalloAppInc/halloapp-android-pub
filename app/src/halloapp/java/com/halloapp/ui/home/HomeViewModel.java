@@ -1,5 +1,6 @@
 package com.halloapp.ui.home;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
@@ -183,6 +184,7 @@ public class HomeViewModel extends AndroidViewModel {
         voiceNotePlayer = new VoiceNotePlayer(application);
 
         unseenHomePosts = new ComputableLiveData<List<Post>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Post> compute() {
                 long lastTime = preferences.getLastSeenPostTime();
@@ -195,6 +197,7 @@ public class HomeViewModel extends AndroidViewModel {
         };
 
         momentList = new ComputableLiveData<List<MomentPost>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<MomentPost> compute() {
                 List<MomentPost> oldMoments = momentList.getLiveData().getValue();

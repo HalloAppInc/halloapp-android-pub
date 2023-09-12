@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -191,6 +192,7 @@ class CommentsViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
 
         lastSeenCommentRowId = new ComputableLiveData<Long>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Long compute() {
                 long rowId = contentDb.getLastSeenCommentRowId(postId);
@@ -200,6 +202,7 @@ class CommentsViewModel extends AndroidViewModel {
         };
 
         isMember = new ComputableLiveData<Boolean>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected Boolean compute() {
                 GroupId groupId = contentDb.getPost(postId).getParentGroup();
@@ -217,6 +220,7 @@ class CommentsViewModel extends AndroidViewModel {
         };
 
         mentionableContacts = new ComputableLiveData<List<Contact>>() {
+            @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
                 HashSet<UserId> contactSet = new HashSet<>();

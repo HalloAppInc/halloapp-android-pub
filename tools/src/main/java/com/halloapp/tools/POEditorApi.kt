@@ -8,6 +8,7 @@ import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.content.PartData
+import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.streams.asInput
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -49,6 +50,7 @@ object POEditorApi {
             val updated: Int?
     )
 
+    @OptIn(DangerousInternalIoApi::class)
     suspend fun upload(apiToken: String, id: Int, file: File): Response {
         val client = HttpClient(Apache)
 
