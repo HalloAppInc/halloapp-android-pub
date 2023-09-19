@@ -42,6 +42,14 @@ public  final class HalloappProfileUpdate extends
      * <code>INCOMING_FRIEND_REQUEST = 2;</code>
      */
     INCOMING_FRIEND_REQUEST(2),
+    /**
+     * <pre>
+     * When the uid deletes their account
+     * </pre>
+     *
+     * <code>DELETE_NOTICE = 3;</code>
+     */
+    DELETE_NOTICE(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -69,6 +77,14 @@ public  final class HalloappProfileUpdate extends
      * <code>INCOMING_FRIEND_REQUEST = 2;</code>
      */
     public static final int INCOMING_FRIEND_REQUEST_VALUE = 2;
+    /**
+     * <pre>
+     * When the uid deletes their account
+     * </pre>
+     *
+     * <code>DELETE_NOTICE = 3;</code>
+     */
+    public static final int DELETE_NOTICE_VALUE = 3;
 
 
     @java.lang.Override
@@ -95,6 +111,7 @@ public  final class HalloappProfileUpdate extends
         case 0: return NORMAL;
         case 1: return FRIEND_NOTICE;
         case 2: return INCOMING_FRIEND_REQUEST;
+        case 3: return DELETE_NOTICE;
         default: return null;
       }
     }

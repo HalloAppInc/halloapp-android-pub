@@ -57490,6 +57490,7 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             if (message.profile != null && message.hasOwnProperty("profile")) {
@@ -57524,6 +57525,10 @@ $root.server = (function() {
             case "INCOMING_FRIEND_REQUEST":
             case 2:
                 message.type = 2;
+                break;
+            case "DELETE_NOTICE":
+            case 3:
+                message.type = 3;
                 break;
             }
             if (object.profile != null) {
@@ -57576,12 +57581,14 @@ $root.server = (function() {
          * @property {number} NORMAL=0 NORMAL value
          * @property {number} FRIEND_NOTICE=1 FRIEND_NOTICE value
          * @property {number} INCOMING_FRIEND_REQUEST=2 INCOMING_FRIEND_REQUEST value
+         * @property {number} DELETE_NOTICE=3 DELETE_NOTICE value
          */
         HalloappProfileUpdate.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "NORMAL"] = 0;
             values[valuesById[1] = "FRIEND_NOTICE"] = 1;
             values[valuesById[2] = "INCOMING_FRIEND_REQUEST"] = 2;
+            values[valuesById[3] = "DELETE_NOTICE"] = 3;
             return values;
         })();
 
@@ -58700,6 +58707,7 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
             if (message.cursor != null && message.hasOwnProperty("cursor"))
@@ -58736,6 +58744,10 @@ $root.server = (function() {
             case "GET_SUGGESTIONS":
             case 3:
                 message.action = 3;
+                break;
+            case "GET_BLOCKED":
+            case 4:
+                message.action = 4;
                 break;
             }
             if (object.cursor != null)
@@ -58786,6 +58798,7 @@ $root.server = (function() {
          * @property {number} GET_INCOMING_PENDING=1 GET_INCOMING_PENDING value
          * @property {number} GET_OUTGOING_PENDING=2 GET_OUTGOING_PENDING value
          * @property {number} GET_SUGGESTIONS=3 GET_SUGGESTIONS value
+         * @property {number} GET_BLOCKED=4 GET_BLOCKED value
          */
         FriendListRequest.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -58793,6 +58806,7 @@ $root.server = (function() {
             values[valuesById[1] = "GET_INCOMING_PENDING"] = 1;
             values[valuesById[2] = "GET_OUTGOING_PENDING"] = 2;
             values[valuesById[3] = "GET_SUGGESTIONS"] = 3;
+            values[valuesById[4] = "GET_BLOCKED"] = 4;
             return values;
         })();
 

@@ -20974,7 +20974,8 @@ export namespace server {
         enum Type {
             NORMAL = 0,
             FRIEND_NOTICE = 1,
-            INCOMING_FRIEND_REQUEST = 2
+            INCOMING_FRIEND_REQUEST = 2,
+            DELETE_NOTICE = 3
         }
     }
 
@@ -21489,7 +21490,8 @@ export namespace server {
             GET_FRIENDS = 0,
             GET_INCOMING_PENDING = 1,
             GET_OUTGOING_PENDING = 2,
-            GET_SUGGESTIONS = 3
+            GET_SUGGESTIONS = 3,
+            GET_BLOCKED = 4
         }
     }
 

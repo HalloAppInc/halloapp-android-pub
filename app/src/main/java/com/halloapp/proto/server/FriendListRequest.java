@@ -51,6 +51,14 @@ public  final class FriendListRequest extends
      * <code>GET_SUGGESTIONS = 3;</code>
      */
     GET_SUGGESTIONS(3),
+    /**
+     * <pre>
+     * Fetch blocked users of this user.
+     * </pre>
+     *
+     * <code>GET_BLOCKED = 4;</code>
+     */
+    GET_BLOCKED(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -86,6 +94,14 @@ public  final class FriendListRequest extends
      * <code>GET_SUGGESTIONS = 3;</code>
      */
     public static final int GET_SUGGESTIONS_VALUE = 3;
+    /**
+     * <pre>
+     * Fetch blocked users of this user.
+     * </pre>
+     *
+     * <code>GET_BLOCKED = 4;</code>
+     */
+    public static final int GET_BLOCKED_VALUE = 4;
 
 
     @java.lang.Override
@@ -113,6 +129,7 @@ public  final class FriendListRequest extends
         case 1: return GET_INCOMING_PENDING;
         case 2: return GET_OUTGOING_PENDING;
         case 3: return GET_SUGGESTIONS;
+        case 4: return GET_BLOCKED;
         default: return null;
       }
     }
