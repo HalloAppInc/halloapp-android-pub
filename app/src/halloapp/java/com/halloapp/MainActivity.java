@@ -1,16 +1,20 @@
 package com.halloapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -111,6 +115,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private NavController navController;
     private HACustomFab haFabView;
+
+    private FriendshipModelPopupWindow friendshipModelPopupWindow;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -262,7 +268,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else if (!checkResult.profileSetup){
+            } else if (!checkResult.profileSetup) {
                 Log.i("MainActivity.onStart: profile not setup");
                 startActivity(new Intent(getBaseContext(), SetupProfileActivity.class));
                 overridePendingTransition(0, 0);
@@ -279,6 +285,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startActivity(new Intent(getBaseContext(), FirstPostOnboardActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+            } else if (checkResult.username == null) {
+                Log.i("MainActivity.onStart: needs username");
+                if (friendshipModelPopupWindow != null) {
+                    friendshipModelPopupWindow.dismiss();
+                }
+                friendshipModelPopupWindow = new FriendshipModelPopupWindow(MainActivity.this, checkResult.name);
+                findViewById(R.id.container).post(() -> friendshipModelPopupWindow.show(findViewById(R.id.container)));
             }
             progress.setVisibility(View.GONE);
         });
@@ -599,4 +612,32 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public HACustomFab getFab() {
         return haFabView;
     }
+
+    class FriendshipModelPopupWindow extends PopupWindow {
+
+        public FriendshipModelPopupWindow(@NonNull Context context, @NonNull String name) {
+            super(context);
+
+            setBackgroundDrawable(null);
+            setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+            setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+
+            View root = LayoutInflater.from(context).inflate(R.layout.friendship_modal, null, false);
+            setContentView(root);
+
+            View continueButton = root.findViewById(R.id.continue_button);
+            continueButton.setOnClickListener(view -> {
+                final Intent intent = SetupProfileActivity.pickUsername(getBaseContext(), name);
+                startActivity(intent);
+                dismiss();
+            });
+
+            setOutsideTouchable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            showAtLocation(anchor, Gravity.CENTER, 0, 0);
+        }
+    }
+
 }

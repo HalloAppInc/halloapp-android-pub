@@ -70,8 +70,8 @@
     <string name="wrong_number">Wrong number?</string>
     <!-- text shown when user registers successfully -->
     <string name="register_success">You\'re in!</string>
-    <!-- text show above name/nickname entry field -->
-    <string name="name_entry_title">How should we call you?</string>
+    <!-- text show above name and username entry field -->
+    <string name="name_username_entry_title">Enter your name and select a username</string>
     <!-- text shown under the profile photo saying that the photo is optional -->
     <string name="add_optional_photo">Add optional photo</string>
     <string name="time_diff_now">Now</string>
@@ -852,6 +852,8 @@
     <string name="invite_friend_chooser_title">Invite %s</string>
     <string name="invite_text_with_name_and_number">Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s</string>
     <string name="name_hint">Your name or nickname</string>
+    <!-- text hint for username entry field -->
+    <string name="username_hint">username</string>
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="counter">%1$d/%2$d</string>
     <string name="invite_pending">Pending</string>
@@ -1992,4 +1994,11 @@
     <string name="ping_followed_you">%s followed you</string>
     <!-- Message menu option to copy the selected message -->
     <string name="copy">Copy</string>
+    <string name="at_symbol">\@</string>
+    <!-- Title of a popup window about a new friendship model feature  -->
+    <string name="friendship_model_title">New friendship model on HalloApp</string>
+    <!-- Text in a popup window explaining a new friendship model feature and prompt for users to choose a username -->
+    <string name="friendship_model_description">Now you can search for people on HalloApp using their name or @username. Your existing HalloApp contacts now become your friends. You can remove existing contacts from friends at any time.</string>
+    <!-- Button text to dismiss new friendship model popup-->
+    <string name="remind_later">Remind later</string>
 </resources>

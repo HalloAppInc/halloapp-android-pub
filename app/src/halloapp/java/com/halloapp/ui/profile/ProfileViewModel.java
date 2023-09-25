@@ -5,7 +5,6 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
-import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 
 import androidx.annotation.MainThread;
@@ -165,15 +164,11 @@ public class ProfileViewModel extends ViewModel {
             @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
-                if (userId.isMe()) {
-                    return StringUtils.formatPhoneNumber(me.getPhone());
+                String username = userId.isMe() ? me.getUsername() : contactsDb.getContact(userId).getUsername();
+                if (TextUtils.isEmpty(username)) {
+                    return "";
                 } else {
-                    Contact contact = contactsDb.getContact(userId);
-                    if (TextUtils.isEmpty(contact.addressBookName)) {
-                        return PhoneNumberUtils.formatNumber("+" + contactsDb.readPhone(userId), null);
-                    } else {
-                        return contactsDb.getContact(userId).getDisplayPhone();
-                    }
+                    return "@" + username;
                 }
             }
         };

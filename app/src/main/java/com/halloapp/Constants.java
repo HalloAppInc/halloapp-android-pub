@@ -126,7 +126,7 @@ public class Constants {
     // specified in the Android pattern docs here: https://developer.android.com/reference/java/util/regex/Pattern
     // This may be because not all of the character classes that are specified are listed in a table,
     // so it would be easy to miss some.
-    public static final String USERNAME_CHARACTERS_REGEX = "^[a-zA-Z0-9_.]+$";
+    public static final String USERNAME_CHARACTERS_REGEX = "^[a-z0-9_.]+$";
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 

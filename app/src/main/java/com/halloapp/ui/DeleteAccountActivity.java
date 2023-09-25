@@ -135,9 +135,11 @@ public class DeleteAccountActivity extends HalloActivity {
         private final Connection connection = Connection.getInstance();
 
         private final MutableLiveData<Boolean> result = new MutableLiveData<>();
+        private final String username;
 
         public DeleteAccountViewModel(@NonNull Application application) {
             super(application);
+            username = Me.getInstance().getUsername();
         }
 
         LiveData<Boolean> getResult() {
@@ -145,7 +147,7 @@ public class DeleteAccountActivity extends HalloActivity {
         }
 
         void deleteAccount(@NonNull String phone, @Nullable String reason) {
-            connection.deleteAccount(phone, null, reason).onResponse(iq -> {
+            connection.deleteAccount(phone, username, reason).onResponse(iq -> {
                 deleteAllUserData();
                 result.postValue(true);
                 final Intent intent = new Intent(getApplication(), DeletionConfirmationActivity.class);

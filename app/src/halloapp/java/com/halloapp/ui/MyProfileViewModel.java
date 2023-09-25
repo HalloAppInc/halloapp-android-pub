@@ -33,4 +33,8 @@ public class MyProfileViewModel extends ViewModel {
     public LiveData<String> getName() {
         return me.name;
     }
+
+    public LiveData<String> getUsername() {
+        return me.username;
+    }
 }

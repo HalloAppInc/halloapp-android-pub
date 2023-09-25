@@ -51,18 +51,18 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                     app:layout_constraintStart_toEndOf="@id/avatar"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/number"
+                    app:layout_constraintBottom_toTopOf="@id/username"
                     tools:text="Ded Pihtov" />
 
                 <TextView
-                    android:id="@+id/number"
+                    android:id="@+id/username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textColor="@color/tertiary_text"
                     app:layout_constraintStart_toEndOf="@id/avatar"
                     app:layout_constraintTop_toBottomOf="@id/name"
-                    tools:text="+1 412-555-6999"/>
+                    tools:text="\@username"/>
 
             </LinearLayout>
 

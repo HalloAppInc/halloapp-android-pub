@@ -95,6 +95,13 @@ public class Contact implements Parcelable {
         return getDisplayName(true);
     }
 
+    public @Nullable String getUsername() {
+        if (!TextUtils.isEmpty(username)) {
+            return "@" + username;
+        }
+        return null;
+    }
+
     public String getDisplayName(boolean showTilde) {
         if (!TextUtils.isEmpty(addressBookName)) {
             return addressBookName;

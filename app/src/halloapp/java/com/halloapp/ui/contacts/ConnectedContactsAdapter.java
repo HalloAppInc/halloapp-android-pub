@@ -143,7 +143,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
 
         private ImageView avatarView;
         private TextView nameView;
-        private TextView phoneView;
+        private TextView usernameView;
 
         private View moreOptions;
 
@@ -158,7 +158,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
 
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
-            phoneView = itemView.findViewById(R.id.phone);
+            usernameView = itemView.findViewById(R.id.username);
 
             moreOptions = itemView.findViewById(R.id.more_options);
             moreOptions.setOnClickListener(new DebouncedClickListener() {
@@ -243,7 +243,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
             } else {
                 nameView.setText(contact.getDisplayName());
             }
-            phoneView.setText(contact.getDisplayPhone());
+            usernameView.setText(contact.getUsername());
             if (contact.userId != null) {
                 AvatarLoader.getInstance().load(avatarView, contact.userId);
             } else {

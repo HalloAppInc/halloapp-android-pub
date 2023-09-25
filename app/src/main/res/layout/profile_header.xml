@@ -46,28 +46,13 @@
         tools:visibility="gone"
         android:textColor="@color/tertiary_text"/>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Button.Secondary"
-        android:id="@+id/add_to_contacts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_to_contacts"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"
-        app:icon="@drawable/ic_person_add"
-        app:layout_constraintTop_toBottomOf="@id/subtitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="6dp"
-        android:visibility="gone"/>
-
     <LinearLayout
         android:id="@+id/actions_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/add_to_contacts"
+        app:layout_constraintTop_toBottomOf="@id/subtitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 

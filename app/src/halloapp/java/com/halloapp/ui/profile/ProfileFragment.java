@@ -174,10 +174,8 @@ public class ProfileFragment extends PostsFragment {
         voiceCallView = headerView.findViewById(R.id.call);
         videoCallView = headerView.findViewById(R.id.video_call);
         unblockView = headerView.findViewById(R.id.unblock);
-        addToContactsView = headerView.findViewById(R.id.add_to_contacts);
         contactActionsContainer = headerView.findViewById(R.id.actions_container);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
-            updateAddToContacts();
             subtitleView.setText(s);
             if (s == null) {
                 subtitleView.setVisibility(View.GONE);
@@ -199,18 +197,13 @@ public class ProfileFragment extends PostsFragment {
         voiceCallView.setOnClickListener(v -> {
             callManager.startCallActivity(requireContext(), profileUserId, CallType.AUDIO);
         });
-        addToContactsView.setOnClickListener(v -> {
-            Contact contact = viewModel.getContact().getValue();
-            String phone = viewModel.getSubtitle().getValue();
-            Intent intent = IntentUtils.createContactIntent(contact, phone);
-            startActivity(intent);
-        });
         if (profileUserId.isMe()) {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
             viewModel.getContact().observe(getViewLifecycleOwner(), contact -> {
                 String name = contact.getDisplayName();
                 nameView.setText(name);
+                // TODO(Michelle): Change copy after implementing friends
                 if (contact.addressBookName == null) {
                     emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
                     emptyView.setText(getString(R.string.posts_exchange_numbers));
@@ -218,7 +211,6 @@ public class ProfileFragment extends PostsFragment {
                     emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
                 }
-                updateAddToContacts();
                 updateMessageUnblock();
             });
         }
@@ -260,15 +252,6 @@ public class ProfileFragment extends PostsFragment {
             contactActionsContainer.setVisibility(View.VISIBLE);
             unblockView.setVisibility(View.GONE);
         }
-    }
-
-    private void updateAddToContacts() {
-        if (profileUserId.isMe() || TextUtils.isEmpty(viewModel.getSubtitle().getValue())) {
-            addToContactsView.setVisibility(View.GONE);
-            return;
-        }
-        Contact contact = viewModel.getContact().getValue();
-        addToContactsView.setVisibility(contact == null || contact.addressBookName != null ? View.GONE : View.VISIBLE);
     }
 
     @Override

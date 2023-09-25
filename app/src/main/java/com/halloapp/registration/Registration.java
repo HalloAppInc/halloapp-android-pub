@@ -521,7 +521,9 @@ public class Registration {
             if (usernameSet) {
                 me.saveUsername(response.getUsername());
             }
-            if (BuildConfig.IS_KATCHUP && nameSet && usernameSet) {
+            // In HalloApp, existing users only have their name set. Usernames will be prompted later.
+            // In Katchup, both must be set during registration.
+            if (nameSet && (!BuildConfig.IS_KATCHUP || usernameSet)) {
                 preferences.setProfileSetup(true);
             }
             Log.i("Registration.verifyRegistration success with uid " + uid);
