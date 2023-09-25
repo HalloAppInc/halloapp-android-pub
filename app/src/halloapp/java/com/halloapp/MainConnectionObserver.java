@@ -12,6 +12,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -50,6 +51,8 @@ import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.HalloappProfileUpdate;
+import com.halloapp.proto.server.HalloappUserProfile;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IdentityKey;
@@ -1430,5 +1433,20 @@ public class MainConnectionObserver extends Connection.Observer {
                 null,
                 0);
         contentDb.addMessage(message, false, completionRunnable);
+    }
+
+    @Override
+    public void onHalloappProfileUpdateReceived(@NonNull HalloappProfileUpdate profileUpdate, @NonNull String ackId) {
+        UserId userId = new UserId(Long.toString(profileUpdate.getProfile().getUid()));
+        HalloappUserProfile profile = profileUpdate.getProfile();
+        FriendshipInfo friendshipProfileInfo = new FriendshipInfo(
+                userId,
+                profile.getUsername(),
+                profile.getName(),
+                profile.getAvatarId(),
+                FriendshipInfo.fromProtoType(profile.getStatus(), profile.getBlocked()),
+                System.currentTimeMillis());
+        contactsDb.addFriendship(friendshipProfileInfo);
+        connection.sendAck(ackId);
     }
 }

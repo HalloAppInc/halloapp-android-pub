@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/view_profile"
+        android:title="@string/view_profile"
+        android:icon="@drawable/ic_menu_info"/>
+
+    <item android:id="@+id/add_to_favorites"
+        android:title="@string/add_to_favorites"
+        android:icon="@drawable/ic_my_profile_favorites"/>
+
+    <item android:id="@+id/remove_friend"
+        android:title="@string/remove_friend"
+        android:icon="@drawable/ic_person_remove"/>
+
+    <item android:id="@+id/block_contact"
+        android:title="@string/action_block_contact"
+        android:icon="@drawable/ic_menu_block"/>
+
+</menu>
+

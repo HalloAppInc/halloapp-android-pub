@@ -1,7 +1,9 @@
 package com.halloapp.ui.profile;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +31,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.calling.calling.CallManager;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
@@ -41,7 +45,6 @@ import com.halloapp.ui.chat.chat.ChatActivity;
 import com.halloapp.ui.chat.chat.KeyVerificationActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
-import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
@@ -53,6 +56,8 @@ import com.halloapp.xmpp.Connection;
 public class ProfileFragment extends PostsFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
+    private static final float HIDDEN_PROFILE_ALPHA = 0.8f;
+    private static final float VISIBLE_PROFILE_ALPHA = 1f;
 
     public static ProfileFragment newProfileFragment(@NonNull UserId userId) {
         ProfileFragment profileFragment = new ProfileFragment();
@@ -68,12 +73,14 @@ public class ProfileFragment extends PostsFragment {
 
     private ImageView avatarView;
     private TextView nameView;
-    private TextView subtitleView;
+    private TextView usernameView;
+    private TextView requestsTextView;
+    private Button friendsButtonView;
+    private Button friendsDismissButtonView;
     private View messageView;
     private View voiceCallView;
     private View videoCallView;
     private View unblockView;
-    private View addToContactsView;
     private View contactActionsContainer;
     private RecyclerView postsView;
 
@@ -168,21 +175,16 @@ public class ProfileFragment extends PostsFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
+        usernameView = headerView.findViewById(R.id.username);
+        requestsTextView = headerView.findViewById(R.id.friends_text);
+        friendsButtonView = headerView.findViewById(R.id.friends_button);
+        friendsDismissButtonView = headerView.findViewById(R.id.friends_dismiss_button);
         messageView = headerView.findViewById(R.id.message);
         voiceCallView = headerView.findViewById(R.id.call);
         videoCallView = headerView.findViewById(R.id.video_call);
         unblockView = headerView.findViewById(R.id.unblock);
         contactActionsContainer = headerView.findViewById(R.id.actions_container);
-        viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
-            subtitleView.setText(s);
-            if (s == null) {
-                subtitleView.setVisibility(View.GONE);
-            } else {
-                subtitleView.setVisibility(View.VISIBLE);
-            }
-        });
         unblockView.setOnClickListener(v -> {
             unBlockContact();
         });
@@ -200,18 +202,46 @@ public class ProfileFragment extends PostsFragment {
         if (profileUserId.isMe()) {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
-            viewModel.getContact().observe(getViewLifecycleOwner(), contact -> {
-                String name = contact.getDisplayName();
-                nameView.setText(name);
-                // TODO(Michelle): Change copy after implementing friends
-                if (contact.addressBookName == null) {
-                    emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
-                    emptyView.setText(getString(R.string.posts_exchange_numbers));
+            viewModel.getProfileInfo().observe(getViewLifecycleOwner(), profile -> {
+                nameView.setText(profile.name);
+                if (!TextUtils.isEmpty(profile.username)) {
+                    usernameView.setText("@" + profile.username);
+                    usernameView.setVisibility(View.VISIBLE);
                 } else {
-                    emptyIcon.setImageResource(R.drawable.ic_posts);
-                    emptyView.setText(getString(R.string.contact_profile_empty, name));
+                    usernameView.setVisibility(View.GONE);
                 }
-                updateMessageUnblock();
+                friendsButtonView.setOnClickListener(view -> {
+                    updateFriendship(profile.friendshipStatus);
+                });
+                updateProfileVisibility(profile.friendshipStatus);
+                if (profile.friendshipStatus == FriendshipInfo.Type.FRIENDS) {
+                    requestsTextView.setVisibility(View.GONE);
+                    friendsButtonView.setText("Friends");
+                    friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
+                    friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
+                    friendsDismissButtonView.setVisibility(View.GONE);
+                } else if (profile.friendshipStatus == FriendshipInfo.Type.OUTGOING_PENDING) {
+                    requestsTextView.setVisibility(View.VISIBLE);
+                    requestsTextView.setText(getString(R.string.outgoing_sent_friend_request, profile.name));
+                    friendsButtonView.setText("Cancel request");
+                    friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
+                    friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
+                    friendsDismissButtonView.setVisibility(View.GONE);
+                } else if (profile.friendshipStatus == FriendshipInfo.Type.INCOMING_PENDING) {
+                    requestsTextView.setVisibility(View.VISIBLE);
+                    requestsTextView.setText(getString(R.string.incoming_sent_friend_request, profile.name));
+                    friendsButtonView.setText("Confirm");
+                    friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                    friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
+                    friendsDismissButtonView.setVisibility(View.VISIBLE);
+                    friendsDismissButtonView.setOnClickListener(view -> rejectFriendRequest());
+                } else if (profile.friendshipStatus == FriendshipInfo.Type.NONE_STATUS) {
+                    requestsTextView.setVisibility(View.GONE);
+                    friendsButtonView.setText("Add friend");
+                    friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                    friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
+                    friendsDismissButtonView.setVisibility(View.GONE);
+                }
             });
         }
 
@@ -254,6 +284,35 @@ public class ProfileFragment extends PostsFragment {
         }
     }
 
+    private void updateProfileVisibility(int friendshipStatus) {
+        boolean canView = friendshipStatus == FriendshipInfo.Type.FRIENDS;
+        ViewUtils.setViewAndChildrenEnabled(videoCallView, canView);
+        ViewUtils.setViewAndChildrenEnabled(voiceCallView, canView);
+        ViewUtils.setViewAndChildrenEnabled(messageView, canView);
+        contactActionsContainer.setAlpha(canView ? VISIBLE_PROFILE_ALPHA : HIDDEN_PROFILE_ALPHA);
+        //TODO(Michelle): Update posts visibility
+    }
+
+    private void updateFriendship(int friendType) {
+        if (friendType == FriendshipInfo.Type.FRIENDS) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(getString(R.string.remove_friend_confirmation, nameView.getText().toString()));
+            builder.setMessage(getString(R.string.remove_friend_confirmation_consequences, nameView.getText().toString()));
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.remove_friend, (dialog, which) -> removeFriend());
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+        } else {
+            viewModel.updateFriendship(friendType, profileUserId).observe(getViewLifecycleOwner(), success -> {
+                if (Boolean.TRUE.equals(success)) {
+                    viewModel.computeUserProfileInfo();
+                } else {
+                    SnackbarHelper.showWarning(getActivity(), getString(R.string.failed_update_profile));
+                }
+            });
+        }
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -272,6 +331,7 @@ public class ProfileFragment extends PostsFragment {
     public void onResume() {
         super.onResume();
         loadAvatar();
+        viewModel.computeUserProfileInfo();
         adapter.notifyDataSetChanged();
     }
 
@@ -389,6 +449,32 @@ public class ProfileFragment extends PostsFragment {
                 viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, profileUserId);
             } else {
                 SnackbarHelper.showWarning(nameView, getString(R.string.unblocking_user_failed_check_internet, chatName));
+            }
+        });
+    }
+
+    private void removeFriend() {
+        String name = nameView.getText().toString();
+        ProgressDialog removeFriendDialog = ProgressDialog.show(requireContext(), null, getString(R.string.removing_friend_in_progress, name), true);
+        removeFriendDialog.show();
+
+        viewModel.removeFriend(profileUserId).observe(getViewLifecycleOwner(), success -> {
+            removeFriendDialog.cancel();
+            if (Boolean.TRUE.equals(success)) {
+                SnackbarHelper.showInfo(nameView, getString(R.string.removing_friend_successful, name));
+                viewModel.computeUserProfileInfo();
+            } else {
+                SnackbarHelper.showWarning(nameView, getString(R.string.removing_friend_failed_check_internet, name));
+            }
+        });
+    }
+
+    private void rejectFriendRequest() {
+        viewModel.rejectFriendRequest(profileUserId).observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                viewModel.computeUserProfileInfo();
+            } else {
+                SnackbarHelper.showWarning(getActivity(), R.string.error_reject_friend_request);
             }
         });
     }

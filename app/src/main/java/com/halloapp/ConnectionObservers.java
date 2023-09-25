@@ -19,6 +19,7 @@ import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.HalloappProfileUpdate;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HoldCall;
 import com.halloapp.proto.server.HomeFeedRerequest;
@@ -617,6 +618,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onProfileUpdateReceived(profileUpdate, ackId);
+            }
+        }
+    }
+
+    public void notifyHalloappProfileUpdateReceived(@NonNull HalloappProfileUpdate profileUpdate, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onHalloappProfileUpdateReceived(profileUpdate, ackId);
             }
         }
     }

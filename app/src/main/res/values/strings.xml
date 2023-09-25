@@ -178,7 +178,7 @@
     <string name="chat_message_attribution">%1$s: %2$s</string>
     <string name="empty_chat_with_name_placeholder">%s is on HalloApp.</string>
     <string name="new_chat_name_placeholder">%s is using HalloApp! 🎉</string>
-    <string name="posts_empty">Your posts will appear here</string>
+    <string name="posts_empty">Posts will appear here</string>
     <string name="posts_exchange_numbers">To connect you must exchange phone numbers</string>
     <string name="home_page_empty">Posts from your contacts will appear here</string>
     <string name="chats_page_empty">Contacts and messages will appear here</string>
@@ -2005,8 +2005,8 @@
     <string name="friends">Friends</string>
     <!-- Message displayed to show all outgoing sent friend requests -->
     <string name="see_outgoing_requests">See sent requests</string>
-    <!-- Message displayed to show all incoming pending friend requests -->
-    <string name="see_incoming_requests">See all incoming requests</string>
+    <!-- Message displayed to show all pending friend requests -->
+    <string name="see_all_requests">See all requests</string>
     <!-- Tab to show suggested and current friend requests -->
     <string name="requests">Requests</string>
     <!-- Button text to confirm an incoming pending friend request -->
@@ -2014,7 +2014,7 @@
     <!-- Button text to send a friend request to someone -->
     <string name="add_friend">Add friend</string>
     <!-- Section title showing current pending friend requests -->
-    <string name="friend_requests">Friend Requests</string>
+    <string name="friend_requests">Friend requests</string>
     <!-- Section title of people to invite to join Halloapp -->
     <string name="invite_friends_on_halloapp_title">Invite friends on Halloapp</string>
     <!-- Section title for friend suggestions from your contact list -->
@@ -2029,4 +2029,42 @@
     <string name="halloapp_friends">My HalloApp friends</string>
     <!-- Section title showing HalloApp users after searching -->
     <string name="halloapp_users">HalloApp users</string>
+    <!-- Shown when user chooses to remove a friend; %s is replaced with the name of the friend to be removed -->
+    <string name="remove_friend_confirmation">Remove %s from your friends?</string>
+    <!-- Explains the consequences of removing a friend where %s is the name of the person -->
+    <string name="remove_friend_confirmation_consequences">%s and you will no longer be able to see each other\'s posts.</string>
+    <!-- Menu item to add someone to your favorites list -->
+    <string name="add_to_favorites">Add to favorites</string>
+    <!-- Menu item to remove someone as a friend -->
+    <string name="remove_friend">Remove friend</string>
+    <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
+    <string name="outgoing_sent_friend_request">You have sent %s a friend request</string>
+    <!-- Message under %s's profile if they sent you a friend request where %s is the name of the person-->
+    <string name="incoming_sent_friend_request">%s has sent you a friend request</string>
+    <!-- Button to reject a friend request -->
+    <string name="ignore">Ignore</string>
+    <!-- Title showing all requests a user received -->
+    <string name="all_requests">All requests</string>
+    <!-- Section title showing current requests received -->
+    <string name="requests_received">Requests received</string>
+    <!-- Section title showing current requests sent -->
+    <string name="requests_sent">Requests sent</string>
+    <!-- Warning message shown when we were unable to remove %s as a friend and to try later where %s is the name of the person -->
+    <string name="removing_friend_failed_check_internet">Couldn\'t remove %s as a friend. Check your internet and try again.</string>
+    <!-- Confirmation message that %s was removed as a friend where %s is the name of the person -->
+    <string name="removing_friend_successful">Removed %s</string>
+    <!-- Message shown when %s is in the process of being removed as a friend where %s is the name of the person-->
+    <string name="removing_friend_in_progress">Removing %s…</string>
+    <!-- Error message when we are unable to send a friend request and to try again later -->
+    <string name="error_send_friend_request">Unable to send friend request, please try again later</string>
+    <!-- Error message when we are unable to cancel a friend request and to try again later -->
+    <string name="error_withdraw_friend_request">Unable to cancel friend request, please try again later</string>
+    <!-- Error message when we are unable to remove someone as a friend and to try again later -->
+    <string name="error_remove_friend">Unable to remove friend, please try again later</string>
+    <!-- Error message when we are unable to reject a friend request and to try again later -->
+    <string name="error_reject_friend_request">Unable to reject friend request, please try again later</string>
+    <!-- Error message when we are unable to accept a friend request and to try again later -->
+    <string name="error_accept_friend_request">Unable to accept friend request, please try again later</string>
+    <!-- Error message when we are unable to block contact and to try again later -->
+    <string name="error_block_contact">Unable to block contact, please try again later</string>
 </resources>

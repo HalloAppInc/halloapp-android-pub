@@ -13,15 +13,19 @@ import java.util.Objects;
 public class FriendshipInfo {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Type.NONE_STATUS, Type.INCOMING_PENDING, Type.OUTGOING_PENDING, Type.FRIENDS})
+    @IntDef({Type.NONE_STATUS, Type.INCOMING_PENDING, Type.OUTGOING_PENDING, Type.FRIENDS, Type.BLOCKED})
     public @interface Type {
         int NONE_STATUS = 1;
         int INCOMING_PENDING = 2;
         int OUTGOING_PENDING = 3;
         int FRIENDS = 4;
+        int BLOCKED = 5;
     }
 
-    public static @Type int fromProtoType(FriendshipStatus friendshipStatus) {
+    public static @Type int fromProtoType(FriendshipStatus friendshipStatus, boolean isBlocked) {
+        if (isBlocked) {
+            return Type.BLOCKED;
+        }
         switch (friendshipStatus) {
             case NONE_STATUS:
                 return Type.NONE_STATUS;
@@ -31,20 +35,6 @@ public class FriendshipInfo {
                 return Type.OUTGOING_PENDING;
             case FRIENDS:
                 return Type.FRIENDS;
-        }
-        throw new IllegalArgumentException("Unexpected friendship status " + friendshipStatus);
-    }
-
-    public static FriendshipStatus toProtoType(@Type int friendshipStatus) {
-        switch (friendshipStatus) {
-            case Type.NONE_STATUS:
-                return FriendshipStatus.NONE_STATUS;
-            case Type.INCOMING_PENDING:
-                return FriendshipStatus.INCOMING_PENDING;
-            case Type.OUTGOING_PENDING:
-                return FriendshipStatus.OUTGOING_PENDING;
-            case Type.FRIENDS:
-                return FriendshipStatus.FRIENDS;
         }
         throw new IllegalArgumentException("Unexpected friendship status " + friendshipStatus);
     }

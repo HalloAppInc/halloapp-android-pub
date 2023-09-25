@@ -22,6 +22,7 @@ import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
@@ -35,8 +36,8 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
 import java.util.List;
@@ -55,9 +56,10 @@ public class ProfileViewModel extends ViewModel {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final ComputableLiveData<String> subtitleLiveData;
+    private final ComputableLiveData<String> usernameLiveData;
     private final ComputableLiveData<Contact> contactLiveData;
     private final ComputableLiveData<Boolean> hasGroupsInCommonLiveData;
+    public final MutableLiveData<FriendshipInfo> profile = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isBlocked;
 
     private final UserId userId;
@@ -160,7 +162,7 @@ public class ProfileViewModel extends ViewModel {
                 return !ContentDb.getInstance().getGroupsInCommon(userId).isEmpty();
             }
         };
-        subtitleLiveData = new ComputableLiveData<String>() {
+        usernameLiveData = new ComputableLiveData<String>() {
             @SuppressLint("RestrictedApi")
             @Override
             protected String compute() {
@@ -203,12 +205,16 @@ public class ProfileViewModel extends ViewModel {
         });
     }
 
-    public LiveData<String> getSubtitle() {
-        return subtitleLiveData.getLiveData();
+    public LiveData<String> getUsername() {
+        return usernameLiveData.getLiveData();
     }
 
     public LiveData<Contact> getContact() {
         return contactLiveData.getLiveData();
+    }
+
+    public LiveData<FriendshipInfo> getProfileInfo() {
+        return profile;
     }
 
     public LiveData<Boolean> getIsBlocked() {
@@ -311,5 +317,101 @@ public class ProfileViewModel extends ViewModel {
     @NonNull
     public VoiceNotePlayer getVoiceNotePlayer() {
         return voiceNotePlayer;
+    }
+
+    public void computeUserProfileInfo() {
+        String username = getUsername().getValue();
+        Connection.getInstance().getHalloappProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(response -> {
+            if (!response.success) {
+                return;
+            }
+            FriendshipInfo friendshipProfileInfo = new FriendshipInfo(
+                    userId.isMe() ? new UserId(me.getUser()) : userId,
+                    response.profile.getUsername(),
+                    response.profile.getName(),
+                    response.profile.getAvatarId(),
+                    FriendshipInfo.fromProtoType(response.profile.getStatus(), response.profile.getBlocked()),
+                    System.currentTimeMillis());
+            profile.postValue(friendshipProfileInfo);
+        }).onError(err -> {
+            Log.e("Failed to get profile info", err);
+        });
+    }
+
+    public LiveData<Boolean> removeFriend(@NonNull UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        Connection.getInstance().removeFriend(userId).onResponse(response -> {
+            if (!response.success) {
+                Log.e("Unable to remove friend " + userId);
+                result.postValue(false);
+            }
+            ContactsDb.getInstance().removeFriendship(response.info);
+            result.postValue(true);
+        }).onError(e -> {
+            Log.e("Unable to remove friend", e);
+            result.postValue(false);
+        });
+        return result;
+    }
+
+    public LiveData<Boolean> rejectFriendRequest(@NonNull UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        Connection.getInstance().rejectFriendRequest(userId).onResponse(response -> {
+            if (!response.success) {
+                Log.e("Unable to reject the friend request of " + userId);
+                result.postValue(false);
+            }
+            ContactsDb.getInstance().removeFriendship(response.info);
+            result.postValue(true);
+        }).onError(e -> {
+            Log.e("Unable to reject friend request", e);
+            result.postValue(false);
+        });
+        return result;
+    }
+
+    public LiveData<Boolean> updateFriendship(int friendType, @NonNull UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        if (friendType == FriendshipInfo.Type.INCOMING_PENDING) {
+            Connection.getInstance().acceptFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to confirm the friend request of " + userId);
+                    result.postValue(false);
+                } else {
+                    ContactsDb.getInstance().addFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to confirm friend request", e);
+                result.postValue(false);
+            });
+        } else if (friendType == FriendshipInfo.Type.OUTGOING_PENDING) {
+            Connection.getInstance().withdrawFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to withdraw the friend request of " + userId);
+                    result.postValue(false);
+                } else {
+                    ContactsDb.getInstance().removeFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to withdraw friend request", e);
+                result.postValue(false);
+            });
+        } else if (friendType == FriendshipInfo.Type.NONE_STATUS) {
+            Connection.getInstance().sendFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to send a friend request to " + userId);
+                    result.postValue(false);
+                } else {
+                    ContactsDb.getInstance().addFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to send friend request", e);
+                result.postValue(false);
+            });
+        }
+        return result;
     }
 }

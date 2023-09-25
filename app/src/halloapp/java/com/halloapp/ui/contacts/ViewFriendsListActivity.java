@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,10 +24,12 @@ import android.widget.TextView;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,21 +41,28 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.id.UserId;
+import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.server.FriendListRequest;
+import com.halloapp.proto.server.FriendshipStatus;
 import com.halloapp.proto.server.HalloappUserProfile;
+import com.halloapp.ui.DebouncedClickListener;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ViewFriendsListActivity.ViewFriendsListViewModel.FriendState;
 import com.halloapp.ui.contacts.ViewFriendsListActivity.ViewFriendsListViewModel.Tab;
 import com.halloapp.ui.contacts.ViewFriendsListActivity.ViewFriendsListViewModel.Type;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FriendListResponseIq;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -74,6 +84,7 @@ public class ViewFriendsListActivity extends HalloActivity {
     private ImageView selectedFriendsTab;
     private ImageView searchIconView;
     private EditText searchEditTextView;
+    private TextView requestsTitleView;
     private RecyclerView listView;
 
     private ViewFriendsListViewModel viewModel;
@@ -99,8 +110,11 @@ public class ViewFriendsListActivity extends HalloActivity {
         selectedFriendsTab = findViewById(R.id.selected_friends_tab);
         searchEditTextView = findViewById(R.id.search_text);
         searchIconView = findViewById(R.id.search_icon);
+        requestsTitleView = findViewById(R.id.requests_title);
 
         searchIconView.setOnClickListener(view -> {
+            requestsTitleView.setVisibility(View.GONE);
+            searchEditTextView.setVisibility(View.VISIBLE);
             searchEditTextView.setText("");
             KeyboardUtils.showSoftKeyboard(searchEditTextView);
         });
@@ -131,7 +145,7 @@ public class ViewFriendsListActivity extends HalloActivity {
         viewModel.searchState.observe(this, state -> {
             if (state == ViewFriendsListViewModel.SearchState.Closed) {
                 searchIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_search));
-                friendsContainer.setVisibility(View.VISIBLE);
+                friendsContainer.setVisibility(viewModel.getSelectedTab().getValue() == Tab.ALL_REQUESTS ? View.GONE : View.VISIBLE);
                 listView.setVisibility(View.VISIBLE);
             } else {
                 searchIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_x));
@@ -141,7 +155,7 @@ public class ViewFriendsListActivity extends HalloActivity {
         });
 
 
-        requestsTab.setOnClickListener(view -> viewModel.setSelectedTab(Tab.REQUESTS));
+        requestsTab.setOnClickListener(view -> viewModel.setSelectedTab(Tab.SUGGESTIONS));
 
         friendsTab.setOnClickListener(view -> viewModel.setSelectedTab(Tab.FRIENDS));
     }
@@ -155,6 +169,15 @@ public class ViewFriendsListActivity extends HalloActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (viewModel.getSelectedTab().getValue() == Tab.ALL_REQUESTS) {
+            viewModel.setSelectedTab(Tab.SUGGESTIONS);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     private void setSelectedTab(@NonNull Tab tab) {
         int selectedTextColor = getResources().getColor(R.color.favorites_dialog_blue);
@@ -162,8 +185,11 @@ public class ViewFriendsListActivity extends HalloActivity {
         Drawable selectedBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.rounded_entry_friendship_bg);
         Drawable unselectedBackgroundDrawable = null;
 
-        requestsTab.setTextColor(Tab.REQUESTS.equals(tab) ? selectedTextColor : unselectedTextColor);
-        selectedRequestsTab.setBackground(Tab.REQUESTS.equals(tab) ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
+        friendsContainer.setVisibility(Tab.ALL_REQUESTS.equals(tab) ? View.GONE : View.VISIBLE);
+        requestsTitleView.setVisibility(Tab.ALL_REQUESTS.equals(tab) ? View.VISIBLE : View.GONE);
+        searchEditTextView.setVisibility(Tab.ALL_REQUESTS.equals(tab) ? View.INVISIBLE : View.VISIBLE);
+        requestsTab.setTextColor(Tab.SUGGESTIONS.equals(tab) ? selectedTextColor : unselectedTextColor);
+        selectedRequestsTab.setBackground(Tab.SUGGESTIONS.equals(tab) ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
         friendsTab.setTextColor(Tab.FRIENDS.equals(tab) ? selectedTextColor : unselectedTextColor);
         selectedFriendsTab.setBackground(Tab.FRIENDS.equals(tab) ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
 
@@ -238,22 +264,21 @@ public class ViewFriendsListActivity extends HalloActivity {
         public void bindTo(@NonNull T item) {}
     }
 
-    public static class SeeRequestsViewHolder extends ViewHolder<SeeRequestsItem> {
+    public class SeeRequestsViewHolder extends ViewHolder<SeeRequestsItem> {
 
-        private final TextView textView;
-        private final ImageView expandListView;
+        private final TextView titleView;
 
         public SeeRequestsViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.text);
-            expandListView = itemView.findViewById(R.id.icon);
+            titleView = itemView.findViewById(R.id.text);
         }
 
         @Override
         public void bindTo(@NonNull SeeRequestsItem item) {
-            textView.setText(item.type == SeeRequestsItem.SeeRequestsType.INCOMING_REQUESTS ? R.string.see_incoming_requests : R.string.see_outgoing_requests);
-            expandListView.setRotation(item.more ? 90 : 0);
-            itemView.setOnClickListener(v -> item.toggle.run());
+            titleView.setText(item.title);
+            itemView.setOnClickListener(view -> {
+                viewModel.setSelectedTab(Tab.ALL_REQUESTS);
+            });
         }
     }
 
@@ -274,9 +299,10 @@ public class ViewFriendsListActivity extends HalloActivity {
         }
     }
 
-    public static class PersonViewHolder extends ViewHolder<PersonItem> {
+    public class PersonViewHolder extends ViewHolder<PersonItem> {
 
         private UserId userId;
+        private FriendState friendState;
         private final ImageView avatarView;
         private final TextView nameView;
         private final TextView usernameView;
@@ -295,56 +321,127 @@ public class ViewFriendsListActivity extends HalloActivity {
             optionsView = itemView.findViewById(R.id.options);
             closeView = itemView.findViewById(R.id.close);
 
-            addView.setOnClickListener(v -> {
-                // TODO(Michelle): Send friend requests
-                addView.setVisibility(View.GONE);
-                addedView.setVisibility(View.VISIBLE);
-
+            itemView.setOnClickListener(view -> {
+                viewProfile();
             });
 
-            // TODO(Michelle): Add option menu (for removing a friend) and close menu (for dismissing a friend request)
+            addView.setOnClickListener(view -> {
+                if (this.friendState == FriendState.DEFAULT) {
+                    viewModel.sendFriendRequest(userId).observe(ViewFriendsListActivity.this, success -> {
+                        if (Boolean.TRUE.equals(success)) {
+                            addedView.setVisibility(View.VISIBLE);
+                            addView.setVisibility(View.GONE);
+                            return;
+                        }
+                        SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.error_send_friend_request);
+                    });
+                } else if (this.friendState == FriendState.INCOMING_REQUEST) {
+                    viewModel.acceptFriendRequest(userId).observe(ViewFriendsListActivity.this, success -> {
+                        if (Boolean.TRUE.equals(success)) {
+                            return;
+                        }
+                        SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.error_accept_friend_request);
+                    });;
+                } else if (this.friendState == FriendState.OUTGOING_REQUEST) {
+                    viewModel.withdrawFriendRequest(userId).observe(ViewFriendsListActivity.this, success -> {
+                        if (Boolean.TRUE.equals(success)) {
+                            return;
+                        }
+                        SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.error_withdraw_friend_request);
+                    });
+                }
+            });
+
+            closeView.setOnClickListener(view -> {
+                viewModel.rejectFriendRequest(userId).observe(ViewFriendsListActivity.this, success -> {
+                    if (Boolean.TRUE.equals(success)) {
+                        return;
+                    }
+                    SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.error_reject_friend_request);
+                });
+            });
+
+            optionsView.setOnClickListener(new DebouncedClickListener() {
+
+                @Override
+                public void onOneClick(@NonNull View v) {
+                    PopupMenu menu = new PopupMenu(v.getContext(), v);
+                    menu.inflate(R.menu.friend_menu);
+                    menu.setOnMenuItemClickListener(item -> {
+                        if (item.getItemId() == R.id.view_profile) {
+                            viewProfile();
+                            return true;
+                        } else if (item.getItemId() == R.id.add_to_favorites) {
+                            viewModel.addToFavorites(userId);
+                            return true;
+                        } else if (item.getItemId() == R.id.remove_friend) {
+                            viewModel.removeFriend(userId).observe(ViewFriendsListActivity.this, success -> {
+                                if (Boolean.TRUE.equals(success)) {
+                                    return;
+                                }
+                                SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.remove_friend);
+                            });
+                            return true;
+                        } else if (item.getItemId() == R.id.block_contact) {
+                            viewModel.blockContact(userId).observe(ViewFriendsListActivity.this, success -> {
+                                if (Boolean.TRUE.equals(success)) {
+                                    return;
+                                }
+                                SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.error_block_contact);
+                            });
+                            return true;
+                        }
+                        return false;
+                    });
+                    menu.setForceShowIcon(true);
+                    menu.show();
+                }
+            });
+        }
+
+        private void viewProfile() {
+            startActivity(ViewProfileActivity.viewProfile(getBaseContext(), userId));
         }
 
         @Override
         public void bindTo(@NonNull PersonItem item) {
             this.userId = item.userId;
             this.nameView.setText(item.name);
+            this.friendState = item.friendState;
             if (!TextUtils.isEmpty(item.username)) {
                 this.usernameView.setText("@" + item.username);
             } else {
                 this.usernameView.setText(null);
             }
             AvatarLoader.getInstance().load(avatarView, item.userId, item.avatarId);
-            if (item.tab == Tab.REQUESTS && item.friendState == FriendState.DEFAULT) {
+            if (item.friendState == FriendState.DEFAULT) {
                 addView.setText(R.string.add_friend);
+                addView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(addView.getContext(), R.color.favorites_dialog_blue)));
+                addView.setTextColor(ContextCompat.getColor(addView.getContext(), R.color.white));
                 addView.setVisibility(View.VISIBLE);
+                addedView.setVisibility(View.GONE);
                 optionsView.setVisibility(View.VISIBLE);
                 closeView.setVisibility(View.GONE);
-            } else if (item.tab == Tab.REQUESTS && item.friendState == FriendState.INCOMING_REQUEST) {
+            } else if (item.friendState == FriendState.INCOMING_REQUEST) {
                 addView.setText(R.string.confirm_friend);
+                addView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(addView.getContext(), R.color.favorites_dialog_blue)));
+                addView.setTextColor(ContextCompat.getColor(addView.getContext(), R.color.white));
                 addView.setVisibility(View.VISIBLE);
+                addedView.setVisibility(View.GONE);
                 optionsView.setVisibility(View.GONE);
                 closeView.setVisibility(View.VISIBLE);
-            } else if (item.tab == Tab.FRIENDS && item.friendState == FriendState.FRIENDS) {
+            } else if (item.friendState == FriendState.FRIENDS) {
                 addView.setVisibility(View.GONE);
                 addedView.setVisibility(View.GONE);
                 optionsView.setVisibility(View.VISIBLE);
                 closeView.setVisibility(View.GONE);
-            } else if (item.tab == Tab.FRIENDS && item.friendState == FriendState.OUTGOING_REQUEST) {
-                //TODO(Michelle): Update when new designs come in
-                addView.setVisibility(View.GONE);
-                addedView.setVisibility(View.GONE);
-                optionsView.setVisibility(View.VISIBLE);
-                closeView.setVisibility(View.GONE);
-            } else if (item.tab == Tab.SEARCH && item.friendState == FriendState.FRIENDS) {
-                addView.setVisibility(View.GONE);
-                addedView.setVisibility(View.GONE);
-                optionsView.setVisibility(View.VISIBLE);
-                closeView.setVisibility(View.GONE);
-            } else if (item.tab == Tab.SEARCH && item.friendState == FriendState.DEFAULT) {
-                addView.setText(R.string.add_friend);
+            } else if (item.friendState == FriendState.OUTGOING_REQUEST) {
+                addView.setText(R.string.cancel);
+                addView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(addView.getContext(), R.color.black_10)));
+                addView.setTextColor(ContextCompat.getColor(addView.getContext(), R.color.favorites_dialog_blue));
                 addView.setVisibility(View.VISIBLE);
-                optionsView.setVisibility(View.VISIBLE);
+                addedView.setVisibility(View.GONE);
+                optionsView.setVisibility(View.GONE);
                 closeView.setVisibility(View.GONE);
             }
         }
@@ -433,22 +530,20 @@ public class ViewFriendsListActivity extends HalloActivity {
         private final String name;
         private final String username;
         private final String avatarId;
-        private final Tab tab;
         private final FriendState friendState;
 
-        public PersonItem(@NonNull UserId userId, @NonNull String name, @Nullable String username, @Nullable String avatarId, @NonNull Tab tab, @Nullable FriendState friendState) {
+        public PersonItem(@NonNull UserId userId, @NonNull String name, @Nullable String username, @Nullable String avatarId, @Nullable FriendState friendState) {
             super(Type.PERSON);
             this.userId = userId;
             this.name = name;
             this.username = username;
             this.avatarId = avatarId;
-            this.tab = tab;
             this.friendState = friendState == null ? FriendState.DEFAULT : friendState;
         }
     }
 
     public static class DeviceContactItem extends Item {
-        
+
         private final Contact contact;
 
         public DeviceContactItem(@NonNull Contact contact) {
@@ -459,22 +554,12 @@ public class ViewFriendsListActivity extends HalloActivity {
 
     public static class SeeRequestsItem extends Item {
 
-        enum SeeRequestsType {
-            INCOMING_REQUESTS,
-            OUTGOING_REQUESTS
-        }
+        private final String title;
 
-        final SeeRequestsItem.SeeRequestsType type;
-        final boolean more;
-        final Runnable toggle;
-
-        public SeeRequestsItem(@NonNull SeeRequestsItem.SeeRequestsType type, boolean more, @NonNull Runnable toggle) {
+        public SeeRequestsItem(@NonNull String title) {
             super(Type.SEE_REQUESTS);
-            this.type = type;
-            this.more = more;
-            this.toggle = toggle;
+            this.title = title;
         }
-
     }
 
     public static class NoConnectionsItem extends Item {
@@ -487,16 +572,17 @@ public class ViewFriendsListActivity extends HalloActivity {
     public static class ViewFriendsListViewModel extends AndroidViewModel {
 
         enum Tab {
-            REQUESTS,
+            SUGGESTIONS,
             FRIENDS,
-            SEARCH
+            ALL_REQUESTS,
         }
 
         enum FriendState {
             DEFAULT,
             OUTGOING_REQUEST,
             INCOMING_REQUEST,
-            FRIENDS
+            FRIENDS,
+            BLOCKED,
         }
 
         enum SearchState {
@@ -504,7 +590,7 @@ public class ViewFriendsListActivity extends HalloActivity {
             InProgress,
             Empty,
             Failed,
-            Success
+            Success,
         }
 
         @Retention(RetentionPolicy.SOURCE)
@@ -517,7 +603,7 @@ public class ViewFriendsListActivity extends HalloActivity {
             int NO_CONNECTIONS = 5;
         }
 
-        private final MutableLiveData<Tab> selectedTab = new MutableLiveData<>(Tab.REQUESTS);
+        private final MutableLiveData<Tab> selectedTab = new MutableLiveData<>(Tab.SUGGESTIONS);
         private final List<FriendListResponseIq.Suggestion> contactSuggestionsList = new ArrayList<>();
         private final List<FriendListResponseIq.Suggestion> friendSuggestionsList = new ArrayList<>();
         private final List<HalloappUserProfile> searchUserResultList = new ArrayList<>();
@@ -527,14 +613,50 @@ public class ViewFriendsListActivity extends HalloActivity {
         public final MutableLiveData<SearchState> searchState = new MutableLiveData<>(SearchState.Closed);
 
         private String suggestionsCursor;
-        private boolean outgoingRequestsExpanded = false;
 
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
         private Runnable searchUsersRunnable;
         private Runnable searchFriendsRunnable;
 
+        public Map<UserId, FriendState> friendStateMap = new HashMap<>();
+
         private static final int SEARCH_DELAY_MS = 300;
 
+        private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onFriendshipsChanged(FriendshipInfo friendshipInfo) {
+                UserId userId = friendshipInfo.userId;
+                FriendState friendState = fromFriendshipInfo(friendshipInfo.friendshipStatus);
+                friendStateMap.put(userId, friendState);
+                items.invalidate();
+            }
+        };
+
+        private static FriendState fromFriendshipStatus(@NonNull FriendshipStatus status) {
+            switch (status) {
+                case NONE_STATUS: return FriendState.DEFAULT;
+                case INCOMING_PENDING: return FriendState.INCOMING_REQUEST;
+                case OUTGOING_PENDING: return FriendState.OUTGOING_REQUEST;
+                case FRIENDS: return FriendState.FRIENDS;
+                default: return FriendState.DEFAULT;
+            }
+        }
+
+        private static FriendState fromFriendshipInfo(int status) {
+            if (FriendshipInfo.Type.FRIENDS == status) {
+                return FriendState.FRIENDS;
+            } else if (FriendshipInfo.Type.OUTGOING_PENDING == status) {
+                return FriendState.OUTGOING_REQUEST;
+            } else if (FriendshipInfo.Type.INCOMING_PENDING == status) {
+                return FriendState.INCOMING_REQUEST;
+            } else if (FriendshipInfo.Type.BLOCKED == status) {
+                return FriendState.BLOCKED;
+            } else if (FriendshipInfo.Type.NONE_STATUS == status) {
+                return FriendState.DEFAULT;
+            }
+            return FriendState.DEFAULT;
+        }
 
         @SuppressLint("RestrictedApi")
         public ViewFriendsListViewModel(@NonNull Application application) {
@@ -548,7 +670,14 @@ public class ViewFriendsListActivity extends HalloActivity {
                 }
             };
 
+            ContactsDb.getInstance().addObserver(contactsObserver);
             fetchSuggestions();
+        }
+
+        @Override
+        protected void onCleared() {
+            super.onCleared();
+            ContactsDb.getInstance().removeObserver(contactsObserver);
         }
 
         @SuppressLint("RestrictedApi")
@@ -570,6 +699,9 @@ public class ViewFriendsListActivity extends HalloActivity {
                         names.put(userId, suggestion.info.name);
                         usernames.put(userId, suggestion.info.username);
                         avatars.put(userId, suggestion.info.avatarId);
+                        if (suggestion.info.friendshipStatus != FriendshipInfo.Type.NONE_STATUS) {
+                            continue;
+                        }
                         switch (suggestion.type) {
                             case CONTACT: {
                                 contactSuggestions.add(suggestion);
@@ -614,6 +746,12 @@ public class ViewFriendsListActivity extends HalloActivity {
             items.invalidate();
         }
 
+        @SuppressLint("RestrictedApi")
+        public void updateFriendState(@NonNull UserId userId, @NonNull FriendState friendState) {
+            friendStateMap.put(userId, friendState);
+            items.invalidate();
+        }
+
         public MutableLiveData<Tab> getSelectedTab() {
             return selectedTab;
         }
@@ -639,8 +777,15 @@ public class ViewFriendsListActivity extends HalloActivity {
                             searchState.postValue(SearchState.Failed);
                             Log.e("Failed to get search results");
                         } else {
+                            ContactsDb contactsDb = ContactsDb.getInstance();
+                            Map<UserId, String> names = new HashMap<>();
+                            Map<UserId, String> usernames = new HashMap<>();
+                            Map<UserId, String> avatars = new HashMap<>();
                             searchUserResultList.clear();
                             searchUserResultList.addAll(response.profiles);
+                            contactsDb.updateUserNames(names);
+                            contactsDb.updateUserUsernames(usernames);
+                            contactsDb.updateUserAvatars(avatars);
                             searchState.postValue(response.profiles.isEmpty() ? SearchState.Empty : SearchState.Success);
                             items.invalidate();
                         }
@@ -705,75 +850,88 @@ public class ViewFriendsListActivity extends HalloActivity {
             List<Item> list = new ArrayList<>();
 
             if (searchState.getValue() != SearchState.Closed) {
-                if (!searchUserResultList.isEmpty()) {
-                    list.add(new SectionHeaderItem(getApplication().getString(R.string.halloapp_users), false));
-                }
-                for (HalloappUserProfile userProfile : searchUserResultList) {
-                    UserId userId = new UserId(Long.toString(userProfile.getUid()));
-                    list.add(new PersonItem(
-                            userId,
-                            userProfile.getName(),
-                            userProfile.getUsername(),
-                            userProfile.getAvatarId(),
-                            Tab.SEARCH,
-                            FriendState.DEFAULT));
-                }
-                if (!searchFriendsResultList.isEmpty()) {
-                    list.add(new SectionHeaderItem(getApplication().getString(R.string.halloapp_friends), false));
-                }
+                boolean isFirstOne = true;
                 for (FriendshipInfo friend : searchFriendsResultList) {
+                    FriendState friendState = friendStateMap.get(friend.userId) == null ? fromFriendshipInfo(friend.friendshipStatus) : friendStateMap.get(friend.userId);
+                    if (friendState != FriendState.FRIENDS) {
+                        continue;
+                    }
+                    if (isFirstOne) {
+                        list.add(new SectionHeaderItem(getApplication().getString(R.string.halloapp_friends), false));
+                        isFirstOne = false;
+                    }
                     list.add(new PersonItem(
                             friend.userId,
                             friend.name,
                             friend.username,
                             friend.avatarId,
-                            Tab.SEARCH,
-                            FriendState.FRIENDS));
+                            friendState));
+                }
+                isFirstOne = true;
+                for (HalloappUserProfile userProfile : searchUserResultList) {
+                    if (userProfile.getBlocked()) {
+                        continue;
+                    }
+                    UserId userId = new UserId(Long.toString(userProfile.getUid()));
+                    FriendState friendState = friendStateMap.get(userId) == null ? fromFriendshipStatus(userProfile.getStatus()) : friendStateMap.get(userId);
+                    if (friendState == FriendState.FRIENDS || friendState == FriendState.BLOCKED) {
+                        continue;
+                    }
+                    if (isFirstOne) {
+                        list.add(new SectionHeaderItem(getApplication().getString(R.string.halloapp_users), false));
+                        isFirstOne = false;
+                    }
+                    list.add(new PersonItem(
+                            userId,
+                            userProfile.getName(),
+                            userProfile.getUsername(),
+                            userProfile.getAvatarId(),
+                            friendState));
                 }
                 return list;
             }
 
+            List<FriendshipInfo> incomingRequestsList = contactsDb.getFriendships(FriendshipInfo.Type.INCOMING_PENDING);
+            List<FriendshipInfo> outgoingRequestsList = contactsDb.getFriendships(FriendshipInfo.Type.OUTGOING_PENDING);
             Tab tab = selectedTab.getValue();
-            if (tab == Tab.REQUESTS) {
-                List<FriendshipInfo> incomingRequestsList = contactsDb.getFriendships(FriendshipInfo.Type.INCOMING_PENDING);
-                if (!incomingRequestsList.isEmpty()) {
+            if (tab == Tab.SUGGESTIONS) {
+                if (!incomingRequestsList.isEmpty() || !outgoingRequestsList.isEmpty()) {
                     list.add(new SectionHeaderItem(getApplication().getString(R.string.friend_requests), false));
-                    for (FriendshipInfo friend : incomingRequestsList) {
+                    if (!incomingRequestsList.isEmpty()) {
+                        FriendshipInfo friend = incomingRequestsList.get(0);
                         list.add(new PersonItem(
                                 friend.userId,
                                 friend.name,
                                 friend.username,
                                 friend.avatarId,
-                                Tab.REQUESTS,
                                 FriendState.INCOMING_REQUEST));
                     }
+                    list.add(new SeeRequestsItem(getApplication().getString(R.string.see_all_requests)));
                 }
 
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.from_contacts_list), false));
                 if (contactSuggestionsList.isEmpty()) {
                     list.add(new NoConnectionsItem());
                 } else {
-                    for(FriendListResponseIq.Suggestion suggestion : contactSuggestionsList) {
+                    for (FriendListResponseIq.Suggestion suggestion : contactSuggestionsList) {
                         list.add(new PersonItem(
                                 suggestion.info.userId,
                                 suggestion.info.name,
                                 suggestion.info.username,
                                 suggestion.info.avatarId,
-                                Tab.REQUESTS,
-                                FriendState.DEFAULT));
+                                friendStateMap.get(suggestion.info.userId)));
                     }
                 }
 
                 if (!friendSuggestionsList.isEmpty()) {
                     list.add(new SectionHeaderItem(getApplication().getString(R.string.friend_suggestions), false));
-                    for(FriendListResponseIq.Suggestion suggestion : friendSuggestionsList) {
+                    for (FriendListResponseIq.Suggestion suggestion : friendSuggestionsList) {
                         list.add(new PersonItem(
                                 suggestion.info.userId,
                                 suggestion.info.name,
                                 suggestion.info.username,
                                 suggestion.info.avatarId,
-                                Tab.REQUESTS,
-                                FriendState.DEFAULT));
+                                friendStateMap.get(suggestion.info.userId)));
                     }
                 }
             } else if (tab == Tab.FRIENDS) {
@@ -782,42 +940,161 @@ public class ViewFriendsListActivity extends HalloActivity {
                 if (friendsList.isEmpty()) {
                     list.add(new NoConnectionsItem());
                 } else {
-                    for(FriendshipInfo friend : friendsList) {
+                    for (FriendshipInfo friend : friendsList) {
                         list.add(new PersonItem(
                                 friend.userId,
                                 friend.name,
                                 friend.username,
                                 friend.avatarId,
-                                Tab.FRIENDS,
                                 FriendState.FRIENDS));
                     }
                 }
 
-                List<FriendshipInfo> outgoingRequestsList = contactsDb.getFriendships(FriendshipInfo.Type.OUTGOING_PENDING);
-                if (!outgoingRequestsList.isEmpty()) {
-                    list.add(new SeeRequestsItem(SeeRequestsItem.SeeRequestsType.OUTGOING_REQUESTS, outgoingRequestsExpanded, this::toggleSentRequests));
-                }
-                if (outgoingRequestsExpanded) {
-                    for(FriendshipInfo friend : outgoingRequestsList) {
-                        list.add(new PersonItem(
-                                friend.userId,
-                                friend.name,
-                                friend.username,
-                                friend.avatarId,
-                                Tab.FRIENDS,
-                                FriendState.OUTGOING_REQUEST));
-                    }
+                if (!incomingRequestsList.isEmpty() || !outgoingRequestsList.isEmpty()) {
+                    list.add(new SeeRequestsItem(getApplication().getString(R.string.see_outgoing_requests)));
                 }
 
                 list.addAll(generateContactsInviteItemList());
+            } else if (tab == Tab.ALL_REQUESTS) {
+                if (!incomingRequestsList.isEmpty()) {
+                    list.add(new SectionHeaderItem(getApplication().getString(R.string.requests_received), false));
+                }
+                for (FriendshipInfo friend : incomingRequestsList) {
+                    list.add(new PersonItem(
+                            friend.userId,
+                            friend.name,
+                            friend.username,
+                            friend.avatarId,
+                            FriendState.INCOMING_REQUEST));
+                }
+
+                if (!outgoingRequestsList.isEmpty()) {
+                    list.add(new SectionHeaderItem(getApplication().getString(R.string.requests_sent), false));
+                }
+                for (FriendshipInfo friend : outgoingRequestsList) {
+                    list.add(new PersonItem(
+                            friend.userId,
+                            friend.name,
+                            friend.username,
+                            friend.avatarId,
+                            FriendState.OUTGOING_REQUEST));
+                }
             }
             return list;
         }
 
-        @SuppressLint("RestrictedApi")
-        private void toggleSentRequests() {
-            outgoingRequestsExpanded = !outgoingRequestsExpanded;
-            items.invalidate();
+        public void addToFavorites(@NonNull UserId userId) {
+            BgWorkers.getInstance().execute(() -> {
+                FeedPrivacyManager.getInstance().updateFeedPrivacy(PrivacyList.Type.ONLY, new ArrayList<>(Collections.singletonList(userId)));
+            });
+        }
+
+        public LiveData<Boolean> removeFriend(@NonNull UserId userId) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            Connection.getInstance().removeFriend(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to remove friend " + userId);
+                    result.postValue(false);
+                } else {
+                    updateFriendState(userId, FriendState.DEFAULT);
+                    ContactsDb.getInstance().removeFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to withdraw friend request", e);
+                result.postValue(false);
+            });
+            return result;
+        }
+
+        public LiveData<Boolean> blockContact(@NonNull UserId userId) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            Connection.getInstance().blockFriend(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to block user: " + userId);
+                    result.postValue(false);
+                } else {
+                    updateFriendState(userId, FriendState.BLOCKED);
+                    ContactsDb.getInstance().addFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to block user", e);
+                result.postValue(false);
+            });
+            return result;
+        }
+
+        public LiveData<Boolean> rejectFriendRequest(@NonNull UserId userId) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            Connection.getInstance().rejectFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to reject the friend request of " + userId);
+                    result.postValue(false);
+                } else {
+                    updateFriendState(userId, FriendState.DEFAULT);
+                    ContactsDb.getInstance().removeFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to reject friend request", e);
+                result.postValue(false);
+            });
+            return result;
+        }
+
+        public LiveData<Boolean> sendFriendRequest(@NonNull UserId userId) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            Connection.getInstance().sendFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to send a friend request to " + userId);
+                    result.postValue(false);
+                } else {
+                    updateFriendState(userId, FriendState.OUTGOING_REQUEST);
+                    ContactsDb.getInstance().addFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to send friend request", e);
+                result.postValue(false);
+            });
+            return result;
+        }
+
+        public LiveData<Boolean> acceptFriendRequest(@NonNull UserId userId) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            Connection.getInstance().acceptFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to confirm the friend request of " + userId);
+                    result.postValue(false);
+                } else {
+                    updateFriendState(userId, FriendState.FRIENDS);
+                    ContactsDb.getInstance().addFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to confirm friend request", e);
+                result.postValue(false);
+            });
+            return result;
+        }
+
+        public LiveData<Boolean> withdrawFriendRequest(@NonNull UserId userId) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            Connection.getInstance().withdrawFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to withdraw the friend request of " + userId);
+                    result.postValue(false);
+                } else {
+                    updateFriendState(userId, FriendState.DEFAULT);
+                    ContactsDb.getInstance().removeFriendship(response.info);
+                    result.postValue(true);
+                }
+            }).onError(e -> {
+                Log.e("Unable to withdraw friend request", e);
+                result.postValue(false);
+            });
+            return result;
         }
     }
 }

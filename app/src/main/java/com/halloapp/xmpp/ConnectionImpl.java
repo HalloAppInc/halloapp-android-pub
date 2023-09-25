@@ -82,6 +82,7 @@ import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.FeedItems;
 import com.halloapp.proto.server.FriendListRequest;
+import com.halloapp.proto.server.FriendshipRequest;
 import com.halloapp.proto.server.GeoTagRequest;
 import com.halloapp.proto.server.GroupChatRetract;
 import com.halloapp.proto.server.GroupChatStanza;
@@ -92,6 +93,8 @@ import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
+import com.halloapp.proto.server.HalloappProfileUpdate;
+import com.halloapp.proto.server.HalloappUserProfile;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.Iq;
@@ -1927,6 +1930,78 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<FriendshipResponseIq> sendFriendRequest(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.ADD_FRIEND)).map(response -> {
+            Log.d("connection: response after sending friend request " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> withdrawFriendRequest(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.WITHDRAW_FRIEND_REQUEST)).map(response -> {
+            Log.d("connection: response after withdrawing friend request " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> removeFriend(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.REMOVE_FRIEND)).map(response -> {
+            Log.d("connection: response after removing friend " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> acceptFriendRequest(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.ACCEPT_FRIEND)).map(response -> {
+            Log.d("connection: response after accepting friend request " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> rejectFriendRequest(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.REJECT_FRIEND)).map(response -> {
+            Log.d("connection: response after rejecting friend request " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> blockFriend(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.BLOCK)).map(response -> {
+            Log.d("connection: response after blocking friend " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> unblockFriend(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.UNBLOCK)).map(response -> {
+            Log.d("connection: response after unblocking friend " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<FriendshipResponseIq> rejectFriendSuggestion(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FriendshipRequestIq(userId, FriendshipRequest.Action.REJECT_SUGGESTION)).map(response -> {
+            Log.d("connection: response after rejecting friend suggestion " + ProtoPrinter.toString(response));
+            return FriendshipResponseIq.fromProto(response.getFriendshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<HalloappProfileResponseIq> getHalloappProfileInfo(@NonNull UserId userId, @Nullable String username) {
+        return sendIqRequestAsync(new HalloappProfileRequestIq(userId, username), true).map(response -> {
+            Log.d("connection: response after getting profile info: " + ProtoPrinter.toString(response));
+            return HalloappProfileResponseIq.fromProto(response.getHallaoppProfileResult());
+        });
+    }
+
+    @Override
     public Observable<UserSearchResponseIq> searchForUser(@NonNull String text) {
         return sendIqRequestAsync(new UserSearchRequestIq(text)).map(response -> {
             Log.d("connection: response after user search request " + ProtoPrinter.toString(response));
@@ -2702,6 +2777,10 @@ public class ConnectionImpl extends Connection {
                 } else if (msg.hasAiImage()) {
                     AiImage aiImage = msg.getAiImage();
                     connectionObservers.notifyAiImageReceived(aiImage.getId(), aiImage.getImage().toByteArray(), msg.getId());
+                    handled = true;
+                } else if (msg.hasHalloappProfileUpdate()) {
+                    HalloappProfileUpdate profileUpdate = msg.getHalloappProfileUpdate();
+                    connectionObservers.notifyHalloappProfileUpdateReceived(profileUpdate, msg.getId());
                     handled = true;
                 }
             }

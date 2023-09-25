@@ -30,6 +30,7 @@ import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.HalloappProfileUpdate;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HoldCall;
 import com.halloapp.proto.server.HomeFeedRerequest;
@@ -151,6 +152,7 @@ public abstract class Connection {
         public void onPostExpired(@NonNull String postId) {}
         public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {}
         public void onPublicFeedUpdate(@NonNull PublicFeedUpdate publicFeedUpdate, @NonNull String ackId) {}
+        public void onHalloappProfileUpdateReceived(@NonNull HalloappProfileUpdate profileUpdate, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();
@@ -360,4 +362,23 @@ public abstract class Connection {
     public abstract Observable<ArchiveResultIq> requestArchive(@NonNull UserId userId);
 
     public abstract Observable<HalloappUserSearchResponseIq> searchForHalloappUser(@NonNull String text);
+
+    public abstract Observable<HalloappProfileResponseIq> getHalloappProfileInfo(@Nullable UserId userId, @Nullable String username);
+
+    public abstract Observable<FriendshipResponseIq> sendFriendRequest(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> withdrawFriendRequest(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> removeFriend(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> acceptFriendRequest(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> rejectFriendRequest(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> blockFriend(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> unblockFriend(@NonNull UserId userId);
+
+    public abstract Observable<FriendshipResponseIq> rejectFriendSuggestion(@NonNull UserId userId);
+
 }

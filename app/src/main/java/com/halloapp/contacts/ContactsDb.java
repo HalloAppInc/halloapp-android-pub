@@ -49,7 +49,7 @@ public class ContactsDb {
         void onSuggestedContactDismissed(long addressBookId);
         void onRelationshipsChanged();
         void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo);
-        void onFriendshipsChanged();
+        void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo);
         void onFriendshipRemoved(@NonNull FriendshipInfo friendshipInfo);
     }
 
@@ -74,7 +74,7 @@ public class ContactsDb {
         public void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo) { }
 
         @Override
-        public void onFriendshipsChanged() { }
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) { }
 
         @Override
         public void onFriendshipRemoved(@NonNull FriendshipInfo friendshipInfo) { }
@@ -1340,20 +1340,28 @@ public class ContactsDb {
         values.put(RelationshipTable.COLUMN_AVATAR_ID, friendship.avatarId);
         values.put(RelationshipTable.COLUMN_LIST_TYPE, friendship.friendshipStatus);
         values.put(RelationshipTable.COLUMN_TIMESTAMP, friendship.timestamp);
-        db.insert(RelationshipTable.TABLE_NAME, null, values);
 
-        notifyFriendshipsChanged();
+        boolean exists;
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + RelationshipTable.TABLE_NAME + " WHERE " + RelationshipTable.COLUMN_USER_ID + "=?", new String[] {friendship.userId.rawId()})) {
+            exists = cursor.getCount() > 0;
+        }
+
+        if (exists) {
+            db.update(RelationshipTable.TABLE_NAME, values, RelationshipTable.COLUMN_USER_ID + "=?", new String[] {friendship.userId.rawId()});
+        } else {
+            db.insertWithOnConflict(RelationshipTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        }
+        notifyFriendshipsChanged(friendship);
     }
 
     @WorkerThread
     public void removeFriendship(@NonNull FriendshipInfo friendship) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.delete(RelationshipTable.TABLE_NAME,
-                RelationshipTable.COLUMN_USER_ID + "=? AND " + RelationshipTable.COLUMN_LIST_TYPE + "=?",
-                new String[] {friendship.userId.rawId(), Integer.toString(friendship.friendshipStatus)});
+                RelationshipTable.COLUMN_USER_ID + "=? ", new String[] {friendship.userId.rawId()});
 
         notifyFriendshipRemoved(friendship);
-        notifyFriendshipsChanged();
+        notifyFriendshipsChanged(friendship);
     }
 
     @WorkerThread
@@ -1368,7 +1376,7 @@ public class ContactsDb {
                 RelationshipTable.COLUMN_USER_ID + "=? AND " + RelationshipTable.COLUMN_LIST_TYPE + "=?",
                 new String[] {friendship.userId.rawId(), Integer.toString(friendship.friendshipStatus)});
 
-        notifyFriendshipsChanged();
+        notifyFriendshipsChanged(friendship);
     }
 
     private void notifyNewContacts(@NonNull Collection<UserId> newContacts) {
@@ -1419,10 +1427,10 @@ public class ContactsDb {
         }
     }
 
-    private void notifyFriendshipsChanged() {
+    private void notifyFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
         synchronized (observers) {
             for (Observer observer : observers) {
-                observer.onFriendshipsChanged();
+                observer.onFriendshipsChanged(friendshipInfo);
             }
         }
     }

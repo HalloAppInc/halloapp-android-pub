@@ -27,7 +27,7 @@ public class FriendListResponseIq extends HalloIq {
         
         for (FriendProfile friendProfile : friendListResponse.getFriendProfilesList()) {
             HalloappUserProfile userProfile = friendProfile.getUserProfile();
-            @FriendshipInfo.Type int status = FriendshipInfo.fromProtoType(userProfile.getStatus());
+            @FriendshipInfo.Type int status = FriendshipInfo.fromProtoType(userProfile.getStatus(), userProfile.getBlocked());
             FriendshipInfo info = new FriendshipInfo(
                     new UserId(Long.toString(userProfile.getUid())),
                     userProfile.getUsername(),

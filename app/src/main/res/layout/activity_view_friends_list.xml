@@ -24,6 +24,17 @@
             android:layout_marginTop="4dp"
             android:layout_marginHorizontal="5dp">
 
+            <TextView
+                android:id="@+id/requests_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/all_requests"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="22sp" />
+
             <EditText
                 android:id="@+id/search_text"
                 android:layout_width="match_parent"
