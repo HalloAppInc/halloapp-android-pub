@@ -25,24 +25,6 @@
                 android:paddingHorizontal="10dp"
                 />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:src="@drawable/ic_chickling"/>
-
-            <TextView
-                android:id="@+id/create_first_post_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textSize="19sp"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingHorizontal="40dp"
-                android:textColor="@color/primary_text"
-                android:text="@string/create_first_post"/>
-
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.Button.Primary.Rounded"
                 android:id="@+id/next"
@@ -50,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/next"
+                android:text="@string/add_friends"
                 android:layout_marginBottom="40dp"/>
 
 

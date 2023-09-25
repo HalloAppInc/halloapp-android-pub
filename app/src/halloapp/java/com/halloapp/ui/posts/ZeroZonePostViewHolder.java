@@ -15,7 +15,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.contacts.ViewMyNetworkActivity;
+import com.halloapp.ui.contacts.ViewFriendsListActivity;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.TimeFormatter;
@@ -64,7 +64,7 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
         if (this.viewNetworkButton != null) {
             viewNetworkButton.setOnClickListener(v -> {
                 Context context = viewNetworkButton.getContext();
-                Intent i = new Intent(context, ViewMyNetworkActivity.class);
+                Intent i = new Intent(context, ViewFriendsListActivity.class);
                 context.startActivity(i);
             });
         }

@@ -13,6 +13,8 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +60,20 @@ public class ContactsViewModel extends AndroidViewModel {
         };
 
         contactsDb.addObserver(contactsObserver);
+    }
+
+    public void sendFriendRequests(@NonNull HashSet<UserId> userIds) {
+        for (UserId userId : userIds) {
+            Connection.getInstance().sendFriendRequest(userId).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Unable to send a friend request to " + userId);
+                } else {
+                    ContactsDb.getInstance().addFriendship(response.info);
+                }
+            }).onError(e -> {
+                Log.e("Unable to send friend request", e);
+            });
+        }
     }
 
     @Override

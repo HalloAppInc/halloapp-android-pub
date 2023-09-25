@@ -1,7 +1,5 @@
 package com.halloapp.ui.contacts;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,23 +8,18 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.privacy.BlockListManager;
-import com.halloapp.ui.DebouncedClickListener;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.chat.chat.KeyVerificationActivity;
-import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.FilterUtils;
-import com.halloapp.widget.SnackbarHelper;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
@@ -36,6 +29,8 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
     private List<Contact> filteredContacts;
     private CharSequence filterText;
     private List<String> filterTokens;
+    private final HashSet<UserId> selectedContacts = new HashSet<>();
+    private final @DrawableRes int selectionIcon = R.drawable.ic_check;
 
     private static final int ITEM_CONNECTED_HEADER = 0;
     private static final int ITEM_CONTACT = 1;
@@ -65,6 +60,10 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private int getFilteredContactsCount() {
         return filteredContacts == null ? 0 : filteredContacts.size();
+    }
+
+    public HashSet<UserId> getSelectedFriends() {
+        return selectedContacts;
     }
 
     @NonNull
@@ -139,13 +138,13 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    private static class ContactViewHolder extends RecyclerView.ViewHolder {
+    private class ContactViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView avatarView;
         private TextView nameView;
         private TextView usernameView;
 
-        private View moreOptions;
+        private ImageView selectionView;
 
         private Contact contact;
 
@@ -160,73 +159,25 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
             nameView = itemView.findViewById(R.id.name);
             usernameView = itemView.findViewById(R.id.username);
 
-            moreOptions = itemView.findViewById(R.id.more_options);
-            moreOptions.setOnClickListener(new DebouncedClickListener() {
-                @Override
-                public void onOneClick(@NonNull View v) {
-                    PopupMenu menu = new PopupMenu(v.getContext(), v);
-                    menu.inflate(R.menu.contact_popup_menu);
-                    menu.setOnMenuItemClickListener(item -> {
-                        if (item.getItemId() == R.id.view_profile) {
-                            viewProfile();
-                            return true;
-                        } else if (item.getItemId() == R.id.view_safety_number) {
-                            viewSafetyNumber();
-                            return true;
-                        } else if (item.getItemId() == R.id.block_action) {
-                            blockAction();
-                            return true;
-                        }
-                        return false;
-                    });
-                    menu.setForceShowIcon(true);
-                    menu.show();
-                }
-            });
-        }
-
-        private void viewProfile() {
-            if (contact == null || contact.userId == null) {
-                return;
-            }
-            Context context = moreOptions.getContext();
-            context.startActivity(ViewProfileActivity.viewProfile(context, contact.userId));
-        }
-
-        private void viewSafetyNumber() {
-            if (contact == null || contact.userId == null) {
-                return;
-            }
-            Context context = moreOptions.getContext();
-            context.startActivity(KeyVerificationActivity.openKeyVerification(context, contact.userId));
-        }
-
-        private void blockAction() {
-            if (contact == null || contact.userId == null) {
-                return;
-            }
-            final String chatName = contact.getDisplayName();
-            Context context = moreOptions.getContext();
-            ProgressDialog blockDialog = ProgressDialog.show(context, null, context.getString(R.string.blocking_user_in_progress, chatName), true);
-            blockDialog.show();
-
-            MutableLiveData<Boolean> blockResult = new DelayedProgressLiveData<>();
-            BlockListManager.getInstance().blockContact(contact.userId).onResponse(result -> {
-                if (result == null || !result) {
-                    blockResult.postValue(false);
-                } else {
-                    blockResult.postValue(true);
-                }
-            }).onError(e -> {
-                blockResult.postValue(false);
-            });
-            blockResult.observe(parent.getLifecycleOwner(), success -> {
-                if (success == null) {
+            selectionView = itemView.findViewById(R.id.selection_indicator);
+            itemView.setOnClickListener(v -> {
+                if (contact == null || contact.userId == null) {
                     return;
                 }
-                blockDialog.cancel();
-                SnackbarHelper.showInfo(moreOptions, context.getString(success ? R.string.blocking_user_successful : R.string.blocking_user_failed_check_internet, chatName));
+                if (selectedContacts.contains(contact.userId)) {
+                    selectedContacts.remove(contact.userId);
+                } else {
+                    selectedContacts.add(contact.userId);
+                }
+                updateSelectionIcon();
             });
+        }
+
+        private void updateSelectionIcon() {
+            boolean selected = selectedContacts.contains(contact.userId);
+            selectionView.setImageResource(selected ? selectionIcon : 0);
+            selectionView.setVisibility(View.VISIBLE);
+            selectionView.setSelected(selected);
         }
 
         public void bindContact(Contact contact, List<String> filterTokens) {
@@ -267,7 +218,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
             if (contacts == null || contacts.size() == 0) {
                 str = numConnectionsTitle.getResources().getString(R.string.no_connections_on_hallo);
             } else {
-                str = numConnectionsTitle.getResources().getQuantityString(R.plurals.connections_on_hallo, contacts.size(), contacts.size());
+                str = numConnectionsTitle.getResources().getQuantityString(R.plurals.friend_connections_on_hallo, contacts.size(), contacts.size());
             }
             numConnectionsTitle.setText(str);
         }
@@ -288,7 +239,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
             if (contacts == null || contacts.size() == 0) {
                 str = connectionsPostVisibility.getResources().getString(R.string.no_connections_on_hallo_explanation);
             } else {
-                str = connectionsPostVisibility.getResources().getQuantityString(R.plurals.connections_on_hallo_explanation, contacts.size(), contacts.size());
+                str = connectionsPostVisibility.getResources().getString(R.string.friend_connections_on_hallo_explanation);
             }
             connectionsPostVisibility.setText(str);
         }

@@ -1350,7 +1350,7 @@
     <!-- Text shown as title above see network section -->
     <string name="home_onboarding_nux_post_visibility_header">Who can see my posts?</string>
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <string name="home_onboarding_nux_post_visibility_text">See who\'s already on HalloApp, and invite friends &amp; family</string>
+    <string name="home_onboarding_nux_post_visibility_text">Your friends on HalloApp can see your posts. Add friends from your network and manage friend requests.</string>
     <!-- action to see the list of people you are connected to (in your network) -->
     <string name="see_network_action">See my network</string>
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
@@ -2067,4 +2067,18 @@
     <string name="error_accept_friend_request">Unable to accept friend request, please try again later</string>
     <!-- Error message when we are unable to block contact and to try again later -->
     <string name="error_block_contact">Unable to block contact, please try again later</string>
+    <!-- Button text telling users to add selected users as friends -->
+    <string name="add_friends">Add friends</string>
+    <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
+    <plurals name="friend_connections_on_hallo">
+        <item quantity="one">%d person from your contacts is on HalloApp. Add them as a friend?</item>
+        <item quantity="other">%d people from your contacts are on HalloApp. Add them as friends?</item>
+    </plurals>
+    <!-- Text telling a user that after these contacts are friends, they can see your posts -->
+    <string name="friend_connections_on_hallo_explanation">Contacts added as friends will be able to see your posts shared on HalloApp.</string>
+    <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
+    <plurals name="sent_friend_requests">
+        <item quantity="one">Sending a friend request to %d person</item>
+        <item quantity="other">Sending friend requests to %d people</item>
+    </plurals>
 </resources>

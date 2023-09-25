@@ -8,7 +8,8 @@
     android:paddingStart="24dp"
     android:paddingEnd="4dp"
     android:paddingTop="7dp"
-    android:paddingBottom="7dp">
+    android:paddingBottom="7dp"
+    android:gravity="center">
 
     <com.google.android.material.imageview.ShapeableImageView
         app:shapeAppearance="@style/CircularImageView"
@@ -57,13 +58,14 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/more_options"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_more_vert"
-        app:tint="@color/primary_text"
-        android:background="?selectableItemBackground"
-        android:padding="8dp"/>
+        android:id="@+id/selection_indicator"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="2dp"
+        android:background="@drawable/contact_selection_background"
+        tools:src="@drawable/ic_check"
+        app:tint="@android:color/white"
+        android:scaleType="fitCenter"
+        android:layout_marginEnd="20dp"/>
 
 </LinearLayout>
