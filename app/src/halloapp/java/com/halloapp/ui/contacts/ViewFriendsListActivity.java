@@ -778,7 +778,7 @@ public class ViewFriendsListActivity extends HalloActivity {
                 }
             } else if (tab == Tab.FRIENDS) {
                 List<FriendshipInfo> friendsList = contactsDb.getFriendships(FriendshipInfo.Type.FRIENDS);
-                list.add(new SectionHeaderItem(getApplication().getString(R.string.friends_on_halloapp), false));
+                list.add(new SectionHeaderItem(getApplication().getString(R.string.my_friends_on_halloapp), false));
                 if (friendsList.isEmpty()) {
                     list.add(new NoConnectionsItem());
                 } else {

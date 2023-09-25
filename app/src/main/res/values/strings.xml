@@ -2022,7 +2022,7 @@
     <!-- Section title for friend suggestions -->
     <string name="friend_suggestions">Friend suggestions</string>
     <!-- Section title showing your current friends -->
-    <string name="friends_on_halloapp">My friends on HalloApp</string>
+    <string name="my_friends_on_halloapp">My friends on HalloApp</string>
     <!-- Search box hint text for HalloApp user search -->
     <string name="search_halloapp_users">Search HalloApp users</string>
     <!-- Section title showing HalloApp friends after searching -->
