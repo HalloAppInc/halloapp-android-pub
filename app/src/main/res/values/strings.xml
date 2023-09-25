@@ -2001,4 +2001,32 @@
     <string name="friendship_model_description">Now you can search for people on HalloApp using their name or @username. Your existing HalloApp contacts now become your friends. You can remove existing contacts from friends at any time.</string>
     <!-- Button text to dismiss new friendship model popup-->
     <string name="remind_later">Remind later</string>
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="friends">Friends</string>
+    <!-- Message displayed to show all outgoing sent friend requests -->
+    <string name="see_outgoing_requests">See sent requests</string>
+    <!-- Message displayed to show all incoming pending friend requests -->
+    <string name="see_incoming_requests">See all incoming requests</string>
+    <!-- Tab to show suggested and current friend requests -->
+    <string name="requests">Requests</string>
+    <!-- Button text to confirm an incoming pending friend request -->
+    <string name="confirm_friend">Confirm</string>
+    <!-- Button text to send a friend request to someone -->
+    <string name="add_friend">Add friend</string>
+    <!-- Section title showing current pending friend requests -->
+    <string name="friend_requests">Friend Requests</string>
+    <!-- Section title of people to invite to join Halloapp -->
+    <string name="invite_friends_on_halloapp_title">Invite friends on Halloapp</string>
+    <!-- Section title for friend suggestions from your contact list -->
+    <string name="from_contacts_list">From your contact list</string>
+    <!-- Section title for friend suggestions -->
+    <string name="friend_suggestions">Friend suggestions</string>
+    <!-- Section title showing your current friends -->
+    <string name="friends_on_halloapp">My friends on HalloApp</string>
+    <!-- Search box hint text for HalloApp user search -->
+    <string name="search_halloapp_users">Search HalloApp users</string>
+    <!-- Section title showing HalloApp friends after searching -->
+    <string name="halloapp_friends">My HalloApp friends</string>
+    <!-- Section title showing HalloApp users after searching -->
+    <string name="halloapp_users">HalloApp users</string>
 </resources>

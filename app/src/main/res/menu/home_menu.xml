@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/invite"
-        android:icon="@drawable/ic_invite"
-        android:title="@string/invite_action"
-        app:iconTint="@color/feed_notification_icon"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/friends"
+        app:tint="@color/color_secondary"
+        android:title="@string/friends"
+        app:showAsAction="ifRoom"
+        />
 
 </menu>

@@ -81,6 +81,7 @@ import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.FeedItems;
+import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.GeoTagRequest;
 import com.halloapp.proto.server.GroupChatRetract;
 import com.halloapp.proto.server.GroupChatStanza;
@@ -1918,6 +1919,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<FriendListResponseIq> requestFriendList(@Nullable String cursor, @NonNull FriendListRequest.Action action) {
+        return sendIqRequestAsync(new FriendListRequestIq(cursor, action)).map(response -> {
+            Log.d("connection: response after friend request " + ProtoPrinter.toString(response));
+            return FriendListResponseIq.fromProto(response.getFriendListResponse());
+        });
+    }
+
+    @Override
     public Observable<UserSearchResponseIq> searchForUser(@NonNull String text) {
         return sendIqRequestAsync(new UserSearchRequestIq(text)).map(response -> {
             Log.d("connection: response after user search request " + ProtoPrinter.toString(response));
@@ -2018,6 +2027,14 @@ public class ConnectionImpl extends Connection {
         return sendIqRequestAsync(new ArchiveRequestIq(userId)).map(response -> {
             Log.d("connection: response after request archive " + ProtoPrinter.toString(response));
             return ArchiveResultIq.fromProto(response.getArchiveResult());
+        });
+    }
+
+    @Override
+    public Observable<HalloappUserSearchResponseIq> searchForHalloappUser(@NonNull String text) {
+        return sendIqRequestAsync(new HalloappUserSearchRequestIq(text)).map(response -> {
+            Log.d("connection: response after halloapp user search request " + ProtoPrinter.toString(response));
+            return HalloappUserSearchResponseIq.fromProto(response.getHalloappSearchResponse());
         });
     }
 

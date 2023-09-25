@@ -26,6 +26,7 @@ import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.ExpiryInfo;
+import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
@@ -330,6 +331,8 @@ public abstract class Connection {
 
     public abstract Observable<FollowSuggestionsResponseIq> requestFollowSuggestions();
 
+    public abstract Observable<FriendListResponseIq> requestFriendList(@Nullable String cursor, @NonNull FriendListRequest.Action action);
+
     public abstract Observable<UserSearchResponseIq> searchForUser(@NonNull String text);
 
     public abstract Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId);
@@ -355,4 +358,6 @@ public abstract class Connection {
     public abstract Observable<GeotagResponseIq> removeGeotag(@NonNull String geotag);
 
     public abstract Observable<ArchiveResultIq> requestArchive(@NonNull UserId userId);
+
+    public abstract Observable<HalloappUserSearchResponseIq> searchForHalloappUser(@NonNull String text);
 }

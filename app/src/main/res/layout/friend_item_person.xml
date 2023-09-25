@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/avatar"
+        app:shapeAppearance="@style/CircularImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/avatar_person"
+        android:layout_gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/username"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:paddingHorizontal="6dp"
+        android:textSize="16sp"
+        tools:text="Alice Bob"
+        />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingStart="6dp"
+        android:textColor="@color/black_54"
+        android:textSize="11sp"
+        tools:text="\@username"
+        />
+
+    <FrameLayout
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="20dp"
+        >
+
+        <Button
+            android:id="@+id/add_friend"
+            android:layout_width="105dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_entry_friendship_bg"
+            android:minHeight="0dp"
+            app:backgroundTint="@color/favorites_dialog_blue"
+            android:textAllCaps="false"
+            tools:text="Add friend"
+            android:textSize="13sp" />
+
+        <ImageButton
+            android:id="@+id/added_friend"
+            android:visibility="gone"
+            android:layout_width="105dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_entry_friendship_bg"
+            android:src="@drawable/ic_check"
+            android:paddingHorizontal="15dp"
+            android:minHeight="0dp"
+            app:backgroundTint="@color/black_10"
+            android:stateListAnimator="@null"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:tint="@color/favorites_dialog_blue" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/options"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_ellipsis_vertical"
+        app:tint="@color/black_54"
+        />
+
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_x"
+        app:tint="@color/black_54"
+        android:visibility="gone"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

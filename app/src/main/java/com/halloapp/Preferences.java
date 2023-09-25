@@ -126,6 +126,8 @@ public class Preferences {
     private static final String PREF_IS_CONNECTED_TO_WEB_CLIENT = "is_connected_to_web_client";
 
     private static final String PREF_KEY_LAST_FULL_RELATIONSHIP_SYNC_TIME = "last_relationship_sync_time";
+    private static final String PREF_KEY_LAST_FULL_FRIENDSHIP_SYNC_TIME = "last_friendship_sync_time";
+
     private static final String PREF_KEY_NOTIFY_REACTIONS = "notify_reactions";
     private static final String PREF_KEY_NOTIFY_MENTIONS = "notify_mentions";
     private static final String PREF_KEY_NOTIFY_ON_FIRE = "notify_on_fire";
@@ -259,6 +261,8 @@ public class Preferences {
     private final BooleanPreference prefIsConnectedToWebClient = createPref(false, PREF_IS_CONNECTED_TO_WEB_CLIENT, false);
 
     private final LongPreference prefLastFullRelationshipSyncTime = createPref(false, PREF_KEY_LAST_FULL_RELATIONSHIP_SYNC_TIME, 0L);
+    private final LongPreference prefLastFullFriendshipSyncTime = createPref(false, PREF_KEY_LAST_FULL_FRIENDSHIP_SYNC_TIME, 0L);
+
     private final BooleanPreference prefNotifyReactions = createPref(true, PREF_KEY_NOTIFY_REACTIONS, true);
     private final BooleanPreference prefNotifyMentions = createPref(true, PREF_KEY_NOTIFY_MENTIONS, true);
     private final BooleanPreference prefNotifyOnFire = createPref(true, PREF_KEY_NOTIFY_ON_FIRE, true);
@@ -1157,6 +1161,16 @@ public class Preferences {
     @WorkerThread
     public void setLastFullRelationshipSyncTime(long timestamp) {
         prefLastFullRelationshipSyncTime.set(timestamp);
+    }
+
+    @WorkerThread
+    public long getLastFullFriendshipSyncTime() {
+        return prefLastFullFriendshipSyncTime.get();
+    }
+
+    @WorkerThread
+    public void setLastFullFriendshipSyncTime(long timestamp) {
+        prefLastFullFriendshipSyncTime.set(timestamp);
     }
 
     @WorkerThread

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="@dimen/action_bar_elevation"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="5dp">
+
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:hint="@string/search_halloapp_users"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/black_54"
+                android:textColorHint="@color/black_54"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.615" />
+
+            <ImageButton
+                android:id="@+id/search_icon"
+                android:layout_gravity="end"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/black"
+                android:background="@null"
+                android:src="@drawable/ic_search"
+                android:contentDescription="@string/search" />
+
+            <ImageButton
+                android:id="@+id/options"
+                android:layout_gravity="end"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@null"
+                android:src="@drawable/ic_ellipsis_vertical"
+                android:contentDescription="@string/options" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/friends_type_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="center"
+        >
+
+        <TextView
+            android:id="@+id/requests_tab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/friends_tab"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:text="@string/requests"
+            android:textSize="16sp"
+            android:layout_weight="1"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/friends_tab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/requests_tab"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:text="@string/friends"
+            android:textSize="16sp"
+            android:layout_weight="1"
+            android:gravity="center"
+            />
+
+        <ImageView
+            android:id="@+id/selected_requests_tab"
+            android:layout_width="100dp"
+            android:layout_height="3dp"
+            app:layout_constraintTop_toBottomOf="@id/requests_tab"
+            app:layout_constraintStart_toStartOf="@id/requests_tab"
+            app:layout_constraintEnd_toEndOf="@id/requests_tab"
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_entry_friendship_bg"
+            android:contentDescription="@string/requests"/>
+
+        <ImageView
+            android:id="@+id/selected_friends_tab"
+            android:layout_width="100dp"
+            android:layout_height="3dp"
+            app:layout_constraintTop_toBottomOf="@id/friends_tab"
+            app:layout_constraintStart_toStartOf="@id/friends_tab"
+            app:layout_constraintEnd_toEndOf="@id/friends_tab"
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_entry_friendship_bg"
+            android:contentDescription="@string/friends" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="10dp"
+        />
+
+</LinearLayout>

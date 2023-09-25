@@ -20,7 +20,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.EditFavoritesActivity;
-import com.halloapp.ui.contacts.ViewMyContactsActivity;
+import com.halloapp.ui.contacts.ViewFriendsListActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.settings.SettingsProfile;
@@ -67,9 +67,9 @@ public class MyProfileHomeFragment extends HalloFragment implements MainNavFragm
             startActivity(new Intent(v.getContext(), HelpActivity.class));
         });
 
-        View myContacts = root.findViewById(R.id.my_contacts);
-        myContacts.setOnClickListener(v -> {
-            startActivity(ViewMyContactsActivity.viewMyContacts(v.getContext(), true));
+        View myFriends = root.findViewById(R.id.my_friends);
+        myFriends.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), ViewFriendsListActivity.class));
         });
 
         View favorites = root.findViewById(R.id.favorites);

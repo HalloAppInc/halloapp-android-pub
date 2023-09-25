@@ -45,6 +45,7 @@ import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
+import com.halloapp.ui.contacts.ViewFriendsListActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.posts.InviteFriendsPostViewHolder;
 import com.halloapp.util.BgWorkers;
@@ -391,8 +392,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.invite) {
-            openInviteFlow();
+        if (item.getItemId() == R.id.friends) {
+            openFriends();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -402,6 +403,10 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         if (PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
             startActivity(new Intent(requireContext(), InviteContactsActivity.class));
         }
+    }
+
+    private void openFriends() {
+        startActivity(new Intent(requireContext(), ViewFriendsListActivity.class));
     }
 
     @Override

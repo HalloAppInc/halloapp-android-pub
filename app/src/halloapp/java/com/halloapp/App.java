@@ -133,6 +133,7 @@ public class App extends Application {
             ApkHasher.getInstance().run(this);
             ContentDb.getInstance().addMomentEntryPost();
             DownloadableAssetManager.getInstance().init(this);
+            FriendshipSyncWorker.schedule(this);
 
             // 0 indicates success; see com.google.android.gms.common.ConnectionResult
             int playServicesConnectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);

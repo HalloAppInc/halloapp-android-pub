@@ -99,7 +99,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/my_contacts"
+                android:id="@+id/my_friends"
                 android:layout_width="match_parent"
                 android:layout_height="52sp"
                 android:paddingTop="6dp"
@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textColor="@color/primary_text"
-                    android:text="@string/my_contacts_title" />
+                    android:text="@string/friends" />
 
             </LinearLayout>
 
