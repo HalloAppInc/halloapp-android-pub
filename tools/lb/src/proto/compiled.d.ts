@@ -10998,6 +10998,9 @@ export namespace server {
         /** Msg album */
         album?: (server.IAlbum|null);
 
+        /** Msg friendListRequest */
+        friendListRequest?: (server.IFriendListRequest|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -11182,6 +11185,9 @@ export namespace server {
         /** Msg album. */
         public album?: (server.IAlbum|null);
 
+        /** Msg friendListRequest. */
+        public friendListRequest?: (server.IFriendListRequest|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -11189,7 +11195,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|"halloappProfileUpdate"|"album");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|"halloappProfileUpdate"|"album"|"friendListRequest");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -21491,7 +21497,8 @@ export namespace server {
             GET_INCOMING_PENDING = 1,
             GET_OUTGOING_PENDING = 2,
             GET_SUGGESTIONS = 3,
-            GET_BLOCKED = 4
+            GET_BLOCKED = 4,
+            SYNC_ALL = 5
         }
     }
 

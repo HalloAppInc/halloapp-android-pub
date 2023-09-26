@@ -30476,6 +30476,7 @@ $root.server = (function() {
          * @property {server.IAiImage|null} [aiImage] Msg aiImage
          * @property {server.IHalloappProfileUpdate|null} [halloappProfileUpdate] Msg halloappProfileUpdate
          * @property {server.IAlbum|null} [album] Msg album
+         * @property {server.IFriendListRequest|null} [friendListRequest] Msg friendListRequest
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -30944,6 +30945,14 @@ $root.server = (function() {
         Msg.prototype.album = null;
 
         /**
+         * Msg friendListRequest.
+         * @member {server.IFriendListRequest|null|undefined} friendListRequest
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.friendListRequest = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -30964,12 +30973,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|"halloappProfileUpdate"|"album"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|"halloappProfileUpdate"|"album"|"friendListRequest"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate", "aiImage", "halloappProfileUpdate", "album"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate", "aiImage", "halloappProfileUpdate", "album", "friendListRequest"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -31113,6 +31122,8 @@ $root.server = (function() {
                 $root.server.HalloappProfileUpdate.encode(message.halloappProfileUpdate, writer.uint32(/* id 57, wireType 2 =*/458).fork()).ldelim();
             if (message.album != null && Object.hasOwnProperty.call(message, "album"))
                 $root.server.Album.encode(message.album, writer.uint32(/* id 58, wireType 2 =*/466).fork()).ldelim();
+            if (message.friendListRequest != null && Object.hasOwnProperty.call(message, "friendListRequest"))
+                $root.server.FriendListRequest.encode(message.friendListRequest, writer.uint32(/* id 59, wireType 2 =*/474).fork()).ldelim();
             return writer;
         };
 
@@ -31314,6 +31325,9 @@ $root.server = (function() {
                     break;
                 case 58:
                     message.album = $root.server.Album.decode(reader, reader.uint32());
+                    break;
+                case 59:
+                    message.friendListRequest = $root.server.FriendListRequest.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -31896,6 +31910,16 @@ $root.server = (function() {
                         return "album." + error;
                 }
             }
+            if (message.friendListRequest != null && message.hasOwnProperty("friendListRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FriendListRequest.verify(message.friendListRequest);
+                    if (error)
+                        return "friendListRequest." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -32223,6 +32247,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.album: object expected");
                 message.album = $root.server.Album.fromObject(object.album);
             }
+            if (object.friendListRequest != null) {
+                if (typeof object.friendListRequest !== "object")
+                    throw TypeError(".server.Msg.friendListRequest: object expected");
+                message.friendListRequest = $root.server.FriendListRequest.fromObject(object.friendListRequest);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -32536,6 +32565,11 @@ $root.server = (function() {
                 object.album = $root.server.Album.toObject(message.album, options);
                 if (options.oneofs)
                     object.payload = "album";
+            }
+            if (message.friendListRequest != null && message.hasOwnProperty("friendListRequest")) {
+                object.friendListRequest = $root.server.FriendListRequest.toObject(message.friendListRequest, options);
+                if (options.oneofs)
+                    object.payload = "friendListRequest";
             }
             return object;
         };
@@ -58708,6 +58742,7 @@ $root.server = (function() {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
                     break;
                 }
             if (message.cursor != null && message.hasOwnProperty("cursor"))
@@ -58748,6 +58783,10 @@ $root.server = (function() {
             case "GET_BLOCKED":
             case 4:
                 message.action = 4;
+                break;
+            case "SYNC_ALL":
+            case 5:
+                message.action = 5;
                 break;
             }
             if (object.cursor != null)
@@ -58799,6 +58838,7 @@ $root.server = (function() {
          * @property {number} GET_OUTGOING_PENDING=2 GET_OUTGOING_PENDING value
          * @property {number} GET_SUGGESTIONS=3 GET_SUGGESTIONS value
          * @property {number} GET_BLOCKED=4 GET_BLOCKED value
+         * @property {number} SYNC_ALL=5 SYNC_ALL value
          */
         FriendListRequest.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -58807,6 +58847,7 @@ $root.server = (function() {
             values[valuesById[2] = "GET_OUTGOING_PENDING"] = 2;
             values[valuesById[3] = "GET_SUGGESTIONS"] = 3;
             values[valuesById[4] = "GET_BLOCKED"] = 4;
+            values[valuesById[5] = "SYNC_ALL"] = 5;
             return values;
         })();
 

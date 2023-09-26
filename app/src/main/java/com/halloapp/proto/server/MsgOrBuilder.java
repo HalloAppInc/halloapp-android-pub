@@ -663,6 +663,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.Album getAlbum();
 
   /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   * @return Whether the friendListRequest field is set.
+   */
+  boolean hasFriendListRequest();
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   * @return The friendListRequest.
+   */
+  com.halloapp.proto.server.FriendListRequest getFriendListRequest();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

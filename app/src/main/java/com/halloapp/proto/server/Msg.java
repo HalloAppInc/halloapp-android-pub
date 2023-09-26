@@ -202,6 +202,7 @@ public  final class Msg extends
     AI_IMAGE(56),
     HALLOAPP_PROFILE_UPDATE(57),
     ALBUM(58),
+    FRIEND_LIST_REQUEST(59),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -269,6 +270,7 @@ public  final class Msg extends
         case 56: return AI_IMAGE;
         case 57: return HALLOAPP_PROFILE_UPDATE;
         case 58: return ALBUM;
+        case 59: return FRIEND_LIST_REQUEST;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3146,6 +3148,56 @@ public  final class Msg extends
    */
   private void clearAlbum() {
     if (payloadCase_ == 58) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FRIEND_LIST_REQUEST_FIELD_NUMBER = 59;
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   */
+  @java.lang.Override
+  public boolean hasFriendListRequest() {
+    return payloadCase_ == 59;
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FriendListRequest getFriendListRequest() {
+    if (payloadCase_ == 59) {
+       return (com.halloapp.proto.server.FriendListRequest) payload_;
+    }
+    return com.halloapp.proto.server.FriendListRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   */
+  private void setFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 59;
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   */
+  private void mergeFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+    value.getClass();
+  if (payloadCase_ == 59 &&
+        payload_ != com.halloapp.proto.server.FriendListRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FriendListRequest.newBuilder((com.halloapp.proto.server.FriendListRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 59;
+  }
+  /**
+   * <code>.server.FriendListRequest friend_list_request = 59;</code>
+   */
+  private void clearFriendListRequest() {
+    if (payloadCase_ == 59) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -6102,6 +6154,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.FriendListRequest friend_list_request = 59;</code>
+     */
+    @java.lang.Override
+    public boolean hasFriendListRequest() {
+      return instance.hasFriendListRequest();
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 59;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FriendListRequest getFriendListRequest() {
+      return instance.getFriendListRequest();
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 59;</code>
+     */
+    public Builder setFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+      copyOnWrite();
+      instance.setFriendListRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 59;</code>
+     */
+    public Builder setFriendListRequest(
+        com.halloapp.proto.server.FriendListRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFriendListRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 59;</code>
+     */
+    public Builder mergeFriendListRequest(com.halloapp.proto.server.FriendListRequest value) {
+      copyOnWrite();
+      instance.mergeFriendListRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FriendListRequest friend_list_request = 59;</code>
+     */
+    public Builder clearFriendListRequest() {
+      copyOnWrite();
+      instance.clearFriendListRequest();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -6233,16 +6333,17 @@ public  final class Msg extends
             com.halloapp.proto.server.AiImage.class,
             com.halloapp.proto.server.HalloappProfileUpdate.class,
             com.halloapp.proto.server.Album.class,
+            com.halloapp.proto.server.FriendListRequest.class,
           };
           java.lang.String info =
-              "\u0000:\u0001\u0000\u0001::\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000;\u0001\u0000\u0001;;\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "4<\u00005<\u00006<\u00007<\u00008<\u00009<\u0000:<\u0000";
+              "4<\u00005<\u00006<\u00007<\u00008<\u00009<\u0000:<\u0000;<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -59,6 +59,14 @@ public  final class FriendListRequest extends
      * <code>GET_BLOCKED = 4;</code>
      */
     GET_BLOCKED(4),
+    /**
+     * <pre>
+     * Set by server_only. Clients should sync all their lists with the server.
+     * </pre>
+     *
+     * <code>SYNC_ALL = 5;</code>
+     */
+    SYNC_ALL(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -102,6 +110,14 @@ public  final class FriendListRequest extends
      * <code>GET_BLOCKED = 4;</code>
      */
     public static final int GET_BLOCKED_VALUE = 4;
+    /**
+     * <pre>
+     * Set by server_only. Clients should sync all their lists with the server.
+     * </pre>
+     *
+     * <code>SYNC_ALL = 5;</code>
+     */
+    public static final int SYNC_ALL_VALUE = 5;
 
 
     @java.lang.Override
@@ -130,6 +146,7 @@ public  final class FriendListRequest extends
         case 2: return GET_OUTGOING_PENDING;
         case 3: return GET_SUGGESTIONS;
         case 4: return GET_BLOCKED;
+        case 5: return SYNC_ALL;
         default: return null;
       }
     }
