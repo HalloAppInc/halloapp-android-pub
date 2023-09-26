@@ -1433,6 +1433,51 @@ public class ContactsDb {
         notifyFriendshipsChanged(friendship);
     }
 
+    public List<FriendshipInfo> getFriendHistory(int limit) {
+        final List<FriendshipInfo> friendships = new ArrayList<>();
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String sql = "SELECT " +
+                RelationshipTable._ID + "," +
+                RelationshipTable.COLUMN_USER_ID + "," +
+                RelationshipTable.COLUMN_USERNAME + "," +
+                RelationshipTable.COLUMN_NAME + "," +
+                RelationshipTable.COLUMN_AVATAR_ID + "," +
+                RelationshipTable.COLUMN_LIST_TYPE + "," +
+                RelationshipTable.COLUMN_SEEN + "," +
+                RelationshipTable.COLUMN_TIMESTAMP +
+                " FROM " + RelationshipTable.TABLE_NAME +
+                " WHERE " + RelationshipTable.COLUMN_LIST_TYPE + "=? OR " +  RelationshipTable.COLUMN_LIST_TYPE + "=?" +
+                " ORDER BY " + RelationshipTable.COLUMN_TIMESTAMP + " DESC " +
+                " LIMIT " + limit;
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {String.valueOf(FriendshipInfo.Type.INCOMING_PENDING), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
+            while (cursor.moveToNext()) {
+                FriendshipInfo friendshipInfo = new FriendshipInfo(
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getLong(7)
+                );
+                friendshipInfo.seen = cursor.getInt(6) == 1;
+                friendships.add(friendshipInfo);
+            }
+        }
+
+        return friendships;
+    }
+
+    public void setFriendSeen(UserId userId) {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(RelationshipTable.COLUMN_SEEN, true);
+        db.update(RelationshipTable.TABLE_NAME,
+                values,
+                RelationshipTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
+    }
+
     private void notifyNewContacts(@NonNull Collection<UserId> newContacts) {
         synchronized (observers) {
             for (Observer observer : observers) {

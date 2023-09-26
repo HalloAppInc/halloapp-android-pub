@@ -30,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostThumbnailLoader;
@@ -39,6 +41,7 @@ import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -262,7 +265,8 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
             void bind(ActivityCenterViewModel.SocialActionEvent socialEvent, Map<UserId, Contact> contacts) {
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME
                         || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX
-                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_GROUP_EVENT) {
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_GROUP_EVENT
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FRIEND_EVENT) {
                     thumbnailView.setVisibility(View.GONE);
                     postThumbnailLoader.cancel(thumbnailView);
                 } else {
@@ -378,6 +382,15 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_POST_REACTION) {
                     final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
                     infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.reacted_to_your_post, contact.getDisplayName(), socialEvent.reaction)));
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FRIEND_EVENT) {
+                    final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
+                    CharSequence text = null;
+                    if (contact.friendshipStatus == FriendshipInfo.Type.FRIENDS) {
+                        text = Html.fromHtml(getResources().getString(R.string.friend_notification, contact.getDisplayName()));
+                    } else if (contact.friendshipStatus == FriendshipInfo.Type.INCOMING_PENDING) {
+                        text = Html.fromHtml(infoView.getContext().getString(R.string.incoming_friend_request_notification, contact.getDisplayName()));
+                    }
+                    infoView.setText(text);
                 }
 
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
@@ -397,6 +410,9 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                         return;
                     } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                         onFavoritesNotificationClicked();
+                        return;
+                    } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FRIEND_EVENT) {
+                        startActivity(ViewProfileActivity.viewProfile(requireContext(), socialEvent.postSenderUserId));
                         return;
                     }
                     if (clickListener != null) {

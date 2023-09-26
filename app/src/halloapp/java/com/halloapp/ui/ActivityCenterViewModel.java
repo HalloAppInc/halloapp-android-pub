@@ -21,6 +21,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -146,6 +147,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         public void onContactsChanged() {
             socialHistory.invalidate();
         }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
+            socialHistory.invalidate();
+        }
     };
 
     public ActivityCenterViewModel(@NonNull Application application) {
@@ -221,6 +227,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(-1));
             final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, -1);
             final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, -1);
+            final List<FriendshipInfo> friendRequests = contactsDb.getFriendHistory(-1);
 
             comments.addAll(mentionedComments);
 
@@ -231,6 +238,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             for (Post post : mentionedPosts) {
                 contentDb.setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
             }
+
+            for (FriendshipInfo friend : friendRequests) {
+                contactsDb.setFriendSeen(friend.userId);
+            }
+
             invalidateSocialHistory();
         });
     }
@@ -330,6 +342,8 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, 50);
         final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, 50);
         final List<Post> groupEvents;
+        final List<FriendshipInfo> friendHistory = contactsDb.getFriendHistory(50);
+
         final String rawMeId = me.user.getValue();
         if (!TextUtils.isEmpty(rawMeId)) {
             groupEvents = contentDb.getRelevantSystemPosts(rawMeId, 50);
@@ -441,6 +455,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             }
         }
 
+        for (FriendshipInfo friend : friendHistory) {
+            SocialActionEvent activity = SocialActionEvent.fromFriendRequest(friend);
+            socialActionEvents.add(activity);
+        }
+
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
         long welcomeNotificationTime = preferences.getWelcomeNotificationTime();
         if (initialRegTimestamp != 0) {
@@ -514,7 +533,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public static class SocialActionEvent {
 
-        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT, Action.TYPE_POST_REACTION})
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT, Action.TYPE_POST_REACTION, Action.TYPE_FRIEND_EVENT})
         public @interface Action {
             int TYPE_COMMENT = 0;
             int TYPE_MENTION_IN_POST = 1;
@@ -523,6 +542,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             int TYPE_FAVORITES_NUX = 4;
             int TYPE_GROUP_EVENT = 5;
             int TYPE_POST_REACTION = 6;
+            int TYPE_FRIEND_EVENT = 7;
         }
 
         public final UserId postSenderUserId;
@@ -592,6 +612,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             activity.timestamp = reaction.timestamp;
             activity.reaction = reaction.reactionType;
             activity.seen = reaction.seen;
+            return activity;
+        }
+
+        public static SocialActionEvent fromFriendRequest(@NonNull FriendshipInfo friend) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_FRIEND_EVENT, friend.userId, null);
+            activity.timestamp = friend.timestamp;
+            activity.seen = friend.seen;
             return activity;
         }
 

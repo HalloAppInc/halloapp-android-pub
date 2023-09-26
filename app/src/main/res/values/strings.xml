@@ -426,6 +426,10 @@
     <string name="welcome_activity_center">&lt;b>HalloApp:&lt;/b> Welcome! You will see notifications about your friends posts and comments here</string>
     <!-- Text shown in activity center telling users about the new favorites feature -->
     <string name="favorites_notification">Check out the new &lt;b>Favorites&lt;/b> feature! &lt;a href="learn-more">Learn more&lt;/a></string>
+    <!-- Text shown in activity center telling users when they received a new friend request. %s is the person who sent the request -->
+    <string name="incoming_friend_request_notification">&lt;b>%s&lt;/b> sent you a friend request! &lt;b>&lt;a href="view-friends">View&lt;/a>&lt;/b></string>
+    <!-- Text shown in activity center telling users when they have a new friend. %s is the name of the friend -->
+    <string name="friend_notification">&lt;b>%s&lt;/b> is now your friend</string>
     <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>
     <string name="contact_hashing_faq_dialog_info">HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book.</string>
     <string name="list_of_two">%1$s and %2$s</string>
