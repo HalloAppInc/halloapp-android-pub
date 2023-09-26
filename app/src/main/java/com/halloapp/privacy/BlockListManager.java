@@ -105,13 +105,10 @@ public class BlockListManager {
 
     @WorkerThread
     public void fetchBlockList() {
-        privacyListApi.getBlockList().onResponse(blockListResponse -> {
-           if (blockListResponse != null) {
-               saveBlockList(blockListResponse);
-           }
-        }).onError(e -> {
-            Log.e("BlockListManager/fetchBlockList failed to fetch blocklist", e);
-        });
+        List<UserId> blockList = privacyListApi.getBlockList();
+        if (blockList != null) {
+           saveBlockList(blockList);
+        }
     }
 
     private void saveBlockList(@NonNull List<UserId> blockList) {
@@ -121,14 +118,12 @@ public class BlockListManager {
     }
 
     public boolean refetchBlockListSync() {
-        try {
-            List<UserId> blockList = privacyListApi.getBlockList().await();
-            saveBlockList(blockList);
-            return true;
-        } catch (ObservableErrorException | InterruptedException e) {
-            Log.w("Failed to refetch block list", e);
+        List<UserId> blockList = privacyListApi.getBlockList();
+        if (blockList == null) {
             return false;
         }
+        saveBlockList(blockList);
+        return true;
     }
 
     @AnyThread
@@ -159,12 +154,13 @@ public class BlockListManager {
     @AnyThread
     public Observable<Boolean> blockContact(@NonNull UserId userId) {
         MutableObservable<Boolean> resultObservable = new MutableObservable<>();
-        privacyListApi.blockUsers(Collections.singleton(userId)).onResponse(result -> {
-            if (result == null || !result) {
+        Connection.getInstance().blockFriend(userId).onResponse(result -> {
+            if (result == null || !result.success) {
                 resultObservable.setResponse(false);
                 return;
             }
             contactsDb.addUserToBlockList(userId);
+            contactsDb.addFriendship(result.info);
             resultObservable.setResponse(true);
             notifyBlockListChanged();
         }).onError(e -> {
@@ -198,12 +194,13 @@ public class BlockListManager {
     @AnyThread
     public Observable<Boolean> unblockContact(@NonNull UserId userId) {
         MutableObservable<Boolean> resultObservable = new MutableObservable<>();
-        privacyListApi.unblockUsers(Collections.singleton(userId)).onResponse(result -> {
-            if (result == null || !result) {
+        Connection.getInstance().unblockFriend(userId).onResponse(result -> {
+            if (result == null || !result.success) {
                 resultObservable.setResponse(false);
                 return;
             }
             contactsDb.removeUserFromBlockList(userId);
+            contactsDb.addFriendship(result.info);
             resultObservable.setResponse(true);
             notifyBlockListChanged();
         }).onError(e -> {

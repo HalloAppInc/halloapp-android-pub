@@ -114,9 +114,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     }
 
     private void pickContactToBlock() {
-        if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CHOOSE_BLOCKED_CONTACT)) {
-            startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
-        }
+        startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
     }
 
     @Override
@@ -142,7 +140,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
             }
             unblockDialog.cancel();
             if (success) {
-                SnackbarHelper.showInfo(this, getString(R.string.unblocking_user_successful, contact.getDisplayName()));
+                SnackbarHelper.showInfo(this, getString(R.string.unblocking_user_successful, name));
             } else {
                 SnackbarHelper.showWarning(this, getString(R.string.unblocking_user_failed_check_internet, contact.getDisplayName()));
             }
@@ -185,7 +183,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     private class ContactViewHolder extends RecyclerView.ViewHolder {
         final private ImageView avatarView;
         final private TextView nameView;
-        final private TextView phoneView;
+        final private TextView usernameView;
 
         private Contact contact;
 
@@ -193,7 +191,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
-            phoneView = itemView.findViewById(R.id.phone);
+            usernameView = itemView.findViewById(R.id.username);
             itemView.setOnClickListener(v -> {
                 if (contact == null || contact.userId == null) {
                     return;
@@ -212,7 +210,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
             this.contact = contact;
             avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
             nameView.setText(contact.getDisplayName());
-            phoneView.setText(contact.getDisplayPhone());
+            usernameView.setText(contact.getUsername());
         }
     }
 

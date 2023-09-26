@@ -469,6 +469,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     ContentDb.getInstance().setUnknownContactAllowed((UserId) chatId, () -> {
                         viewModel.chat.invalidate();
                     });
+                    viewModel.sendSystemMessage(Message.USAGE_BLOCK, chatId);
                     finish();
                 } else {
                     SnackbarHelper.showWarning(chatView, getString(R.string.blocking_user_failed_check_internet, chatName));
@@ -1137,8 +1138,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return true;
         } else if (item.getItemId() == R.id.block) {
             if (!blocked) {
+                final String chatName = viewModel.name.getLiveData().getValue();
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(getString(R.string.block_user_confirmation, viewModel.contact.getLiveData().getValue().getDisplayName()));
+                builder.setTitle(getString(R.string.block_user_confirmation, chatName));
                 builder.setMessage(getString(R.string.block_user_confirmation_consequences));
                 builder.setCancelable(true);
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> blockContact(item));

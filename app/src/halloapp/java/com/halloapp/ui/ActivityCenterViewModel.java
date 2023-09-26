@@ -357,7 +357,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         Iterator<Comment> iterator = comments.iterator();
         while (iterator.hasNext()) {
             Comment comment = iterator.next();
-            if (blockList.contains(comment.senderUserId)) {
+            if (blockList != null && blockList.contains(comment.senderUserId)) {
                 iterator.remove();
             }
         }
@@ -365,7 +365,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         iterator = mentionedComments.iterator();
         while (iterator.hasNext()) {
             Comment comment = iterator.next();
-            if (blockList.contains(comment.senderUserId)) {
+            if (blockList != null && blockList.contains(comment.senderUserId)) {
                 iterator.remove();
             }
         }

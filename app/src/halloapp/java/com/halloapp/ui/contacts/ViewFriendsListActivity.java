@@ -41,6 +41,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.id.UserId;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.FriendshipStatus;
@@ -1014,21 +1015,20 @@ public class ViewFriendsListActivity extends HalloActivity {
         }
 
         public LiveData<Boolean> blockContact(@NonNull UserId userId) {
-            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
-            Connection.getInstance().blockFriend(userId).onResponse(response -> {
-                if (!response.success) {
+            MutableLiveData<Boolean> blockResult = new DelayedProgressLiveData<>();
+            BlockListManager.getInstance().blockContact(userId).onResponse(result -> {
+                if (result == null || !result) {
                     Log.e("Unable to block user: " + userId);
-                    result.postValue(false);
+                    blockResult.postValue(false);
                 } else {
-                    updateFriendState(userId, FriendState.BLOCKED);
-                    ContactsDb.getInstance().addFriendship(response.info);
-                    result.postValue(true);
+                    updateFriendState(userId, ViewFriendsListActivity.ViewFriendsListViewModel.FriendState.BLOCKED);
+                    blockResult.postValue(true);
                 }
             }).onError(e -> {
                 Log.e("Unable to block user", e);
-                result.postValue(false);
+                blockResult.postValue(false);
             });
-            return result;
+            return blockResult;
         }
 
         public LiveData<Boolean> rejectFriendRequest(@NonNull UserId userId) {

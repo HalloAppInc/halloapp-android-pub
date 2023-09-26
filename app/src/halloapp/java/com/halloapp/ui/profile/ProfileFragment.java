@@ -81,6 +81,7 @@ public class ProfileFragment extends PostsFragment {
     private View voiceCallView;
     private View videoCallView;
     private View unblockView;
+    private View friendsContainer;
     private View contactActionsContainer;
     private RecyclerView postsView;
 
@@ -177,6 +178,7 @@ public class ProfileFragment extends PostsFragment {
 
         nameView = headerView.findViewById(R.id.name);
         usernameView = headerView.findViewById(R.id.username);
+        friendsContainer = headerView.findViewById(R.id.friends_container);
         requestsTextView = headerView.findViewById(R.id.friends_text);
         friendsButtonView = headerView.findViewById(R.id.friends_button);
         friendsDismissButtonView = headerView.findViewById(R.id.friends_dismiss_button);
@@ -276,9 +278,11 @@ public class ProfileFragment extends PostsFragment {
         ViewUtils.setViewAndChildrenEnabled(voiceCallView, !profileUserId.isMe());
         ViewUtils.setViewAndChildrenEnabled(messageView, !profileUserId.isMe());
         if (blocked) {
+            friendsContainer.setVisibility(View.GONE);
             contactActionsContainer.setVisibility(View.GONE);
             unblockView.setVisibility(View.VISIBLE);
         } else {
+            friendsContainer.setVisibility(View.VISIBLE);
             contactActionsContainer.setVisibility(View.VISIBLE);
             unblockView.setVisibility(View.GONE);
         }

@@ -139,7 +139,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         progressBar = findViewById(R.id.progress);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
-        viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
+        viewModel.getFriendsList().getLiveData().observe(this, adapter::setContacts);
 
         boolean showInviteOption = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE, true);
         adapter.setInviteVisible(showInviteOption);
@@ -221,7 +221,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private void loadContacts() {
         if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
-            viewModel.contactList.invalidate();
+            viewModel.getFriendsList().invalidate();
         }
     }
 
@@ -322,7 +322,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + (shouldShowInviteItem() ? 1 : 0);
+            return getFilteredContactsCount() + (shouldShowInviteItem() ? 1 : 0) + (showCreateGroup ? 1 : 0);
         }
 
         @NonNull

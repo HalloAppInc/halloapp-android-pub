@@ -35,12 +35,12 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/phone"
+        app:layout_constraintBottom_toTopOf="@id/username"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Ded Pihtov"/>
 
     <TextView
-        android:id="@+id/phone"
+        android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/avatar"
@@ -52,6 +52,6 @@
         android:textAppearance="?textAppearanceListItemSecondary"
         android:textDirection="locale"
         android:textAlignment="gravity"
-        tools:text="+1 (650) 555-3000"/>
+        tools:text="\@username"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

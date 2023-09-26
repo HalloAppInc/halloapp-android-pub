@@ -329,6 +329,16 @@ public class ProfileViewModel extends ViewModel {
         String username = getUsername().getValue();
         Connection.getInstance().getHalloappProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(response -> {
             if (!response.success) {
+                // If the server does not send over info (eg person is blocked), use any old information
+                Contact oldContact = ContactsDb.getInstance().getContact(userId);
+                FriendshipInfo friendshipProfileInfo = new FriendshipInfo(
+                        userId.isMe() ? new UserId(me.getUser()) : userId,
+                        oldContact.username,
+                        oldContact.halloName,
+                        oldContact.avatarId,
+                        oldContact.friendshipStatus,
+                        System.currentTimeMillis());
+                profile.postValue(friendshipProfileInfo);
                 return;
             }
             FriendshipInfo friendshipProfileInfo = new FriendshipInfo(
@@ -341,6 +351,16 @@ public class ProfileViewModel extends ViewModel {
             profile.postValue(friendshipProfileInfo);
         }).onError(err -> {
             Log.e("Failed to get profile info", err);
+            // Use any old information in case of error
+            Contact oldContact = ContactsDb.getInstance().getContact(userId);
+            FriendshipInfo friendshipProfileInfo = new FriendshipInfo(
+                    userId.isMe() ? new UserId(me.getUser()) : userId,
+                    oldContact.username,
+                    oldContact.halloName,
+                    oldContact.avatarId,
+                    oldContact.friendshipStatus,
+                    System.currentTimeMillis());
+            profile.postValue(friendshipProfileInfo);
         });
     }
 
