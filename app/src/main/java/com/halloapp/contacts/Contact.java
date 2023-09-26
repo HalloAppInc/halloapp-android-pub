@@ -32,6 +32,7 @@ public class Contact implements Parcelable {
     public @Nullable String normalizedPhone; // phone from server contact sync
     public @Nullable String avatarId; // from server
     public @Nullable UserId userId;
+    public @FriendshipInfo.Type int friendshipStatus = FriendshipInfo.Type.NONE_STATUS;
     public boolean newConnection;
     public long connectionTime;
     public long numPotentialFriends;
@@ -56,6 +57,15 @@ public class Contact implements Parcelable {
     public Contact(@NonNull UserId userId, @Nullable String name, @Nullable String halloName) {
         this(0, 0, name, null, null, null, userId);
         this.halloName = halloName;
+    }
+
+    public Contact(long rowId, @Nullable UserId userId, @Nullable String avatarId, @Nullable String halloName, @FriendshipInfo.Type int friendshipStatus) {
+        this.rowId = rowId;
+        this.addressBookId = 0;
+        this.userId = userId;
+        this.avatarId = avatarId;
+        this.halloName = halloName;
+        this.friendshipStatus = friendshipStatus;
     }
 
     public void setColorIndex(int colorIndex) {
@@ -92,25 +102,14 @@ public class Contact implements Parcelable {
     }
 
     public String getDisplayName() {
-        return getDisplayName(true);
-    }
-
-    public @Nullable String getUsername() {
-        if (!TextUtils.isEmpty(username)) {
-            return "@" + username;
+        if (!TextUtils.isEmpty(halloName)) {
+            return halloName;
         }
-        return null;
-    }
-
-    public String getDisplayName(boolean showTilde) {
         if (!TextUtils.isEmpty(addressBookName)) {
             return addressBookName;
         }
-        if (!TextUtils.isEmpty(halloName)) {
-            return (showTilde ? "~" : "") + halloName;
-        }
         if (!TextUtils.isEmpty(fallbackName)) {
-            return (showTilde ? "~" : "") + fallbackName;
+            return fallbackName;
         }
         if (normalizedPhone != null) {
             return getDisplayPhone();
@@ -119,11 +118,7 @@ public class Contact implements Parcelable {
     }
 
     public String getShortName() {
-        return getShortName(true);
-    }
-
-    public String getShortName(boolean showTilde) {
-        String displayName = getDisplayName(showTilde);
+        String displayName = getDisplayName();
         String[] parts = displayName.split(" ");
         return parts[0];
     }
@@ -136,6 +131,13 @@ public class Contact implements Parcelable {
             internationalPhone = addressBookPhone;
         }
         return BidiFormatter.getInstance().unicodeWrap(internationalPhone, false);
+    }
+
+    public @Nullable String getUsername() {
+        if (!TextUtils.isEmpty(username)) {
+            return "@" + username;
+        }
+        return null;
     }
 
     public static List<Contact> sort(@NonNull List<Contact> contacts) {

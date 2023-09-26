@@ -217,7 +217,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             disabledContacts.addAll(disabledInput);
         }
         groupInviteLink = getIntent().getStringExtra(EXTRA_INVITE_LINK);
-        viewModel.contactList.getLiveData().observe(this, allContacts -> {
+        viewModel.getFriendsList().getLiveData().observe(this, allContacts -> {
             Map<UserId, Contact> map = new HashMap<>();
             for (Contact contact : allContacts) {
                 map.put(contact.userId, contact);

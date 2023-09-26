@@ -554,6 +554,7 @@ public class ContactsDb {
             }
         }
         contact.username = readUsername(userId);
+        contact.friendshipStatus = readFriendshipStatus(userId);
         return contact;
     }
 
@@ -645,6 +646,20 @@ public class ContactsDb {
             }
         }
         return null;
+    }
+
+    @WorkerThread
+    public @FriendshipInfo.Type int readFriendshipStatus(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(RelationshipTable.TABLE_NAME,
+                new String[]{RelationshipTable.COLUMN_LIST_TYPE},
+                RelationshipTable.COLUMN_USER_ID + "=?",
+                new String[]{userId.rawId()}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return FriendshipInfo.Type.NONE_STATUS;
     }
 
     @WorkerThread
@@ -863,6 +878,19 @@ public class ContactsDb {
                 " FROM " + ContactsTable.TABLE_NAME +
                 " WHERE " + ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_USER_ID + " != ? AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL";
         try (Cursor cursor = databaseHelper.getReadableDatabase().rawQuery(queryString, new String[] {Me.getInstance().getUser()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
+    }
+
+    @WorkerThread
+    public int getFriendsCount() {
+        final String queryString = "SELECT COUNT(DISTINCT " + RelationshipTable.COLUMN_USER_ID + ")" +
+                " FROM " + RelationshipTable.TABLE_NAME +
+                " WHERE " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ? AND " + RelationshipTable.COLUMN_LIST_TYPE + " IS ?";
+        try (Cursor cursor = databaseHelper.getReadableDatabase().rawQuery(queryString, new String[] {Me.getInstance().getUser(), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
             if (cursor.moveToNext()) {
                 return cursor.getInt(0);
             }
@@ -1294,6 +1322,32 @@ public class ContactsDb {
         }
 
         return 0;
+    }
+
+    public List<Contact> getFriends() {
+        final List<Contact> friends = new ArrayList<>();
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(RelationshipTable.TABLE_NAME,
+                new String[] {
+                        RelationshipTable._ID,
+                        RelationshipTable.COLUMN_USER_ID,
+                        RelationshipTable.COLUMN_AVATAR_ID,
+                        RelationshipTable.COLUMN_NAME,
+                        RelationshipTable.COLUMN_LIST_TYPE
+                },
+                RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL", new String[]{String.valueOf(FriendshipInfo.Type.FRIENDS)}, null, null, null)) {
+                while (cursor.moveToNext()) {
+                    final String userIdStr = cursor.getString(1);
+                    final Contact friend = new Contact(
+                            cursor.getLong(0),
+                            userIdStr == null ? null : new UserId(userIdStr),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getInt(4));
+                    friends.add(friend);
+                }
+        }
+        return friends;
     }
 
     @WorkerThread

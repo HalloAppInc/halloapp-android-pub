@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add_to_contacts"
-        android:title="@string/add_to_contacts"
-        app:showAsAction="never"
-        android:visible="false"/>
-
-    <item
         android:id="@+id/clear_chat"
         android:title="@string/clear_chat"
         app:showAsAction="never"/>

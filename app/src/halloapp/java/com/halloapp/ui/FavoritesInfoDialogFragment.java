@@ -45,7 +45,7 @@ public class FavoritesInfoDialogFragment extends DialogFragment {
         Bundle args = requireArguments();
         boolean myPost = args.getBoolean(ARG_MY_POST, true);
         String poster = args.getString(ARG_POSTER_NAME);
-        messageView.setText(myPost ? getString(R.string.contact_favorites_explanation) : getString(R.string.contact_favorites_explanation_others_with_name, poster));
+        messageView.setText(myPost ? getString(R.string.friend_favorites_explanation) : getString(R.string.friend_favorites_explanation_others_with_name, poster));
 
         cancel.setOnClickListener(v -> {
             dismiss();

@@ -178,7 +178,7 @@
                 </FrameLayout>
 
                 <LinearLayout
-                    android:id="@+id/unknown_contact_container"
+                    android:id="@+id/unknown_friend_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -194,7 +194,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/not_in_address_book_alert"
+                        android:text="@string/not_friend_alert"
                         android:textSize="14sp"
                         android:layout_marginTop="15dp"
                         android:textColor="@color/primary_text"
@@ -202,7 +202,7 @@
                         />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/unknown_accept"
+                        android:id="@+id/unknown_add_friend"
                         style="@style/Widget.Button.Secondary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -212,21 +212,7 @@
                         android:layout_marginStart="80dp"
                         android:layout_marginEnd="80dp"
                         app:cornerRadius="10dp"
-                        android:text="@string/accept_message"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/unknown_add"
-                        style="@style/Widget.Button.Neutral"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:letterSpacing=".02"
-                        android:layout_marginTop="2dp"
-                        app:cornerRadius="10dp"
-                        android:layout_marginStart="80dp"
-                        android:layout_marginEnd="80dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:text="@string/add_to_contacts"/>
+                        android:text="@string/add_as_friend"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/unknown_block"

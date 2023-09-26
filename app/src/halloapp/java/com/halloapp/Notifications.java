@@ -1038,11 +1038,7 @@ public class Notifications {
             Log.d("Notifications.update: " + post);
             if (userIds.add(post.senderUserId)) {
                 final Contact contact = ContactsDb.getInstance().getContact(post.senderUserId);
-                if (!TextUtils.isEmpty(post.psaTag)) {
-                    names.add(contact.getDisplayName(false));
-                } else {
-                    names.add(contact.getDisplayName());
-                }
+                names.add(contact.getDisplayName());
             }
             if (post.timestamp > momentNotificationTimeCutoff) {
                 momentNotificationTimeCutoff = post.timestamp;

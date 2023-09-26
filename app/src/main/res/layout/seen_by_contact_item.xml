@@ -26,7 +26,7 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/time"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/phone"
+        app:layout_constraintBottom_toTopOf="@id/username"
         android:singleLine="true"
         android:ellipsize="end"
         android:textAppearance="?textAppearanceListItem"
@@ -37,7 +37,7 @@
         tools:text="Ded Pihtov"/>
 
     <TextView
-        android:id="@+id/phone"
+        android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -51,7 +51,7 @@
         android:textColor="@color/secondary_text"
         android:textDirection="locale"
         android:textAlignment="gravity"
-        tools:text="+1-650-924-6950"/>
+        tools:text="\@username"/>
 
 
     <TextView

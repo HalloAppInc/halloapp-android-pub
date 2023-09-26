@@ -87,6 +87,7 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1447,6 +1448,9 @@ public class MainConnectionObserver extends Connection.Observer {
                 FriendshipInfo.fromProtoType(profile.getStatus(), profile.getBlocked()),
                 System.currentTimeMillis());
         contactsDb.addFriendship(friendshipProfileInfo);
+        contactsDb.updateUserNames(Collections.singletonMap(userId, profile.getName()));
+        contactsDb.updateUserUsernames(Collections.singletonMap(userId, profile.getUsername()));
+        contactsDb.updateUserAvatars(Collections.singletonMap(userId, profile.getAvatarId()));
         connection.sendAck(ackId);
     }
 }

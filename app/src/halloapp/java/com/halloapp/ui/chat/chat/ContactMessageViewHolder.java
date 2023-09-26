@@ -22,8 +22,6 @@ public class ContactMessageViewHolder extends MessageViewHolder {
     private final ImageView avatarView;
     private final TextView nameView;
 
-    private final View contactActionContainer;
-
     ContactMessageViewHolder(@NonNull View itemView, @NonNull MessageViewHolderParent parent) {
         super(itemView, parent);
 
@@ -31,11 +29,6 @@ public class ContactMessageViewHolder extends MessageViewHolder {
         avatarView = itemView.findViewById(R.id.avatar);
         nameView = itemView.findViewById(R.id.contact_name);
 
-        contactActionContainer = itemView.findViewById(R.id.contact_action);
-        contactActionContainer.setVisibility(View.GONE);
-        contactActionContainer.setOnClickListener(v -> {
-
-        });
         previewContainer.setOnClickListener(v -> {
             ContactCard contactCard = ContactCardUtils.deserializeContactCard(message.text);
             if (contactCard != null) {

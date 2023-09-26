@@ -185,9 +185,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        boolean showTilde = TextUtils.isEmpty(moment.psaTag);
-                        senderName = result.getShortName(showTilde);
-                        String name = result.getDisplayName(showTilde);
+                        senderName = result.getShortName();
+                        String name = result.getDisplayName();
                         view.setText(view.getContext().getString(R.string.instant_post_from, name));
                     }
                 }

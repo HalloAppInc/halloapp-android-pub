@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.chat.chat.ChatActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -45,7 +46,7 @@ public class ContactMenuBottomSheetDialogFragment extends HalloBottomSheetDialog
 
         final View message = view.findViewById(R.id.message);
         final View viewProfile = view.findViewById(R.id.view_profile);
-        if (TextUtils.isEmpty(contact.addressBookName)) {
+        if (contact.friendshipStatus != FriendshipInfo.Type.FRIENDS) {
             message.setVisibility(View.GONE);
         } else {
             message.setVisibility(View.VISIBLE);

@@ -783,6 +783,12 @@ public class ViewFriendsListActivity extends HalloActivity {
                             Map<UserId, String> avatars = new HashMap<>();
                             searchUserResultList.clear();
                             searchUserResultList.addAll(response.profiles);
+                            for (HalloappUserProfile profile : response.profiles) {
+                                UserId userId = new UserId(Long.toString(profile.getUid()));
+                                names.put(userId, profile.getName());
+                                usernames.put(userId, profile.getUsername());
+                                avatars.put(userId, profile.getAvatarId());
+                            }
                             contactsDb.updateUserNames(names);
                             contactsDb.updateUserUsernames(usernames);
                             contactsDb.updateUserAvatars(avatars);
@@ -893,6 +899,7 @@ public class ViewFriendsListActivity extends HalloActivity {
 
             List<FriendshipInfo> incomingRequestsList = contactsDb.getFriendships(FriendshipInfo.Type.INCOMING_PENDING);
             List<FriendshipInfo> outgoingRequestsList = contactsDb.getFriendships(FriendshipInfo.Type.OUTGOING_PENDING);
+            List<FriendshipInfo> friendsList = contactsDb.getFriendships(FriendshipInfo.Type.FRIENDS);
             Tab tab = selectedTab.getValue();
             if (tab == Tab.SUGGESTIONS) {
                 if (!incomingRequestsList.isEmpty() || !outgoingRequestsList.isEmpty()) {
@@ -909,10 +916,10 @@ public class ViewFriendsListActivity extends HalloActivity {
                     list.add(new SeeRequestsItem(getApplication().getString(R.string.see_all_requests)));
                 }
 
-                list.add(new SectionHeaderItem(getApplication().getString(R.string.from_contacts_list), false));
-                if (contactSuggestionsList.isEmpty()) {
+                if (contactSuggestionsList.isEmpty() && friendsList.isEmpty()) {
                     list.add(new NoConnectionsItem());
-                } else {
+                } else if (!contactSuggestionsList.isEmpty()){
+                    list.add(new SectionHeaderItem(getApplication().getString(R.string.from_contacts_list), false));
                     for (FriendListResponseIq.Suggestion suggestion : contactSuggestionsList) {
                         list.add(new PersonItem(
                                 suggestion.info.userId,
@@ -935,7 +942,6 @@ public class ViewFriendsListActivity extends HalloActivity {
                     }
                 }
             } else if (tab == Tab.FRIENDS) {
-                List<FriendshipInfo> friendsList = contactsDb.getFriendships(FriendshipInfo.Type.FRIENDS);
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.my_friends_on_halloapp), false));
                 if (friendsList.isEmpty()) {
                     list.add(new NoConnectionsItem());

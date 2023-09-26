@@ -66,19 +66,19 @@ public class HomeFeedPostKeyManager {
         List<UserId> userIds = new ArrayList<>();
 
         ContactsDb contactsDb = ContactsDb.getInstance();
-        List<Contact> contacts;
+        List<Contact> friends;
         if (!favorites) {
-            contacts = contactsDb.getUsers();
+            friends = contactsDb.getFriends();
         } else {
             List<UserId> favoritesUserIds = contactsDb.getFeedShareList();
-            contacts = new ArrayList<>();
+            friends = new ArrayList<>();
             for (UserId userId : favoritesUserIds) {
-                contacts.add(contactsDb.getContact(userId));
+                friends.add(contactsDb.getContact(userId));
             }
         }
         List<UserId> allUserIds = new ArrayList<>();
-        for (Contact contact : contacts) {
-            allUserIds.add(contact.userId);
+        for (Contact friend : friends) {
+            allUserIds.add(friend.userId);
         }
         for (UserId userId : allUserIds) {
             if (!userId.isMe()) {

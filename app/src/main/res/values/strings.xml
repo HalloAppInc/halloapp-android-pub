@@ -171,16 +171,16 @@
     <!-- Storage usage section header for archive category -->
     <string name="storage_usage_archive">Archive</string>
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts</string>
+    <string name="home_contact_permissions_banner">To better connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts</string>
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">To share posts with your friends &amp; family, allow HalloApp access to your contacts</string>
+    <string name="new_post_contact_permissions_banner">To better share posts with your friends &amp; family, allow HalloApp access to your contacts</string>
     <string name="new_message">New message</string>
     <string name="chat_message_attribution">%1$s: %2$s</string>
     <string name="empty_chat_with_name_placeholder">%s is on HalloApp.</string>
     <string name="new_chat_name_placeholder">%s is using HalloApp! 🎉</string>
     <string name="posts_empty">Posts will appear here</string>
     <string name="posts_exchange_numbers">To connect you must exchange phone numbers</string>
-    <string name="home_page_empty">Posts from your contacts will appear here</string>
+    <string name="home_page_empty">Posts from your friends will appear here</string>
     <string name="chats_page_empty">Contacts and messages will appear here</string>
     <string name="chats_search_empty">No chats found for \'%s\'</string>
     <string name="groups_page_empty">Your groups will appear here</string>
@@ -256,8 +256,8 @@
     <string name="moment_ready_for_selfie_count">3…2…1…</string>
     <!-- Countdown message just before taking a selfie -->
     <string name="moment_ready_for_selfie_full">3…2…1… Selfie! ✨</string>
-    <!-- Before sharing a moment displays the number of contacts -->
-    <string name="all_contacts_count">All Contacts (%d)</string>
+    <!-- Before sharing a moment displays the number of friends -->
+    <string name="all_contacts_count">All Friends (%d)</string>
     <!-- Rationale for when requesting microphone permission for voice posts-->
     <string name="voice_post_record_audio_permission_rationale">To record audio posts we need permission to access the microphone</string>
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
@@ -271,8 +271,8 @@
     <string name="voice_note_record_audio_permission_rationale_denied">To record audio we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="camera_record_audio_permission_rationale">To take photos and record videos we need permission to access the camera and record audio on your device</string>
     <string name="camera_record_audio_permission_rationale_denied">To take photos and record videos we need permission to access the camera and record audio on your device.\n\nOpen the app settings screen to modify app permissions.</string>
-    <string name="contacts_permission_rationale">To connect with your friends and family we need permission to access contacts on your device</string>
-    <string name="contacts_permission_rationale_denied">To connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="contacts_permission_rationale">To better connect with your friends and family we need permission to access contacts on your device</string>
+    <string name="contacts_permission_rationale_denied">To better connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="storage_permission_rationale">To pick media we need permission to access your device storage</string>
     <string name="storage_permission_rationale_denied">To pick media we need permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
     <!-- Rationale for when requesting microphone permission for voice calls -->
@@ -296,7 +296,7 @@
     <!-- Message when we failed to save post media to gallery -->
     <string name="media_save_to_gallery_failed">Failed to save to gallery</string>
     <string name="retry">Retry</string>
-    <string name="contact_rationale_upload">In order to connect you with your friends and family we’ll need your permission to access your contacts to sync the phone numbers in your address book.</string>
+    <string name="contact_rationale_upload">In order to better connect you with your friends and family we’ll need your permission to access your contacts to sync the phone numbers in your address book.</string>
     <!-- text explaining to the user how we use the users address book -->
     <string name="contact_usage_rationale">HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family.</string>
     <!-- contact permission request title -->
@@ -440,18 +440,18 @@
     <string name="preparing_logs">Preparing logs…</string>
     <string name="terms_of_service">Terms of service</string>
     <string name="privacy_policy">Privacy policy</string>
-    <string name="settings_block_list">Blocked contacts</string>
+    <string name="settings_block_list">Blocked friends</string>
     <string name="settings_feed_privacy">Posts</string>
     <string name="settings_privacy">Privacy</string>
     <plurals name="contact_selection_subtitle">
-        <item quantity="one">%d contact selected</item>
-        <item quantity="other">%d contacts selected</item>
+        <item quantity="one">%d friend selected</item>
+        <item quantity="other">%d friends selected</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="one">You may select at most %d contact</item>
-        <item quantity="other">You may select at most %d contacts</item>
+        <item quantity="one">You may select at most %d friend</item>
+        <item quantity="other">You may select at most %d friends</item>
     </plurals>
-    <string name="no_contacts_selected_subtitle">No contacts selected</string>
+    <string name="no_contacts_selected_subtitle">No friends selected</string>
     <string name="help">Help</string>
     <string name="about">About HalloApp</string>
     <!-- Title for the About screen -->
@@ -527,7 +527,7 @@
     <!-- Title for section containing recently contacted people and groups -->
     <string name="compose_share_recents_header">Recents</string>
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">Search contacts</string>
+    <string name="compose_share_search_contacts">Search friends</string>
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
         <item quantity="one">%d person</item>
@@ -624,13 +624,13 @@
         <item quantity="one">Katchup expires in %d day</item>
         <item quantity="other">Katchup expires in %d days</item>
     </plurals>
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for their posts -->
-    <string name="contact_favorites_explanation">This post is only shared with contacts you added to Favorites. You can edit your Favorites list at any time.</string>
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time.</string>
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time.</string>
-    <!-- Favorites means the users favorite contacts -->
+    <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for their posts -->
+    <string name="friend_favorites_explanation">This post is only shared with the friends you added to Favorites. You can edit your Favorites list at any time.</string>
+    <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts -->
+    <string name="friend_favorites_explanation_others">This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time.</string>
+    <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="friend_favorites_explanation_others_with_name">%s shared this post with friends on their Favorites list. You can setup and edit your Favorites list at any time.</string>
+    <!-- Favorites means the users favorite friends -->
     <string name="contact_favorites">Favorites</string>
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">Edit favorites</string>
@@ -639,7 +639,7 @@
     <!-- Button action for when user is editing their favorites -->
     <string name="edit_favorites_action">Edit favorites</string>
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <string name="favorites_nux_call_to_action">Now you can create a list of your favorite contacts, and share your HalloApp posts just with them</string>
+    <string name="favorites_nux_call_to_action">Now you can create a list of your favorite friends, and share your HalloApp posts just with them</string>
     <string name="share_link">Share link</string>
     <string name="copy_link">Copy link</string>
     <!-- Button for revoking a link used for external sharing -->
@@ -759,8 +759,6 @@
     <string name="key_verification_switch_label">Verified</string>
     <!-- Notification shown as if it were the first message in a chat -->
     <string name="e2e_notice">All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;</string>
-    <!-- Notification shown at top of chat if the other user is not in this user's address book; %s is their display name -->
-    <string name="add_to_contacts_notice">&lt;b&gt;Tap to add %s to your contact book&lt;/b&gt;</string>
     <!-- Menu option to delete a post -->
     <string name="delete_post">Delete post</string>
     <!-- Menu option to delete a moment -->
@@ -834,7 +832,7 @@
     <string name="search_groups">Search groups</string>
     <!-- A new label used as the title/label of the GroupPickerActivity-->
     <string name="select_post_destination">Post to…</string>
-    <string name="search_contacts">Search contacts</string>
+    <string name="search_contacts">Search friends</string>
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group-->
     <string name="search_post_destination">Search</string>
     <string name="search">Search</string>
@@ -857,8 +855,8 @@
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="counter">%1$d/%2$d</string>
     <string name="invite_pending">Pending</string>
-    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">Your contacts that join HalloApp will be able to see your future posts</string>
+    <!-- Disclaimer at bottom of my friends explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">Contacts added as friends will be able to see your posts shared on HalloApp.</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">Groups in common</string>
@@ -915,9 +913,9 @@
     <!-- Shown in popup telling the user their message was sent -->
     <string name="private_reply_sent">Reply sent</string>
     <string name="group_subtitle">tap here for group info</string>
-    <string name="empty_block_list">No blocked contacts</string>
-    <string name="block_notification">You blocked this contact. Tap to unblock</string>
-    <string name="unblock_notification">You unblocked this contact</string>
+    <string name="empty_block_list">No blocked friends</string>
+    <string name="block_notification">You blocked this friend. Tap to unblock</string>
+    <string name="unblock_notification">You unblocked this friend</string>
     <string name="system_message_group_created">This group was created by %s</string>
     <string name="system_message_group_created_by_you">This group was created by you</string>
     <string name="system_message_members_added">%1$s added %2$s</string>
@@ -991,10 +989,10 @@
     <string name="group_info_title">Group info</string>
     <string name="admin">Admin</string>
     <string name="save">Save</string>
-    <!-- Title for screen that shows all the user's contacts -->
-    <string name="my_contacts_title">My contacts</string>
-    <!-- Title for list showing all users halloapp contacts -->
-    <string name="my_ha_contacts">My HalloApp contacts</string>
+    <!-- Title for screen that shows all the user's friends -->
+    <string name="my_contacts_title">My friends</string>
+    <!-- Title for list showing all users halloapp friends -->
+    <string name="my_ha_contacts">My HalloApp friends</string>
     <string name="contact_picker_feed_except_title">Hide posts from…</string>
     <string name="contact_picker_feed_only_title">Share posts with…</string>
     <!-- Title for feed privacy when setting it from a single post -->
@@ -1002,9 +1000,9 @@
     <string name="setting_feed_privacy_title">Who can see my posts</string>
     <!-- Title for feed privacy when setting it from a single post for the group section -->
     <string name="setting_feed_privacy_groups_section_title">Share only with a group</string>
-    <string name="setting_feed_all">My contacts</string>
+    <string name="setting_feed_all">My friends</string>
     <string name="setting_feed_only">Only share with…</string>
-    <string name="setting_feed_except">My contacts except…</string>
+    <string name="setting_feed_except">My friends except…</string>
     <string name="feed_privacy_fail_to_load">Failed to load privacy settings</string>
     <string name="feed_privacy_update_success">Setting updated successfully</string>
     <string name="feed_privacy_update_failure">Failed to update setting</string>
@@ -1136,8 +1134,8 @@
         <item quantity="other">%d contacts on HalloApp</item>
     </plurals>
     <plurals name="settings_block_list_summary">
-        <item quantity="one">%d contact</item>
-        <item quantity="other">%d contacts</item>
+        <item quantity="one">%d friend</item>
+        <item quantity="other">%d friends</item>
     </plurals>
     <string name="settings_block_list_none_summary">None</string>
     <string name="settings_feed_contacts_summary">My phone contacts</string>
@@ -1151,7 +1149,7 @@
     </plurals>
     <!-- Text shown under progress bar when first setting up HalloApp -->
     <string name="app_initializing">Setting up HalloApp</string>
-    <string name="settings_feed_selected_empty">No contacts selected</string>
+    <string name="settings_feed_selected_empty">No friends selected</string>
     <string name="settings_version_footer">HalloApp Version %s</string>
     <string name="connectivity_info_airplane_mode">Airplane mode on</string>
     <string name="connectivity_info_not_connected">No network</string>
@@ -1227,7 +1225,7 @@
     <!-- Shown below on seen by to explain that post will never expire  -->
     <string name="seen_by_post_expiration_permanent">Your post will never expire</string>
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">Your Moment was shared with your contacts. Moments disappear after 24 hours.</string>
+    <string name="seen_by_post_expiration_moments">Your Moment was shared with your friends. Moments disappear after 24 hours.</string>
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">FAQ</string>
     <!-- Button takes user to settings to manage their storage -->
@@ -1462,11 +1460,11 @@
     </plurals>
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">This contact will be able to see your posts shared with all HalloApp contacts</item>
-        <item quantity="other">These contacts will be able to see your posts shared with all HalloApp contacts</item>
+        <item quantity="one">This friend will be able to see your posts shared with all HalloApp friends</item>
+        <item quantity="other">These friends will be able to see your posts shared with all HalloApp friends</item>
     </plurals>
-    <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">Your phone contacts that register on HalloApp will appear here automatically.</string>
+    <!-- Explaining to users that they will see their friends below, when they currently have no friends -->
+    <string name="no_connections_on_hallo_explanation">Your friends on HalloApp will appear here automatically.</string>
     <!-- pre-filled text for when user makes first post during onboarding -->
     <string name="first_time_post_content">Hey there! I\'m using HalloApp</string>
     <!-- title for screen to compose user's first post -->
@@ -2069,6 +2067,16 @@
     <string name="error_block_contact">Unable to block contact, please try again later</string>
     <!-- Button text telling users to add selected users as friends -->
     <string name="add_friends">Add friends</string>
+    <!-- Message alerting the user that the person messaging them is not a friend -->
+    <string name="not_friend_alert">This person is not a friend</string>
+    <!-- Button text telling users to add the user as a friend -->
+    <string name="add_as_friend">Add as a friend</string>
+    <!-- Message when a friend request was successfully sent -->
+    <string name="send_friend_request_successful">Successfully sent friend request</string>
+    <!-- Label for icon that indicates all the user's friends with their total number in parentheses -->
+    <string name="compact_share_my_friends">My friends (%d)</string>
+    <!-- Title of section for recent friends -->
+    <string name="recent_friends">Recent friends</string>
     <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
     <plurals name="friend_connections_on_hallo">
         <item quantity="one">%d person from your contacts is on HalloApp. Add them as a friend?</item>

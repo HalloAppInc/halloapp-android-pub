@@ -50,7 +50,7 @@ public class EditFavoritesViewModel extends AndroidViewModel {
             @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
-                List<Contact> contacts = contactsDb.getUsers();
+                List<Contact> contacts = contactsDb.getFriends();
                 if (initialSelection != null) {
                     Set<UserId> initialSelectionCopy = new HashSet<>(initialSelection);
                     for (Contact contact : contacts) {

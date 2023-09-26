@@ -166,7 +166,7 @@ public class ProfileFragment extends PostsFragment {
         final ImageView emptyIcon = emptyContainer.findViewById(R.id.empty_icon);
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
-            emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+            emptyContainer.setVisibility(posts != null && posts.size() == 0 ? View.VISIBLE : View.GONE);
             adapter.submitList(posts, null);
         });
         if (viewModel.getSavedScrollState() != null) {
@@ -290,7 +290,6 @@ public class ProfileFragment extends PostsFragment {
         ViewUtils.setViewAndChildrenEnabled(voiceCallView, canView);
         ViewUtils.setViewAndChildrenEnabled(messageView, canView);
         contactActionsContainer.setAlpha(canView ? VISIBLE_PROFILE_ALPHA : HIDDEN_PROFILE_ALPHA);
-        //TODO(Michelle): Update posts visibility
     }
 
     private void updateFriendship(int friendType) {

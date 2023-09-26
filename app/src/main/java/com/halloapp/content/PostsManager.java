@@ -80,10 +80,10 @@ public class PostsManager {
             }
             shareOperations++;
         }
-        List<Contact> contacts = contactsDb.getUsers();
+        List<Contact> friends = contactsDb.getFriends();
         HashSet<UserId> shareToIds = new HashSet<>();
-        for (Contact contact : contacts) {
-            shareToIds.add(contact.userId);
+        for (Contact friend : friends) {
+            shareToIds.add(friend.userId);
         }
         sharePosts(shareToIds, true);
     }

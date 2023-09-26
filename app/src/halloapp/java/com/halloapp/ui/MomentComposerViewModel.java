@@ -74,7 +74,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
             @SuppressLint("RestrictedApi")
             @Override
             protected Integer compute() {
-                return contactsDb.getContactsCount();
+                return contactsDb.getFriendsCount();
             }
         };
 
@@ -290,10 +290,10 @@ public class MomentComposerViewModel extends AndroidViewModel {
             @PrivacyList.Type String audienceType;
             List<UserId> audienceList;
 
-            List<Contact> contacts = contactsDb.getUsers();
-            audienceList = new ArrayList<>(contacts.size());
-            for (Contact contact : contacts) {
-                audienceList.add(contact.userId);
+            List<Contact> friends = contactsDb.getFriends();
+            audienceList = new ArrayList<>(friends.size());
+            for (Contact friend : friends) {
+                audienceList.add(friend.userId);
             }
             audienceType = PrivacyList.Type.ALL;
 

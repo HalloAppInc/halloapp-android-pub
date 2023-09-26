@@ -110,7 +110,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
         takeToProfileOnClick = getIntent().getBooleanExtra(EXTRA_CLICK_TO_PROFILE, false);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
-        viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
+        viewModel.getFriendsList().getLiveData().observe(this, adapter::setContacts);
 
         loadContacts();
     }

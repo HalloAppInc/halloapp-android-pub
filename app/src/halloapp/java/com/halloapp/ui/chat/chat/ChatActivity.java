@@ -70,6 +70,7 @@ import com.halloapp.UrlPreviewLoader;
 import com.halloapp.calling.calling.CallManager;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -246,7 +247,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private MenuItem videoCallMenuItem;
     private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
-    private View unknownContactsContainer;
+    private View unknownFriendsContainer;
     private View screenOverlay;
 
     private boolean showKeyboardOnResume;
@@ -343,7 +344,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         subtitleView = findViewById(R.id.subtitle);
         avatarView = findViewById(R.id.avatar);
         footer = findViewById(R.id.footer);
-        unknownContactsContainer = findViewById(R.id.unknown_contact_container);
+        unknownFriendsContainer = findViewById(R.id.unknown_friend_container);
 
         chatInputView = findViewById(R.id.entry_view);
 
@@ -475,22 +476,19 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             });
         });
 
-        findViewById(R.id.unknown_accept).setOnClickListener(v -> {
+        findViewById(R.id.unknown_add_friend).setOnClickListener(v -> {
             if (chatId instanceof UserId) {
                 ContentDb.getInstance().setUnknownContactAllowed((UserId) chatId, () -> {
                     viewModel.chat.invalidate();
                 });
-                ContentDb.getInstance().setChatSeen(chatId);
-            }
-        });
-
-        findViewById(R.id.unknown_add).setOnClickListener(v -> {
-            if (chatId instanceof UserId) {
-                ContentDb.getInstance().setUnknownContactAllowed((UserId) chatId, () -> {
-                    viewModel.chat.invalidate();
+                viewModel.sendFriendRequest((UserId) chatId).observe(this, success -> {
+                    if (Boolean.TRUE.equals(success)) {
+                        SnackbarHelper.showInfo(this, R.string.send_friend_request_successful);
+                        return;
+                    }
+                    SnackbarHelper.showWarning(this, R.string.error_send_friend_request);
                 });
                 ContentDb.getInstance().setChatSeen(chatId);
-                addToContacts();
             }
         });
 
@@ -704,7 +702,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 adapter.setFirstUnseenMessageRowId(chat.firstUnseenMessageRowId);
                 adapter.setNewMessageCount(chat.newMessageCount);
                 footer.setVisibility(chat.isActive ? View.VISIBLE : View.GONE);
-                unknownContactsContainer.setVisibility((!chat.isGroup && !chat.isActive) ? View.VISIBLE : View.GONE);
+                unknownFriendsContainer.setVisibility((!chat.isGroup && !chat.isActive) ? View.VISIBLE : View.GONE);
             }
 
             if (chatId instanceof UserId) {
@@ -1111,9 +1109,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         voiceCallMenuItem.setVisible(allowCalling);
         videoCallMenuItem.setVisible(allowCalling);
-        viewModel.contact.getLiveData().observe(this, contact -> {
-            menu.findItem(R.id.add_to_contacts).setVisible(contact != null && TextUtils.isEmpty(contact.addressBookName));
-        });
         callManager.getIsInCall().observe(this, (inCall) -> {
             this.isCallOngoing = inCall;
             updateCallButtons();
@@ -1155,11 +1150,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return true;
         } else if (item.getItemId() == R.id.verify) {
             startActivity(KeyVerificationActivity.openKeyVerification(this, (UserId) chatId));
-        } else if (item.getItemId() == R.id.add_to_contacts) {
-            Contact contact = viewModel.contact.getLiveData().getValue();
-            String phone = viewModel.phone.getValue();
-            Intent intent = IntentUtils.createContactIntent(contact, phone);
-            startActivity(intent);
         } else if (item.getItemId() == R.id.call_voice) {
             Log.i("ChatActivity: starting a voice call with Uid: " + chatId.rawId());
             callManager.startCallActivity(this, (UserId) chatId, CallType.AUDIO);

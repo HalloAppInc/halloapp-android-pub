@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
@@ -25,11 +26,18 @@ public class ContactsViewModel extends AndroidViewModel {
     private final ContactsDb contactsDb = ContactsDb.getInstance();
 
     final ComputableLiveData<List<Contact>> contactList;
+    private final ComputableLiveData<List<Contact>> friendsList;
+
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
             contactList.invalidate();
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
+            friendsList.invalidate();
         }
     };
 
@@ -59,6 +67,16 @@ public class ContactsViewModel extends AndroidViewModel {
             }
         };
 
+        friendsList = new ComputableLiveData<List<Contact>>() {
+
+            @SuppressLint("RestrictedApi")
+            @Override
+            protected List<Contact> compute() {
+                List<Contact> contacts = contactsDb.getFriends();
+                return Contact.sort(contacts);
+            }
+        };
+
         contactsDb.addObserver(contactsObserver);
     }
 
@@ -74,6 +92,10 @@ public class ContactsViewModel extends AndroidViewModel {
                 Log.e("Unable to send friend request", e);
             });
         }
+    }
+
+    public ComputableLiveData<List<Contact>> getFriendsList() {
+        return friendsList;
     }
 
     @Override

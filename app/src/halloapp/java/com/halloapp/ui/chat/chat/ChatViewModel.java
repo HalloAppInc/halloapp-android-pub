@@ -42,6 +42,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.ui.contacts.ViewFriendsListActivity;
 import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -223,14 +224,6 @@ public class ChatViewModel extends AndroidViewModel {
             protected String compute() {
                 ContactsDb contactsDb = ContactsDb.getInstance();
                 Contact contact = contactsDb.getContact((UserId)chatId);
-                String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId)chatId) : null;
-                String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
-                ChatViewModel.this.phone.postValue(normalizedPhone);
-                if (!TextUtils.isEmpty(contact.addressBookName)) {
-                    return contact.addressBookName;
-                } else if (!TextUtils.isEmpty(normalizedPhone)) {
-                    return normalizedPhone;
-                }
                 return contact.getDisplayName();
             }
         };
@@ -698,6 +691,23 @@ public class ChatViewModel extends AndroidViewModel {
             }
         });
         return rowIdLiveData;
+    }
+
+    public LiveData<Boolean> sendFriendRequest(@NonNull UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        Connection.getInstance().sendFriendRequest(userId).onResponse(response -> {
+            if (!response.success) {
+                Log.e("Unable to send a friend request to " + userId);
+                result.postValue(false);
+            } else {
+                ContactsDb.getInstance().addFriendship(response.info);
+                result.postValue(true);
+            }
+        }).onError(e -> {
+            Log.e("Unable to send friend request", e);
+            result.postValue(false);
+        });
+        return result;
     }
 
     public static class Reply {

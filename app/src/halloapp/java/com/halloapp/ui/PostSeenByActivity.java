@@ -319,7 +319,7 @@ public class PostSeenByActivity extends HalloActivity {
             final ImageView avatarView;
             final TextView nameView;
             final TextView timeView;
-            final TextView phoneView;
+            final TextView usernameView;
             final View menuView;
             final View screenshottedView;
             final TextView reactionView;
@@ -332,7 +332,7 @@ public class PostSeenByActivity extends HalloActivity {
                 nameView = itemView.findViewById(R.id.name);
                 timeView = itemView.findViewById(R.id.time);
                 menuView = itemView.findViewById(R.id.menu);
-                phoneView = itemView.findViewById(R.id.phone);
+                usernameView = itemView.findViewById(R.id.username);
                 screenshottedView = itemView.findViewById(R.id.screenshotted);
                 reactionView = itemView.findViewById(R.id.reaction);
 
@@ -360,7 +360,7 @@ public class PostSeenByActivity extends HalloActivity {
                 contact = item.contact;
                 avatarLoader.load(avatarView, Preconditions.checkNotNull(item.contact.userId));
                 nameView.setText(contact.getDisplayName());
-                phoneView.setText(contact.getDisplayPhone());
+                usernameView.setText(contact.getUsername());
                 timeView.setVisibility(View.INVISIBLE);
                 if (item.timestamp == -1) {
                     itemView.setAlpha(0.6f);

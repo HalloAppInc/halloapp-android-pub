@@ -126,8 +126,8 @@ public class ShareDestinationSelectableListView extends LinearLayout {
 
             nameView.setTextColor(getTextColor(item.selected));
             checkboxView.setVisibility(item.selected ? VISIBLE : GONE);
-            final String myContactsText = getResources().getString(R.string.compact_share_my_contacts, item.destination.size);
-            nameView.setText(myContactsText);
+            final String myFriendsText = getResources().getString(R.string.compact_share_my_friends, item.destination.size);
+            nameView.setText(myFriendsText);
 
             avatarView.setSelected(item.selected);
             avatarContainerView.setSelected(item.selected);

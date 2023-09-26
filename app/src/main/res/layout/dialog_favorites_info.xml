@@ -62,7 +62,7 @@
                         android:lineSpacingMultiplier="1.26"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
-                        android:text="@string/contact_favorites_explanation"
+                        android:text="@string/friend_favorites_explanation"
                         android:padding="4dp" />
 
                 </FrameLayout>

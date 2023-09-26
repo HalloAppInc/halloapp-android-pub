@@ -255,14 +255,14 @@ class CommentsViewModel extends AndroidViewModel {
                         if (parentPost.getAudienceType() != null) {
                             switch (parentPost.getAudienceType()) {
                                 case PrivacyList.Type.ALL: {
-                                    List<Contact> contacts = contactsDb.getUsers();
+                                    List<Contact> contacts = contactsDb.getFriends();
                                     for (Contact contact : contacts) {
                                         contactSet.add(contact.userId);
                                     }
                                     break;
                                 }
                                 case PrivacyList.Type.EXCEPT: {
-                                    List<Contact> contacts = contactsDb.getUsers();
+                                    List<Contact> contacts = contactsDb.getFriends();
                                     for (Contact contact : contacts) {
                                         contactSet.add(contact.userId);
                                     }
@@ -281,7 +281,7 @@ class CommentsViewModel extends AndroidViewModel {
                                 }
                             }
                         } else {
-                            List<Contact> contacts = contactsDb.getUsers();
+                            List<Contact> contacts = contactsDb.getFriends();
                             for (Contact contact : contacts) {
                                 contactSet.add(contact.userId);
                             }

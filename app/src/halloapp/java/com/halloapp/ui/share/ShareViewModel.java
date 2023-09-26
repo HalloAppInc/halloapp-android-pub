@@ -115,7 +115,7 @@ public class ShareViewModel extends AndroidViewModel {
             @SuppressLint("RestrictedApi")
             @Override
             protected DestinationListAndRecency compute() {
-                final List<Contact> contacts = contactsDb.getUsers();
+                final List<Contact> contacts = contactsDb.getFriends();
                 final List<Group> groups = chatsOnly ? new ArrayList<>() : contentDb.getActiveGroups();
                 final ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
                 if (!chatsOnly) {

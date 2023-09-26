@@ -20,6 +20,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
@@ -242,7 +243,7 @@ class MessagesDb {
                             Contact contact = ContactsDb.getInstance().getContact((UserId) message.chatId);
                             if (message.isOutgoing()) {
                                 chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, true);
-                            } else if (!contact.inAddressBook()) {
+                            } else if (contact.friendshipStatus == FriendshipInfo.Type.NONE_STATUS) {
                                 chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, false);
                             }
                         }

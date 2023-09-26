@@ -523,7 +523,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
                 if (getItem(position).type == DestinationItem.ITEM_GROUPS_HEADER) {
                     header.setText(R.string.your_groups);
                 } else if (getItem(position).type == DestinationItem.ITEM_CONTACTS_HEADER) {
-                    header.setText(R.string.recent_contacts);
+                    header.setText(R.string.recent_friends);
                 }
 
                 return;

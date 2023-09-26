@@ -40,6 +40,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
@@ -76,7 +77,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final ReactionsLayout reactionsView;
     private final TextView newMessagesSeparator;
     private final View e2eNoticeView;
-    private final View addToContactsView;
     private final TextView nameView;
     private final TextView systemMessage;
     private final TextView tombstoneMessage;
@@ -166,7 +166,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
-        addToContactsView = itemView.findViewById(R.id.add_to_contacts_notice);
         linkPreviewContainer = itemView.findViewById(R.id.link_preview_container);
         linkPreviewTitle = itemView.findViewById(R.id.link_title);
         linkPreviewUrl = itemView.findViewById(R.id.link_domain);
@@ -213,9 +212,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         if (e2eNoticeView != null) {
             TextView e2eText = e2eNoticeView.findViewById(R.id.e2e_text);
             e2eText.setText(StringUtils.replaceBoldWithMedium(Html.fromHtml(itemView.getContext().getString(R.string.e2e_notice))));
-        }
-        if (addToContactsView != null) {
-            addToContactsView.setOnClickListener(v -> parent.addToContacts());
         }
         if (quickForward != null) {
             quickForward.setOnClickListener(v -> {
@@ -488,23 +484,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             }
         }
 
-        if (addToContactsView != null) {
-            if (!isLast) {
-                addToContactsView.setVisibility(View.GONE);
-            } else {
-                parent.getContactLiveData().observe(this, contact -> {
-                    updateAddContactsVisibility();
-                    if (contact != null) {
-                        TextView addToContactsText = addToContactsView.findViewById(R.id.add_to_contacts_text);
-                        addToContactsText.setText(Html.fromHtml(addToContactsText.getContext().getString(R.string.add_to_contacts_notice, contact.getDisplayName())));
-                    }
-                });
-                parent.getPhoneLiveData().observe(this, phone -> {
-                    updateAddContactsVisibility();
-                });
-            }
-        }
-
         if (nameView != null) {
             if (message.isOutgoing()) {
                 contactLoader.cancel(nameView);
@@ -538,16 +517,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 replyContainer.hide();
                 contentView.setMinimumWidth(0);
             }
-        }
-    }
-
-    private void updateAddContactsVisibility() {
-        if (addToContactsView != null) {
-            Contact contact = parent.getContactLiveData().getValue();
-            String phone = parent.getPhoneLiveData().getValue();
-            String addressBookName = contact == null ? null : contact.addressBookName;
-            addToContactsView.setVisibility(
-                    (TextUtils.isEmpty(addressBookName) && !TextUtils.isEmpty(phone)) ? View.VISIBLE : View.GONE);
         }
     }
 

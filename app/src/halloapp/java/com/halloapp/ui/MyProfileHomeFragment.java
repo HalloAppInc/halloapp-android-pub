@@ -89,13 +89,15 @@ public class MyProfileHomeFragment extends HalloFragment implements MainNavFragm
             startActivity(new Intent(v.getContext(), SettingsActivity.class));
         });
 
-        TextView username = root.findViewById(R.id.username);
-        TextView name = root.findViewById(R.id.name);
+        TextView usernameView = root.findViewById(R.id.username);
+        TextView nameView = root.findViewById(R.id.name);
 
         avatarView = root.findViewById(R.id.avatar);
 
-        viewModel.getName().observe(getViewLifecycleOwner(), name::setText);
-        viewModel.getUsername().observe(getViewLifecycleOwner(), username::setText);
+        viewModel.getName().observe(getViewLifecycleOwner(), nameView::setText);
+        viewModel.getUsername().observe(getViewLifecycleOwner(), username -> {
+            usernameView.setText(username == null ? null : "@" + username);
+        });
 
         avatarLoader.load(avatarView, UserId.ME, false);
 

@@ -64,46 +64,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_to_contacts_notice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_max="280sp"
-            android:orientation="horizontal"
-            android:background="@drawable/e2e_message_background"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:layout_marginStart="44dp"
-            android:layout_marginEnd="44dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="6dp">
-
-            <TextView
-                android:id="@+id/add_to_contacts_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?textAppearanceBody1"
-                android:textSize="12sp"
-                android:text="@string/add_to_contacts_notice"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textColor="@color/e2e_message_text"/>
-
-        </FrameLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"

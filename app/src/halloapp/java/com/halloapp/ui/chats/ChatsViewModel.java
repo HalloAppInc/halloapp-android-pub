@@ -148,7 +148,7 @@ public class ChatsViewModel extends AndroidViewModel {
             @SuppressLint("RestrictedApi")
             @Override
             protected List<Contact> compute() {
-                List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getUniqueContactsWithPhones());
+                List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getFriends());
 
                 ListIterator<Contact> iterator = contacts.listIterator();
                 String myUserId = me.getUser();
@@ -198,7 +198,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);
                 }
-                final List<Contact> contacts = ContactsDb.getInstance().getPlaceholderChats();
+                final List<Contact> contacts = ContactsDb.getInstance().getFriends();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
                 Contact.sort(contacts);
                 final List<Chat> contactChats = new ArrayList<>();
@@ -219,9 +219,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name) && chat.chatId instanceof UserId) {
                         Contact contact = contactsDb.getContact((UserId)chat.chatId);
-                        String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone(Preconditions.checkNotNull(contact.userId)) : null;
-                        String nonContactDisplayName = phone == null ? contact.getDisplayName() : PhoneNumberUtils.formatNumber("+" + phone, null);
-                        chat.name = TextUtils.isEmpty(contact.addressBookName) ? nonContactDisplayName : contact.getDisplayName();
+                        chat.name = contact.getDisplayName();
                     }
                 }
                 Collections.sort(chats, (obj1, obj2) -> {

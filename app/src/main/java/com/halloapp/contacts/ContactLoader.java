@@ -40,11 +40,6 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
     @MainThread
     public void load(@NonNull TextView view, @NonNull UserId userId, boolean openProfileOnTap, @Nullable String backupName) {
-        load(view, userId, openProfileOnTap, backupName, true);
-    }
-
-    @MainThread
-    public void load(@NonNull TextView view, @NonNull UserId userId, boolean openProfileOnTap, @Nullable String backupName, boolean showTilde) {
         if (userId.isMe()) {
             view.setText(view.getContext().getString(R.string.me));
             view.setClickable(false);
@@ -64,11 +59,11 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
                     return;
                 }
                 contact.fallbackName = backupText;
-                final String name = contact.getDisplayName(showTilde);
+                final String name = contact.getDisplayName();
                 if (TextUtils.isEmpty(name)) {
                     view.setText(backupText);
                 } else {
-                    view.setText(contact.getDisplayName(showTilde));
+                    view.setText(contact.getDisplayName());
                     if (openProfileOnTap && !userId.isMe()) {
                         view.setOnClickListener(v -> {
                             onTap.apply(userId);

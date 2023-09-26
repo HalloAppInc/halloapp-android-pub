@@ -588,9 +588,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        boolean showTilde = TextUtils.isEmpty(post.psaTag);
-                        name.setText(result.getDisplayName(showTilde));
-                        chatInputView.getTextEntry().setHint(getString(R.string.reply_to_contact, result.getDisplayName(showTilde)));
+                        name.setText(result.getDisplayName());
+                        chatInputView.getTextEntry().setHint(getString(R.string.reply_to_contact, result.getDisplayName()));
                     }
                 }
 

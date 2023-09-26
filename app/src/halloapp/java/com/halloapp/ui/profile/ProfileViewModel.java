@@ -143,6 +143,12 @@ public class ProfileViewModel extends ViewModel {
         public void onNewContacts(@NonNull Collection<UserId> newContacts) {
             contactLiveData.invalidate();
         }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
+            computeUserProfileInfo();
+            contactLiveData.invalidate();
+        }
     };
 
     public ProfileViewModel(@NonNull UserId userId) {
@@ -186,10 +192,10 @@ public class ProfileViewModel extends ViewModel {
             }
         };
         postList = Transformations.switchMap(contactLiveData.getLiveData(), contact -> {
-            if (contact == null || contact.addressBookName != null) {
+            if (contact == null || contact.friendshipStatus == FriendshipInfo.Type.FRIENDS) {
                 return new LivePagedListBuilder<>(dataSourceFactory, 50).build();
             }
-            return new MutableLiveData<>();
+            return new MutableLiveData<>(null);
         });
         contactLiveData.invalidate();
         isBlocked = new MutableLiveData<>();
