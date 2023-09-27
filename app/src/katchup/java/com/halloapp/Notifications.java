@@ -717,6 +717,10 @@ public class Notifications {
         notificationManager.cancel(userId.rawId(), NEW_FOLLOWER_NOTIFICATION_ID);
     }
 
+    public void showFriendModelNotification() {
+        // HalloApp exclusive - do nothing
+    }
+
     @WorkerThread
     @Nullable
     private List<ScreenshotByInfo> getScreenshotContacts() {

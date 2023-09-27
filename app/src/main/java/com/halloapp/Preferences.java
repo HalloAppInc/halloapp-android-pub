@@ -138,6 +138,10 @@ public class Preferences {
     private static final String PREF_KEY_SHOW_DEV_CONTENT = "show_dev_content";
     private static final String PREF_KEY_GEOTAG = "geotag";
 
+    private static final String PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_ONE = "friend_model_delay_in_days_time_one";
+    private static final String PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_TWO = "friend_model_delay_in_days_time_two";
+    private static final String PREF_PREV_FRIEND_MODEL_NOTIFY_TIME_IN_MILLIS = "prev_friend_model_notify_time_in_millis";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -272,6 +276,10 @@ public class Preferences {
     private final BooleanPreference prefShowServerScore = createPref(false, PREF_KEY_SHOW_SERVER_SCORE, false);
     private final BooleanPreference prefShowDevContent = createPref(false, PREF_KEY_SHOW_DEV_CONTENT, false);
     private final StringPreference prefGeotag = createPref(true, PREF_KEY_GEOTAG, null);
+
+    private final IntPreference prefFriendModelDelayInDaysTimeOne = createPref(false, PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_ONE, 1);
+    private final IntPreference prefFriendModelDelayInDaysTimeTwo = createPref(false, PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_TWO, 1);
+    private final LongPreference prefPrevFriendModelNotifyTimeInMillis = createPref(false, PREF_PREV_FRIEND_MODEL_NOTIFY_TIME_IN_MILLIS, System.currentTimeMillis());
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1219,5 +1227,35 @@ public class Preferences {
 
     public void setGeotag(String geotag) {
         prefGeotag.set(geotag);
+    }
+    
+    @WorkerThread
+    public int getPrefFriendModelDelayInDaysTimeOne() {
+        return prefFriendModelDelayInDaysTimeOne.get();
+    }
+
+    @WorkerThread
+    public void setPrefFriendModelDelayInDaysTimeOne(int time) {
+        prefFriendModelDelayInDaysTimeOne.set(time);
+    }
+
+    @WorkerThread
+    public int getPrefFriendModelDelayInDaysTimeTwo() {
+        return prefFriendModelDelayInDaysTimeTwo.get();
+    }
+
+    @WorkerThread
+    public void setPrefFriendModelDelayInDaysTimeTwo(int time) {
+        prefFriendModelDelayInDaysTimeTwo.set(time);
+    }
+    
+    @WorkerThread
+    public long getPrefPrevFriendModelNotifyTimeInMillis() {
+        return prefPrevFriendModelNotifyTimeInMillis.get();
+    }
+
+    @WorkerThread
+    public void setPrefPrevFriendModelNotifyTimeInMillis(long time) {
+        prefPrevFriendModelNotifyTimeInMillis.set(time);
     }
 }

@@ -2097,4 +2097,8 @@
         <item quantity="one">Sending a friend request to %d person</item>
         <item quantity="other">Sending friend requests to %d people</item>
     </plurals>
+    <!-- Title of the new friendship model notification -->
+    <string name="notification_friendship_model_title">New friendship model</string>
+    <!-- Body of the new friendship model notification -->
+    <string name="notification_friendship_model_body">Now you can search for people on HalloApp and add them as friends</string>
 </resources>

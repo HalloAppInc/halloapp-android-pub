@@ -123,6 +123,7 @@ public class Notifications {
     private static final int REMOVED_FROM_GROUP_NOTIFICATION_ID = 10;
     private static final int UNFINISHED_REGISTRATION_NOTIFICATION_ID = 11;
     private static final int DAILY_MOMENT_NOTIFICATION_ID = 12;
+    private static final int FRIENDSHIP_MODEL_NOTIFICATION_ID = 13;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
@@ -1443,6 +1444,35 @@ public class Notifications {
     public void clearFinishRegistrationNotification() {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.cancel(UNFINISHED_REGISTRATION_NOTIFICATION_ID);
+    }
+
+    public void showFriendModelNotification() {
+        String title = context.getString(R.string.notification_friendship_model_title);
+        String body = context.getString(R.string.notification_friendship_model_body);
+        Intent contentIntent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(false));
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setContentTitle(title)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
+
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(FRIENDSHIP_MODEL_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearFriendModelNotification() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(FRIENDSHIP_MODEL_NOTIFICATION_ID);
     }
 
     static public class DeleteNotificationReceiver extends BroadcastReceiver {

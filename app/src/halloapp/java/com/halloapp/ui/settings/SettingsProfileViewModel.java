@@ -19,9 +19,11 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -212,6 +214,10 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     UsernameResponseIq responseIq = Connection.getInstance().sendUsername(Preconditions.checkNotNull(username)).await();
                     if (responseIq.success) {
                         me.saveUsername(username);
+                        Notifications.getInstance(AppContext.getInstance().get()).clearFriendModelNotification();
+                        Preferences.getInstance().setPrefFriendModelDelayInDaysTimeOne(1);
+                        Preferences.getInstance().setPrefFriendModelDelayInDaysTimeTwo(1);
+                        Preferences.getInstance().setPrefPrevFriendModelNotifyTimeInMillis(0);
                     }
                     usernameSet = responseIq.success;
                 } else {
