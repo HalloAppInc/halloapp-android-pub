@@ -334,7 +334,9 @@ public class ContentDb {
                 reactionsDb.addReaction(reaction);
                 postsDb.deleteComment(reaction.reactionId);
                 ContentItem contentItem = comment.parentCommentId != null ? getComment(reaction.contentId) : getPost(reaction.contentId);
-                observers.notifyReactionAdded(reaction, contentItem);
+                if (contentItem != null) {
+                    observers.notifyReactionAdded(reaction, contentItem);
+                }
             } else if (comment.isRetracted()) {
                 postsDb.retractComment(comment);
                 observers.notifyCommentRetracted(comment);

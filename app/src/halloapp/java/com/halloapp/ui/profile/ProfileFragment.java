@@ -287,7 +287,6 @@ public class ProfileFragment extends PostsFragment {
             contactActionsContainer.setVisibility(View.GONE);
             unblockView.setVisibility(View.VISIBLE);
         } else {
-            friendsContainer.setVisibility(View.VISIBLE);
             contactActionsContainer.setVisibility(View.VISIBLE);
             unblockView.setVisibility(View.GONE);
         }
@@ -299,6 +298,7 @@ public class ProfileFragment extends PostsFragment {
         ViewUtils.setViewAndChildrenEnabled(voiceCallView, canView);
         ViewUtils.setViewAndChildrenEnabled(messageView, canView);
         contactActionsContainer.setAlpha(canView ? VISIBLE_PROFILE_ALPHA : HIDDEN_PROFILE_ALPHA);
+        friendsContainer.setVisibility(friendshipStatus != FriendshipInfo.Type.BLOCKED ? View.VISIBLE : View.GONE);
     }
 
     private void updateFriendship(int friendType) {
