@@ -5,8 +5,11 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
+import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
@@ -17,6 +20,7 @@ import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.FriendListRequest;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FriendListResponseIq;
@@ -33,6 +37,15 @@ import java.util.concurrent.TimeUnit;
 public class FriendshipSyncWorker extends Worker {
 
     private static final String FRIENDSHIP_SYNC_WORKER_ID = "friendship-sync-worker";
+
+    public static void startFriendshipSync(@NonNull Context context) {
+        BgWorkers.getInstance().execute(() -> {
+            Preferences.getInstance().setLastFullFriendshipSyncTime(0);
+            final Data data = new Data.Builder().build();
+            final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(FriendshipSyncWorker.class).setInputData(data).build();
+            WorkManager.getInstance(context).enqueueUniqueWork(FriendshipSyncWorker.FRIENDSHIP_SYNC_WORKER_ID, ExistingWorkPolicy.REPLACE, workRequest);
+        });
+    }
 
     public static void schedule(@NonNull Context context) {
         long lastFullSync = Preferences.getInstance().getLastFullFriendshipSyncTime();

@@ -2782,6 +2782,11 @@ public class ConnectionImpl extends Connection {
                     HalloappProfileUpdate profileUpdate = msg.getHalloappProfileUpdate();
                     connectionObservers.notifyHalloappProfileUpdateReceived(profileUpdate, msg.getId());
                     handled = true;
+                } else if (msg.hasFriendListRequest()) {
+                    Log.i("connection: got friend list request " + ProtoPrinter.toString(msg));
+                    FriendListRequest friendList = msg.getFriendListRequest();
+                    connectionObservers.notifyFriendListRequestReceived(friendList, msg.getId());
+                    handled = true;
                 }
             }
             if (!handled) {

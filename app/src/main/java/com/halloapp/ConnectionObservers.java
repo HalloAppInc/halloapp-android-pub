@@ -17,6 +17,7 @@ import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.ExpiryInfo;
+import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HalloappProfileUpdate;
@@ -626,6 +627,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onHalloappProfileUpdateReceived(profileUpdate, ackId);
+            }
+        }
+    }
+
+    public void notifyFriendListRequestReceived(@NonNull FriendListRequest friendList, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onFriendListRequestReceived(friendList, ackId);
             }
         }
     }

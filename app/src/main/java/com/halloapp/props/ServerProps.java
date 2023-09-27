@@ -393,7 +393,7 @@ public class ServerProps {
     }
 
     public synchronized int getFriendshipSyncIntervalSeconds() {
-        return propContactSyncIntervalSeconds.getValue();
+        return propRelationshipSyncIntervalSeconds.getValue();
     }
 
     public synchronized int getPublicFeedRefreshIntervalSeconds() {

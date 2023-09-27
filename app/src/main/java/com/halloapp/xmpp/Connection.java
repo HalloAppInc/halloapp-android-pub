@@ -153,6 +153,7 @@ public abstract class Connection {
         public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {}
         public void onPublicFeedUpdate(@NonNull PublicFeedUpdate publicFeedUpdate, @NonNull String ackId) {}
         public void onHalloappProfileUpdateReceived(@NonNull HalloappProfileUpdate profileUpdate, @NonNull String ackId) {}
+        public void onFriendListRequestReceived(@NonNull FriendListRequest friendList, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

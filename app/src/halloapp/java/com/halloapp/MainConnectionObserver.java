@@ -6,6 +6,10 @@ import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -48,6 +52,7 @@ import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.ExpiryInfo;
+import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
@@ -1451,6 +1456,17 @@ public class MainConnectionObserver extends Connection.Observer {
         contactsDb.updateUserNames(Collections.singletonMap(userId, profile.getName()));
         contactsDb.updateUserUsernames(Collections.singletonMap(userId, profile.getUsername()));
         contactsDb.updateUserAvatars(Collections.singletonMap(userId, profile.getAvatarId()));
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onFriendListRequestReceived(@NonNull FriendListRequest friendList, @NonNull String ackId) {
+        if (friendList.getAction() == FriendListRequest.Action.SYNC_ALL) {
+            Log.i("Running server initiated friendship sync");
+            FriendshipSyncWorker.startFriendshipSync(context);
+        } else {
+            Log.w("Unrecognized friendList request received " + friendList.getAction());
+        }
         connection.sendAck(ackId);
     }
 }
