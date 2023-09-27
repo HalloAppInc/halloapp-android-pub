@@ -15,6 +15,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
@@ -59,6 +60,12 @@ public class ChatsViewModel extends AndroidViewModel {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
+            chatsList.invalidate();
+            contactsList.invalidate();
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             chatsList.invalidate();
             contactsList.invalidate();
         }

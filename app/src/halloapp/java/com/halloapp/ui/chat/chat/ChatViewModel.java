@@ -25,6 +25,7 @@ import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContactMessage;
 import com.halloapp.content.ContentDb;
@@ -110,6 +111,12 @@ public class ChatViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsChanged() {
+            contact.invalidate();
+            name.invalidate();
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             contact.invalidate();
             name.invalidate();
         }

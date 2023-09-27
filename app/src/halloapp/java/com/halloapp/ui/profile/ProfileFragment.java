@@ -102,6 +102,11 @@ public class ProfileFragment extends PostsFragment {
         public void onContactsChanged() {
             avatarView.post(ProfileFragment.this::loadAvatar);
         }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
+            avatarView.post(ProfileFragment.this::loadAvatar);
+        }
     };
 
     @Override

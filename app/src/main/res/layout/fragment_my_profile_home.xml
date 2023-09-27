@@ -117,11 +117,23 @@
                     android:src="@drawable/ic_profile_my_contacts"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textColor="@color/primary_text"
                     android:text="@string/friends" />
+
+                <TextView
+                    android:id="@+id/friend_requests_count"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/color_bg_circle"
+                    android:backgroundTint="@color/favorites_dialog_blue"
+                    android:layout_marginStart="10dp"
+                    tools:text="4"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:textColor="@color/white" />
 
             </LinearLayout>
 

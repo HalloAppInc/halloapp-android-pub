@@ -22,6 +22,7 @@ import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
@@ -103,6 +104,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
+            if (mentionableContacts != null) {
+                mentionableContacts.invalidate();
+            }
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             if (mentionableContacts != null) {
                 mentionableContacts.invalidate();
             }

@@ -28,6 +28,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.MomentPost;
@@ -92,6 +93,12 @@ public abstract class PostsFragment extends HalloFragment {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
+            contactLoader.resetCache();
+            mainHandler.post(adapter::notifyDataSetChanged);
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             contactLoader.resetCache();
             mainHandler.post(adapter::notifyDataSetChanged);
         }

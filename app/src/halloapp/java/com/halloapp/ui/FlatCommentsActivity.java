@@ -79,6 +79,7 @@ import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -229,6 +230,12 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
+            contactLoader.resetCache();
+            mainHandler.post(adapter::notifyDataSetChanged);
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             contactLoader.resetCache();
             mainHandler.post(adapter::notifyDataSetChanged);
         }

@@ -17,14 +17,17 @@ public class FriendshipResponseIq extends HalloIq {
     public FriendshipResponseIq(@NonNull FriendshipResponse friendshipResponse) {
         this.success = friendshipResponse.getResult().equals(FriendshipResponse.Result.OK);
         this.profile = friendshipResponse.getProfile();
-        this.info = new FriendshipInfo(
+        // Profiles are not set after rejecting a friend suggestion
+        if (profile.getUid() != 0) {
+            this.info = new FriendshipInfo(
                 new UserId(Long.toString(profile.getUid())),
                 profile.getUsername(),
                 profile.getName(),
                 profile.getAvatarId(),
                 FriendshipInfo.fromProtoType(profile.getStatus(), profile.getBlocked()),
                 System.currentTimeMillis()
-        );
+            );
+        }
     }
 
     @Override

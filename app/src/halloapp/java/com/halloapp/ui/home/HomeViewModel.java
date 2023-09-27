@@ -28,19 +28,25 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.FriendListResponseIq;
 import com.halloapp.xmpp.invites.InvitesApi;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeViewModel extends AndroidViewModel {
@@ -73,6 +79,7 @@ public class HomeViewModel extends AndroidViewModel {
     private long lastSeenTimestamp;
     private long lastSavedTimestamp;
     private String requestedTopMomentId = null;
+    private String suggestionsCursor = null;
 
     private final VoiceNotePlayer voiceNotePlayer;
 
@@ -228,7 +235,43 @@ public class HomeViewModel extends AndroidViewModel {
 
         contentDb.addObserver(contentObserver);
 
-        loadSuggestedContacts();
+        loadSuggestedFriends();
+    }
+
+    public void loadSuggestedFriends() {
+        List<Contact> suggestions = new ArrayList<>();
+        Connection.getInstance().requestFriendList(suggestionsCursor, FriendListRequest.Action.GET_SUGGESTIONS).onResponse(response -> {
+            if (!response.success) {
+                Log.e("Fetching friend suggestions was not successful");
+            } else {
+                suggestionsCursor = response.cursor;
+
+                Map<UserId, String> names = new HashMap<>();
+                Map<UserId, String> usernames = new HashMap<>();
+                Map<UserId, String> avatars = new HashMap<>();
+                List<UserId> userIds = new ArrayList<>();
+
+                for (FriendListResponseIq.Suggestion suggestion : response.suggestions) {
+                    UserId userId = suggestion.info.userId;
+                    names.put(userId, suggestion.info.name);
+                    usernames.put(userId, suggestion.info.username);
+                    avatars.put(userId, suggestion.info.avatarId);
+                    userIds.add(userId);
+                }
+
+                ContactsDb contactsDb = ContactsDb.getInstance();
+                contactsDb.updateUserNames(names);
+                contactsDb.updateUserUsernames(usernames);
+                contactsDb.updateUserAvatars(avatars);
+
+                for (UserId userId : userIds) {
+                    suggestions.add(contactsDb.getContact(userId));
+                }
+                suggestedContacts.postValue(suggestions);
+            }
+        }).onError(error -> {
+            Log.e("Fetching friend suggestions has an error", error);
+        });
     }
 
     private void loadSuggestedContacts() {
@@ -268,6 +311,63 @@ public class HomeViewModel extends AndroidViewModel {
             });
         });
         return inviteResult;
+    }
+
+    public LiveData<Boolean> rejectFriendSuggestion(@NonNull UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        Connection.getInstance().rejectFriendSuggestion(userId).onResponse(response -> {
+            if (!response.success) {
+                Log.e("Unable to reject friend suggestion of " + userId);
+                result.postValue(false);
+            } else {
+                List<Contact> currentList = suggestedContacts.getValue();
+                if (currentList != null) {
+                    currentList = new ArrayList<>(currentList);
+                    ListIterator<Contact> iterator = currentList.listIterator();
+                    while (iterator.hasNext()) {
+                        Contact contact = iterator.next();
+                        if (Objects.equals(contact.getRawUserId(), userId.rawId())) {
+                            iterator.remove();
+                        }
+                    }
+                    suggestedContacts.postValue(currentList);
+                }
+                result.postValue(true);
+            }
+        }).onError(e -> {
+            Log.e("Unable to reject friend suggestion", e);
+            result.postValue(false);
+        });
+        return result;
+    }
+
+    public LiveData<Boolean> sendFriendRequest(@NonNull UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        Connection.getInstance().sendFriendRequest(userId).onResponse(response -> {
+            if (!response.success) {
+                Log.e("Unable to send a friend request to " + userId);
+                result.postValue(false);
+            } else {
+                ContactsDb.getInstance().addFriendship(response.info);
+                List<Contact> currentList = suggestedContacts.getValue();
+                if (currentList != null) {
+                    currentList = new ArrayList<>(currentList);
+                    ListIterator<Contact> iterator = currentList.listIterator();
+                    while (iterator.hasNext()) {
+                        Contact contact = iterator.next();
+                        if (Objects.equals(contact.getRawUserId(), userId.rawId())) {
+                            iterator.remove();
+                        }
+                    }
+                    suggestedContacts.postValue(currentList);
+                }
+                result.postValue(true);
+            }
+        }).onError(e -> {
+            Log.e("Unable to send friend request", e);
+            result.postValue(false);
+        });
+        return result;
     }
 
     public void loadSavedState(@Nullable Bundle savedInstanceState) {

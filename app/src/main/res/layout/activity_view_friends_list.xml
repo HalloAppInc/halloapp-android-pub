@@ -58,25 +58,13 @@
                 android:layout_gravity="end"
                 android:layout_width="48dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:tint="@color/black"
                 android:background="@null"
                 android:src="@drawable/ic_search"
                 android:contentDescription="@string/search" />
-
-            <ImageButton
-                android:id="@+id/options"
-                android:layout_gravity="end"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@null"
-                android:src="@drawable/ic_ellipsis_vertical"
-                android:contentDescription="@string/options" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

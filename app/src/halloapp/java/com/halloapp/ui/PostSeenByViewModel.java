@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.Reaction;
@@ -66,6 +67,11 @@ public class PostSeenByViewModel extends AndroidViewModel {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
+            mainHandler.post(seenByList::invalidate);
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             mainHandler.post(seenByList::invalidate);
         }
     };

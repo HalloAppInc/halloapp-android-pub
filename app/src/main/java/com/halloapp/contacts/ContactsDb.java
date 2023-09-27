@@ -555,6 +555,9 @@ public class ContactsDb {
         }
         contact.username = readUsername(userId);
         contact.friendshipStatus = readFriendshipStatus(userId);
+        if (getContactAvatarInfo(userId) != null) {
+            contact.avatarId = getContactAvatarInfo(userId).avatarId;
+        }
         return contact;
     }
 
@@ -891,6 +894,19 @@ public class ContactsDb {
                 " FROM " + RelationshipTable.TABLE_NAME +
                 " WHERE " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ? AND " + RelationshipTable.COLUMN_LIST_TYPE + " IS ?";
         try (Cursor cursor = databaseHelper.getReadableDatabase().rawQuery(queryString, new String[] {Me.getInstance().getUser(), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
+    }
+
+    @WorkerThread
+    public int getFriendRequestCount() {
+        final String queryString = "SELECT COUNT(DISTINCT " + RelationshipTable.COLUMN_USER_ID + ")" +
+                " FROM " + RelationshipTable.TABLE_NAME +
+                " WHERE " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ? AND " + RelationshipTable.COLUMN_LIST_TYPE + " IS ?";
+        try (Cursor cursor = databaseHelper.getReadableDatabase().rawQuery(queryString, new String[] {Me.getInstance().getUser(), String.valueOf(FriendshipInfo.Type.INCOMING_PENDING)})) {
             if (cursor.moveToNext()) {
                 return cursor.getInt(0);
             }

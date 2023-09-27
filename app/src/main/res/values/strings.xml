@@ -2009,8 +2009,10 @@
     <string name="see_outgoing_requests">See sent requests</string>
     <!-- Message displayed to show all pending friend requests -->
     <string name="see_all_requests">See all requests</string>
-    <!-- Tab to show suggested and current friend requests -->
-    <string name="requests">Requests</string>
+    <!-- Tab to show suggested and current friend requests when there are no current requests -->
+    <string name="requests_zero">Requests</string>
+    <!-- Tab to show suggested and current friend requests where %d is the number of current requests -->
+    <string name="requests">Requests (%d)</string>
     <!-- Button text to confirm an incoming pending friend request -->
     <string name="confirm_friend">Confirm</string>
     <!-- Button text to send a friend request to someone -->
@@ -2069,6 +2071,8 @@
     <string name="error_accept_friend_request">Unable to accept friend request, please try again later</string>
     <!-- Error message when we are unable to block contact and to try again later -->
     <string name="error_block_contact">Unable to block contact, please try again later</string>
+    <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
+    <string name="error_reject_friend_suggestion">Unable to reject friend suggestion, please try again later</string>
     <!-- Button text telling users to add selected users as friends -->
     <string name="add_friends">Add friends</string>
     <!-- Message alerting the user that the person messaging them is not a friend -->

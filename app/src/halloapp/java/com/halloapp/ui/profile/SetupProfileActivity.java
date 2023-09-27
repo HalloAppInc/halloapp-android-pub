@@ -28,6 +28,7 @@ import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.ui.contacts.ViewFriendsListActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.settings.SettingsProfileViewModel;
 import com.halloapp.util.Preconditions;
@@ -196,6 +197,8 @@ public class SetupProfileActivity extends HalloActivity {
                         } else if (state == WorkInfo.State.SUCCEEDED) {
                             if (!isExistingUser) {
                                 startActivity(new Intent(SetupProfileActivity.this, InitialSyncActivity.class));
+                            } else {
+                                startActivity(new Intent(SetupProfileActivity.this, ViewFriendsListActivity.class));
                             }
                             finish();
                         }

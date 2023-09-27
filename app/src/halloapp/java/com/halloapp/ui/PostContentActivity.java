@@ -35,6 +35,7 @@ import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Post;
@@ -118,6 +119,12 @@ public class PostContentActivity extends HalloActivity {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
+            contactLoader.resetCache();
+            mainHandler.post(() -> updatePost());
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             contactLoader.resetCache();
             mainHandler.post(() -> updatePost());
         }

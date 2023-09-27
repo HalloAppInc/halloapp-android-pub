@@ -14,6 +14,7 @@ import androidx.paging.PagedList;
 
 import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.FlatCommentsDataSource;
@@ -47,6 +48,11 @@ class FlatCommentsViewModel extends CommentsViewModel {
 
         @Override
         public void onContactsChanged() {
+            invalidateDataSource();
+        }
+
+        @Override
+        public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
             invalidateDataSource();
         }
 

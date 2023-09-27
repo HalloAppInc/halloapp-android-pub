@@ -57,6 +57,7 @@ import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.ContactPermissionsBannerView;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private HomeViewModel viewModel;
     private PostThumbnailLoader postThumbnailLoader;
     private DeviceAvatarLoader deviceAvatarLoader;
+    private AvatarLoader avatarLoader;
 
     private boolean scrollUpOnDataLoaded;
     private boolean restoreStateOnDataLoaded;
@@ -101,6 +103,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         final Context context = requireContext();
         postThumbnailLoader = new PostThumbnailLoader(context, context.getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
         deviceAvatarLoader = new DeviceAvatarLoader(context);
+        avatarLoader = AvatarLoader.getInstance();
         Log.d("HomeFragment: onCreate");
     }
 
@@ -439,6 +442,33 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
     }
 
+    private void sendFriendRequest(@NonNull Contact contact) {
+        if (contact.userId == null) {
+            Log.e("HomeFragment/sendFriendRequest null userId");
+            return;
+        }
+        viewModel.sendFriendRequest(contact.userId).observe(this, success -> {
+            if (Boolean.TRUE.equals(success)) {
+                SnackbarHelper.showInfo(requireActivity(), R.string.send_friend_request_successful);
+                return;
+            }
+            SnackbarHelper.showWarning(requireActivity(), R.string.error_send_friend_request);
+        });
+    }
+
+    private void rejectFriendSuggestion(@NonNull Contact contact) {
+        if (contact.userId == null) {
+            Log.e("HomeFragment/rejectFriendSuggestion null userId");
+            return;
+        }
+        viewModel.rejectFriendSuggestion(contact.userId).observe(this, success -> {
+            if (Boolean.TRUE.equals(success)) {
+                return;
+            }
+            SnackbarHelper.showWarning(requireActivity(), R.string.error_reject_friend_suggestion);
+        });
+    }
+
     private void onSuccessfulInvite(@NonNull Contact contact) {
         Intent chooser = IntentUtils.createSmsChooserIntent(requireContext(), getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
         startActivity(chooser);
@@ -480,13 +510,18 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
         private final InviteFriendsPostViewHolder.Host host = new InviteFriendsPostViewHolder.Host() {
             @Override
-            public void sendInvite(Contact contact) {
-                HomeFragment.this.sendInvite(contact);
+            public void sendFriendRequest(Contact contact) {
+                HomeFragment.this.sendFriendRequest(contact);
             }
 
             @Override
-            public DeviceAvatarLoader getAvatarLoader() {
-                return deviceAvatarLoader;
+            public void dismissFriendSuggestion(Contact contact) {
+                HomeFragment.this.rejectFriendSuggestion(contact);
+            }
+
+            @Override
+            public AvatarLoader getAvatarLoader() {
+                return avatarLoader;
             }
         };
 

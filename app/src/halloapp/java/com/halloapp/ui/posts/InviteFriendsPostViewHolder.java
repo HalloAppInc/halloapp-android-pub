@@ -15,9 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.avatar.DeviceAvatarLoader;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.HorizontalSpaceDecoration;
@@ -29,8 +28,9 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
     private final InviteCardAdapter adapter;
 
     public interface Host {
-        void sendInvite(Contact contact);
-        DeviceAvatarLoader getAvatarLoader();
+        void sendFriendRequest(Contact contact);
+        void dismissFriendSuggestion(Contact contact);
+        AvatarLoader getAvatarLoader();
     }
 
     private Host host;
@@ -83,14 +83,14 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
             avatarView = itemView.findViewById(R.id.invite_avatar);
             View closeButton = itemView.findViewById(R.id.close_btn);
             closeButton.setOnClickListener(v -> {
-                if (contact != null) {
-                    ContactsDb.getInstance().dismissSuggestedContact(contact);
+                if (contact != null && host != null) {
+                    host.dismissFriendSuggestion(contact);
                 }
             });
-            View inviteButton = itemView.findViewById(R.id.invite_button);
-            inviteButton.setOnClickListener(v -> {
+            View requestButton = itemView.findViewById(R.id.request_button);
+            requestButton.setOnClickListener(v -> {
                 if (contact != null && host != null) {
-                    host.sendInvite(contact);
+                    host.sendFriendRequest(contact);
                 }
             });
         }
@@ -98,11 +98,11 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
         public void bind(Contact contact) {
             this.contact = contact;
             nameView.setText(contact.getDisplayName());
-            captionView.setText(captionView.getContext().getResources().getQuantityString(R.plurals.friends_on_halloapp, (int) contact.numPotentialFriends, (int) contact.numPotentialFriends));
+            captionView.setText(contact.getUsername());
             if (host != null) {
-                DeviceAvatarLoader loader = host.getAvatarLoader();
+                AvatarLoader loader = host.getAvatarLoader();
                 if (loader != null) {
-                    loader.load(avatarView, contact.addressBookPhone);
+                    loader.load(avatarView, contact.userId, contact.avatarId);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
                 return -1;
             } else {
                 Contact contact = contacts.get(position);
-                return contact.getAddressBookId();
+                return Long.parseLong(contact.getRawUserId());
             }
         }
 

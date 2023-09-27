@@ -26,6 +26,8 @@ import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
+import java.text.NumberFormat;
+
 public class MyProfileHomeFragment extends HalloFragment implements MainNavFragment {
 
     private MyProfileViewModel viewModel;
@@ -70,6 +72,12 @@ public class MyProfileHomeFragment extends HalloFragment implements MainNavFragm
         View myFriends = root.findViewById(R.id.my_friends);
         myFriends.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), ViewFriendsListActivity.class));
+        });
+
+        TextView myFriendRequestsCount = root.findViewById(R.id.friend_requests_count);
+        viewModel.getFriendRequestsCount().observe(getViewLifecycleOwner(), count -> {
+            myFriendRequestsCount.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+            myFriendRequestsCount.setText(NumberFormat.getInstance().format(count));
         });
 
         View favorites = root.findViewById(R.id.favorites);

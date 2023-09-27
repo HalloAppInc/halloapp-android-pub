@@ -142,6 +142,9 @@ public class ViewFriendsListActivity extends HalloActivity {
 
         viewModel.getSelectedTab().observe(this, this::setSelectedTab);
         viewModel.items.getLiveData().observe(this, adapter::setItems);
+        viewModel.getFriendRequestsCount().observe(this, count -> {
+            requestsTab.setText(count > 0 ? getString(R.string.requests, count) : getString(R.string.requests_zero));
+        });
 
         viewModel.searchState.observe(this, state -> {
             if (state == ViewFriendsListViewModel.SearchState.Closed) {
@@ -368,6 +371,10 @@ public class ViewFriendsListActivity extends HalloActivity {
                 public void onOneClick(@NonNull View v) {
                     PopupMenu menu = new PopupMenu(v.getContext(), v);
                     menu.inflate(R.menu.friend_menu);
+                    if (friendState == FriendState.DEFAULT) {
+                        menu.getMenu().findItem(R.id.remove_friend).setVisible(false);
+                        menu.getMenu().findItem(R.id.add_to_favorites).setVisible(false);
+                    }
                     menu.setOnMenuItemClickListener(item -> {
                         if (item.getItemId() == R.id.view_profile) {
                             viewProfile();
@@ -611,6 +618,7 @@ public class ViewFriendsListActivity extends HalloActivity {
         private final List<FriendshipInfo> searchFriendsResultList = new ArrayList<>();
 
         public final ComputableLiveData<List<Item>> items;
+        private final ComputableLiveData<Integer> friendRequestsCounts;
         public final MutableLiveData<SearchState> searchState = new MutableLiveData<>(SearchState.Closed);
 
         private String suggestionsCursor;
@@ -626,7 +634,7 @@ public class ViewFriendsListActivity extends HalloActivity {
         private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
             @SuppressLint("RestrictedApi")
             @Override
-            public void onFriendshipsChanged(FriendshipInfo friendshipInfo) {
+            public void onFriendshipsChanged(@NonNull FriendshipInfo friendshipInfo) {
                 UserId userId = friendshipInfo.userId;
                 FriendState friendState = fromFriendshipInfo(friendshipInfo.friendshipStatus);
                 friendStateMap.put(userId, friendState);
@@ -666,8 +674,16 @@ public class ViewFriendsListActivity extends HalloActivity {
             items = new ComputableLiveData<List<Item>>() {
                 @Override
                 protected List<Item> compute() {
+                    friendRequestsCounts.invalidate();
                     return computeFriendItems();
 
+                }
+            };
+
+            friendRequestsCounts = new ComputableLiveData<Integer>() {
+                @Override
+                protected Integer compute() {
+                    return ContactsDb.getInstance().getFriendRequestCount();
                 }
             };
 
@@ -679,6 +695,11 @@ public class ViewFriendsListActivity extends HalloActivity {
         protected void onCleared() {
             super.onCleared();
             ContactsDb.getInstance().removeObserver(contactsObserver);
+        }
+
+        @SuppressLint("RestrictedApi")
+        private LiveData<Integer> getFriendRequestsCount() {
+            return friendRequestsCounts.getLiveData();
         }
 
         @SuppressLint("RestrictedApi")
