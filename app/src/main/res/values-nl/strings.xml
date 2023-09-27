@@ -52,9 +52,9 @@ Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s gebruikt HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s gebruikt HalloApp! &#127881;"</string>
-    <string name="posts_empty">"Je posts verschijnen hier"</string>
+    <string name="posts_empty">"Posts verschijnen hier"</string>
     <string name="posts_exchange_numbers">"Om connectie te maken, moeten jullie telefoonnummers uitwisselen"</string>
-    <string name="home_page_empty">"Posts van je contacten verschijnen hier"</string>
+    <string name="home_page_empty">"Posts van je vrienden verschijnen hier"</string>
     <string name="chats_page_empty">"Contacten en berichten verschijnen hier"</string>
     <string name="chats_search_empty">"Geen chats gevonden voor '%s'"</string>
     <string name="groups_page_empty">"Je groepen verschijnen hier"</string>
@@ -71,8 +71,8 @@ Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Om foto's en video's te maken, hebben we toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
-    <string name="contacts_permission_rationale">"Om je te verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat"</string>
-    <string name="contacts_permission_rationale_denied">"Om je te verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat.
+    <string name="contacts_permission_rationale">"Om je beter te verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat"</string>
+    <string name="contacts_permission_rationale_denied">"Om je beter te verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="storage_permission_rationale">"Om media te selecteren hebben we toegang nodig tot de opslag van je apparaat"</string>
@@ -80,7 +80,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="retry">"Opnieuw proberen"</string>
-    <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot je contacten zodat we de telefoonnummers in je adresboek kunnen synchroniseren."</string>
+    <string name="contact_rationale_upload">"Om je beter te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot je contacten zodat we de telefoonnummers in je adresboek kunnen synchroniseren."</string>
     <string name="failed_to_initialize">"Initialiseren mislukt"</string>
     <string name="type_a_comment_hint">"Voeg een reactie toe"</string>
     <string name="comments">"Reacties"</string>
@@ -106,18 +106,18 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="send_logs">"Feedback &amp; logs delen"</string>
     <string name="terms_of_service">"Gebruiksvoorwaarden"</string>
     <string name="privacy_policy">"Privacybeleid"</string>
-    <string name="settings_block_list">"Geblokkeerde contacten"</string>
+    <string name="settings_block_list">"Geblokkeerde vrienden"</string>
     <string name="settings_feed_privacy">"Posts"</string>
     <string name="settings_privacy">"Privacy"</string>
     <plurals name="contact_selection_subtitle">
-        <item quantity="one">"%d contact geselecteerd"</item>
-        <item quantity="other">"%d contacten geselecteerd"</item>
+        <item quantity="one">"%d vriend geselecteerd"</item>
+        <item quantity="other">"%d vrienden geselecteerd"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"Je kunt maximaal %d contact selecteren"</item>
-        <item quantity="other">"Je kunt maximaal %d contacten selecteren"</item>
+        <item quantity="one">"Je kunt maximaal %d vriend selecteren"</item>
+        <item quantity="other">"Je kunt maximaal %d vrienden selecteren"</item>
     </plurals>
-    <string name="no_contacts_selected_subtitle">"Geen contacten geselecteerd"</string>
+    <string name="no_contacts_selected_subtitle">"Geen vrienden geselecteerd"</string>
     <string name="help">"Help"</string>
     <string name="about">"Over HalloApp"</string>
     <string name="notify_posts">"Posts"</string>
@@ -226,7 +226,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="day_of_week_at_time">"%1$s om %2$s"</string>
     <string name="unknown_contact">"Onbekend contact"</string>
     <string name="select_contact">"Nieuw bericht"</string>
-    <string name="search_contacts">"Zoek contacten"</string>
+    <string name="search_contacts">"Zoek vrienden"</string>
     <string name="search">"Zoeken"</string>
     <string name="contact_search_empty">"Niets gevonden voor '%s'"</string>
     <string name="action_save">"Opslaan"</string>
@@ -255,9 +255,9 @@ versie: %2$s
     <string name="picker_title_block_user">"Gebruiker blokkeren"</string>
     <string name="cancel">"Annuleren"</string>
     <string name="group_subtitle">"Tik hier voor groepsinformatie"</string>
-    <string name="empty_block_list">"Geen geblokkeerde contacten"</string>
-    <string name="block_notification">"Je hebt dit contact geblokkeerd. Tik om te deblokkeren"</string>
-    <string name="unblock_notification">"Je hebt dit contact gedeblokkeerd"</string>
+    <string name="empty_block_list">"Geen geblokkeerde vrienden"</string>
+    <string name="block_notification">"Je hebt deze vriend geblokkeerd. Tik om te deblokkeren"</string>
+    <string name="unblock_notification">"Je hebt deze vriend gedeblokkeerd"</string>
     <string name="system_message_group_created">"Deze groep is aangemaakt door %s"</string>
     <string name="system_message_group_created_by_you">"Je hebt deze groep aangemaakt"</string>
     <string name="system_message_members_added">"%1$s heeft %2$s toegevoegd"</string>
@@ -304,9 +304,9 @@ versie: %2$s
     <string name="contact_picker_feed_except_title">"Verberg posts voor…"</string>
     <string name="contact_picker_feed_only_title">"Deel posts met…"</string>
     <string name="setting_feed_privacy_title">"Wie kan mijn posts zien"</string>
-    <string name="setting_feed_all">"Mijn contacten"</string>
+    <string name="setting_feed_all">"Mijn vrienden"</string>
     <string name="setting_feed_only">"Alleen delen met…"</string>
-    <string name="setting_feed_except">"Mijn contacten, behalve…"</string>
+    <string name="setting_feed_except">"Mijn vrienden, behalve…"</string>
     <string name="feed_privacy_fail_to_load">"Laden van privacyinstellingen mislukt"</string>
     <string name="feed_privacy_update_success">"Instelling succesvol bijgewerkt"</string>
     <string name="feed_privacy_update_failure">"Bijwerken van instelling mislukt"</string>
@@ -372,8 +372,8 @@ versie: %2$s
         <item quantity="other">"%d contacten op HalloApp"</item>
     </plurals>
     <plurals name="settings_block_list_summary">
-        <item quantity="one">"%d contact"</item>
-        <item quantity="other">"%d contacten"</item>
+        <item quantity="one">"%d vriend"</item>
+        <item quantity="other">"%d vrienden"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"Geen"</string>
     <string name="settings_feed_contacts_summary">"Mijn contacten"</string>
@@ -385,7 +385,7 @@ versie: %2$s
         <item quantity="one">"%d contact geselecteerd"</item>
         <item quantity="other">"%d contacten geselecteerd"</item>
     </plurals>
-    <string name="settings_feed_selected_empty">"Geen contacten geselecteerd"</string>
+    <string name="settings_feed_selected_empty">"Geen vrienden geselecteerd"</string>
     <string name="settings_version_footer">"HalloApp Versie %s"</string>
     <string name="connectivity_info_airplane_mode">"Vliegtuigstand aan"</string>
     <string name="connectivity_info_not_connected">"Geen netwerk"</string>
@@ -846,9 +846,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="search_post_destination">"Zoeken"</string>
     <string name="link_preview_loading">"Voorbeeld wordt geladen…"</string>
 
-    <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
-
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Openen van link mislukt"</string>
 
@@ -1216,14 +1213,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Toast displayed when the other side removes the call hold -->
     <string name="call_other_side_on_unhold">"Oproep is hervat"</string>
 
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
-
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">"Favorieten"</string>
-
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
 
     <!-- Drawing on images -->
     <string name="draw">"Tekenen"</string>
@@ -1255,9 +1246,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
     <string name="external_share_info">"Iedereen met deze link kan je post zien. Link verloopt zodra je post verloopt. Linkvoorbeeld is onversleuteld."</string>
 
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"%s heeft deze post gedeeld met contacten op een Favorietenlijst. Je kunt je eigen Favorietenlijst op ieder moment instellen en bewerken."</string>
-
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">"Favorieten bewerken"</string>
 
@@ -1265,16 +1253,16 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="edit_favorites_action">"Favorieten bewerken"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <string name="favorites_nux_call_to_action">"Je kunt nu een lijst van je favoriete contacten maken en je HalloApp-posts alleen met hen delen"</string>
+    <string name="favorites_nux_call_to_action">"Je kunt nu een lijst van je favoriete vrienden maken en je HalloApp-posts alleen met hen delen"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Je contacten die lid worden van HalloApp kunnen je toekomstige posts zien"</string>
+    <string name="my_contacts_disclaimer">"Contacten die je als vriend toevoegt, kunnen je posts zien die je op HalloApp deelt."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="my_contacts_title">"Mijn contacten"</string>
+    <string name="my_contacts_title">"Mijn vrienden"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <string name="my_ha_contacts">"Mijn HalloApp-contacten"</string>
+    <string name="my_ha_contacts">"Mijn HalloApp-vrienden"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
     <string name="setting_feed_privacy_groups_section_title">"Alleen delen met een groep"</string>
@@ -1362,7 +1350,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Je post is gedeeld met je Favorieten en verdwijnt na 30 dagen."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Je Moment is gedeeld met je contacten. Momenten verdwijnen na 24 uur."</string>
+    <string name="seen_by_post_expiration_moments">"Je Moment is gedeeld met je vrienden. Momenten verdwijnen na 24 uur."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Nieuw moment van %s"</string>
@@ -1599,9 +1587,6 @@ Je kunt dit later altijd weer aanpassen."</string>
     <!-- text shown when user registers successfully -->
     <string name="register_success">"Je bent binnen!"</string>
 
-    <!-- text show above name/nickname entry field -->
-    <string name="name_entry_title">"Hoe moeten we je noemen?"</string>
-
     <!-- text shown under the profile photo saying that the photo is optional -->
     <string name="add_optional_photo">"Voeg foto toe (optioneel)"</string>
 
@@ -1653,7 +1638,7 @@ netwerk"</string>
     <string name="home_onboarding_nux_post_visibility_header">"Wie kan mijn posts zien?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <string name="home_onboarding_nux_post_visibility_text">"Bekijk wie er al op HalloApp zitten en nodig vrienden &amp; familie uit"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Je vrienden op HalloApp kunnen je posts zien. Voeg vrienden uit je netwerk toe en beheer vriendschapsverzoeken."</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
     <string name="see_network_action">"Bekijk mijn netwerk"</string>
@@ -1669,12 +1654,12 @@ netwerk"</string>
 
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"Dit contact kan je posts zien die je met alle HalloApp-contacten deelt"</item>
-        <item quantity="other">"Deze contacten kunnen je posts zien die je met alle HalloApp-contacten deelt"</item>
+        <item quantity="one">"Deze vriend kan je posts zien die je met alle HalloApp-vrienden deelt"</item>
+        <item quantity="other">"Deze vrienden kunnen je posts zien die je met alle HalloApp-vrienden deelt"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">"Je telefooncontacten die zich registreren op HalloApp verschijnen hier automatisch."</string>
+    <string name="no_connections_on_hallo_explanation">"Je vrienden op HalloApp verschijnen hier automatisch."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
     <string name="first_time_post_content">"Hallo! Ik gebruik HalloApp"</string>
@@ -1755,7 +1740,7 @@ netwerk"</string>
     <string name="compose_share_recents_header">"Recent"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">"Zoek contacten"</string>
+    <string name="compose_share_search_contacts">"Zoek vrienden"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
@@ -1773,10 +1758,10 @@ netwerk"</string>
     <string name="send_to">"Verzenden naar…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"Om je te verbinden met je vrienden &amp; familie en hun posts te zien, sta HalloApp toegang tot je contacten toe"</string>
+    <string name="home_contact_permissions_banner">"Om je beter te verbinden met je vrienden &amp; familie en hun posts te zien, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"Om posts te delen met je vrienden &amp; familie, sta HalloApp toegang tot je contacten toe"</string>
+    <string name="new_post_contact_permissions_banner">"Om beter posts te delen met je vrienden &amp; familie, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- title when asking for permissions for groups -->
     <string name="allow_contacts_groups">"Om groepsdeelnemers toe te voegen, sta toegang tot je contacten toe"</string>
@@ -1830,7 +1815,7 @@ netwerk"</string>
     <string name="moment_sharing_with">"Delen met"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <string name="all_contacts_count">"Alle Contacten (%d)"</string>
+    <string name="all_contacts_count">"Alle Vrienden (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
     <string name="compact_share_my_contacts">"Mijn Contacten (%d)"</string>
@@ -2743,6 +2728,187 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Message menu option to copy the selected message -->
     <string name="copy">"Kopiëren"</string>
+
+    <!-- text show above name and username entry field -->
+    <string name="name_username_entry_title">"Voer je naam in en kies een gebruikersnaam"</string>
+
+    <!-- text hint for username entry field -->
+    <string name="username_hint">"gebruikersnaam"</string>
+    <string name="at_symbol">"@"</string>
+
+    <!-- Title of a popup window about a new friendship model feature -->
+    <string name="friendship_model_title">"Nieuw vriendschapsmodel op HalloApp"</string>
+
+    <!-- Text in a popup window explaining a new friendship model feature and prompt for users to choose a username -->
+    <string name="friendship_model_description">"Vanaf nu kun je personen op HalloApp zoeken op hun naam of @gebruikersnaam. Je bestaande HalloApp-contacten worden nu je vrienden. Je kunt bestaande contacten op ieder moment uit je vrienden verwijderen."</string>
+
+    <!-- Button text to dismiss new friendship model popup -->
+    <string name="remind_later">"Later herinneren"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="friends">"Vrienden"</string>
+
+    <!-- Message displayed to show all outgoing sent friend requests -->
+    <string name="see_outgoing_requests">"Bekijk verzonden verzoeken"</string>
+
+    <!-- Tab to show suggested and current friend requests -->
+    <!-- Fuzzy -->
+    <string name="requests">"Verzoeken (%d)"</string>
+
+    <!-- Button text to confirm an incoming pending friend request -->
+    <string name="confirm_friend">"Bevestigen"</string>
+
+    <!-- Button text to send a friend request to someone -->
+    <string name="add_friend">"Vriend toevoegen"</string>
+
+    <!-- Section title showing current pending friend requests -->
+    <string name="friend_requests">"Vriendschapsverzoeken"</string>
+
+    <!-- Section title of people to invite to join Halloapp -->
+    <string name="invite_friends_on_halloapp_title">"Vrienden uitnodigen voor HalloApp"</string>
+
+    <!-- Section title for friend suggestions from your contact list -->
+    <string name="from_contacts_list">"Uit je contactenlijst"</string>
+
+    <!-- Section title for friend suggestions -->
+    <string name="friend_suggestions">"Vriendsuggesties"</string>
+
+    <!-- Section title showing your current friends -->
+    <string name="my_friends_on_halloapp">"Mijn vrienden op HalloApp"</string>
+
+    <!-- Search box hint text for HalloApp user search -->
+    <string name="search_halloapp_users">"HalloApp-gebruikers zoeken"</string>
+
+    <!-- Section title showing HalloApp friends after searching -->
+    <string name="halloapp_friends">"Mijn HalloApp-vrienden"</string>
+
+    <!-- Section title showing HalloApp users after searching -->
+    <string name="halloapp_users">"HalloApp-gebruikers"</string>
+
+    <!-- Message displayed to show all pending friend requests -->
+    <string name="see_all_requests">"Alle verzoeken weergeven"</string>
+
+    <!-- Shown when user chooses to remove a friend; %s is replaced with the name of the friend to be removed -->
+    <string name="remove_friend_confirmation">"%s uit je vrienden verwijderen?"</string>
+
+    <!-- Explains the consequences of removing a friend where %s is the name of the person -->
+    <string name="remove_friend_confirmation_consequences">"%s en jij kunnen elkaars posts niet langer zien."</string>
+
+    <!-- Menu item to add someone to your favorites list -->
+    <string name="add_to_favorites">"Toevoegen aan Favorieten"</string>
+
+    <!-- Menu item to remove someone as a friend -->
+    <string name="remove_friend">"Vriend verwijderen"</string>
+
+    <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
+    <string name="outgoing_sent_friend_request">"Je hebt %s een vriendschapsverzoek gestuurd"</string>
+
+    <!-- Message under %s's profile if they sent you a friend request where %s is the name of the person -->
+    <string name="incoming_sent_friend_request">"%s heeft je een vriendschapsverzoek gestuurd"</string>
+
+    <!-- Button to reject a friend request -->
+    <string name="ignore">"Negeren"</string>
+
+    <!-- Title showing all requests a user received -->
+    <string name="all_requests">"Alle verzoeken"</string>
+
+    <!-- Section title showing current requests received -->
+    <string name="requests_received">"Ontvangen verzoeken"</string>
+
+    <!-- Section title showing current requests sent -->
+    <string name="requests_sent">"Verzonden verzoeken"</string>
+
+    <!-- Warning message shown when we were unable to remove %s as a friend and to try later where %s is the name of the person -->
+    <string name="removing_friend_failed_check_internet">"Kon %s niet als vriend verwijderen. Controleer je internetverbinding en probeer het opnieuw."</string>
+
+    <!-- Confirmation message that %s was removed as a friend where %s is the name of the person -->
+    <string name="removing_friend_successful">"%s verwijderd"</string>
+
+    <!-- Message shown when %s is in the process of being removed as a friend where %s is the name of the person -->
+    <string name="removing_friend_in_progress">"%s wordt verwijderd…"</string>
+
+    <!-- Error message when we are unable to send a friend request and to try again later -->
+    <string name="error_send_friend_request">"Kan vriendschapsverzoek niet verzenden, probeer het later opnieuw"</string>
+
+    <!-- Error message when we are unable to cancel a friend request and to try again later -->
+    <string name="error_withdraw_friend_request">"Kan vriendschapsverzoek niet annuleren, probeer het later opnieuw"</string>
+
+    <!-- Error message when we are unable to remove someone as a friend and to try again later -->
+    <string name="error_remove_friend">"Kan vriend niet verwijderen, probeer het later opnieuw"</string>
+
+    <!-- Error message when we are unable to reject a friend request and to try again later -->
+    <string name="error_reject_friend_request">"Kan vriendschapsverzoek niet afwijzen, probeer het later opnieuw"</string>
+
+    <!-- Error message when we are unable to accept a friend request and to try again later -->
+    <string name="error_accept_friend_request">"Kan vriendschapsverzoek niet accepteren, probeer het later opnieuw"</string>
+
+    <!-- Error message when we are unable to block contact and to try again later -->
+    <string name="error_block_contact">"Kan contact niet blokkeren, probeer het later opnieuw"</string>
+
+    <!-- Button text telling users to add selected users as friends -->
+    <string name="add_friends">"Vrienden toevoegen"</string>
+
+    <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
+    <plurals name="friend_connections_on_hallo">
+        <item quantity="one">"%d van je contacten gebruikt HalloApp. Toevoegen als vriend?"</item>
+        <item quantity="other">"%d van je contacten gebruiken HalloApp. Toevoegen als vrienden?"</item>
+    </plurals>
+
+    <!-- Text telling a user that after these contacts are friends, they can see your posts -->
+    <string name="friend_connections_on_hallo_explanation">"Contacten die je als vriend toevoegt, kunnen je posts zien die je op HalloApp deelt."</string>
+
+    <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
+    <plurals name="sent_friend_requests">
+        <item quantity="one">"Vriendschapsverzoek wordt verzonden naar %d persoon"</item>
+        <item quantity="other">"Vriendschapsverzoek wordt verzonden naar %d personen"</item>
+    </plurals>
+
+    <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for their posts -->
+    <string name="friend_favorites_explanation">"Deze post is alleen gedeeld met de vrienden die je aan Favorieten hebt toegevoegd. Je kunt je favorietenlijst op ieder moment aanpassen."</string>
+
+    <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts -->
+    <string name="friend_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
+
+    <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="friend_favorites_explanation_others_with_name">"%s heeft deze post gedeeld met vrienden op een favorietenlijst. Je kunt je eigen favorietenlijst maken en deze op ieder moment aanpassen."</string>
+
+    <!-- Message alerting the user that the person messaging them is not a friend -->
+    <string name="not_friend_alert">"Deze persoon is geen vriend"</string>
+
+    <!-- Button text telling users to add the user as a friend -->
+    <string name="add_as_friend">"Toevoegen als vriend"</string>
+
+    <!-- Message when a friend request was successfully sent -->
+    <string name="send_friend_request_successful">"Vriendschapsverzoek succesvol verzonden"</string>
+
+    <!-- Label for icon that indicates all the user's friends with their total number in parentheses -->
+    <string name="compact_share_my_friends">"Mijn vrienden (%d)"</string>
+
+    <!-- Title of section for recent friends -->
+    <string name="recent_friends">"Recente vrienden"</string>
+
+    <!-- Text shown in activity center telling users when they received a new friend request. %s is the person who sent the request -->
+    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; heeft je een vriendschapsverzoek gestuurd! &lt;b&gt;&lt;a href=\"view-friends\"&gt;Bekijken&lt;/a&gt;&lt;/b&gt;"</string>
+
+    <!-- Text shown in activity center telling users when they have a new friend. %s is the name of the friend -->
+    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; is nu je vriend"</string>
+
+    <!-- Tab to show suggested and current friend requests when there are no current requests -->
+    <string name="requests_zero">"Requests"</string>
+
+    <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
+    <string name="error_reject_friend_suggestion">"Unable to reject friend suggestion, please try again later"</string>
+
+    <!-- Title of the new friendship model notification -->
+    <string name="notification_friendship_model_title">"New friendship model"</string>
+
+    <!-- Body of the new friendship model notification -->
+    <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
+    <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
+    <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s heeft deze post gedeeld met contacten op een Favorietenlijst. Je kunt je eigen Favorietenlijst op ieder moment instellen en bewerken."</string>
+    <string name="name_entry_title">"Hoe moeten we je noemen?"</string>
     <string name="unlock_moment_subtitle">"Om het moment van %s te zien, deel je je eigen moment"</string>
     <string name="unlock_all_moment_subtitle">"Om momenten te zien, deel je je eigen moment"</string>
     <string name="notification_many_daily_katchup_reminder_body">"catch up with %1$s, %2$s, +%3$d others now…"</string>
