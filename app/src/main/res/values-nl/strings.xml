@@ -2752,7 +2752,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="see_outgoing_requests">"Bekijk verzonden verzoeken"</string>
 
     <!-- Tab to show suggested and current friend requests -->
-    <!-- Fuzzy -->
     <string name="requests">"Verzoeken (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
@@ -2894,16 +2893,16 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; is nu je vriend"</string>
 
     <!-- Tab to show suggested and current friend requests when there are no current requests -->
-    <string name="requests_zero">"Requests"</string>
+    <string name="requests_zero">"Verzoeken"</string>
 
     <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
-    <string name="error_reject_friend_suggestion">"Unable to reject friend suggestion, please try again later"</string>
+    <string name="error_reject_friend_suggestion">"Kan vriendsuggestie niet afwijzen, probeer het later opnieuw"</string>
 
     <!-- Title of the new friendship model notification -->
-    <string name="notification_friendship_model_title">"New friendship model"</string>
+    <string name="notification_friendship_model_title">"Nieuw vriendschapsmodel"</string>
 
     <!-- Body of the new friendship model notification -->
-    <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+    <string name="notification_friendship_model_body">"Vanaf nu kun je personen op HalloApp zoeken en ze toevoegen als vriend"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
     <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
