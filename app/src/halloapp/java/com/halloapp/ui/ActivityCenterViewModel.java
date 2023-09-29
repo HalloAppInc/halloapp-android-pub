@@ -448,6 +448,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 }
                 if (!groups.containsKey(groupId)) {
                     Group group = contentDb.getGroup(post.getParentGroup());
+                    if (group == null) {
+                        continue;
+                    }
                     groups.put(groupId, group);
                 }
                 SocialActionEvent activity = SocialActionEvent.fromGroupEvent(post, groups.get(groupId));
