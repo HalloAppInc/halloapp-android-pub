@@ -2797,7 +2797,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Tab to show suggested and current friend requests -->
     <!-- Fuzzy -->
-    <string name="requests">"درخواست‌ها"</string>
+    <string name="requests">"درخواست‌ها (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
     <string name="confirm_friend">"تأیید"</string>

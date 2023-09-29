@@ -2806,7 +2806,7 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
 
     <!-- Tab to show suggested and current friend requests -->
     <!-- Fuzzy -->
-    <string name="requests">"Solicitudes"</string>
+    <string name="requests">"Solicitudes (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
     <string name="confirm_friend">"Confirmar"</string>
