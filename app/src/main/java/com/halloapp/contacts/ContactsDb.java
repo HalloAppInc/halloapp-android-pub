@@ -1360,6 +1360,7 @@ public class ContactsDb {
                             cursor.getString(2),
                             cursor.getString(3),
                             cursor.getInt(4));
+                    friend.fallbackName = appContext.get().getString(R.string.unknown_contact);
                     friends.add(friend);
                 }
         }

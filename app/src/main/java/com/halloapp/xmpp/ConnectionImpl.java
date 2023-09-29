@@ -2779,6 +2779,7 @@ public class ConnectionImpl extends Connection {
                     connectionObservers.notifyAiImageReceived(aiImage.getId(), aiImage.getImage().toByteArray(), msg.getId());
                     handled = true;
                 } else if (msg.hasHalloappProfileUpdate()) {
+                    Log.i("connection: got halloapp profile update " + ProtoPrinter.toString(msg));
                     HalloappProfileUpdate profileUpdate = msg.getHalloappProfileUpdate();
                     connectionObservers.notifyHalloappProfileUpdateReceived(profileUpdate, msg.getId());
                     handled = true;
