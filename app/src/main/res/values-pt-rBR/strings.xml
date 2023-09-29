@@ -2788,7 +2788,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Tab to show suggested and current friend requests -->
     <!-- Fuzzy -->
-    <string name="requests">"Solicitações"</string>
+    <string name="requests">"Solicitações (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
     <string name="confirm_friend">"Confirmar"</string>

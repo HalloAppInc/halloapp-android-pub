@@ -2833,10 +2833,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="see_all_requests">"مشاهده همه درخواست‌ها"</string>
 
     <!-- Shown when user chooses to remove a friend; %s is replaced with the name of the friend to be removed -->
-    <string name="remove_friend_confirmation">"حذف s% از دوستانتان"</string>
+    <string name="remove_friend_confirmation">"حذف %s از دوستانتان"</string>
 
     <!-- Explains the consequences of removing a friend where %s is the name of the person -->
-    <string name="remove_friend_confirmation_consequences">"شما و s% دیگر نمیتوانید پست‌های یکدیگر را ببینید."</string>
+    <string name="remove_friend_confirmation_consequences">"شما و %s دیگر نمیتوانید پست‌های یکدیگر را ببینید."</string>
 
     <!-- Menu item to add someone to your favorites list -->
     <string name="add_to_favorites">"اضافه کردن به محبوب‌ها"</string>
@@ -2845,10 +2845,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="remove_friend">"حذف دوست"</string>
 
     <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
-    <string name="outgoing_sent_friend_request">"شما به s% درخواست دوستی فرستادید"</string>
+    <string name="outgoing_sent_friend_request">"شما به %s درخواست دوستی فرستادید"</string>
 
     <!-- Message under %s's profile if they sent you a friend request where %s is the name of the person -->
-    <string name="incoming_sent_friend_request">"s% به شما درخواست دوستی فرستاده است"</string>
+    <string name="incoming_sent_friend_request">"%s به شما درخواست دوستی فرستاده است"</string>
 
     <!-- Button to reject a friend request -->
     <string name="ignore">"رد کردن"</string>
@@ -2863,13 +2863,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="requests_sent">"درخواست‌های فرستاده شده"</string>
 
     <!-- Warning message shown when we were unable to remove %s as a friend and to try later where %s is the name of the person -->
-    <string name="removing_friend_failed_check_internet">"خطا در حذف s% به عنوان دوست. اینترنت خود را چک کنید و دوباره امتحان کنید."</string>
+    <string name="removing_friend_failed_check_internet">"خطا در حذف %s به عنوان دوست. اینترنت خود را چک کنید و دوباره امتحان کنید."</string>
 
     <!-- Confirmation message that %s was removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_successful">"s% حذف شد"</string>
+    <string name="removing_friend_successful">"%s حذف شد"</string>
 
     <!-- Message shown when %s is in the process of being removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_in_progress">"در حال حذف کردن s%…"</string>
+    <string name="removing_friend_in_progress">"در حال حذف کردن %s…"</string>
 
     <!-- Error message when we are unable to send a friend request and to try again later -->
     <string name="error_send_friend_request">"خطا در فرستادن درخواست دوستی، لطفاً مجدداً تلاش کنید"</string>
@@ -2894,8 +2894,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
     <plurals name="friend_connections_on_hallo">
-        <item quantity="one">"d% دوست از مخاطبین شما در هالواپ است. به عنوان دوست اضافه میکنید؟"</item>
-        <item quantity="other">"d% دوست از مخاطبین شما در هالواپ هستند. به عنوان دوست اضافه میکنید؟"</item>
+        <item quantity="one">"%d دوست از مخاطبین شما در هالواپ است. به عنوان دوست اضافه میکنید؟"</item>
+        <item quantity="other">"%d دوست از مخاطبین شما در هالواپ هستند. به عنوان دوست اضافه میکنید؟"</item>
     </plurals>
 
     <!-- Text telling a user that after these contacts are friends, they can see your posts -->
@@ -2903,8 +2903,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
     <plurals name="sent_friend_requests">
-        <item quantity="one">"در حال فرستادن درخواست دوستی به d% نفر"</item>
-        <item quantity="other">"در حال فرستادن درخواست دوستی به d% نفر"</item>
+        <item quantity="one">"در حال فرستادن درخواست دوستی به %d نفر"</item>
+        <item quantity="other">"در حال فرستادن درخواست دوستی به %d نفر"</item>
     </plurals>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for their posts -->
