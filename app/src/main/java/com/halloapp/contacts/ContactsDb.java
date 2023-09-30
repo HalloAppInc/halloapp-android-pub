@@ -987,7 +987,7 @@ public class ContactsDb {
 
     @WorkerThread
     public List<UserId> getFeedShareList() {
-        return getFeedShareList(true);
+        return getFeedShareList(false);
     }
 
     @WorkerThread

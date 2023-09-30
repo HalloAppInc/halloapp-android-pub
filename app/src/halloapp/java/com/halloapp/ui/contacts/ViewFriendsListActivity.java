@@ -42,6 +42,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.FriendshipStatus;
@@ -387,7 +388,7 @@ public class ViewFriendsListActivity extends HalloActivity {
                                 if (Boolean.TRUE.equals(success)) {
                                     return;
                                 }
-                                SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.remove_friend);
+                                SnackbarHelper.showWarning(ViewFriendsListActivity.this, R.string.error_remove_friend);
                             });
                             return true;
                         } else if (item.getItemId() == R.id.block_contact) {
@@ -1013,7 +1014,16 @@ public class ViewFriendsListActivity extends HalloActivity {
 
         public void addToFavorites(@NonNull UserId userId) {
             BgWorkers.getInstance().execute(() -> {
-                FeedPrivacyManager.getInstance().updateFeedPrivacy(PrivacyList.Type.ONLY, new ArrayList<>(Collections.singletonList(userId)));
+                FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
+                FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
+                if (feedPrivacy == null) {
+                    return;
+                }
+                List<UserId> initialList = new ArrayList<>(feedPrivacy.onlyList);
+                if (!initialList.contains(userId)) {
+                    initialList.add(userId);
+                    feedPrivacyManager.updateFeedPrivacy(PrivacyList.Type.ONLY, new ArrayList<>(initialList));
+                }
             });
         }
 
