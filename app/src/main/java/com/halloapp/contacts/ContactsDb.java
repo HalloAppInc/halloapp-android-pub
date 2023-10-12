@@ -1351,18 +1351,20 @@ public class ContactsDb {
                         RelationshipTable.COLUMN_NAME,
                         RelationshipTable.COLUMN_LIST_TYPE
                 },
-                RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ?",
-                new String[]{String.valueOf(FriendshipInfo.Type.FRIENDS), Me.getInstance().getUser()}, null, null, null)) {
+                RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL",
+                new String[]{String.valueOf(FriendshipInfo.Type.FRIENDS)}, null, null, null)) {
                 while (cursor.moveToNext()) {
                     final String userIdStr = cursor.getString(1);
-                    final Contact friend = new Contact(
-                            cursor.getLong(0),
-                            userIdStr == null ? null : new UserId(userIdStr),
-                            cursor.getString(2),
-                            cursor.getString(3),
-                            cursor.getInt(4));
-                    friend.fallbackName = appContext.get().getString(R.string.unknown_contact);
-                    friends.add(friend);
+                    if (userIdStr != null && !userIdStr.equals(Me.getInstance().getUser())) {
+                        final Contact friend = new Contact(
+                                cursor.getLong(0),
+                                new UserId(userIdStr),
+                                cursor.getString(2),
+                                cursor.getString(3),
+                                cursor.getInt(4));
+                        friend.fallbackName = appContext.get().getString(R.string.unknown_contact);
+                        friends.add(friend);
+                    }
                 }
         }
         return friends;
@@ -1384,19 +1386,22 @@ public class ContactsDb {
                 RelationshipTable.COLUMN_SEEN + "," +
                 RelationshipTable.COLUMN_TIMESTAMP +
                 " FROM " + RelationshipTable.TABLE_NAME +
-                " WHERE " + RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " !=?";
-        try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(friendshipType), Me.getInstance().getUser()})) {
+                " WHERE " + RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL";
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(friendshipType)})) {
             while (cursor.moveToNext()) {
-                FriendshipInfo friendshipInfo = new FriendshipInfo(
-                        new UserId(cursor.getString(1)),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getInt(5),
-                        cursor.getLong(7)
-                );
-                friendshipInfo.seen = cursor.getInt(6) == 1;
-                friendships.add(friendshipInfo);
+                final String userIdStr = cursor.getString(1);
+                if (userIdStr != null && !userIdStr.equals(Me.getInstance().getUser())) {
+                    FriendshipInfo friendshipInfo = new FriendshipInfo(
+                            new UserId(userIdStr),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getInt(5),
+                            cursor.getLong(7)
+                    );
+                    friendshipInfo.seen = cursor.getInt(6) == 1;
+                    friendships.add(friendshipInfo);
+                }
             }
         }
         return friendships;
@@ -1465,21 +1470,24 @@ public class ContactsDb {
                 RelationshipTable.COLUMN_SEEN + "," +
                 RelationshipTable.COLUMN_TIMESTAMP +
                 " FROM " + RelationshipTable.TABLE_NAME +
-                " WHERE " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ? AND (" + RelationshipTable.COLUMN_LIST_TYPE + "=? OR " +  RelationshipTable.COLUMN_LIST_TYPE + "=?)" +
+                " WHERE " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND (" + RelationshipTable.COLUMN_LIST_TYPE + "=? OR " +  RelationshipTable.COLUMN_LIST_TYPE + "=?)" +
                 " ORDER BY " + RelationshipTable.COLUMN_TIMESTAMP + " DESC " +
                 " LIMIT " + limit;
-        try (final Cursor cursor = db.rawQuery(sql, new String[] {Me.getInstance().getUser(), String.valueOf(FriendshipInfo.Type.INCOMING_PENDING), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {String.valueOf(FriendshipInfo.Type.INCOMING_PENDING), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
             while (cursor.moveToNext()) {
-                FriendshipInfo friendshipInfo = new FriendshipInfo(
-                        new UserId(cursor.getString(1)),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getInt(5),
-                        cursor.getLong(7)
-                );
-                friendshipInfo.seen = cursor.getInt(6) == 1;
-                friendships.add(friendshipInfo);
+                final String userIdStr = cursor.getString(1);
+                if (userIdStr != null && !userIdStr.equals(Me.getInstance().getUser())) {
+                    FriendshipInfo friendshipInfo = new FriendshipInfo(
+                            new UserId(userIdStr),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getInt(5),
+                            cursor.getLong(7)
+                    );
+                    friendshipInfo.seen = cursor.getInt(6) == 1;
+                    friendships.add(friendshipInfo);
+                }
             }
         }
 
