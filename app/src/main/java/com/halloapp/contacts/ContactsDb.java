@@ -1351,7 +1351,8 @@ public class ContactsDb {
                         RelationshipTable.COLUMN_NAME,
                         RelationshipTable.COLUMN_LIST_TYPE
                 },
-                RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL", new String[]{String.valueOf(FriendshipInfo.Type.FRIENDS)}, null, null, null)) {
+                RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ?",
+                new String[]{String.valueOf(FriendshipInfo.Type.FRIENDS), Me.getInstance().getUser()}, null, null, null)) {
                 while (cursor.moveToNext()) {
                     final String userIdStr = cursor.getString(1);
                     final Contact friend = new Contact(
@@ -1383,8 +1384,8 @@ public class ContactsDb {
                 RelationshipTable.COLUMN_SEEN + "," +
                 RelationshipTable.COLUMN_TIMESTAMP +
                 " FROM " + RelationshipTable.TABLE_NAME +
-                " WHERE " + RelationshipTable.COLUMN_LIST_TYPE + "=?";
-        try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(friendshipType)})) {
+                " WHERE " + RelationshipTable.COLUMN_LIST_TYPE + "=? AND " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " !=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(friendshipType), Me.getInstance().getUser()})) {
             while (cursor.moveToNext()) {
                 FriendshipInfo friendshipInfo = new FriendshipInfo(
                         new UserId(cursor.getString(1)),
@@ -1464,10 +1465,10 @@ public class ContactsDb {
                 RelationshipTable.COLUMN_SEEN + "," +
                 RelationshipTable.COLUMN_TIMESTAMP +
                 " FROM " + RelationshipTable.TABLE_NAME +
-                " WHERE " + RelationshipTable.COLUMN_LIST_TYPE + "=? OR " +  RelationshipTable.COLUMN_LIST_TYPE + "=?" +
+                " WHERE " + RelationshipTable.COLUMN_USER_ID + " IS NOT NULL AND " + RelationshipTable.COLUMN_USER_ID + " != ? AND (" + RelationshipTable.COLUMN_LIST_TYPE + "=? OR " +  RelationshipTable.COLUMN_LIST_TYPE + "=?)" +
                 " ORDER BY " + RelationshipTable.COLUMN_TIMESTAMP + " DESC " +
                 " LIMIT " + limit;
-        try (final Cursor cursor = db.rawQuery(sql, new String[] {String.valueOf(FriendshipInfo.Type.INCOMING_PENDING), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {Me.getInstance().getUser(), String.valueOf(FriendshipInfo.Type.INCOMING_PENDING), String.valueOf(FriendshipInfo.Type.FRIENDS)})) {
             while (cursor.moveToNext()) {
                 FriendshipInfo friendshipInfo = new FriendshipInfo(
                         new UserId(cursor.getString(1)),

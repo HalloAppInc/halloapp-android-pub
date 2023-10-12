@@ -18,6 +18,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.FriendshipInfo;
@@ -2243,13 +2244,13 @@ class MessagesDb {
     @NonNull List<Chat> getChats(boolean includeChats, boolean includeGroups) {
         final List<Chat> chats = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String selection;
+        String selection = ChatsTable.COLUMN_CHAT_ID + " !=?";
         if (includeGroups && includeChats) {
-            selection = "";
+            selection += "";
         } else if (includeGroups) {
-            selection = ChatsTable.COLUMN_IS_GROUP + "=1";
+            selection += " AND " + ChatsTable.COLUMN_IS_GROUP + "=1";
         } else {
-            selection = ChatsTable.COLUMN_IS_GROUP + "=0";
+            selection += " AND " + ChatsTable.COLUMN_IS_GROUP + "=0";
         }
         try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
                 new String [] {
@@ -2266,7 +2267,7 @@ class MessagesDb {
                         ChatsTable.COLUMN_IS_ACTIVE,
                         ChatsTable.COLUMN_THEME,
                         ChatsTable.COLUMN_INVITE_LINK},
-                selection, null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
+                selection, new String[] {Me.getInstance().getUser()}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
