@@ -2758,7 +2758,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="confirm_friend">"Bevestigen"</string>
 
     <!-- Button text to send a friend request to someone -->
-    <string name="add_friend">"Vriend toevoegen"</string>
+    <string name="add_friend">"Toevoegen"</string>
 
     <!-- Section title showing current pending friend requests -->
     <string name="friend_requests">"Vriendschapsverzoeken"</string>

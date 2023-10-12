@@ -46,13 +46,9 @@ Sujeito a cobrança da operadora."</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está no HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s está a usar o HalloApp! &#127881;"</string>
-
-    <!-- Fuzzy -->
-    <string name="posts_empty">"As suas publicações aparecerão aqui"</string>
+    <string name="posts_empty">"As postagens aparecerão aqui"</string>
     <string name="posts_exchange_numbers">"Para se ligar, devem trocar números de telefone"</string>
-
-    <!-- Fuzzy -->
-    <string name="home_page_empty">"Publicações dos seus contatos aparecerão aqui"</string>
+    <string name="home_page_empty">"As postagens dos seus amigos aparecerão aqui"</string>
     <string name="chats_page_empty">"Contatos e mensagens aparecerão aqui"</string>
     <string name="chats_search_empty">"Nenhuma conversa encontrada para '%s'"</string>
     <string name="groups_page_empty">"Os seus grupos aparecerão aqui"</string>
@@ -69,9 +65,7 @@ Sujeito a cobrança da operadora."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Para tirar fotos e gravar vídeos, precisamos de permissão para aceder à câmara e gravar áudio no seu dispositivo.
 
 Abra as configurações da aplicação para modificar as permissões."</string>
-
-    <!-- Fuzzy -->
-    <string name="contacts_permission_rationale">"Para o(a) ligar aos seus amigos e familiares, precisamos de aceder aos contatos do seu dispositivo"</string>
+    <string name="contacts_permission_rationale">"Para se conectar melhor com seus amigos e familiares, precisamos de permissão para acessar os contatos no seu dispositivo"</string>
 
     <!-- Fuzzy -->
     <string name="contacts_permission_rationale_denied">"Para lhe ligar aos seus amigos e familiares, precisamos acessar os contatos do seu dispositivo.
@@ -2925,16 +2919,16 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; agora é seu amigo"</string>
 
     <!-- Tab to show suggested and current friend requests when there are no current requests -->
-    <string name="requests_zero">"Requests"</string>
+    <string name="requests_zero">"Pedidos"</string>
 
     <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
-    <string name="error_reject_friend_suggestion">"Unable to reject friend suggestion, please try again later"</string>
+    <string name="error_reject_friend_suggestion">"Não foi possível rejeitar a sugestão de amigo. Por favor, tente novamente mais tarde"</string>
 
     <!-- Title of the new friendship model notification -->
-    <string name="notification_friendship_model_title">"New friendship model"</string>
+    <string name="notification_friendship_model_title">"Novo modelo de amizade"</string>
 
     <!-- Body of the new friendship model notification -->
-    <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+    <string name="notification_friendship_model_body">"Agora você pode procurar pessoas no HalloApp e adicioná-las como amigos"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Toque para adicionar %s ao seu catálogo de contatos&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Esta postagem é partilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar sua lista de favoritos nas configurações de privacidade a qualquer momento."</string>
     <string name="contact_favorites_explanation_others">"Esta postagem é partilhada apenas com um público limitado. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>
