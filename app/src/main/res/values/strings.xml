@@ -2114,15 +2114,15 @@
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
     <string name="notification_post_highlight_suggestion_body">%d photos taken</string>
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
-    <string name="notification_post_highlight_suggestion_with_location_body">%d photos taken at %s</string>
+    <string name="notification_post_highlight_suggestion_with_location_body">%1$d photos taken at %2$s</string>
     <!-- Title describing new post suggestions to create  -->
     <string name="new_post_suggestions">New post suggestions</string>
     <!-- Text stating there are no new post suggestions -->
     <string name="no_post_suggestions">No post suggestions</string>
     <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
-    <string name="suggestion_text_template">%d photos taken on %s</string>
+    <string name="suggestion_text_template">%1$d photos taken on %2$s</string>
     <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
-    <string name="suggestion_text_with_location_template">%d photos taken at %s</string>
+    <string name="suggestion_text_with_location_template">%1$d photos taken at %2$s</string>
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
     <string name="selecting_best_photos">Selecting best photos…</string>
 </resources>
