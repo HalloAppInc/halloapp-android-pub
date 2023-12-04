@@ -67,6 +67,7 @@ public class Debug {
     private static final String DEBUG_MENU_LOGOUT = "Logout";
     private static final String DEBUG_MENU_DELETE_CONTENT_DB = "Delete posts DB";
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
+    private static final String DEBUG_MENU_DELETE_GALLERY_DB = "Delete gallery DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
     private static final String DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN = "Set incoming posts unseen";
@@ -104,6 +105,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTENT_DB);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
+        menu.getMenu().add(DEBUG_MENU_DELETE_GALLERY_DB);
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
         menu.getMenu().add(DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN);
@@ -143,6 +145,10 @@ public class Debug {
                 }
                 case DEBUG_MENU_DELETE_CONTENT_DB: {
                     new DeleteContentDbTask(activity.getApplication()).execute();
+                    break;
+                }
+                case DEBUG_MENU_DELETE_GALLERY_DB: {
+                    new DeleteGalleryDbTask(activity.getApplication()).execute();
                     break;
                 }
                 case DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS: {
@@ -797,6 +803,23 @@ public class Debug {
             ContentDb.getInstance().deleteDb();
             FileUtils.deleteRecursive(FileStore.getInstance().getMediaDir());
             FileUtils.deleteRecursive(FileStore.getInstance().getTmpDir());
+            restart(application);
+            return null;
+        }
+    }
+
+    static class DeleteGalleryDbTask extends AsyncTask<Void, Void, Void> {
+
+        private final Application application;
+
+        DeleteGalleryDbTask(@NonNull Application application) {
+            this.application = application;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ContentDb.getInstance().deleteAllGalleryItems();
+            ContentDb.getInstance().deleteAllSuggestions();
             restart(application);
             return null;
         }

@@ -275,4 +275,40 @@ public class BitmapUtils {
 
         return output;
     }
+
+    // Structured after: https://stackoverflow.com/questions/5669501/how-do-you-get-the-rgb-values-from-a-bitmap-on-android
+    public static float[][][] getRGBArray(@NonNull Bitmap bitmap, int maxWidth, int maxHeight) {
+        float[][][] rgbArray = new float[maxWidth][maxHeight][3];
+        int[] pixels = new int[maxWidth*maxHeight];
+        bitmap = resize(bitmap, maxWidth, maxHeight);
+        bitmap.getPixels(pixels, 0, maxWidth, 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        for (int h = 0; h < bitmap.getHeight(); h++) {
+            for (int w = 0; w < bitmap.getWidth(); w++) {
+                int index = h * maxWidth + w;
+                rgbArray[h][w][0] = (pixels[index] >> 16) & 0xff;
+                rgbArray[h][w][1] = (pixels[index] >> 8) & 0xff;
+                rgbArray[h][w][2] = pixels[index] & 0xff;
+            }
+        }
+        return rgbArray;
+    }
+
+    private static Bitmap resize(@NonNull Bitmap image, int maxWidth, int maxHeight) {
+        if (maxHeight > 0 && maxWidth > 0) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            float ratioMax = (float) maxWidth / (float) maxHeight;
+
+            int finalWidth = maxWidth;
+            int finalHeight = maxHeight;
+            if (ratioMax < ratioBitmap) {
+                finalWidth = (int) ((float) maxHeight * ratioBitmap);
+            } else {
+                finalHeight = (int) ((float) maxWidth / ratioBitmap);
+            }
+            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+        }
+        return Bitmap.createBitmap(image, (image.getWidth() - maxWidth)/2 , (image.getHeight() - maxHeight)/2, maxWidth, maxHeight);
+    }
 }

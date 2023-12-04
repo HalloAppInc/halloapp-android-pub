@@ -62,6 +62,7 @@ public class ServerProps {
     private static final String PROP_FILE_SHARING = "file_sharing";
     private static final String PROP_CONTACT_SHARING = "contact_sharing";
     private static final String PROP_USE_CLOSE_FRIENDS_RECOMMENDATION = "close_friends_recos";
+    private static final String PROP_MAGIC_POSTS_ENABLED = "photo_suggestions";
     private static final String PROP_RELATIONSHIP_SYNC_INTERVAL = "relationship_sync_frequency";
     private static final String PROP_PUBLIC_FEED_REFRESH_INTERNVAL_SECS = "refresh_public_feed_interval_secs";
     private static final String PROP_MAX_SELFIE_VIDEO_BITRATE = "max_selfie_video_bit_rate";
@@ -127,6 +128,7 @@ public class ServerProps {
     private final BooleanProp propFileSharingEnabled = createProp(PROP_FILE_SHARING, false);
     private final BooleanProp propContactSharingEnabled = createProp(PROP_CONTACT_SHARING, false);
     private final BooleanProp propUseCloseFriendsRec = createProp(PROP_USE_CLOSE_FRIENDS_RECOMMENDATION, false);
+    private final BooleanProp propMagicPostsEnabled = createProp(PROP_MAGIC_POSTS_ENABLED, false);
     private final IntegerProp propRelationshipSyncIntervalSeconds = createProp(PROP_RELATIONSHIP_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
     private final IntegerProp propPublicFeedRefreshIntervalSeconds = createProp(PROP_PUBLIC_FEED_REFRESH_INTERNVAL_SECS, 10 * 60);
     private final IntegerProp propMaxSelfieVideoBitrate = createProp(PROP_MAX_SELFIE_VIDEO_BITRATE, 1000000);
@@ -386,6 +388,10 @@ public class ServerProps {
 
     public synchronized boolean getUseCloseFriendsRec() {
         return propUseCloseFriendsRec.getValue();
+    }
+
+    public synchronized boolean getMagicPostsEnabled() {
+        return propMagicPostsEnabled.getValue();
     }
 
     public synchronized int getRelationshipSyncIntervalSeconds() {

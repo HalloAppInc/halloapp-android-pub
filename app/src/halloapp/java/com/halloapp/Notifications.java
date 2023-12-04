@@ -100,6 +100,7 @@ public class Notifications {
     private static final String ONGOING_CALL_NOTIFICATION_CHANNEL_ID = "ongoing_call_notifications";
     private static final String BROADCASTS_NOTIFICATION_CHANNEL_ID = "broadcast_notifications";
     private static final String MISSED_CALL_NOTIFICATION_CHANNEL_ID = "missed_call_notifications";
+    private static final String MAGIC_POST_NOTIFICATION_CHANNEL_ID = "magic_post_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
     private static final String FEED_NOTIFICATION_GROUP_KEY = "feed_notification";
@@ -124,6 +125,7 @@ public class Notifications {
     private static final int UNFINISHED_REGISTRATION_NOTIFICATION_ID = 11;
     private static final int DAILY_MOMENT_NOTIFICATION_ID = 12;
     private static final int FRIENDSHIP_MODEL_NOTIFICATION_ID = 13;
+    private static final int MAGIC_POST_NOTIFICATION_ID = 14;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
@@ -221,6 +223,7 @@ public class Notifications {
             final NotificationChannel missedCallNotificationsChannel = new NotificationChannel(MISSED_CALL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.missed_call_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             missedCallNotificationsChannel.enableLights(true);
             missedCallNotificationsChannel.enableVibration(true);
+            final NotificationChannel magicPostNotificationsChannel = new NotificationChannel(MAGIC_POST_NOTIFICATION_CHANNEL_ID, context.getString(R.string.magic_post_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(momentsNotificationChannel);
@@ -233,6 +236,7 @@ public class Notifications {
             notificationManager.createNotificationChannel(ongoingCallNotificationsChannel);
             notificationManager.createNotificationChannel(broadcastNotificationsChannel);
             notificationManager.createNotificationChannel(missedCallNotificationsChannel);
+            notificationManager.createNotificationChannel(magicPostNotificationsChannel);
         }
     }
 
@@ -1473,6 +1477,38 @@ public class Notifications {
     public void clearFriendModelNotification() {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.cancel(FRIENDSHIP_MODEL_NOTIFICATION_ID);
+    }
+
+    public void showMagicPostNotification(int photoSize, @Nullable String location) {
+        String title = context.getString(R.string.notification_post_highlight_suggestion);
+        String body = TextUtils.isEmpty(location)
+            ? context.getString(R.string.notification_post_highlight_suggestion_body, photoSize)
+            : context.getString(R.string.notification_post_highlight_suggestion_with_location_body, photoSize, location);
+
+        Intent contentIntent = new Intent(context, MainActivity.class);
+        contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MAGIC_POSTS);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(false));
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MAGIC_POST_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setAutoCancel(true)
+                .setContentText(body)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION)
+                .setContentIntent(pendingIntent);
+
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(MAGIC_POST_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearMagicPostNotification() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(MAGIC_POST_NOTIFICATION_ID);
     }
 
     static public class DeleteNotificationReceiver extends BroadcastReceiver {

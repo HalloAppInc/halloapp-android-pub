@@ -382,4 +382,6 @@ public abstract class Connection {
 
     public abstract Observable<FriendshipResponseIq> rejectFriendSuggestion(@NonNull UserId userId);
 
+    public abstract Observable<ReverseGeocodeResponseIq> getGeocodeLocation(double latitude, double longitude);
+
 }

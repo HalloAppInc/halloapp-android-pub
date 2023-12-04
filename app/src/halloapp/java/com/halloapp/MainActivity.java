@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -39,6 +40,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.ContentComposerActivity;
@@ -90,6 +92,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String NAV_TARGET_GROUPS = "groups";
     public static final String NAV_TARGET_MESSAGES = "messages";
     public static final String NAV_TARGET_ACTIVITY = "activity";
+    public static final String NAV_TARGET_MAGIC_POSTS = "magic_posts";
+
+    private static final int NAV_MENU_MIDDLE = 2;
 
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
@@ -183,6 +188,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         final AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
                 R.id.navigation_groups,
+                R.id.navigation_magic_posts,
                 R.id.navigation_messages,
                 R.id.navigation_activity).build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -191,13 +197,18 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnNavigationItemReselectedListener(item -> scrollToTop());
-        navView.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_camera) {
-                startCameraPost();
-                return false;
-            }
-            return NavigationUI.onNavDestinationSelected(item, navController);
-        });
+        // If magic posts are not supported/enabled, default back to camera tab
+        if (Build.VERSION.SDK_INT < 24 || !ServerProps.getInstance().getMagicPostsEnabled()) {
+            navView.getMenu().removeItem(R.id.navigation_magic_posts);
+            navView.getMenu().add(Menu.NONE, R.id.camera, NAV_MENU_MIDDLE, R.string.title_camera).setIcon(R.drawable.ic_nav_camera);
+            navView.setOnItemSelectedListener(item -> {
+                if (item.getItemId() == R.id.camera) {
+                    startCameraPost();
+                    return false;
+                }
+                return NavigationUI.onNavDestinationSelected(item, navController);
+            });
+        }
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
         networkIndicatorView.bind(this);
@@ -580,6 +591,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (NAV_TARGET_GROUPS.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_groups);
+        } else if (NAV_TARGET_MAGIC_POSTS.equals(extraNotificationNavTarget)) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_magic_posts);
         }
         String extraPostId = intent.getStringExtra(EXTRA_POST_ID);
         boolean showCommentsActivity = intent.getBooleanExtra(EXTRA_POST_SHOW_COMMENTS, false);

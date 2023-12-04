@@ -1,17 +1,19 @@
 package com.halloapp.ui.mediapicker;
 
-import java.util.Calendar;
+import androidx.annotation.Nullable;
 import java.util.Objects;
 
 public class GalleryItem {
 
     public final long id;
     public final int type;
-    public final long date;
-    public final int year;
-    public final int month;
-    public final int day;
-    public final long duration;
+    public long date;
+    public long duration;
+    public double latitude;
+    public double longitude;
+    public String suggestionId;
+    public boolean suggested;
+    public float score;
 
     @Override
     public boolean equals(Object o) {
@@ -27,17 +29,25 @@ public class GalleryItem {
         return Objects.hash(id, type);
     }
 
+    public GalleryItem(long id, int type) {
+        this.id = id;
+        this.type = type;
+    }
+
     public GalleryItem(long id, int type, long date, long duration) {
         this.id = id;
         this.type = type;
         this.date = date * 1000;
         this.duration = duration;
+    }
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(this.date);
-
-        this.year = calendar.get(Calendar.YEAR);
-        this.month = calendar.get(Calendar.MONTH);
-        this.day = calendar.get(Calendar.DAY_OF_MONTH);
+    public GalleryItem(long id, int type, long date, long duration, double latitude, double longitude, @Nullable String suggestionId) {
+        this.id = id;
+        this.type = type;
+        this.date = date;
+        this.duration = duration;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.suggestionId = suggestionId;
     }
 }

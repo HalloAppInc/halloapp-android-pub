@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_chats" />
 
     <fragment
+        android:id="@+id/navigation_magic_posts"
+        android:name="com.halloapp.ui.MagicPostFragment"
+        android:label="@string/title_magic_post"
+        tools:layout="@layout/fragment_magic_post" />
+
+    <fragment
         android:id="@+id/navigation_messages"
         android:name="com.halloapp.ui.chats.ChatsFragment"
         android:label="@string/title_messages"

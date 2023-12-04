@@ -16,6 +16,7 @@ import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
 import com.halloapp.Preferences;
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 
@@ -42,6 +43,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final Preferences preferences = Preferences.getInstance();
+    private final ContentDb contentDb = ContentDb.getInstance();
 
     private final GalleryDataSource.Factory dataSourceFactory;
     private final MutableLiveData<Integer> layout = new MutableLiveData<>();
@@ -50,6 +52,14 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
     public ArrayList<Uri> original;
     public Bundle state;
+
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onSuggestedGalleryItemsAdded(@NonNull List<Long> suggestedGalleryItems) {
+            selected.postValue(suggestedGalleryItems);
+        }
+    };
 
     public MediaPickerViewModel(@NonNull Application application, boolean includeVideos, @NonNull long[] selected) {
         this(application, includeVideos);
@@ -74,6 +84,27 @@ public class MediaPickerViewModel extends AndroidViewModel {
         mediaList = new LivePagedListBuilder<>(dataSourceFactory, 250).build();
 
         bgWorkers.execute(() -> layout.postValue(preferences.getPickerLayout()));
+    }
+
+    public MediaPickerViewModel(@NonNull Application application, boolean includeVideos, @NonNull String suggestionId, int size) {
+        super(application);
+        dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), includeVideos, suggestionId, getApplication().getAssets());
+        contentDb.addObserver(contentObserver);
+
+        PagedList.Config config = new PagedList.Config.Builder().setInitialLoadSizeHint(size).setMaxSize(size).build();
+        mediaList = new LivePagedListBuilder<>(dataSourceFactory, config).build();
+        bgWorkers.execute(() -> {
+            layout.postValue(preferences.getPickerLayout());
+            List<Long> selectedIds = contentDb.getSelectedGalleryItemIds(suggestionId);
+            if (!selectedIds.isEmpty()) {
+                selected.postValue(selectedIds);
+            }
+        });
+    }
+
+    @Override
+    protected void onCleared() {
+        contentDb.removeObserver(contentObserver);
     }
 
     void invalidate() {

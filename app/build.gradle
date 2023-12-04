@@ -59,6 +59,9 @@ android {
         debug {
             resValue "bool", "isDebug", "true"
         }
+        aaptOptions {
+            noCompress "tflite"
+        }
     }
     flavorDimensions "app"
     productFlavors {
@@ -211,6 +214,8 @@ dependencies {
     implementation 'com.amplitude:analytics-android:1.5.2'
 
     implementation 'androidx.core:core-splashscreen:1.0.1'
+    implementation 'com.google.mlkit:face-detection:16.1.5'
+    implementation 'org.tensorflow:tensorflow-lite:2.10.0'
 }
 
 apply plugin: 'com.huawei.agconnect'

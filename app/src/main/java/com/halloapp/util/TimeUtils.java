@@ -1,7 +1,11 @@
 package com.halloapp.util;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class TimeUtils {
 
@@ -28,5 +32,14 @@ public class TimeUtils {
         calendar2.setTimeInMillis(time2);
         return calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR)
                 && calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR);
+    }
+
+    public static String getDayMonth(long time) {
+        if (time == 0) {
+            return "";
+        }
+        Date date = new Date(time);
+        DateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        return sdf.format(date);
     }
 }

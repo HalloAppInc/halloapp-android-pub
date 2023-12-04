@@ -16,6 +16,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.Suggestion;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
@@ -44,6 +45,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ContentDetails;
 import com.halloapp.proto.server.ExpiryInfo;
+import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
@@ -88,6 +90,7 @@ public class ContentDb {
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
     private final KatchupMomentDb katchupMomentDb;
+    private final GalleryDb galleryDb;
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -125,6 +128,7 @@ public class ContentDb {
         void onDbCreated();
         void onArchivedPostRemoved(@NonNull Post post);
         void onLocalPostSeen(@NonNull String postId);
+        void onSuggestedGalleryItemsAdded(@NonNull List<Long> suggestedGalleryItems);
     }
 
     public static class DefaultObserver implements Observer {
@@ -161,6 +165,7 @@ public class ContentDb {
         public void onGroupDeleted(@NonNull GroupId groupId) {}
         public void onChatDeleted(@NonNull ChatId chatId) {}
         public void onArchivedPostRemoved(@NonNull Post post) {}
+        public void onSuggestedGalleryItemsAdded(@NonNull List<Long> suggestedGalleryItems) {}
         public void onPostsExpired() {}
         public void onFeedCleanup() {}
         public void onDbCreated() {}
@@ -198,7 +203,8 @@ public class ContentDb {
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
         reactionsDb = new ReactionsDb(databaseHelper);
         messagesDb = new MessagesDb(callsDb, mediaDb, fileStore, mentionsDb, reactionsDb, serverProps, futureProofDb, urlPreviewsDb, databaseHelper);
-        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, reactionsDb, futureProofDb, urlPreviewsDb, katchupMomentDb, databaseHelper, fileStore, serverProps);
+        galleryDb = new GalleryDb(databaseHelper);
+        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, reactionsDb, futureProofDb, urlPreviewsDb, katchupMomentDb, galleryDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {
@@ -2111,6 +2117,88 @@ public class ContentDb {
             postsDb.expirePost(postId);
             observers.notifyPostsExpired();
         });
+    }
+
+    @WorkerThread
+    public void addGalleryItemUri(long uriId, int type, long date, long duration) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.addGalleryItemUri(uriId, type, date, duration);
+        });
+    }
+
+    @WorkerThread
+    public void addGalleryItem(@NonNull GalleryItem item, @Nullable Suggestion suggestion) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.addGalleryItem(item, suggestion == null ? null : suggestion.id);
+        });
+    }
+
+    @WorkerThread
+    public void addAllGalleryItems(@NonNull HashMap<Suggestion, List<GalleryItem>> allGalleryItems) {
+        databaseWriteExecutor.execute(() -> {
+            for (Suggestion suggestion : allGalleryItems.keySet()) {
+                if (allGalleryItems.get(suggestion) == null || suggestion.id == null) {
+                    Log.w("Invalid gallery item for suggestion " + suggestion.id);
+                } else {
+                    galleryDb.addAllGalleryItems(allGalleryItems.get(suggestion), suggestion.id);
+                }
+            }
+        });
+    }
+
+    @WorkerThread
+    public void markSuggestedGalleryItems(@NonNull List<Long> suggestedGalleryItems, @NonNull String suggestionId) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.markSuggestedGalleryItems(suggestedGalleryItems, suggestionId);
+            observers.notifySuggestedGalleryItemsAdded(suggestedGalleryItems);
+        });
+    }
+
+    @WorkerThread
+    public void addAllSuggestions(@NonNull ArrayList<Suggestion> allSuggestions) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.addAllSuggestions(allSuggestions);
+        });
+    }
+
+    @WorkerThread
+    public ArrayList<GalleryItem> getPendingGalleryItems(long cutoffTime) {
+        return galleryDb.getPendingGalleryItems(cutoffTime);
+    }
+
+    @WorkerThread
+    public List<Long> getSelectedGalleryItemIds(@NonNull String suggestionId) {
+        return galleryDb.getSelectedGalleryItemIds(suggestionId);
+    }
+
+    @WorkerThread
+    public List<GalleryItem> getGalleryItemsBySuggestion(@NonNull String suggestionId) {
+        return galleryDb.getGalleryItemsBySuggestion(suggestionId);
+    }
+
+    @WorkerThread
+    public GalleryItem getThumbnailPhotoBySuggestion(@NonNull String suggestionId) {
+        return galleryDb.getThumbnailPhotoBySuggestion(suggestionId);
+    }
+
+    @WorkerThread
+    public Suggestion getSuggestion(@NonNull String suggestionId) {
+        return galleryDb.getSuggestion(suggestionId);
+    }
+
+    @WorkerThread
+    public ArrayList<Suggestion> getAllSuggestions() {
+        return galleryDb.getAllSuggestions();
+    }
+
+    @WorkerThread
+    public void deleteAllGalleryItems() {
+        databaseWriteExecutor.execute(galleryDb::deleteAllGalleryItems);
+    }
+
+    @WorkerThread
+    public void deleteAllSuggestions() {
+        databaseWriteExecutor.execute(galleryDb::deleteAllSuggestions);
     }
 
     @WorkerThread

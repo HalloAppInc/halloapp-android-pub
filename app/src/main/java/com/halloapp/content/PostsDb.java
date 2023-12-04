@@ -20,6 +20,7 @@ import com.halloapp.FileStore;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.GalleryTable;
 import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
@@ -32,6 +33,7 @@ import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
 import com.halloapp.content.tables.SeenPostsTable;
 import com.halloapp.content.tables.SeenTable;
+import com.halloapp.content.tables.SuggestionsTable;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -69,6 +71,7 @@ class PostsDb {
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
     private final KatchupMomentDb katchupMomentDb;
+    private final GalleryDb galleryDb;
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
     private final ServerProps serverProps;
@@ -81,6 +84,7 @@ class PostsDb {
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
             KatchupMomentDb katchupMomentDb,
+            GalleryDb galleryDb,
             ContentDbHelper databaseHelper,
             FileStore fileStore,
             ServerProps serverProps) {
@@ -91,6 +95,7 @@ class PostsDb {
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
         this.katchupMomentDb = katchupMomentDb;
+        this.galleryDb = galleryDb;
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
         this.serverProps = serverProps;
@@ -4052,7 +4057,17 @@ class PostsDb {
                 null);
         Log.i("ContentDb.cleanup: " + deletedHistoryPayloads + " history payloads deleted");
 
-        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || expiredMoments > 0 || deletedHistoryPayloads > 0);
+        final int deletedSuggestions = db.delete(SuggestionsTable.TABLE_NAME,
+                SuggestionsTable.COLUMN_SIZE + "=0 OR " + SuggestionsTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - (2 * DateUtils.WEEK_IN_MILLIS)),
+                null);
+        Log.i("ContentDb.cleanup: " + deletedSuggestions + " suggestions deleted");
+
+        final int deletedGalleryItems = db.delete(GalleryTable.TABLE_NAME,
+                GalleryTable.COLUMN_GALLERY_ITEM_URI + "<0 OR " + GalleryTable.COLUMN_TIME_TAKEN + "<" + (System.currentTimeMillis() - (2 * DateUtils.WEEK_IN_MILLIS)),
+                null);
+        Log.i("ContentDb.cleanup: " + deletedGalleryItems + " gallery items deleted");
+
+        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || expiredMoments > 0 || deletedHistoryPayloads > 0 || deletedSuggestions > 0 || deletedGalleryItems > 0);
     }
 
     private int deleteOrphanedSeenReceipts(SQLiteDatabase db) {

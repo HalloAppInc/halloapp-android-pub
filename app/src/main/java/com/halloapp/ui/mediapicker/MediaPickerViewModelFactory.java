@@ -14,6 +14,8 @@ public class MediaPickerViewModelFactory implements ViewModelProvider.Factory {
     private final boolean includeVideos;
     private final long[] selectedIds;
     private final List<Uri> selelctedUris;
+    private final String suggestionId;
+    private final int size;
 
 
     MediaPickerViewModelFactory(@NonNull Application application, boolean includeVideos, @NonNull long[] selected) {
@@ -21,6 +23,8 @@ public class MediaPickerViewModelFactory implements ViewModelProvider.Factory {
         this.includeVideos = includeVideos;
         this.selectedIds = selected;
         this.selelctedUris = null;
+        this.suggestionId = null;
+        this.size = 0;
     }
 
     MediaPickerViewModelFactory(@NonNull Application application, boolean includeVideos, @NonNull List<Uri> selected) {
@@ -28,6 +32,8 @@ public class MediaPickerViewModelFactory implements ViewModelProvider.Factory {
         this.includeVideos = includeVideos;
         this.selectedIds = null;
         this.selelctedUris = selected;
+        this.suggestionId = null;
+        this.size = 0;
     }
 
     MediaPickerViewModelFactory(@NonNull Application application, boolean includeVideos) {
@@ -35,6 +41,17 @@ public class MediaPickerViewModelFactory implements ViewModelProvider.Factory {
         this.includeVideos = includeVideos;
         this.selectedIds = null;
         this.selelctedUris = null;
+        this.suggestionId = null;
+        this.size = 0;
+    }
+
+    MediaPickerViewModelFactory(@NonNull Application application, boolean includeVideos, @NonNull String suggestionId, int size) {
+        this.application = application;
+        this.includeVideos = includeVideos;
+        this.selectedIds = null;
+        this.selelctedUris = null;
+        this.suggestionId = suggestionId;
+        this.size = size;
     }
 
     @Override
@@ -46,6 +63,9 @@ public class MediaPickerViewModelFactory implements ViewModelProvider.Factory {
             } else if (selelctedUris != null) {
                 //noinspection unchecked
                 return (T) new MediaPickerViewModel(application, includeVideos, selelctedUris);
+            } else if (suggestionId != null) {
+                //noinspection unchecked
+                return (T) new MediaPickerViewModel(application, includeVideos, suggestionId, size);
             } else {
                 //noinspection unchecked
                 return (T) new MediaPickerViewModel(application, includeVideos);

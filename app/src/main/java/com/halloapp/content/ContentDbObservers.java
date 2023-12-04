@@ -9,6 +9,7 @@ import com.halloapp.id.UserId;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 class ContentDbObservers {
@@ -238,6 +239,14 @@ class ContentDbObservers {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMediaPercentTransferred(contentItem, media, percent);
+            }
+        }
+    }
+
+    void notifySuggestedGalleryItemsAdded(@NonNull List<Long> suggestedGalleryItems) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onSuggestedGalleryItemsAdded(suggestedGalleryItems);
             }
         }
     }

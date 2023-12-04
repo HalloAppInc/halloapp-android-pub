@@ -123,6 +123,9 @@ public class App extends Application {
         DailyWorker.schedule(this);
         ScheduledContactSyncWorker.schedule(this);
         UnfinishedRegistrationWorker.schedule(this);
+        if (Build.VERSION.SDK_INT >= 24 && ServerProps.getInstance().getMagicPostsEnabled()) {
+            GalleryWorker.schedule(getApplicationContext());
+        }
 
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 

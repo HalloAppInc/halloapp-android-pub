@@ -2002,6 +2002,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<ReverseGeocodeResponseIq> getGeocodeLocation(double latitude, double longitude) {
+        return sendIqRequestAsync(new ReverseGeocodeRequestIq(latitude, longitude), true).map(response -> {
+            Log.d("connection: response after getting geocode location: " + ProtoPrinter.toString(response));
+            return ReverseGeocodeResponseIq.fromProto(response.getReverseGeocodeResult());
+        });
+    }
+
+    @Override
     public Observable<UserSearchResponseIq> searchForUser(@NonNull String text) {
         return sendIqRequestAsync(new UserSearchRequestIq(text)).map(response -> {
             Log.d("connection: response after user search request " + ProtoPrinter.toString(response));

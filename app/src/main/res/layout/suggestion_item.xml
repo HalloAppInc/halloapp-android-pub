@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@drawable/rounded_entry_album_bg"
+    android:layout_marginVertical="5dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        app:shapeAppearance="@style/RoundedAppearanceAlbumThumbnail"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black_54"
+        android:textSize="12sp"
+        android:layout_margin="10dp"
+        tools:text="7:50 pm" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/thumbnail"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="10dp" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="West Village" />
+
+        <TextView
+            android:id="@+id/suggestion_text"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/black_87"
+            tools:text="5 photos taken at 1 Park Ave" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

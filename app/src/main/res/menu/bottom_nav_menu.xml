@@ -4,26 +4,31 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_nav_home"
-        android:title="@string/title_home" />
+        android:title="@string/title_home"
+        android:orderInCategory="0" />
 
     <item
         android:id="@+id/navigation_groups"
         android:icon="@drawable/ic_nav_groups"
-        android:title="@string/title_groups" />
+        android:title="@string/title_groups"
+        android:orderInCategory="1" />
 
     <item
-        android:id="@+id/navigation_camera"
-        android:icon="@drawable/ic_nav_camera"
-        android:title="@string/title_camera" />
+        android:id="@+id/navigation_magic_posts"
+        android:icon="@drawable/ic_magic_post"
+        android:title="@string/title_magic_post"
+        android:orderInCategory="2" />
 
     <item
         android:id="@+id/navigation_messages"
         android:icon="@drawable/ic_nav_message"
-        android:title="@string/title_messages" />
+        android:title="@string/title_messages"
+        android:orderInCategory="3" />
 
     <item
         android:id="@+id/navigation_activity"
         android:icon="@drawable/ic_nav_activity"
-        android:title="@string/activity" />
+        android:title="@string/activity"
+        android:orderInCategory="4" />
 
 </menu>

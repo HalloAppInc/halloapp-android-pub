@@ -2,6 +2,7 @@ package com.halloapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.format.DateUtils;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
@@ -142,6 +143,9 @@ public class Preferences {
     private static final String PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_TWO = "friend_model_delay_in_days_time_two";
     private static final String PREF_PREV_FRIEND_MODEL_NOTIFY_TIME_IN_MILLIS = "prev_friend_model_notify_time_in_millis";
 
+    private static final String PREF_LAST_MAGIC_POST_NOTIFICATION_TIME_IN_MILLIS = "last_magic_post_notification_time_in_millis";
+    private static final String PREF_KEY_SHOWED_MAGIC_POSTS_NUX = "showed_magic_posts_nux";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -280,6 +284,9 @@ public class Preferences {
     private final IntPreference prefFriendModelDelayInDaysTimeOne = createPref(false, PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_ONE, 1);
     private final IntPreference prefFriendModelDelayInDaysTimeTwo = createPref(false, PREF_FRIEND_MODEL_DELAY_IN_DAYS_TIME_TWO, 1);
     private final LongPreference prefPrevFriendModelNotifyTimeInMillis = createPref(false, PREF_PREV_FRIEND_MODEL_NOTIFY_TIME_IN_MILLIS, System.currentTimeMillis());
+
+    private final LongPreference prefLastMagicPostNotificationTimeInMillis = createPref(false, PREF_LAST_MAGIC_POST_NOTIFICATION_TIME_IN_MILLIS, System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
+    private final BooleanPreference prefShowedMagicPostNux = createPref(false, PREF_KEY_SHOWED_MAGIC_POSTS_NUX, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1257,5 +1264,25 @@ public class Preferences {
     @WorkerThread
     public void setPrefPrevFriendModelNotifyTimeInMillis(long time) {
         prefPrevFriendModelNotifyTimeInMillis.set(time);
+    }
+
+    @WorkerThread
+    public long getPrefLastMagicPostNotificationTimeInMillis() {
+        return prefLastMagicPostNotificationTimeInMillis.get();
+    }
+
+    @WorkerThread
+    public void setPrefLastMagicPostNotificationTimeInMillis(long time) {
+        prefLastMagicPostNotificationTimeInMillis.set(time);
+    }
+
+    @WorkerThread
+    public boolean getPrefShowedMagicPostNux() {
+        return prefShowedMagicPostNux.get();
+    }
+
+    @WorkerThread
+    public void setPrefShowedMagicPostNux(boolean showed) {
+        prefShowedMagicPostNux.set(showed);
     }
 }

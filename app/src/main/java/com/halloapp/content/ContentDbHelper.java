@@ -19,6 +19,7 @@ import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
+import com.halloapp.content.tables.GalleryTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.GroupMessageSeenReceiptsTable;
 import com.halloapp.content.tables.GroupsTable;
@@ -38,6 +39,7 @@ import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
 import com.halloapp.content.tables.SeenPostsTable;
 import com.halloapp.content.tables.SeenTable;
+import com.halloapp.content.tables.SuggestionsTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.util.logs.Log;
 
@@ -46,7 +48,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 95;
+    private static final int DATABASE_VERSION = 96;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -545,6 +547,42 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CallsTable.COLUMN_CALL_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + GalleryTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GalleryTable.TABLE_NAME + " ("
+                + GalleryTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GalleryTable.COLUMN_GALLERY_ITEM_URI + " INTEGER NOT NULL,"
+                + GalleryTable.COLUMN_TYPE + " TEXT NOT NULL,"
+                + GalleryTable.COLUMN_TIME_TAKEN + " INTEGER,"
+                + GalleryTable.COLUMN_DURATION + " INTEGER,"
+                + GalleryTable.COLUMN_LONGITUDE + " REAL,"
+                + GalleryTable.COLUMN_LATITUDE + " REAL,"
+                + GalleryTable.COLUMN_SUGGESTION_ID + " TEXT,"
+                + GalleryTable.COLUMN_IS_SUGGESTED + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + GalleryTable.INDEX_GALLERY_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + GalleryTable.INDEX_GALLERY_KEY + " ON " + GalleryTable.TABLE_NAME + "("
+                + GalleryTable.COLUMN_GALLERY_ITEM_URI
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + SuggestionsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + SuggestionsTable.TABLE_NAME + " ("
+                + SuggestionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + SuggestionsTable.COLUMN_SUGGESTION_ID + " TEXT NOT NULL,"
+                + SuggestionsTable.COLUMN_TIMESTAMP + " TEXT,"
+                + SuggestionsTable.COLUMN_SIZE + " INTEGER,"
+                + SuggestionsTable.COLUMN_LOCATION_NAME + " TEXT,"
+                + SuggestionsTable.COLUMN_LOCATION_ADDRESS + " TEXT,"
+                + SuggestionsTable.COLUMN_LATITUDE + " REAL,"
+                + SuggestionsTable.COLUMN_LONGITUDE + " REAL,"
+                + SuggestionsTable.COLUMN_IS_SCORED + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + SuggestionsTable.INDEX_SUGGESTION_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + SuggestionsTable.INDEX_SUGGESTION_KEY + " ON " + SuggestionsTable.TABLE_NAME + "("
+                + SuggestionsTable.COLUMN_SUGGESTION_ID
+                + ");");
+
         db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
         //noinspection SyntaxError
         db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
@@ -851,6 +889,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 94: {
                 upgradeFromVersion94(db);
+            }
+            case 95: {
+                upgradeFromVersion95(db);
             }
             break;
             default: {
@@ -1868,6 +1909,44 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE UNIQUE INDEX " + SeenPostsTable.INDEX_SEEN_KEY + " ON " + SeenPostsTable.TABLE_NAME + "("
                 + SeenPostsTable.COLUMN_POST_ID + ", "
                 + SeenPostsTable.COLUMN_SENDER_USER_ID
+                + ");");
+    }
+
+    private void upgradeFromVersion95(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + GalleryTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GalleryTable.TABLE_NAME + " ("
+                + GalleryTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GalleryTable.COLUMN_GALLERY_ITEM_URI + " INTEGER NOT NULL,"
+                + GalleryTable.COLUMN_TYPE + " TEXT NOT NULL,"
+                + GalleryTable.COLUMN_TIME_TAKEN + " INTEGER,"
+                + GalleryTable.COLUMN_DURATION + " INTEGER,"
+                + GalleryTable.COLUMN_LONGITUDE + " REAL,"
+                + GalleryTable.COLUMN_LATITUDE + " REAL,"
+                + GalleryTable.COLUMN_SUGGESTION_ID + " TEXT,"
+                + GalleryTable.COLUMN_IS_SUGGESTED + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + GalleryTable.INDEX_GALLERY_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + GalleryTable.INDEX_GALLERY_KEY + " ON " + GalleryTable.TABLE_NAME + "("
+                + GalleryTable.COLUMN_GALLERY_ITEM_URI
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + SuggestionsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + SuggestionsTable.TABLE_NAME + " ("
+                + SuggestionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + SuggestionsTable.COLUMN_SUGGESTION_ID + " TEXT NOT NULL,"
+                + SuggestionsTable.COLUMN_TIMESTAMP + " TEXT,"
+                + SuggestionsTable.COLUMN_SIZE + " INTEGER,"
+                + SuggestionsTable.COLUMN_LOCATION_NAME + " TEXT,"
+                + SuggestionsTable.COLUMN_LOCATION_ADDRESS + " TEXT,"
+                + SuggestionsTable.COLUMN_LATITUDE + " REAL,"
+                + SuggestionsTable.COLUMN_LONGITUDE + " REAL,"
+                + SuggestionsTable.COLUMN_IS_SCORED + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + SuggestionsTable.INDEX_SUGGESTION_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + SuggestionsTable.INDEX_SUGGESTION_KEY + " ON " + SuggestionsTable.TABLE_NAME + "("
+                + SuggestionsTable.COLUMN_SUGGESTION_ID
                 + ");");
     }
 

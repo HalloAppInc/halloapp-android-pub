@@ -30,6 +30,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
+import java.util.List;
 
 public class KatchupContentDbObserver implements ContentDb.Observer {
 
@@ -308,4 +309,9 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
     public void onLocalPostSeen(@NonNull String postId) {
 
     }
+
+   @Override
+   public void onSuggestedGalleryItemsAdded(@NonNull List<Long> suggestedGalleryItems) {
+
+   }
 }

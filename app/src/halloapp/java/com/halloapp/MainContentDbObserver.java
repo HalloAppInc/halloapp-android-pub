@@ -29,6 +29,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MainContentDbObserver implements ContentDb.Observer {
 
@@ -346,6 +347,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onLocalPostSeen(@NonNull String postId) {
+
+    }
+
+    @Override
+    public void onSuggestedGalleryItemsAdded(@NonNull List<Long> suggestedGalleryItems) {
 
     }
 }

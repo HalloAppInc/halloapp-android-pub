@@ -7,6 +7,8 @@
     <string name="title_camera">Camera</string>
     <string name="title_profile">Profile</string>
     <string name="title_groups">Groups</string>
+    <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
+    <string name="title_magic_post">Magic posts</string>
     <string name="comment">Comment</string>
     <string name="next">Next</string>
     <string name="next_lowercase">next</string>
@@ -32,6 +34,8 @@
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">Moments notifications</string>
     <string name="feed_notifications_channel_name">Feed notifications</string>
+    <!-- Name for notification channel for magic posts -->
+    <string name="magic_post_notifications_channel_name">Magic post notifications</string>
     <string name="message_notifications_channel_name">Message notifications</string>
     <string name="critical_notifications_channel_name">Critical app alerts</string>
     <!-- Name for notifications that come out as a broadcast from the server -->
@@ -2101,4 +2105,24 @@
     <string name="notification_friendship_model_title">New friendship model</string>
     <!-- Body of the new friendship model notification -->
     <string name="notification_friendship_model_body">Now you can search for people on HalloApp and add them as friends</string>
+    <!-- Title of the introduction for the magic posts tab -->
+    <string name="try_magic_posts">Try magic posts</string>
+    <!-- Body explaining what magic posts are and how they are generated -->
+    <string name="try_magic_post_explanation">When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing.</string>
+    <!-- Title of notification saying there is a new highlight (post) suggestion -->
+    <string name="notification_post_highlight_suggestion">New highlight</string>
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
+    <string name="notification_post_highlight_suggestion_body">%d photos taken</string>
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
+    <string name="notification_post_highlight_suggestion_with_location_body">%d photos taken at %s</string>
+    <!-- Title describing new post suggestions to create  -->
+    <string name="new_post_suggestions">New post suggestions</string>
+    <!-- Text stating there are no new post suggestions -->
+    <string name="no_post_suggestions">No post suggestions</string>
+    <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
+    <string name="suggestion_text_template">%d photos taken on %s</string>
+    <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
+    <string name="suggestion_text_with_location_template">%d photos taken at %s</string>
+    <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
+    <string name="selecting_best_photos">Selecting best photos…</string>
 </resources>

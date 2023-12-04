@@ -191,6 +191,14 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="RoundedAppearanceAlbumThumbnail" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">10dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
+    </style>
+
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Title</item>
         <item name="subtitleTextAppearance">@style/TextAppearance.Toolbar.Subtitle</item>

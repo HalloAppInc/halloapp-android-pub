@@ -138,6 +138,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         return intent;
     }
 
+    public static Intent pickForMagicPost(@NonNull Context context, @NonNull String id, int size) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_SUGGESTION_ID, id);
+        intent.putExtra(EXTRA_GALLERY_SIZE, size);
+        return intent;
+    }
+
     private static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
     private static final String EXTRA_CHAT_ID = "chat_id";
     private static final String EXTRA_GROUP_ID = "group_id";
@@ -154,11 +161,15 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     private static final String EXTRA_TEXT_DRAFT = "text_draft";
 
+    private static final String EXTRA_SUGGESTION_ID = "suggestion_id";
+    private static final String EXTRA_GALLERY_SIZE = "gallery_size";
+
     private static final boolean SHOW_VIDEOS_DEFAULT = true;
     private static final boolean SHOW_CAMERA_DEFAULT = false;
     private static final boolean ALLOW_MULTIPLE_DEFAULT = true;
     private static final int TITLE_ID_DEFAULT = R.string.new_post;
     private static final int CAMERA_PURPOSE_DEFAULT = CameraActivity.PURPOSE_COMPOSE;
+    private static final int GALLERY_SIZE_DEFAULT = 100;
 
     private static final int PICKER_PURPOSE_SEND = 1;
     private static final int PICKER_PURPOSE_AVATAR = 2;
@@ -198,6 +209,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final View actionsView = findViewById(R.id.actions);
         final View progressView = findViewById(R.id.progress);
         final View emptyView = findViewById(android.R.id.empty);
+        final View suggestionProgressView = findViewById(R.id.suggestion_progress);
         nextButton = actionsView.findViewById(R.id.next);
         nextButton.setEnabled(false);
 
@@ -223,6 +235,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         preview = new MediaPickerPreview(this);
 
         setupZoom(mediaView);
+        if (getIntent().getStringExtra(EXTRA_SUGGESTION_ID) != null) {
+            suggestionProgressView.setVisibility(View.VISIBLE);
+        }
 
         viewModel.getMediaList().observe(this, mediaItems -> {
             adapter.setPagedList(mediaItems);
@@ -230,6 +245,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
         });
         viewModel.getSelected().observe(this, selected -> {
+            suggestionProgressView.setVisibility(View.GONE);
             notifyAdapterOnSelection(selected);
             updateActionMode(selected);
             updateActions(!selected.isEmpty());
@@ -356,10 +372,25 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getIntent().getStringExtra(EXTRA_SUGGESTION_ID) == null) {
+            super.onBackPressed();
+        } else {
+            setResult(RESULT_CANCELED);
+            finish();
+        }
+    }
+
     private void requestPermissions() {
-        final String[] perms = Build.VERSION.SDK_INT >= 31
-                ? new String[] {Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}
-                : new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
+        final String[] perms;
+        if (Build.VERSION.SDK_INT >= 33) {
+            perms = new String[] {Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.ACCESS_MEDIA_LOCATION};
+        } else if (Build.VERSION.SDK_INT >= 29) {
+            perms = new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_MEDIA_LOCATION};
+        } else {
+            perms = new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
+        }
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
                     REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);
@@ -434,6 +465,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
         } else if (getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA) != null) {
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA));
+        } else if (getIntent().getStringExtra(EXTRA_SUGGESTION_ID) != null) {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getStringExtra(EXTRA_SUGGESTION_ID), getIntent().getIntExtra(EXTRA_GALLERY_SIZE, GALLERY_SIZE_DEFAULT));
         } else {
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos);
         }
