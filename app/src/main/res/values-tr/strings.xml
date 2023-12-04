@@ -1295,8 +1295,7 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
     <string name="edit_favorites_action">"Yakınlar listesini düzenle"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <!-- Fuzzy -->
-    <string name="favorites_nux_call_to_action">"Şimdi yakın kişilerin için bir liste yarat ve HalloApp gönderilerini yalnızca onlarla paylaş. "</string>
+    <string name="favorites_nux_call_to_action">"Şimdi yakın kişilerin için bir liste yarat ve HalloApp gönderilerini yalnızca onlarla paylaş."</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
     <!-- Fuzzy -->
@@ -1981,7 +1980,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="seen_by_post_expiration_my_contacts_with_duration">"Gönderin %s içinde kaybolacak"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
-    <string name="seen_by_post_expiration_favorites_with_duration">"Gönderin, yakınlarınla paylaşıldı ve %s içinde kaybolacak"</string>
+    <string name="seen_by_post_expiration_favorites_with_duration">"Gönderin, Yakınlarınla paylaşıldı ve %s içinde kaybolacak"</string>
 
     <!-- Shown below on seen by to explain that post will never expire -->
     <string name="seen_by_post_expiration_permanent">"Gönderin asla kaybolmayacak"</string>
@@ -2776,182 +2775,218 @@ Erişim iznini değiştirmek için uygulama ayarları ekranını aç"</string>
     <string name="phone_description">"hesabını doğrulamak için. Numaranı yalnızca sen görebilirsin."</string>
 
     <!-- Message menu option to copy the selected message -->
-    <string name="copy">"Copy"</string>
+    <string name="copy">"Kopyala"</string>
 
     <!-- text show above name and username entry field -->
-    <string name="name_username_entry_title">"Enter your name and select a username"</string>
+    <string name="name_username_entry_title">"Adını gir ve bir kullanıcı adı seç"</string>
 
     <!-- text hint for username entry field -->
-    <string name="username_hint">"username"</string>
+    <string name="username_hint">"Kullanıcı adı"</string>
     <string name="at_symbol">"@"</string>
 
     <!-- Title of a popup window about a new friendship model feature -->
-    <string name="friendship_model_title">"New friendship model on HalloApp"</string>
+    <string name="friendship_model_title">"HalloApp'te yeni arkadaşlık modeli"</string>
 
     <!-- Text in a popup window explaining a new friendship model feature and prompt for users to choose a username -->
-    <string name="friendship_model_description">"Now you can search for people on HalloApp using their name or @username. Your existing HalloApp contacts now become your friends. You can remove existing contacts from friends at any time."</string>
+    <string name="friendship_model_description">"Artık HalloApp'teki kişileri, adlarını veya @kullanıcıadı yazarak aratabilirsin. Mevcut HalloApp kişilerin, arkadaşın oluyor. Kişilerini arkadaşlarından istediğin zaman silebilirsin. "</string>
 
     <!-- Button text to dismiss new friendship model popup -->
-    <string name="remind_later">"Remind later"</string>
+    <string name="remind_later">"Daha sonra hatırlat"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="friends">"Friends"</string>
+    <string name="friends">"Arkadaşlar"</string>
 
     <!-- Message displayed to show all outgoing sent friend requests -->
-    <string name="see_outgoing_requests">"See sent requests"</string>
+    <string name="see_outgoing_requests">"Gönderilen istekleri gör"</string>
 
     <!-- Tab to show suggested and current friend requests -->
-    <string name="requests">"Requests (%d)"</string>
+    <string name="requests">"İstekler (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
-    <string name="confirm_friend">"Confirm"</string>
+    <string name="confirm_friend">"Kabul et"</string>
 
     <!-- Button text to send a friend request to someone -->
-    <string name="add_friend">"Add friend"</string>
+    <string name="add_friend">"Arkadaşı ekle"</string>
 
     <!-- Section title showing current pending friend requests -->
-    <string name="friend_requests">"Friend requests"</string>
+    <string name="friend_requests">"Arkadaşlık istekleri"</string>
 
     <!-- Section title of people to invite to join Halloapp -->
-    <string name="invite_friends_on_halloapp_title">"Invite friends on Halloapp"</string>
+    <string name="invite_friends_on_halloapp_title">"Arkadaşlarını HalloApp'e davet et"</string>
 
     <!-- Section title for friend suggestions from your contact list -->
-    <string name="from_contacts_list">"From your contact list"</string>
+    <string name="from_contacts_list">"Kişilerinden"</string>
 
     <!-- Section title for friend suggestions -->
-    <string name="friend_suggestions">"Friend suggestions"</string>
+    <string name="friend_suggestions">"Arkadaş önerileri"</string>
 
     <!-- Section title showing your current friends -->
-    <string name="my_friends_on_halloapp">"My friends on HalloApp"</string>
+    <string name="my_friends_on_halloapp">"HalloApp'teki arkadaşlarım"</string>
 
     <!-- Search box hint text for HalloApp user search -->
-    <string name="search_halloapp_users">"Search HalloApp users"</string>
+    <string name="search_halloapp_users">"HalloApp kullanıcılarını ara"</string>
 
     <!-- Section title showing HalloApp friends after searching -->
-    <string name="halloapp_friends">"My HalloApp friends"</string>
+    <string name="halloapp_friends">"HalloApp arkadaşlarım"</string>
 
     <!-- Section title showing HalloApp users after searching -->
-    <string name="halloapp_users">"HalloApp users"</string>
+    <string name="halloapp_users">"HalloApp kullanıcıları"</string>
 
     <!-- Message displayed to show all pending friend requests -->
-    <string name="see_all_requests">"See all requests"</string>
+    <string name="see_all_requests">"Bütün istekleri gör"</string>
 
     <!-- Shown when user chooses to remove a friend; %s is replaced with the name of the friend to be removed -->
-    <string name="remove_friend_confirmation">"Remove %s from your friends?"</string>
+    <string name="remove_friend_confirmation">"%s kişisini çıkar?"</string>
 
     <!-- Explains the consequences of removing a friend where %s is the name of the person -->
-    <string name="remove_friend_confirmation_consequences">"%s and you will no longer be able to see each other's posts."</string>
+    <string name="remove_friend_confirmation_consequences">"%s ve sen, artık birbirinizin gönderilerini göremeyeceksiniz."</string>
 
     <!-- Menu item to add someone to your favorites list -->
-    <string name="add_to_favorites">"Add to favorites"</string>
+    <string name="add_to_favorites">"Yakınlara ekle"</string>
 
     <!-- Menu item to remove someone as a friend -->
-    <string name="remove_friend">"Remove friend"</string>
+    <string name="remove_friend">"Arkadaşı sil"</string>
 
     <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
-    <string name="outgoing_sent_friend_request">"You have sent %s a friend request"</string>
+    <string name="outgoing_sent_friend_request">"%s arkadaşlık isteği gönderdin"</string>
 
     <!-- Message under %s's profile if they sent you a friend request where %s is the name of the person -->
-    <string name="incoming_sent_friend_request">"%s has sent you a friend request"</string>
+    <string name="incoming_sent_friend_request">"%s, sana arkadaşlık isteği gönderdi"</string>
 
     <!-- Button to reject a friend request -->
-    <string name="ignore">"Ignore"</string>
+    <string name="ignore">"Görmezden gel"</string>
 
     <!-- Title showing all requests a user received -->
-    <string name="all_requests">"All requests"</string>
+    <string name="all_requests">"İstekler"</string>
 
     <!-- Section title showing current requests received -->
-    <string name="requests_received">"Requests received"</string>
+    <string name="requests_received">"Alınan istekler"</string>
 
     <!-- Section title showing current requests sent -->
-    <string name="requests_sent">"Requests sent"</string>
+    <string name="requests_sent">"Gönderilen istekler"</string>
 
     <!-- Warning message shown when we were unable to remove %s as a friend and to try later where %s is the name of the person -->
-    <string name="removing_friend_failed_check_internet">"Couldn't remove %s as a friend. Check your internet and try again."</string>
+    <string name="removing_friend_failed_check_internet">"%s, arkadaşlıktan çıkarılamadı. İnternet bağlantını kontrol et ve yeniden dene."</string>
 
     <!-- Confirmation message that %s was removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_successful">"Removed %s"</string>
+    <string name="removing_friend_successful">"%s, çıkarıldı"</string>
 
     <!-- Message shown when %s is in the process of being removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_in_progress">"Removing %s…"</string>
+    <string name="removing_friend_in_progress">"%s çıkarılıyor…"</string>
 
     <!-- Error message when we are unable to send a friend request and to try again later -->
-    <string name="error_send_friend_request">"Unable to send friend request, please try again later"</string>
+    <string name="error_send_friend_request">"Arkadaşlık isteği gönderilemedi; daha sonra tekrar dene"</string>
 
     <!-- Error message when we are unable to cancel a friend request and to try again later -->
-    <string name="error_withdraw_friend_request">"Unable to cancel friend request, please try again later"</string>
+    <string name="error_withdraw_friend_request">"Arkadaşlık isteği iptal edilemedi; daha sonra tekrar dene"</string>
 
     <!-- Error message when we are unable to remove someone as a friend and to try again later -->
-    <string name="error_remove_friend">"Unable to remove friend, please try again later"</string>
+    <string name="error_remove_friend">"Arkadaş silinemiyor; daha sonra tekrar dene"</string>
 
     <!-- Error message when we are unable to reject a friend request and to try again later -->
-    <string name="error_reject_friend_request">"Unable to reject friend request, please try again later"</string>
+    <string name="error_reject_friend_request">"İstek reddedilemiyor; daha sonra tekrar dene"</string>
 
     <!-- Error message when we are unable to accept a friend request and to try again later -->
-    <string name="error_accept_friend_request">"Unable to accept friend request, please try again later"</string>
+    <string name="error_accept_friend_request">"İstek kabul edilemiyor; daha sonra tekrar dene."</string>
 
     <!-- Error message when we are unable to block contact and to try again later -->
-    <string name="error_block_contact">"Unable to block contact, please try again later"</string>
+    <string name="error_block_contact">"Kişi engellenemiyor; daha sonra tekrar dene."</string>
 
     <!-- Button text telling users to add selected users as friends -->
-    <string name="add_friends">"Add friends"</string>
+    <string name="add_friends">"Arkadaşlara ekle"</string>
 
     <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
     <plurals name="friend_connections_on_hallo">
-        <item quantity="one">"%d person from your contacts is on HalloApp. Add them as a friend?"</item>
-        <item quantity="other">"%d person from your contacts is on HalloApp. Add them as a friend?"</item>
+        <item quantity="one">"Listendeki %d kişi HalloApp'te. Onları arkadaş olarak eklemek ister misin?"</item>
+        <item quantity="other">"Listendeki %d kişi HalloApp'te. Onları arkadaş olarak eklemek ister misin?"</item>
     </plurals>
 
     <!-- Text telling a user that after these contacts are friends, they can see your posts -->
-    <string name="friend_connections_on_hallo_explanation">"Contacts added as friends will be able to see your posts shared on HalloApp."</string>
+    <string name="friend_connections_on_hallo_explanation">"Arkadaş olarak eklenenler, HalloApp'te paylaştıklarını görebilir. "</string>
 
     <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
     <plurals name="sent_friend_requests">
-        <item quantity="one">"Sending a friend request to %d person"</item>
-        <item quantity="other">"Sending a friend request to %d person"</item>
+        <item quantity="one">"%d kişiye arkadaşlık isteği gönderiliyor"</item>
+        <item quantity="other">"%d kişiye arkadaşlık isteği gönderiliyor"</item>
     </plurals>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for their posts -->
-    <string name="friend_favorites_explanation">"This post is only shared with the friends you added to Favorites. You can edit your Favorites list at any time."</string>
+    <string name="friend_favorites_explanation">"Bu gönderi, yalnızca Yakınlar listendekilerle paylaşılır. Yakınlar listeni istediğin zaman düzenleyebilirsin."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="friend_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="friend_favorites_explanation_others">"Bu gönderi sınırlı bir kitleyle paylaşılmıştır. Bu kitleyi gizlilik ayarlarından istediğin zaman düzenleyebilirsin."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="friend_favorites_explanation_others_with_name">"%s shared this post with friends on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+    <string name="friend_favorites_explanation_others_with_name">"%s, bunu yalnızca Yakınlar listesindekilerle paylaştı. Yakınlar listeni istediğin zaman oluşturabilir ve düzenleyebilirsin."</string>
 
     <!-- Message alerting the user that the person messaging them is not a friend -->
-    <string name="not_friend_alert">"This person is not a friend"</string>
+    <string name="not_friend_alert">"Bu kişi arkadaşın değil."</string>
 
     <!-- Button text telling users to add the user as a friend -->
-    <string name="add_as_friend">"Add as a friend"</string>
+    <string name="add_as_friend">"Arkadaş olarak ekle"</string>
 
     <!-- Message when a friend request was successfully sent -->
-    <string name="send_friend_request_successful">"Successfully sent friend request"</string>
+    <string name="send_friend_request_successful">"İstek başarıyla gönderildi."</string>
 
     <!-- Label for icon that indicates all the user's friends with their total number in parentheses -->
-    <string name="compact_share_my_friends">"My friends (%d)"</string>
+    <string name="compact_share_my_friends">"Arkadaşlarım (%d)"</string>
 
     <!-- Title of section for recent friends -->
     <string name="recent_friends">"Recent friends"</string>
 
     <!-- Text shown in activity center telling users when they received a new friend request. %s is the person who sent the request -->
-    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; sent you a friend request! &lt;b&gt;&lt;a href=\"view-friends\"&gt;View&lt;/a&gt;&lt;/b&gt;"</string>
+    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt;, sana arkadaşlık isteği gönderdi! &lt;b&gt;&lt;a href=\"view-friends\"&gt;View&lt;/a&gt;&lt;/b&gt;"</string>
 
     <!-- Text shown in activity center telling users when they have a new friend. %s is the name of the friend -->
-    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; is now your friend"</string>
+    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt;, artık arkadaşın"</string>
 
     <!-- Tab to show suggested and current friend requests when there are no current requests -->
-    <string name="requests_zero">"Requests"</string>
+    <string name="requests_zero">"İstekler"</string>
 
     <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
-    <string name="error_reject_friend_suggestion">"Unable to reject friend suggestion, please try again later"</string>
+    <string name="error_reject_friend_suggestion">"İstek reddedilemiyor; daha sonra tekrar dene"</string>
 
     <!-- Title of the new friendship model notification -->
-    <string name="notification_friendship_model_title">"New friendship model"</string>
+    <string name="notification_friendship_model_title">"Yeni arkadaşlık modeli"</string>
 
     <!-- Body of the new friendship model notification -->
-    <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+    <string name="notification_friendship_model_body">"Artık HalloApp'teki kişilerini aratabilir ve onları arkadaş olarak ekleyebilirsin"</string>
+
+    <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
+    <string name="title_magic_post">"Magic posts"</string>
+
+    <!-- Name for notification channel for magic posts -->
+    <string name="magic_post_notifications_channel_name">"Magic post notifications"</string>
+
+    <!-- Title of the introduction for the magic posts tab -->
+    <string name="try_magic_posts">"Try magic posts"</string>
+
+    <!-- Body explaining what magic posts are and how they are generated -->
+    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+
+    <!-- Title of notification saying there is a new highlight (post) suggestion -->
+    <string name="notification_post_highlight_suggestion">"New highlight"</string>
+
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
+    <string name="notification_post_highlight_suggestion_body">"%d photos taken"</string>
+
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
+    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d photos taken at %2$s"</string>
+
+    <!-- Title describing new post suggestions to create -->
+    <string name="new_post_suggestions">"New post suggestions"</string>
+
+    <!-- Text stating there are no new post suggestions -->
+    <string name="no_post_suggestions">"No post suggestions"</string>
+
+    <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
+    <string name="suggestion_text_template">"%1$d photos taken on %2$s"</string>
+
+    <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
+    <string name="suggestion_text_with_location_template">"%1$d photos taken at %2$s"</string>
+
+    <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
+    <string name="selecting_best_photos">"Selecting best photos…"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;%s kişisini rehberine eklemek için dokun&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Bu gönderi yalnızca Yakınlar listendekilerle paylaşılıyor. Yakınlar listeni istediğinde yeniden düzenleyebilirsin. "</string>
     <string name="contact_favorites_explanation_others">"Bu gönderi sınırlı bir kitleyle paylaşılmıştır. Bu kitleyi gizlilik ayarlarından istediğin zaman düzenleyebilirsin. "</string>

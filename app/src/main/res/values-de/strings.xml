@@ -53,13 +53,9 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#127881;"</string>
-
-    <!-- Fuzzy -->
-    <string name="posts_empty">"Hier findest du deine Beiträge"</string>
+    <string name="posts_empty">"Beiträge werden hier angezeigt"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
-
-    <!-- Fuzzy -->
-    <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
+    <string name="home_page_empty">"Beiträge deiner Freunde werden hier angezeigt"</string>
     <string name="chats_page_empty">"Kontakte und Nachrichten erscheinen hier"</string>
     <string name="chats_search_empty">"Keine Chats gefunden für '%s'"</string>
     <string name="groups_page_empty">"Deine Gruppen findest du hier"</string>
@@ -80,12 +76,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
-
-    <!-- Fuzzy -->
-    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
-
-    <!-- Fuzzy -->
-    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
+    <string name="contacts_permission_rationale">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakte, damit wir dich mit deinen Freunden und deiner Familie vernetzen können"</string>
+    <string name="contacts_permission_rationale_denied">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakte, damit wir dich mit deinen Freunden und deiner Familie vernetzen können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -99,8 +91,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="retry">"Erneut versuchen"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakte, damit wir dich mit deinen Freunden und deiner Familie vernetzen und die Telefonnummern synchronisieren können."</string>
+    <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakte, damit wir dich mit deinen Freunden und deiner Familie vernetzen und die Telefonnummern in deinem Adressbuch synchronisieren können."</string>
     <string name="failed_to_initialize">"Initialisierung fehlgeschlagen"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
@@ -117,7 +108,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation? Pls. provide more details -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; hat dich in einem Kommentar zu &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag erwähnt"</string>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere Priorität"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Darüber hinaus werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Es werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -128,26 +119,18 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="send_logs">"Feedback und Logs teilen"</string>
     <string name="terms_of_service">"Nutzungsbedingungen"</string>
     <string name="privacy_policy">"Datenschutzrichtlinie"</string>
-
-    <!-- Fuzzy -->
-    <string name="settings_block_list">"Geblockte Kontakte"</string>
+    <string name="settings_block_list">"Geblockte Freunde"</string>
     <string name="settings_feed_privacy">"Beiträge"</string>
     <string name="settings_privacy">"Privatsphäre"</string>
-
-    <!-- Fuzzy -->
     <plurals name="contact_selection_subtitle">
-        <item quantity="one">"%d Kontakt ausgewählt"</item>
-        <item quantity="other">"%d Kontakte ausgewählt"</item>
+        <item quantity="one">"%d Freund:in ausgewählt"</item>
+        <item quantity="other">"%d Freunde ausgewählt"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"Du kannst maximal %d Kontakt auswählen"</item>
-        <item quantity="other">"Du kannst maximal %d Kontakte auswählen"</item>
+        <item quantity="one">"Du kannst maximal %d Freund auswählen"</item>
+        <item quantity="other">"Du kannst maximal %d Freunde auswählen"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="no_contacts_selected_subtitle">"Keine Kontakte ausgewählt"</string>
+    <string name="no_contacts_selected_subtitle">"Keine Freunde ausgewählt"</string>
     <string name="help">"Hilfe"</string>
     <string name="about">"Über HalloApp"</string>
     <string name="notify_posts">"Beiträge"</string>
@@ -162,7 +145,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
     <!-- in version 0.153 when no one saw post yet -  header still reads "Seen by" in English -->
     <string name="seen_by">"Gesehen von"</string>
-    <string name="empty_viewed_by">"Noch hat keiner deinen Beitrag gesehen"</string>
+    <string name="empty_viewed_by">"Dein Beitrag wurde noch nicht angesehen"</string>
     <string name="options">"Optionen"</string>
     <string name="block">"Blocken"</string>
     <string name="play">"Wiedergabe"</string>
@@ -269,9 +252,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="day_of_week_at_time">"%1$s um %2$s"</string>
     <string name="unknown_contact">"Kontakt unbekannt"</string>
     <string name="select_contact">"Neue Nachricht"</string>
-
-    <!-- Fuzzy -->
-    <string name="search_contacts">"Kontakte durchsuchen"</string>
+    <string name="search_contacts">"Freunde durchsuchen"</string>
     <string name="search">"Suchen"</string>
     <string name="contact_search_empty">"Nichts gefunden für '%s'"</string>
     <string name="action_save">"Speichern"</string>
@@ -284,7 +265,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <!-- Can I get a screenshot pls -->
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"In Bearbeitung"</string>
-    <string name="failed_update_profile">"Profil kann nicht aktualisiert werden, versuche es später noch einmal"</string>
+    <string name="failed_update_profile">"Profil nicht aktualisiert, später erneut versuchen"</string>
     <string name="profile_updated">"Profil wurde aktualisiert"</string>
     <string name="flip">"Spiegeln"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
@@ -309,15 +290,9 @@ Version: %2$s
     <string name="picker_title_block_user">"Person blocken"</string>
     <string name="cancel">"Abbrechen"</string>
     <string name="group_subtitle">"Für Gruppen-Info hier tippen"</string>
-
-    <!-- Fuzzy -->
-    <string name="empty_block_list">"Keine geblockten Kontakte"</string>
-
-    <!-- Fuzzy -->
-    <string name="block_notification">"Du hast diesen Kontakt geblockt. Zum Entblocken hier tippen"</string>
-
-    <!-- Fuzzy -->
-    <string name="unblock_notification">"Du hast diesen Kontakt entblockt"</string>
+    <string name="empty_block_list">"Keine geblockten Freunde"</string>
+    <string name="block_notification">"Du hast diesen Freund geblockt. Zum Entblocken hier tippen"</string>
+    <string name="unblock_notification">"Du hast diesen Freund entblockt"</string>
     <string name="system_message_group_created">"%s hat diese Gruppe gegründet"</string>
     <string name="system_message_group_created_by_you">"Du hast diese Gruppe gegründet"</string>
     <string name="system_message_members_added">"%1$s hat %2$s hinzugefügt"</string>
@@ -366,18 +341,14 @@ Version: %2$s
     <string name="contact_picker_feed_except_title">"Beiträge ausblenden für…"</string>
     <string name="contact_picker_feed_only_title">"Beiträge teilen mit…"</string>
     <string name="setting_feed_privacy_title">"Wer kann meine Beiträge sehen"</string>
-
-    <!-- Fuzzy -->
-    <string name="setting_feed_all">"Meine Kontakte"</string>
+    <string name="setting_feed_all">"Meine Freunde"</string>
     <string name="setting_feed_only">"Nur teilen mit…"</string>
-
-    <!-- Fuzzy -->
-    <string name="setting_feed_except">"Meine Kontakte außer …"</string>
+    <string name="setting_feed_except">"Meine Freunde außer …"</string>
     <string name="feed_privacy_fail_to_load">"Privatsphäre-Einstellungen können nicht geladen werden"</string>
     <string name="feed_privacy_update_success">"Einstellung erfolgreich aktualisiert"</string>
     <string name="feed_privacy_update_failure">"Einstellung kann nicht aktualisiert werden"</string>
     <string name="invite_failed_internet">"Einladung kann nicht gesendet werden. Überprüfe dein Internet und versuche es noch einmal"</string>
-    <string name="invite_failed_no_invites">"Sorry, du hast keine weiteren Einladungen mehr. Versuche es später noch einmal"</string>
+    <string name="invite_failed_no_invites">"Du hast keine weiteren Einladungen mehr, später erneut versuchen"</string>
     <string name="invite_failed_invalid_number">"Diese Handynummer ist ungültig"</string>
     <string name="invite_failed_existing_user">"Dein Kontakt nutzt bereits HalloApp!"</string>
     <string name="invite_failed_unknown">"Einladung kann nicht gesendet werden"</string>
@@ -397,26 +368,26 @@ Version: %2$s
     <string name="members_header">"Mitglieder (%s)"</string>
     <string name="add_members">"Mitglieder hinzufügen"</string>
     <string name="add_members_in_progress">"Mitglieder werden hinzugefügt…"</string>
-    <string name="failed_add_members">"Mitglieder können nicht hinzugefügt werden, versuche es später noch einmal"</string>
+    <string name="failed_add_members">"Mitglieder können nicht hinzugefügt werden, später erneut versuchen"</string>
     <string name="create_group_in_progress">"Erstellung der Gruppe %s…"</string>
     <string name="new_group_title">"Gruppennamen erstellen"</string>
     <string name="group_picker_title">"Neue Gruppe"</string>
     <string name="button_create_group">"Erstellen"</string>
     <string name="group_name_hint">"Gruppenname"</string>
-    <string name="failed_create_group">"Gruppe kann nicht erstellt werden, versuche es später noch einmal"</string>
+    <string name="failed_create_group">"Gruppe kann nicht erstellt werden, später erneut versuchen"</string>
 
     <!-- Shown in options menu to remove a member of group -->
     <string name="group_remove_member">"Aus Gruppe entfernen"</string>
     <string name="group_promote_to_admin">"Zum Admin machen"</string>
     <string name="promote_admin_in_progress">"Admin-Status wird geändert…"</string>
-    <string name="failed_promote_admin">"Admin-Status kann nicht geändert werden, probiere es später noch einmal"</string>
+    <string name="failed_promote_admin">"Admin-Status kann nicht geändert werden, später erneut versuchen"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
     <string name="group_demote_from_admin">"Admin-Status entfernen"</string>
     <string name="demote_admin_in_progress">"Admin-Status wird entfernt…"</string>
-    <string name="failed_demote_admin">"Admin-Status kann nicht entfernt werden, probiere es später noch einmal"</string>
+    <string name="failed_demote_admin">"Admin-Status kann nicht entfernt werden, später erneut versuchen"</string>
     <string name="remove_member_in_progress">"Mitglied wird entfernt…"</string>
-    <string name="failed_remove_member">"Das Mitglied kann nicht entfernt werden, probiere es später noch einmal"</string>
+    <string name="failed_remove_member">"Das Mitglied kann nicht entfernt werden, später erneut versuchen"</string>
     <string name="leave_group">"Gruppe verlassen"</string>
     <plurals name="leave_group_plural">
         <item quantity="one">"Gruppe verlassen"</item>
@@ -432,16 +403,14 @@ Version: %2$s
         <item quantity="one">"Gruppe wird verlassen…"</item>
         <item quantity="other">"Gruppen werden verlassen…"</item>
     </plurals>
-    <string name="failed_leave_group">"Gruppe kann nicht verlassen werden, versuche es später noch einmal"</string>
+    <string name="failed_leave_group">"Gruppe nicht verlassen, später erneut versuchen"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d Kontakt auf HalloApp"</item>
         <item quantity="other">"%d Kontakte auf HalloApp"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="settings_block_list_summary">
-        <item quantity="one">"%d Kontakt"</item>
-        <item quantity="other">"%d Kontakte"</item>
+        <item quantity="one">"%d Freund"</item>
+        <item quantity="other">"%d Freunde"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"Keine"</string>
     <string name="settings_feed_contacts_summary">"Meine Kontakte"</string>
@@ -453,9 +422,7 @@ Version: %2$s
         <item quantity="one">"%d Kontakt ausgewählt"</item>
         <item quantity="other">"%d Kontakte ausgewählt"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="settings_feed_selected_empty">"Keine Kontakte ausgewählt"</string>
+    <string name="settings_feed_selected_empty">"Keine Freunde ausgewählt"</string>
     <string name="settings_version_footer">"HalloApp Version %s"</string>
     <string name="connectivity_info_airplane_mode">"Flugmodus ein"</string>
     <string name="connectivity_info_not_connected">"Kein Netz"</string>
@@ -510,7 +477,7 @@ Version: %2$s
     <string name="invite_link_loading">"Gruppe wird geladen…"</string>
     <string name="invite_link_copied">"Link wurde kopiert!"</string>
     <string name="invite_link_title">"Einladungs-Link"</string>
-    <string name="invite_link_summary">"HalloApp-Nutzer können diesen Link verwenden, um dieser Gruppe beizutreten. Alle Nutzer, die über den Link beitreten, werden keine Inhalte von vor ihrem Beitritt sehen."</string>
+    <string name="invite_link_summary">"Alle auf HalloApp können diesen Link verwenden, um dieser Gruppe beizutreten. User, die über den Link beitreten, werden keine Inhalte von vor ihrem Beitritt sehen."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Beitritt zur Gruppe nicht möglich"</string>
@@ -673,7 +640,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="data_available_at">"Daten sind verfügbar am %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Lade eine Kopie aller deiner Nutzerdaten herunter, die auf den Servern von HalloApp gespeichert sind. Die Kopie enthält keine Nachrichten- oder Beitragsinhalte."</string>
+    <string name="export_data_explanation">"Lade eine Kopie aller deiner Benutzerdaten herunter, die auf den Servern von HalloApp gespeichert sind. Die Kopie enthält keine Nachrichten- oder Beitragsinhalte."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Anfrage ist fehlgeschlagen"</string>
@@ -691,7 +658,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="verify_safety_number">"Sicherheitsnummer verifizieren"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"Du erhälst Updates von deinen Freunden und deiner Familie, indem du den Zugriff auf deine Kontakte aktivierst"</string>
+    <string name="enable_contacts_rationale">"Erhalte Updates von Freunden und deiner Familie, indem du den Zugriff auf deine Kontakte erlaubst"</string>
 
     <!-- Button that takes users to system settings -->
     <string name="go_to_settings">"Zu meinen Einstellungen"</string>
@@ -895,7 +862,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="view_group_info">"Gruppen-Info ansehen"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Gruppe kann nicht aktualisiert werden, versuche es später noch einmal"</string>
+    <string name="failed_update_group">"Gruppe nicht aktualisiert, später erneut versuchen"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
     <string name="group_updated">"Gruppe aktualisiert"</string>
@@ -1332,20 +1299,16 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="edit_favorites_action">"Favoriten bearbeiten"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <!-- Fuzzy -->
-    <string name="favorites_nux_call_to_action">"Du kannst nun eine Favoritenliste erstellen und deine HalloApp-Beiträge nur mit deinen Favoriten teilen."</string>
+    <string name="favorites_nux_call_to_action">"Erstelle eine Liste mit deinen Lieblingsfreunden und teile deine HalloApp-Posts nur mit ihnen"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine zukünftigen Beiträge sehen"</string>
+    <string name="my_contacts_disclaimer">"Kontakte, die als Freunde hinzugefügt wurden, können deine auf HalloApp geteilten Beiträge sehen."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_title">"Meine Kontakte"</string>
+    <string name="my_contacts_title">"Meine Freunde"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <!-- Fuzzy -->
-    <string name="my_ha_contacts">"Meine HalloApp-Kontakte"</string>
+    <string name="my_ha_contacts">"Meine HalloApp-Freunde"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
     <string name="setting_feed_privacy_groups_section_title">"Nur mit einer Gruppe teilen"</string>
@@ -1434,8 +1397,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und wird für 30 Tage angezeigt."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt. Momente werden 24 Stunden angezeigt."</string>
+    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Freunden geteilt. Momente werden 24 Stunden angezeigt."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Ein neuer Moment von %s"</string>
@@ -1459,8 +1421,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Dieser Moment wird nicht mehr angezeigt"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Um Momente für 24 Stunden zu sehen, teile deine eigenen"</string>
+    <string name="share_moment_subtitle">"Momente laufen nach 24 Stunden ab"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Trennen der Verbindung…"</string>
@@ -1518,7 +1479,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="notify_moments">"Momente"</string>
 
     <!-- Replaces the name on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_name">"Geblockter Nutzer"</string>
+    <string name="blocked_user_hidden_name">"Geblockter User"</string>
 
     <!-- Shown after the name on a blocked user's visible comment -->
     <string name="blocked_user_visible_name">"Geblockt"</string>
@@ -1718,14 +1679,13 @@ Netzwerk"</string>
     <string name="home_onboarding_nux_header">"Willkommen bei HalloApp! Dein privates soziales Netzwerk"</string>
 
     <!-- Brief explanation of what HalloApp is for -->
-    <string name="home_onboarding_nux_text">"Ein privater digitaler Raum ohne Influencer und ohne Werbung. Nur du und die Menschen, die dir wichtig sind"</string>
+    <string name="home_onboarding_nux_text">"Ein privater digitaler Raum ohne Influencer und Werbung - nur du und die Menschen, die dir wichtig sind."</string>
 
     <!-- Text shown as title above see network section -->
     <string name="home_onboarding_nux_post_visibility_header">"Wer kann meine Beiträge sehen?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <!-- Fuzzy -->
-    <string name="home_onboarding_nux_post_visibility_text">"Sieh nach wer schon auf HalloApp ist und lade Freunde und Familie ein"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Deine Freunde auf HalloApp können deine Beiträge sehen. Füge Freunde aus deinem Netzwerk hinzu und verwalte Freundschaftsanfragen."</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
     <string name="see_network_action">"Mein Netzwerk anzeigen"</string>
@@ -1740,15 +1700,13 @@ Netzwerk"</string>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
-    <!-- Fuzzy -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"Dieser Kontakt kann deine Beiträge sehen, die mit allen HalloApp-Kontakten geteilt werden"</item>
-        <item quantity="other">"Diese Kontakte können deine Beiträge sehen, die mit allen HalloApp-Kontakten geteilt werden"</item>
+        <item quantity="one">"Dieser/diese Freund:in kann deine Beiträge sehen, die du mit allen HalloApp-Freunden geteilt hast"</item>
+        <item quantity="other">"Diese Freunde können deine Beiträge sehen, die du mit allen HalloApp-Freunden geteilt hast"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <!-- Fuzzy -->
-    <string name="no_connections_on_hallo_explanation">"Deine Telefonkontakte, die auf HalloApp registriert sind, werden hier automatisch angezeigt."</string>
+    <string name="no_connections_on_hallo_explanation">"Deine Freunde auf HalloApp werden hier automatisch angezeigt."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
     <string name="first_time_post_content">"Hallo! Ich bin auf HalloApp"</string>
@@ -1784,7 +1742,7 @@ Netzwerk"</string>
     <string name="content_expiration_title">"Ablaufzeit der Inhalte"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
-    <string name="empty_moment_viewed_by">"Bislang hat keiner deinen Moment gesehen"</string>
+    <string name="empty_moment_viewed_by">"Dein Moment wurde noch nicht angesehen"</string>
 
     <!-- Label displaying the time when a post will expire -->
     <string name="expires_on">"Läuft ab am %s"</string>
@@ -1829,8 +1787,7 @@ Netzwerk"</string>
     <string name="compose_share_recents_header">"Zuletzt kontaktiert"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <!-- Fuzzy -->
-    <string name="compose_share_search_contacts">"Kontakte durchsuchen"</string>
+    <string name="compose_share_search_contacts">"Freunde durchsuchen"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
@@ -1848,12 +1805,10 @@ Netzwerk"</string>
     <string name="send_to">"Senden an…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <!-- Fuzzy -->
-    <string name="home_contact_permissions_banner">"Um dich mit deinen Freunden und deiner Familie zu verbinden und deren Beiträge zu sehen, erlaube HalloApp den Zugriff auf deine Kontakte"</string>
+    <string name="home_contact_permissions_banner">"Erlaube HalloApp den Zugriff auf deine Kontakte, um besser mit deinen Freunden und deiner Familie in Kontakt zu treten und deren Beiträge zu sehen"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <!-- Fuzzy -->
-    <string name="new_post_contact_permissions_banner">"Um Beiträge mit Freunden und deiner Familie zu teilen, erlaube HalloApp den Zugriff auf deine Kontakte"</string>
+    <string name="new_post_contact_permissions_banner">"Erlaube HalloApp den Zugriff auf deine Kontakte, um Beiträge besser mit Freunden und deiner Familie zu teilen"</string>
 
     <!-- title when asking for permissions for groups -->
     <string name="allow_contacts_groups">"Um Teilnehmer zur Gruppe hinzuzufügen, erlaube den Zugriff auf deine Kontakte"</string>
@@ -1865,7 +1820,7 @@ Netzwerk"</string>
     <string name="allow_contacts">"Zugriff auf Kontakte erlauben"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
-    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Herzlich willkommen! Hier siehst du Benachrichtigungen über die Beiträge und Kommentare deiner Freunde"</string>
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Herzlich willkommen! Hier wirst du über die Beiträge und Kommentare deiner Freunde benachrichtigt"</string>
 
     <!-- title when asking for permissions for activity center -->
     <string name="allow_contacts_activity">"Um Updates von deinen Freunden zu erhalten, erlaube den Zugriff auf deine Kontakte"</string>
@@ -1886,19 +1841,19 @@ Netzwerk"</string>
     <string name="report_post_failed">"Beitrag kann nicht gemeldet werden"</string>
 
     <!-- Menu option to report a user for objectionable content -->
-    <string name="report_user">"Nutzer melden"</string>
+    <string name="report_user">"User melden"</string>
 
     <!-- Dialog message confirming the user wants to report the user -->
-    <string name="report_user_dialog_message">"Möchtest du diesen Nutzer melden? Gemeldete Nutzer werden zu deiner Blockliste hinzugefügt."</string>
+    <string name="report_user_dialog_message">"Möchtest du diesen User melden? Gemeldete User werden zu deiner Blockliste hinzugefügt."</string>
 
     <!-- Progress dialog message while reporting the user -->
-    <string name="report_user_in_progress">"Melden des Nutzers…"</string>
+    <string name="report_user_in_progress">"Melden des Users…"</string>
 
     <!-- Info message when reporting the user is complete -->
-    <string name="report_user_succeeded">"Nutzer wurde gemeldet"</string>
+    <string name="report_user_succeeded">"User wurde gemeldet"</string>
 
     <!-- Error message shown when reporting the user fails -->
-    <string name="report_user_failed">"Nutzer kann nicht gemeldet werden"</string>
+    <string name="report_user_failed">"User kann nicht gemeldet werden"</string>
 
     <!-- menu option to create a new group chat -->
     <string name="new_group_chat">"Neuer Gruppen-Chat"</string>
@@ -1907,8 +1862,7 @@ Netzwerk"</string>
     <string name="moment_sharing_with">"Teilen mit"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <!-- Fuzzy -->
-    <string name="all_contacts_count">"Allen Kontakten (%d)"</string>
+    <string name="all_contacts_count">"allen Freunden (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
     <string name="compact_share_my_contacts">"Meine Kontakte (%d)"</string>
@@ -2500,7 +2454,7 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="settings_notifications_on_fire_option">"Feuer und Flamme"</string>
 
     <!-- notifications settings new users option -->
-    <string name="settings_notifications_new_users_option">"Neue Nutzer"</string>
+    <string name="settings_notifications_new_users_option">"Neue User"</string>
 
     <!-- notifications settings someone follow you option -->
     <string name="settings_notifications_someone_follows_option">"jemand folgt dir"</string>
@@ -2820,26 +2774,26 @@ Bleibe dran!"</string>
     <string name="phone_description">"ⓘ to recover and to help verify your acount. only you can see your phone number."</string>
 
     <!-- Message menu option to copy the selected message -->
-    <string name="copy">"Copy"</string>
+    <string name="copy">"Kopieren"</string>
 
     <!-- text show above name and username entry field -->
     <string name="name_username_entry_title">"Enter your name and select a username"</string>
 
     <!-- text hint for username entry field -->
-    <string name="username_hint">"username"</string>
+    <string name="username_hint">"Benutzername"</string>
     <string name="at_symbol">"@"</string>
 
     <!-- Title of a popup window about a new friendship model feature -->
-    <string name="friendship_model_title">"New friendship model on HalloApp"</string>
+    <string name="friendship_model_title">"Neues Freundschaftsmodell auf HalloApp"</string>
 
     <!-- Text in a popup window explaining a new friendship model feature and prompt for users to choose a username -->
-    <string name="friendship_model_description">"Now you can search for people on HalloApp using their name or @username. Your existing HalloApp contacts now become your friends. You can remove existing contacts from friends at any time."</string>
+    <string name="friendship_model_description">"Du kannst nun auf HalloApp Personen über ihren Namen oder @Benutzernamen suchen. Deine HalloApp-Kontakte werden jetzt deine Freunde. Du kannst bestehende Kontakte jederzeit aus Freunde entfernen."</string>
 
     <!-- Button text to dismiss new friendship model popup -->
     <string name="remind_later">"Remind later"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="friends">"Friends"</string>
+    <string name="friends">"Freunde"</string>
 
     <!-- Message displayed to show all outgoing sent friend requests -->
     <string name="see_outgoing_requests">"See sent requests"</string>
@@ -2851,7 +2805,7 @@ Bleibe dran!"</string>
     <string name="confirm_friend">"Confirm"</string>
 
     <!-- Button text to send a friend request to someone -->
-    <string name="add_friend">"Add friend"</string>
+    <string name="add_friend">"Als Freund hinzufügen"</string>
 
     <!-- Section title showing current pending friend requests -->
     <string name="friend_requests">"Friend requests"</string>
@@ -2872,7 +2826,7 @@ Bleibe dran!"</string>
     <string name="search_halloapp_users">"Search HalloApp users"</string>
 
     <!-- Section title showing HalloApp friends after searching -->
-    <string name="halloapp_friends">"My HalloApp friends"</string>
+    <string name="halloapp_friends">"Meine HalloApp-Freunde"</string>
 
     <!-- Section title showing HalloApp users after searching -->
     <string name="halloapp_users">"HalloApp users"</string>
@@ -2887,10 +2841,10 @@ Bleibe dran!"</string>
     <string name="remove_friend_confirmation_consequences">"%s and you will no longer be able to see each other's posts."</string>
 
     <!-- Menu item to add someone to your favorites list -->
-    <string name="add_to_favorites">"Add to favorites"</string>
+    <string name="add_to_favorites">"Zu Favoriten hinzufügen"</string>
 
     <!-- Menu item to remove someone as a friend -->
-    <string name="remove_friend">"Remove friend"</string>
+    <string name="remove_friend">"Freund löschen"</string>
 
     <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
     <string name="outgoing_sent_friend_request">"You have sent %s a friend request"</string>
@@ -2899,7 +2853,7 @@ Bleibe dran!"</string>
     <string name="incoming_sent_friend_request">"%s has sent you a friend request"</string>
 
     <!-- Button to reject a friend request -->
-    <string name="ignore">"Ignore"</string>
+    <string name="ignore">"Ignorieren"</string>
 
     <!-- Title showing all requests a user received -->
     <string name="all_requests">"All requests"</string>
@@ -2920,25 +2874,25 @@ Bleibe dran!"</string>
     <string name="removing_friend_in_progress">"Removing %s…"</string>
 
     <!-- Error message when we are unable to send a friend request and to try again later -->
-    <string name="error_send_friend_request">"Unable to send friend request, please try again later"</string>
+    <string name="error_send_friend_request">"Freundschaftsanfrage kann nicht gesendet werden, bitte später erneut versuchen"</string>
 
     <!-- Error message when we are unable to cancel a friend request and to try again later -->
-    <string name="error_withdraw_friend_request">"Unable to cancel friend request, please try again later"</string>
+    <string name="error_withdraw_friend_request">"Freundschaftsanfrage kann nicht gelöscht werden, bitte später erneut versuchen"</string>
 
     <!-- Error message when we are unable to remove someone as a friend and to try again later -->
-    <string name="error_remove_friend">"Unable to remove friend, please try again later"</string>
+    <string name="error_remove_friend">"Freund kann nicht entfernt werden, bitte später erneut versuchen"</string>
 
     <!-- Error message when we are unable to reject a friend request and to try again later -->
-    <string name="error_reject_friend_request">"Unable to reject friend request, please try again later"</string>
+    <string name="error_reject_friend_request">"Freundschaftsanfrage kann nicht abgelehnt werden, bitte später erneut versuchen"</string>
 
     <!-- Error message when we are unable to accept a friend request and to try again later -->
-    <string name="error_accept_friend_request">"Unable to accept friend request, please try again later"</string>
+    <string name="error_accept_friend_request">"Freundschaftsanfrage kann nicht angenommen werden, bitte später erneut versuchen"</string>
 
     <!-- Error message when we are unable to block contact and to try again later -->
-    <string name="error_block_contact">"Unable to block contact, please try again later"</string>
+    <string name="error_block_contact">"Kontakt kann nicht geblockt werden, bitte später erneut versuchen"</string>
 
     <!-- Button text telling users to add selected users as friends -->
-    <string name="add_friends">"Add friends"</string>
+    <string name="add_friends">"Zu Freunden hinzufügen"</string>
 
     <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
     <plurals name="friend_connections_on_hallo">
@@ -2947,7 +2901,7 @@ Bleibe dran!"</string>
     </plurals>
 
     <!-- Text telling a user that after these contacts are friends, they can see your posts -->
-    <string name="friend_connections_on_hallo_explanation">"Contacts added as friends will be able to see your posts shared on HalloApp."</string>
+    <string name="friend_connections_on_hallo_explanation">"Kontakte, die als Freunde hinzugefügt wurden, können deine auf HalloApp geteilten Beiträge sehen."</string>
 
     <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
     <plurals name="sent_friend_requests">
@@ -2959,7 +2913,7 @@ Bleibe dran!"</string>
     <string name="friend_favorites_explanation">"This post is only shared with the friends you added to Favorites. You can edit your Favorites list at any time."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="friend_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="friend_favorites_explanation_others">"Dieser Beitrag wird nur mit einer bestimmten Zielgruppe geteilt, die du in den Privatsphäre-Einstellungen jederzeit anpassen kannst."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
     <string name="friend_favorites_explanation_others_with_name">"%s shared this post with friends on their Favorites list. You can setup and edit your Favorites list at any time."</string>
@@ -2989,13 +2943,49 @@ Bleibe dran!"</string>
     <string name="requests_zero">"Requests"</string>
 
     <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
-    <string name="error_reject_friend_suggestion">"Unable to reject friend suggestion, please try again later"</string>
+    <string name="error_reject_friend_suggestion">"Freundschaftsvorschlag kann nicht abgelehnt werden, bitte später erneut versuchen"</string>
 
     <!-- Title of the new friendship model notification -->
     <string name="notification_friendship_model_title">"New friendship model"</string>
 
     <!-- Body of the new friendship model notification -->
     <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+
+    <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
+    <string name="title_magic_post">"Magic posts"</string>
+
+    <!-- Name for notification channel for magic posts -->
+    <string name="magic_post_notifications_channel_name">"Magic post notifications"</string>
+
+    <!-- Title of the introduction for the magic posts tab -->
+    <string name="try_magic_posts">"Try magic posts"</string>
+
+    <!-- Body explaining what magic posts are and how they are generated -->
+    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+
+    <!-- Title of notification saying there is a new highlight (post) suggestion -->
+    <string name="notification_post_highlight_suggestion">"New highlight"</string>
+
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
+    <string name="notification_post_highlight_suggestion_body">"%d photos taken"</string>
+
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
+    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d photos taken at %2$s"</string>
+
+    <!-- Title describing new post suggestions to create -->
+    <string name="new_post_suggestions">"New post suggestions"</string>
+
+    <!-- Text stating there are no new post suggestions -->
+    <string name="no_post_suggestions">"No post suggestions"</string>
+
+    <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
+    <string name="suggestion_text_template">"%1$d photos taken on %2$s"</string>
+
+    <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
+    <string name="suggestion_text_with_location_template">"%1$d photos taken at %2$s"</string>
+
+    <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
+    <string name="selecting_best_photos">"Selecting best photos…"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tippen, um %s zu deinen Kontakten hinzuzufügen&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Dieser Beitrag wird nur mit den Kontakten geteilt, die du zu deinen Favoriten hinzugefügt hast. Du kannst deine Favoritenliste jederzeit bearbeiten."</string>
     <string name="contact_favorites_explanation_others">"Dieser Beitrag wird nur mit einer bestimmten Zielgruppe geteilt, die du in den Privatsphäre-Einstellungen jederzeit anpassen kannst."</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
-    <string name="title_home">"Laman"</string>
+    <string name="title_home">"Beranda"</string>
     <string name="title_messages">"Chat"</string>
     <string name="title_profile">"Profil"</string>
     <string name="title_groups">"Grup"</string>
@@ -46,13 +46,9 @@ Dapat dikenakan biaya operator."</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s ada di HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s menggunakan HalloApp! &#127881;"</string>
-
-    <!-- Fuzzy -->
-    <string name="posts_empty">"Postingan Anda akan muncul di sini"</string>
+    <string name="posts_empty">"Postingan akan muncul di sini"</string>
     <string name="posts_exchange_numbers">"Anda harus menggunakan nomor telepon untuk terhubung"</string>
-
-    <!-- Fuzzy -->
-    <string name="home_page_empty">"Postingan dari kontak Anda akan muncul di sini"</string>
+    <string name="home_page_empty">"Postingan dari teman akan muncul di sini"</string>
     <string name="chats_page_empty">"Kontak dan pesan akan muncul di sini"</string>
     <string name="chats_search_empty">"Tidak ditemukan chat untuk '%s'"</string>
     <string name="groups_page_empty">"Grup Anda akan muncul di sini"</string>
@@ -68,12 +64,8 @@ Dapat dikenakan biaya operator."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Untuk mengambil foto dan merekam video, kami memerlukan izin untuk mengakses kamera dan merekam audio di perangkat Anda.
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
-
-    <!-- Fuzzy -->
-    <string name="contacts_permission_rationale">"Untuk terhubung dengan teman dan keluarga Anda, kami memerlukan izin untuk mengakses kontak di perangkat Anda"</string>
-
-    <!-- Fuzzy -->
-    <string name="contacts_permission_rationale_denied">"Untuk terhubung dengan teman dan keluarga Anda, kami memerlukan izin untuk mengakses kontak di perangkat Anda.
+    <string name="contacts_permission_rationale">"Agar terhubung dengan teman dan keluarga Anda, kami perlu izin akses ke kontak di perangkat Anda"</string>
+    <string name="contacts_permission_rationale_denied">"Agar terhubung dengan teman dan keluarga Anda, kami perlu izin akses ke kontak di perangkat Anda.
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="storage_permission_rationale">"Untuk memilih media, kami memerlukan izin untuk mengakses penyimpanan perangkat Anda"</string>
@@ -81,9 +73,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="retry">"Coba lagi"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Untuk menghubungkan Anda dengan teman dan keluarga, kami memerlukan izin Anda untuk mengakses kontak Anda agar dapat menyinkronkan nomor telepon di buku alamat Anda."</string>
+    <string name="contact_rationale_upload">"Agar terhubung dengan teman dan keluarga Anda, kami perlu izin akses ke daftar kontak untuk menyinkronkan nomor telepon di buku alamat Anda."</string>
     <string name="failed_to_initialize">"Gagal memulai"</string>
     <string name="type_a_comment_hint">"Tambahkan komentar"</string>
     <string name="comments">"Komentar"</string>
@@ -106,27 +96,19 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="no_activity">"Tidak ada aktivitas"</string>
     <string name="failed_to_load_media">"Gagal memuat media"</string>
     <string name="settings">"Setelan"</string>
-    <string name="send_logs">"Bagikan saran &amp; log"</string>
+    <string name="send_logs">"Bagikan saran &amp; data log"</string>
     <string name="terms_of_service">"Ketentuan layanan"</string>
     <string name="privacy_policy">"Kebijakan privasi"</string>
-
-    <!-- Fuzzy -->
-    <string name="settings_block_list">"Kontak diblokir"</string>
+    <string name="settings_block_list">"Teman diblokir"</string>
     <string name="settings_feed_privacy">"Postingan"</string>
     <string name="settings_privacy">"Privasi"</string>
-
-    <!-- Fuzzy -->
     <plurals name="contact_selection_subtitle">
-        <item quantity="other">"%d kontak dipilih"</item>
+        <item quantity="other">"%d teman dipilih"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="contact_maximum_selection">
-        <item quantity="other">"Anda dapat memilih paling banyak  %d kontak"</item>
+        <item quantity="other">"Anda boleh memilih paling banyak  %d teman"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="no_contacts_selected_subtitle">"Tidak ada kontak dipilih"</string>
+    <string name="no_contacts_selected_subtitle">"Tidak ada teman dipilih"</string>
     <string name="help">"Bantuan"</string>
     <string name="about">"Tentang HalloApp"</string>
     <string name="notify_posts">"Postingan"</string>
@@ -222,9 +204,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="day_of_week_at_time">"%1$s %2$s"</string>
     <string name="unknown_contact">"Kontak tidak dikenal"</string>
     <string name="select_contact">"Pesan baru"</string>
-
-    <!-- Fuzzy -->
-    <string name="search_contacts">"Cari kontak"</string>
+    <string name="search_contacts">"Cari teman"</string>
     <string name="search">"Cari"</string>
     <string name="contact_search_empty">"Tidak ada yang ditemukan untuk '%s'"</string>
     <string name="action_save">"Simpan"</string>
@@ -240,9 +220,9 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="flip">"Balik"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
     <string name="email_logs_text">"----------------------------------------
-Harap tinggalkan saran atau deskripsi masalah di
-kotak di atas. Kami menyertakan log-log Anda di
-di email ini agar bisa memecahkan permasalahan teknis.
+Silakan tulis saran atau deskripsi masalah pada
+kolom di atas. Kami menyertakan data log Anda di
+di email ini demi solusi permasalahan teknis.
 uid: %1$s
 version: %2$s
 ----------------------------------------"</string>
@@ -253,15 +233,9 @@ version: %2$s
     <string name="picker_title_block_user">"Blokir pengguna"</string>
     <string name="cancel">"Batalkan"</string>
     <string name="group_subtitle">"ketuk di sini untuk info grup"</string>
-
-    <!-- Fuzzy -->
-    <string name="empty_block_list">"Tidak ada kontak yang diblokir"</string>
-
-    <!-- Fuzzy -->
-    <string name="block_notification">"Anda memblokir kontak ini. Ketuk untuk membuka blokir"</string>
-
-    <!-- Fuzzy -->
-    <string name="unblock_notification">"Anda membuka blokir kontak ini"</string>
+    <string name="empty_block_list">"Tidak ada teman yang diblokir"</string>
+    <string name="block_notification">"Anda memblokir teman ini. Ketuk untuk membuka blokir"</string>
+    <string name="unblock_notification">"Anda membuka blokir teman ini"</string>
     <string name="system_message_group_created">"Grup ini dibuat oleh %s"</string>
     <string name="system_message_group_created_by_you">"Grup ini dibuat oleh Anda"</string>
     <string name="system_message_members_added">"%1$s menambahkan %2$s"</string>
@@ -308,13 +282,9 @@ version: %2$s
     <string name="contact_picker_feed_except_title">"Sembunyikan postingan dari…"</string>
     <string name="contact_picker_feed_only_title">"Bagikan postingan dengan…"</string>
     <string name="setting_feed_privacy_title">"Yang dapat melihat postingan saya"</string>
-
-    <!-- Fuzzy -->
-    <string name="setting_feed_all">"Kontak saya"</string>
+    <string name="setting_feed_all">"Teman saya"</string>
     <string name="setting_feed_only">"Hanya bagikan dengan…"</string>
-
-    <!-- Fuzzy -->
-    <string name="setting_feed_except">"Kontak saya kecuali…"</string>
+    <string name="setting_feed_except">"Teman saya kecuali…"</string>
     <string name="feed_privacy_fail_to_load">"Gagal memuat setelan privasi"</string>
     <string name="feed_privacy_update_success">"Setelan berhasil diperbarui"</string>
     <string name="feed_privacy_update_failure">"Gagal memperbarui setelan"</string>
@@ -374,10 +344,8 @@ version: %2$s
     <plurals name="friends_on_halloapp">
         <item quantity="other">"%d kontak di HalloApp"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="settings_block_list_summary">
-        <item quantity="other">"%d kontak"</item>
+        <item quantity="other">"%d teman"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"Tidak Ada"</string>
     <string name="settings_feed_contacts_summary">"Kontak di ponsel saya"</string>
@@ -387,9 +355,7 @@ version: %2$s
     <plurals name="settings_feed_selected">
         <item quantity="other">"%d kontak dipilih"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="settings_feed_selected_empty">"Tidak ada kontak dipilih"</string>
+    <string name="settings_feed_selected_empty">"Tidak ada teman dipilih"</string>
     <string name="settings_version_footer">"Versi HaloApp %s"</string>
     <string name="connectivity_info_airplane_mode">"Mode pesawat aktif"</string>
     <string name="connectivity_info_not_connected">"Tidak ada jaringan"</string>
@@ -689,13 +655,13 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="archived_on">"Diarsipkan pada tanggal %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"Anda tidak dapat bergabung dengan grup itu karena sudah penuh"</string>
+    <string name="invite_link_failed_to_join_full">"Anda tidak bisa bergabung karena grup sudah penuh"</string>
 
     <!-- Error message when the invite link is invalid -->
     <string name="invite_link_failed_to_join_invalid">"Tautan undangan invalid"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
-    <string name="invite_link_failed_to_join_removed">"Anda telah dikeluarkan dan tidak dapat bergabung kembali melalui link undangan"</string>
+    <string name="invite_link_failed_to_join_removed">"Anda telah dikeluarkan dan tidak bisa bergabung kembali via tautan undangan"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
     <string name="deletion_confirmation_message">"Akun HalloApp Anda telah berhasil dihapus."</string>
@@ -898,7 +864,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="delete_account_explanation_bullet_one">"• Menghapus informasi akun dan foto profil Anda"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Mengeluarkan dari semua grup HalloApp"</string>
+    <string name="delete_account_explanation_bullet_two">"• Mengeluarkan Anda dari semua grup HalloApp"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
     <string name="delete_account_explanation_bullet_three">"• Menghapus riwayat pesan Anda di ponsel ini"</string>
@@ -1083,7 +1049,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Tak dapat memulai panggilan."</string>
+    <string name="unable_to_start_call">"Tak bisa memulai panggilan."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Panggilan video tak terjawab"</string>
@@ -1171,7 +1137,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="call_e2e_notice">"Dienkripsi ujung ke ujung"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Menyiapkan log…"</string>
+    <string name="preparing_logs">"Menyiapkan data log…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
     <string name="post_tombstone_placeholder">"Menunggu postingan ini. Proses ini mungkin memerlukan waktu beberapa saat. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
@@ -1238,20 +1204,16 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="edit_favorites_action">"Edit Favorit"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <!-- Fuzzy -->
-    <string name="favorites_nux_call_to_action">"Sekarang Anda dapat membuat daftar kontak favorit dan berbagi postingan HalloApp Anda hanya dengan mereka"</string>
+    <string name="favorites_nux_call_to_action">"Kini Anda bisa membuat daftar teman favorit, dan berbagi postingan HalloApp hanya dengan mereka"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"Kontak Anda yang bergabung dengan HalloApp akan dapat melihat postingan Anda"</string>
+    <string name="my_contacts_disclaimer">"Kontak yang ditambah sebagai teman akan bisa melihat postingan Anda di HalloApp."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_title">"Kontak saya"</string>
+    <string name="my_contacts_title">"Teman saya"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <!-- Fuzzy -->
-    <string name="my_ha_contacts">"Kontak HalloApp saya"</string>
+    <string name="my_ha_contacts">"Teman HalloApp saya"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
     <string name="setting_feed_privacy_groups_section_title">"Bagikan hanya dengan grup"</string>
@@ -1327,7 +1289,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="start_action">"Mulai"</string>
 
     <!-- Shown to user when you try to call yourself -->
-    <string name="cannot_call_yourself">"Tidak dapat melakukan panggilan kepada diri sendiri"</string>
+    <string name="cannot_call_yourself">"Tidak bisa melakukan panggilan kepada diri sendiri"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
     <string name="seen_by_post_expiration_my_contacts">"Postingan Anda akan hilang setelah 30 hari."</string>
@@ -1336,8 +1298,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Postingan telah dibagikan kepada daftar Favorit dan akan hilang setelah 30 hari."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"Momen Anda telah dibagikan dengan kontak Anda. Momen akan hilang setelah 24 jam."</string>
+    <string name="seen_by_post_expiration_moments">"Momen Anda telah dibagikan kepada teman. Momen akan hilang setelah 24 jam."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Momen baru dari %s"</string>
@@ -1611,14 +1572,13 @@ pribadi Anda"</string>
     <string name="home_onboarding_nux_header">"Selamat Datang di HalloApp! Jaringan sosial pribadi Anda"</string>
 
     <!-- Brief explanation of what HalloApp is for -->
-    <string name="home_onboarding_nux_text">"Aplikasi pribadi tanpa influencer dan tanpa iklan. Hanya Anda dan orang-orang terdekat Anda"</string>
+    <string name="home_onboarding_nux_text">"Ruang personal tanpa para pemengaruh dan iklan. Hanya Anda dan orang-orang terdekat"</string>
 
     <!-- Text shown as title above see network section -->
     <string name="home_onboarding_nux_post_visibility_header">"Siapa yang dapat melihat postingan saya?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <!-- Fuzzy -->
-    <string name="home_onboarding_nux_post_visibility_text">"Lihat siapa yang ada di HalloApp, dan undang teman &amp; keluarga"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Teman-teman di HalloApp bisa melihat postingan Anda. Tambahkan teman dari jejaring Anda dan atur permintaan pertemanan."</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
     <string name="see_network_action">"Lihat jaringan saya"</string>
@@ -1632,14 +1592,12 @@ pribadi Anda"</string>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
-    <!-- Fuzzy -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="other">"Kontak ini akan dapat melihat postingan Anda yang dibagikan dengan semua kontak HalloApp"</item>
+        <item quantity="other">"Teman ini akan bisa melihat postingan yang Anda bagi ke semua teman HalloApp"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <!-- Fuzzy -->
-    <string name="no_connections_on_hallo_explanation">"Kontak di ponsel Anda yang mendaftar di HalloApp akan muncul di sini secara otomatis."</string>
+    <string name="no_connections_on_hallo_explanation">"Teman Anda di HalloApp akan muncul di sini secara otomatis."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
     <string name="first_time_post_content">"Halo! Saya menggunakan HalloApp"</string>
@@ -1720,8 +1678,7 @@ pribadi Anda"</string>
     <string name="compose_share_recents_header">"Panggilan Terakhir"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <!-- Fuzzy -->
-    <string name="compose_share_search_contacts">"Cari kontak"</string>
+    <string name="compose_share_search_contacts">"Cari teman"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
@@ -1738,11 +1695,9 @@ pribadi Anda"</string>
     <string name="send_to">"Kirim ke…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <!-- Fuzzy -->
-    <string name="home_contact_permissions_banner">"Untuk terhubung dengan teman &amp; keluarga Anda dan melihat postingan mereka, beri HalloApp akses ke kontak"</string>
+    <string name="home_contact_permissions_banner">"Agar terhubung dengan teman &amp; keluarga Anda dan melihat postingan mereka, beri HalloApp akses ke kontak"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <!-- Fuzzy -->
     <string name="new_post_contact_permissions_banner">"Untuk membagi postingan dengan teman &amp; keluarga Anda, beri HalloApp akses ke kontak"</string>
 
     <!-- title when asking for permissions for groups -->
@@ -1797,8 +1752,7 @@ pribadi Anda"</string>
     <string name="moment_sharing_with">"Berbagi dengan"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <!-- Fuzzy -->
-    <string name="all_contacts_count">"Semua Kontak (%d)"</string>
+    <string name="all_contacts_count">"Semua Teman (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
     <string name="compact_share_my_contacts">"Kontak Saya (%d)"</string>
@@ -1830,7 +1784,7 @@ pribadi Anda"</string>
     <string name="moment_add_location">"Tambah Lokasi"</string>
 
     <!-- Message when a user wants to add a location to a moment but we aren't able to -->
-    <string name="moment_location_fail">"Tidak dapat menambah lokasi"</string>
+    <string name="moment_location_fail">"Tidak bisa menambah lokasi"</string>
 
     <!-- Rationale for when requesting location permission for moments -->
     <string name="moment_location_permission_rationale">"Kami perlu izin akses lokasi agar bisa menambahkannya ke momen"</string>
@@ -1962,7 +1916,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="feed_type_following">"mengikuti"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <string name="user_list_type_add">"saran"</string>
+    <string name="user_list_type_add">"usulan"</string>
 
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">"mengikuti"</string>
@@ -2707,177 +2661,213 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="copy">"Salin"</string>
 
     <!-- text show above name and username entry field -->
-    <string name="name_username_entry_title">"Enter your name and select a username"</string>
+    <string name="name_username_entry_title">"Masukkan nama Anda dan pilih username"</string>
 
     <!-- text hint for username entry field -->
     <string name="username_hint">"username"</string>
     <string name="at_symbol">"@"</string>
 
     <!-- Title of a popup window about a new friendship model feature -->
-    <string name="friendship_model_title">"New friendship model on HalloApp"</string>
+    <string name="friendship_model_title">"Model pertemanan baru di HalloApp"</string>
 
     <!-- Text in a popup window explaining a new friendship model feature and prompt for users to choose a username -->
-    <string name="friendship_model_description">"Now you can search for people on HalloApp using their name or @username. Your existing HalloApp contacts now become your friends. You can remove existing contacts from friends at any time."</string>
+    <string name="friendship_model_description">"Kini Anda bisa mencari orang di HalloApp menggunakan nama atau @username mereka. Daftar kontak di HalloApp adalah teman Anda sekarang. Anda bisa menghapus daftar kontak dari teman kapan pun."</string>
 
     <!-- Button text to dismiss new friendship model popup -->
-    <string name="remind_later">"Remind later"</string>
+    <string name="remind_later">"Ingatkan nanti"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="friends">"Friends"</string>
+    <string name="friends">"Teman"</string>
 
     <!-- Message displayed to show all outgoing sent friend requests -->
-    <string name="see_outgoing_requests">"See sent requests"</string>
+    <string name="see_outgoing_requests">"Lihat Permintaan Terkirim"</string>
 
     <!-- Tab to show suggested and current friend requests -->
-    <string name="requests">"Requests (%d)"</string>
+    <string name="requests">"Permintaan (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
-    <string name="confirm_friend">"Confirm"</string>
+    <string name="confirm_friend">"Konfirmasi"</string>
 
     <!-- Button text to send a friend request to someone -->
-    <string name="add_friend">"Add friend"</string>
+    <string name="add_friend">"Tambah teman"</string>
 
     <!-- Section title showing current pending friend requests -->
-    <string name="friend_requests">"Friend requests"</string>
+    <string name="friend_requests">"Permintaan pertemanan"</string>
 
     <!-- Section title of people to invite to join Halloapp -->
-    <string name="invite_friends_on_halloapp_title">"Invite friends on Halloapp"</string>
+    <string name="invite_friends_on_halloapp_title">"Undang teman di HalloApp"</string>
 
     <!-- Section title for friend suggestions from your contact list -->
-    <string name="from_contacts_list">"From your contact list"</string>
+    <string name="from_contacts_list">"Dari daftar kontak"</string>
 
     <!-- Section title for friend suggestions -->
-    <string name="friend_suggestions">"Friend suggestions"</string>
+    <string name="friend_suggestions">"Usulan pertemanan"</string>
 
     <!-- Section title showing your current friends -->
-    <string name="my_friends_on_halloapp">"My friends on HalloApp"</string>
+    <string name="my_friends_on_halloapp">"Teman saya di HalloApp"</string>
 
     <!-- Search box hint text for HalloApp user search -->
-    <string name="search_halloapp_users">"Search HalloApp users"</string>
+    <string name="search_halloapp_users">"Cari pengguna HalloApp"</string>
 
     <!-- Section title showing HalloApp friends after searching -->
-    <string name="halloapp_friends">"My HalloApp friends"</string>
+    <string name="halloapp_friends">"Teman pengguna HalloApp"</string>
 
     <!-- Section title showing HalloApp users after searching -->
-    <string name="halloapp_users">"HalloApp users"</string>
+    <string name="halloapp_users">"Pengguna HalloApp"</string>
 
     <!-- Message displayed to show all pending friend requests -->
-    <string name="see_all_requests">"See all requests"</string>
+    <string name="see_all_requests">"Lihat semua permintaan"</string>
 
     <!-- Shown when user chooses to remove a friend; %s is replaced with the name of the friend to be removed -->
-    <string name="remove_friend_confirmation">"Remove %s from your friends?"</string>
+    <string name="remove_friend_confirmation">"Hapus %s dari pertemanan?"</string>
 
     <!-- Explains the consequences of removing a friend where %s is the name of the person -->
-    <string name="remove_friend_confirmation_consequences">"%s and you will no longer be able to see each other's posts."</string>
+    <string name="remove_friend_confirmation_consequences">"%s dan Anda tidak bisa lagi melihat postingan satu sama lain."</string>
 
     <!-- Menu item to add someone to your favorites list -->
-    <string name="add_to_favorites">"Add to favorites"</string>
+    <string name="add_to_favorites">"Tambah ke favorit"</string>
 
     <!-- Menu item to remove someone as a friend -->
-    <string name="remove_friend">"Remove friend"</string>
+    <string name="remove_friend">"Hapus teman"</string>
 
     <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
-    <string name="outgoing_sent_friend_request">"You have sent %s a friend request"</string>
+    <string name="outgoing_sent_friend_request">"Anda mengirim %s permintaan pertemanan"</string>
 
     <!-- Message under %s's profile if they sent you a friend request where %s is the name of the person -->
-    <string name="incoming_sent_friend_request">"%s has sent you a friend request"</string>
+    <string name="incoming_sent_friend_request">"%s mengirimkan Anda permintaan pertemanan"</string>
 
     <!-- Button to reject a friend request -->
-    <string name="ignore">"Ignore"</string>
+    <string name="ignore">"Acuhkan"</string>
 
     <!-- Title showing all requests a user received -->
-    <string name="all_requests">"All requests"</string>
+    <string name="all_requests">"Semua permintaan"</string>
 
     <!-- Section title showing current requests received -->
-    <string name="requests_received">"Requests received"</string>
+    <string name="requests_received">"Permintaan diterima"</string>
 
     <!-- Section title showing current requests sent -->
-    <string name="requests_sent">"Requests sent"</string>
+    <string name="requests_sent">"Permintaan terkirim"</string>
 
     <!-- Warning message shown when we were unable to remove %s as a friend and to try later where %s is the name of the person -->
-    <string name="removing_friend_failed_check_internet">"Couldn't remove %s as a friend. Check your internet and try again."</string>
+    <string name="removing_friend_failed_check_internet">"Tidak bisa menghapus %s sebagai teman. Periksa internet Anda dan coba lagi."</string>
 
     <!-- Confirmation message that %s was removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_successful">"Removed %s"</string>
+    <string name="removing_friend_successful">"%s dihapus"</string>
 
     <!-- Message shown when %s is in the process of being removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_in_progress">"Removing %s…"</string>
+    <string name="removing_friend_in_progress">"Menghapus %s…"</string>
 
     <!-- Error message when we are unable to send a friend request and to try again later -->
-    <string name="error_send_friend_request">"Unable to send friend request, please try again later"</string>
+    <string name="error_send_friend_request">"Tidak bisa mengirim permintaan pertemanan, silakan coba lagi nanti"</string>
 
     <!-- Error message when we are unable to cancel a friend request and to try again later -->
-    <string name="error_withdraw_friend_request">"Unable to cancel friend request, please try again later"</string>
+    <string name="error_withdraw_friend_request">"Tidak bisa membatalkan permintaan pertemanan, silakan coba lagi nanti"</string>
 
     <!-- Error message when we are unable to remove someone as a friend and to try again later -->
-    <string name="error_remove_friend">"Unable to remove friend, please try again later"</string>
+    <string name="error_remove_friend">"Tidak bisa menghapus teman, silakan coba lagi nanti"</string>
 
     <!-- Error message when we are unable to reject a friend request and to try again later -->
-    <string name="error_reject_friend_request">"Unable to reject friend request, please try again later"</string>
+    <string name="error_reject_friend_request">"Tidak bisa menolak permintaan pertemanan, silakan coba lagi nanti"</string>
 
     <!-- Error message when we are unable to accept a friend request and to try again later -->
-    <string name="error_accept_friend_request">"Unable to accept friend request, please try again later"</string>
+    <string name="error_accept_friend_request">"Tidak bisa menerima permintaan pertemanan, silakan coba lagi nanti"</string>
 
     <!-- Error message when we are unable to block contact and to try again later -->
-    <string name="error_block_contact">"Unable to block contact, please try again later"</string>
+    <string name="error_block_contact">"Tidak bisa memblokir kontak, silakan coba lagi nanti"</string>
 
     <!-- Button text telling users to add selected users as friends -->
-    <string name="add_friends">"Add friends"</string>
+    <string name="add_friends">"Tambah teman"</string>
 
     <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
     <plurals name="friend_connections_on_hallo">
-        <item quantity="other">"%d person from your contacts is on HalloApp. Add them as a friend?"</item>
+        <item quantity="other">"%d orang dari daftar kontak Anda ada di HalloApp. Tambahkan sebagai teman?"</item>
     </plurals>
 
     <!-- Text telling a user that after these contacts are friends, they can see your posts -->
-    <string name="friend_connections_on_hallo_explanation">"Contacts added as friends will be able to see your posts shared on HalloApp."</string>
+    <string name="friend_connections_on_hallo_explanation">"Kontak yang ditambah sebagai teman akan bisa melihat postingan Anda di HalloApp."</string>
 
     <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
     <plurals name="sent_friend_requests">
-        <item quantity="other">"Sending a friend request to %d person"</item>
+        <item quantity="other">"Mengirimkan permintaan pertemanan ke %d orang"</item>
     </plurals>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for their posts -->
-    <string name="friend_favorites_explanation">"This post is only shared with the friends you added to Favorites. You can edit your Favorites list at any time."</string>
+    <string name="friend_favorites_explanation">"Postingan ini hanya dibagikan ke teman yang ditambahkan ke Favorit. Anda bisa mengedit daftar Favorit kapan saja."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="friend_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="friend_favorites_explanation_others">"Postingan ini hanya dibagikan kepada kalangan terbatas. Anda dapat mengatur daftar kalangan di setelan privasi kapan pun."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="friend_favorites_explanation_others_with_name">"%s shared this post with friends on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+    <string name="friend_favorites_explanation_others_with_name">"%s membagikan postingan ini ke teman di daftar Favoritnya. Anda bisa memulai dan mengedit daftar Favorit kapan saja."</string>
 
     <!-- Message alerting the user that the person messaging them is not a friend -->
-    <string name="not_friend_alert">"This person is not a friend"</string>
+    <string name="not_friend_alert">"Orang ini bukan teman"</string>
 
     <!-- Button text telling users to add the user as a friend -->
-    <string name="add_as_friend">"Add as a friend"</string>
+    <string name="add_as_friend">"Tambahkan sebagai teman"</string>
 
     <!-- Message when a friend request was successfully sent -->
-    <string name="send_friend_request_successful">"Successfully sent friend request"</string>
+    <string name="send_friend_request_successful">"Permintaan pertemanan berhasil dikirim"</string>
 
     <!-- Label for icon that indicates all the user's friends with their total number in parentheses -->
-    <string name="compact_share_my_friends">"My friends (%d)"</string>
+    <string name="compact_share_my_friends">"Teman saya (%d)"</string>
 
     <!-- Title of section for recent friends -->
-    <string name="recent_friends">"Recent friends"</string>
+    <string name="recent_friends">"Teman terbaru"</string>
 
     <!-- Text shown in activity center telling users when they received a new friend request. %s is the person who sent the request -->
-    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; sent you a friend request! &lt;b&gt;&lt;a href=\"view-friends\"&gt;View&lt;/a&gt;&lt;/b&gt;"</string>
+    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; mengirim permintaan pertemanan! &lt;b&gt;&lt;a href=\"view-friends\"&gt;View&lt;/a&gt;&lt;/b&gt;"</string>
 
     <!-- Text shown in activity center telling users when they have a new friend. %s is the name of the friend -->
-    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; is now your friend"</string>
+    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; kini teman Anda"</string>
 
     <!-- Tab to show suggested and current friend requests when there are no current requests -->
-    <string name="requests_zero">"Requests"</string>
+    <string name="requests_zero">"Permintaan"</string>
 
     <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
-    <string name="error_reject_friend_suggestion">"Unable to reject friend suggestion, please try again later"</string>
+    <string name="error_reject_friend_suggestion">"Tidak bisa menolak usulan pertemanan, silakan coba lagi nanti"</string>
 
     <!-- Title of the new friendship model notification -->
-    <string name="notification_friendship_model_title">"New friendship model"</string>
+    <string name="notification_friendship_model_title">"Model pertemanan baru"</string>
 
     <!-- Body of the new friendship model notification -->
-    <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+    <string name="notification_friendship_model_body">"Kini Anda bisa mencari orang di HalloApp dan menambahkan mereka sebagai teman"</string>
+
+    <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
+    <string name="title_magic_post">"Magic posts"</string>
+
+    <!-- Name for notification channel for magic posts -->
+    <string name="magic_post_notifications_channel_name">"Magic post notifications"</string>
+
+    <!-- Title of the introduction for the magic posts tab -->
+    <string name="try_magic_posts">"Try magic posts"</string>
+
+    <!-- Body explaining what magic posts are and how they are generated -->
+    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+
+    <!-- Title of notification saying there is a new highlight (post) suggestion -->
+    <string name="notification_post_highlight_suggestion">"New highlight"</string>
+
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
+    <string name="notification_post_highlight_suggestion_body">"%d photos taken"</string>
+
+    <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
+    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d photos taken at %2$s"</string>
+
+    <!-- Title describing new post suggestions to create -->
+    <string name="new_post_suggestions">"New post suggestions"</string>
+
+    <!-- Text stating there are no new post suggestions -->
+    <string name="no_post_suggestions">"No post suggestions"</string>
+
+    <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
+    <string name="suggestion_text_template">"%1$d photos taken on %2$s"</string>
+
+    <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
+    <string name="suggestion_text_with_location_template">"%1$d photos taken at %2$s"</string>
+
+    <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
+    <string name="selecting_best_photos">"Selecting best photos…"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Ketuk untuk menambahkan %s ke buku alamat Anda&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Postingan ini hanya dibagikan kepada kontak yang Anda tambahkan ke Favorit. Anda dapat mengedit daftar Favorit Anda kapan pun."</string>
     <string name="contact_favorites_explanation_others">"Postingan ini hanya dibagikan kepada kalangan terbatas. Anda dapat mengatur daftar kalangan di setelan privasi kapan pun."</string>
