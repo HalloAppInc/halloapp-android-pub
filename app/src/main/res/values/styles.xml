@@ -192,6 +192,7 @@
     </style>
 
     <style name="RoundedAppearanceAlbumThumbnail" parent="">
+        <item name="background">@null</item>
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeTopLeft">10dp</item>

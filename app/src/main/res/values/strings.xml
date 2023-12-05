@@ -2108,7 +2108,7 @@
     <!-- Title of the introduction for the magic posts tab -->
     <string name="try_magic_posts">Try magic posts</string>
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing.</string>
+    <string name="try_magic_post_explanation">When you take new photos, we find the best shots and organize them into a post draft, so it\'s ready for you if you feel like posting.</string>
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
     <string name="notification_post_highlight_suggestion">New highlight</string>
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->

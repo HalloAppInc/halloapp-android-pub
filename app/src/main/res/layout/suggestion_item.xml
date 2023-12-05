@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@drawable/rounded_entry_album_bg"
+    android:background="@drawable/rounded_entry_suggestion_bg"
     android:layout_marginVertical="5dp">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/black_54"
+        android:textColor="@color/black_30"
         android:textSize="12sp"
         android:layout_margin="10dp"
         tools:text="7:50 pm" />
@@ -43,8 +43,8 @@
             android:id="@+id/title"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textColor="@color/black_20"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:text="West Village" />
 
@@ -52,8 +52,8 @@
             android:id="@+id/suggestion_text"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/black_87"
+            android:textSize="14sp"
+            android:textColor="@color/black_54"
             tools:text="5 photos taken at 1 Park Ave" />
 
     </LinearLayout>
