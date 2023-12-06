@@ -224,4 +224,8 @@
 
     <color name="reaction_bubble_circle">#4E3F39</color>
 
+    <color name="magic_post_text">@color/white_54</color>
+    <color name="magic_post_title">@color/white_70</color>
+    <color name="magic_post_time">@color/white_40</color>
+
 </resources>
