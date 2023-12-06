@@ -8,6 +8,7 @@
     <color name="black_54">#8A000000</color>
     <color name="black_40">#66000000</color>
     <color name="black_30">#4C000000</color>
+    <color name="black_25">#40000000</color>
     <color name="black_20">#33000000</color>
     <color name="black_10">#19000000</color>
     <color name="black_5">#0D000000</color>
@@ -175,6 +176,8 @@
     <color name="comment_reply_bg">@color/color_secondary_15_alpha</color>
     <color name="comment_reply_text">@color/black_54</color>
 
+    <color name="friend_text">@color/black_54</color>
+
     <color name="share_link_post_bg">#F3F2EF</color>
 
     <color name="voice_note_circle">#E6CAE3FF</color>
@@ -320,5 +323,11 @@
 
     <!-- Selected Reaction in Reaction Bubble Color -->
     <color name="reaction_bubble_circle">#9A9A9A</color>
+
+    <color name="magic_post_title">@color/black_20</color>
+    <color name="magic_post_text">@color/black_54</color>
+    <color name="magic_post_time">@color/black_30</color>
+
+
 
 </resources>

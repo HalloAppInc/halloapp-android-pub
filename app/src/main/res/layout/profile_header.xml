@@ -100,7 +100,7 @@
             app:backgroundTint="@color/black_20"
             android:textAllCaps="false"
             android:text="@string/ignore"
-            android:textColor="@color/black" />
+            android:textColor="@color/friend_text" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

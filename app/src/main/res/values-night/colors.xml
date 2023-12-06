@@ -89,6 +89,8 @@
     <color name="comment_reply_bg">#3F464E</color>
     <color name="comment_reply_text">#A6FFFFFF</color>
 
+    <color name="friend_text">#A6FFFFFF</color>
+
     <color name="seen_by_divider">@color/white_20</color>
     <color name="share_link_post_bg">#4a4a4a</color>
 

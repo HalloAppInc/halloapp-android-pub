@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent"
         android:paddingStart="6dp"
-        android:textColor="@color/black_54"
+        android:textColor="@color/friend_text"
         android:textSize="11sp"
         tools:text="\@username"
         />
@@ -91,7 +91,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_ellipsis_vertical"
-        app:tint="@color/black_54"
+        app:tint="@color/friend_text"
         />
 
     <ImageView
@@ -103,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_x"
-        app:tint="@color/black_54"
+        app:tint="@color/friend_text"
         android:visibility="gone"
         />
 

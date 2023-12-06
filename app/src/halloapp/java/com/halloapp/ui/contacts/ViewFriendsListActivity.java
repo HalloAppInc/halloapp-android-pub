@@ -186,7 +186,7 @@ public class ViewFriendsListActivity extends HalloActivity {
     @SuppressLint("RestrictedApi")
     private void setSelectedTab(@NonNull Tab tab) {
         int selectedTextColor = getResources().getColor(R.color.favorites_dialog_blue);
-        int unselectedTextColor = getResources().getColor(R.color.black);
+        int unselectedTextColor = getResources().getColor(R.color.friend_text);
         Drawable selectedBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.rounded_entry_friendship_bg);
         Drawable unselectedBackgroundDrawable = null;
 

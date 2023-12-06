@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/exo_ic_chevron_right"
-        app:tint="@color/black"
+        app:tint="@color/friend_text"
         android:layout_marginStart="20dp"
         />
 
