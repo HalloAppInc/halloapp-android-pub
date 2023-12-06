@@ -26,7 +26,7 @@
         app:layout_constraintBottom_toTopOf="@+id/username"
         app:layout_constraintVertical_chainStyle="packed"
         android:paddingHorizontal="6dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         tools:text="Alice Bob"
         />
 
@@ -50,12 +50,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="35dp"
         >
 
         <Button
             android:id="@+id/add_friend"
-            android:layout_width="100dp"
+            android:layout_width="105dp"
             android:layout_height="35dp"
             android:background="@drawable/rounded_entry_friendship_bg"
             android:minHeight="0dp"

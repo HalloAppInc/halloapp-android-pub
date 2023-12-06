@@ -65,6 +65,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
             tools:text="You have sent Ded a friend request"
             android:textColor="@color/black"
             android:textSize="15sp"
