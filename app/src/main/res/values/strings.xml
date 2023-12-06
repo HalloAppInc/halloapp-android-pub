@@ -2125,4 +2125,8 @@
     <string name="suggestion_text_with_location_template">%1$d photos taken at %2$s</string>
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
     <string name="selecting_best_photos">Selecting best photos…</string>
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">Cancel request</string>
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">Confirm</string>
 </resources>

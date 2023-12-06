@@ -223,28 +223,28 @@ public class ProfileFragment extends PostsFragment {
                 updateProfileVisibility(profile.friendshipStatus);
                 if (profile.friendshipStatus == FriendshipInfo.Type.FRIENDS) {
                     requestsTextView.setVisibility(View.GONE);
-                    friendsButtonView.setText("Friends");
+                    friendsButtonView.setText(R.string.friends);
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
                     friendsDismissButtonView.setVisibility(View.GONE);
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.OUTGOING_PENDING) {
                     requestsTextView.setVisibility(View.VISIBLE);
                     requestsTextView.setText(getString(R.string.outgoing_sent_friend_request, profile.name));
-                    friendsButtonView.setText("Cancel request");
+                    friendsButtonView.setText(R.string.cancel_request);
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
                     friendsDismissButtonView.setVisibility(View.GONE);
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.INCOMING_PENDING) {
                     requestsTextView.setVisibility(View.VISIBLE);
                     requestsTextView.setText(getString(R.string.incoming_sent_friend_request, profile.name));
-                    friendsButtonView.setText("Confirm");
+                    friendsButtonView.setText(R.string.confirm);
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
                     friendsDismissButtonView.setVisibility(View.VISIBLE);
                     friendsDismissButtonView.setOnClickListener(view -> rejectFriendRequest());
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.NONE_STATUS) {
                     requestsTextView.setVisibility(View.GONE);
-                    friendsButtonView.setText("Add friend");
+                    friendsButtonView.setText(R.string.add_friend);
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
                     friendsDismissButtonView.setVisibility(View.GONE);
