@@ -51,6 +51,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
     private static final int BURST_THRESHOLD_IN_SECONDS = 15000;
     private static final double ASSET_FACE_FACTOR = 1.5;
     private static final int PHOTO_SIZE = 224;
+    private static final int MAX_SELECTED_ITEMS = 10;
 
     final private ContentResolver contentResolver;
     final private boolean includeVideos;
@@ -186,7 +187,8 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
         }
         GalleryItem bestItem = galleryItems.get(0);
         long currentBurstTime = galleryItems.get(0).date;
-        for (int i = 1; i < galleryItems.size(); i++) {
+        int numSelected = 1;
+        for (int i = 1; i < galleryItems.size() && numSelected < MAX_SELECTED_ITEMS; i++) {
             GalleryItem currentItem = galleryItems.get(i);
             // Choose best photo within a burst (photo taken less than BurstThreshold apart)
             if (currentBurstTime - currentItem.date < BURST_THRESHOLD_IN_SECONDS) {
@@ -194,6 +196,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
             } else {
                 bestOfBursts.add(bestItem.id);
                 bestItem = currentItem;
+                numSelected++;
             }
             currentBurstTime = bestItem.date;
         }
