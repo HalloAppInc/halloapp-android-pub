@@ -1738,7 +1738,7 @@
     <!-- hint for the phone verification code -->
     <string name="code_hint">000000</string>
     <!-- label explaining the use of phone number in the app -->
-    <string name="phone_description">&#9432; to recover and to help verify your acount. only you can see your phone number.</string>
+    <string name="phone_description">&#9432; to recover and to help verify your account. only you can see your phone number.</string>
     <!-- label for TikTok handle on profile -->
     <string name="tiktok">TikTok</string>
     <!-- label for Instagram handle on profile -->
