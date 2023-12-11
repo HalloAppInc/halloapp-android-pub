@@ -36,7 +36,7 @@ public class Suggestion {
         this.timestamp = timestamp;
     }
 
-    public Suggestion(@NonNull String id, double latitude, double longitude, @Nullable String locationName, @Nullable String location, long timestamp, int size, boolean isScored) {
+    public Suggestion(@NonNull String id, double latitude, double longitude, @Nullable String locationName, @Nullable String locationAddress, long timestamp, int size, boolean isScored) {
         this(id, latitude, longitude, timestamp);
         this.locationName = locationName;
         this.locationAddress = locationAddress;
