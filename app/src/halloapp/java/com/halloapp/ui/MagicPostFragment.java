@@ -8,7 +8,6 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.Suggestion;
 import com.halloapp.content.ContentDb;
+import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.ui.mediapicker.GalleryThumbnailLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
@@ -252,24 +252,22 @@ public class MagicPostFragment extends HalloFragment implements MainNavFragment,
 
     private class SuggestionViewHolder extends ViewHolderWithLifecycle {
 
-        private final ImageView thumbnail;
+        private final ImageView thumbnailTopLeft, thumbnailTopRight, thumbnailBottomLeft, thumbnailBottomRight;
         private final TextView suggestionText, suggestionTime, suggestionTitle;
 
         public SuggestionViewHolder(@NonNull View itemView) {
             super(itemView);
-            thumbnail = itemView.findViewById(R.id.thumbnail);
+            thumbnailTopLeft = itemView.findViewById(R.id.thumbnail_top_left);
+            thumbnailTopRight = itemView.findViewById(R.id.thumbnail_top_right);
+            thumbnailBottomLeft = itemView.findViewById(R.id.thumbnail_bottom_left);
+            thumbnailBottomRight = itemView.findViewById(R.id.thumbnail_bottom_right);
             suggestionText = itemView.findViewById(R.id.suggestion_text);
             suggestionTime = itemView.findViewById(R.id.time);
             suggestionTitle = itemView.findViewById(R.id.title);
         }
 
         public void bindTo(@NonNull Suggestion item) {
-            if (item.thumbnail != null) {
-                thumbnailLoader.load(thumbnail, item.thumbnail);
-            } else {
-                thumbnail.setImageDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.ic_suggestion_image));
-            }
-
+            setThumbnails(item.thumbnails);
             suggestionTitle.setVisibility(TextUtils.isEmpty(item.locationName) ? View.GONE : View.VISIBLE);
             suggestionText.setText(TextUtils.isEmpty(item.locationAddress)
                     ? getString(R.string.suggestion_text_template, item.size, formatRelativeTime(item.timestamp))
@@ -281,6 +279,26 @@ public class MagicPostFragment extends HalloFragment implements MainNavFragment,
                 Intent intent = MediaPickerActivity.pickForMagicPost(getContext(), item.id, item.size);
                 startActivityForResult(intent, REQUEST_CODE_POST);
             });
+        }
+
+        private void setThumbnails(@NonNull GalleryItem[] thumbnails) {
+            if (thumbnails[0] != null) {
+                thumbnailLoader.load(thumbnailTopLeft, thumbnails[0]);
+            } else {
+                thumbnailTopLeft.setImageDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.ic_suggestion_image));
+            }
+            if (thumbnails[1] != null) {
+                thumbnailLoader.load(thumbnailTopRight, thumbnails[1]);
+            }
+            if (thumbnails[2] != null) {
+                thumbnailLoader.load(thumbnailBottomLeft, thumbnails[2]);
+            }
+            if (thumbnails[3] != null) {
+                thumbnailLoader.load(thumbnailBottomRight, thumbnails[3]);
+            }
+            thumbnailTopRight.setVisibility(thumbnails[1] == null ? View.GONE : View.VISIBLE);
+            thumbnailBottomLeft.setVisibility(thumbnails[2] == null ? View.GONE : View.VISIBLE);
+            thumbnailBottomRight.setVisibility(thumbnails[3] == null ? View.GONE : View.VISIBLE);
         }
     }
 

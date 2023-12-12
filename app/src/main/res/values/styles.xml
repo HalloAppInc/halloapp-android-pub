@@ -191,11 +191,29 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
-    <style name="RoundedAppearanceAlbumThumbnail" parent="">
-        <item name="background">@null</item>
+    <style name="RoundedAppearanceThumbnail" parent="">
+        <item name="background">@color/white</item>
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeTopLeft">10dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
+    </style>
+
+    <style name="RoundedAppearanceThumbnailTop" parent="">
+        <item name="background">@color/white</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">10dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+    <style name="RoundedAppearanceThumbnailBottom" parent="">
+        <item name="background">@color/white</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">10dp</item>
     </style>

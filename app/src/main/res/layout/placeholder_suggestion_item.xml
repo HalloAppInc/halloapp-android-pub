@@ -11,7 +11,7 @@
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        app:shapeAppearance="@style/RoundedAppearanceAlbumThumbnail"
+        app:shapeAppearance="@style/RoundedAppearanceThumbnail"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

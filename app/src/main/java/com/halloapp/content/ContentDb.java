@@ -2184,8 +2184,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public GalleryItem getThumbnailPhotoBySuggestion(@NonNull String suggestionId) {
-        return galleryDb.getThumbnailPhotoBySuggestion(suggestionId);
+    public GalleryItem[] getThumbnailPhotosBySuggestion(@NonNull String suggestionId) {
+        return galleryDb.getThumbnailPhotosBySuggestion(suggestionId);
     }
 
     @WorkerThread

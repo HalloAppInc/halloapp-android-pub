@@ -21,7 +21,7 @@ public class Suggestion {
     public double longitude;
     public double latitude;
     public long timestamp;
-    public GalleryItem thumbnail;
+    public GalleryItem[] thumbnails;
     public boolean isScored;
     public boolean isPlaceholder;
 

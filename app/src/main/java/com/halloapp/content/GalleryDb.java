@@ -286,8 +286,10 @@ public class GalleryDb {
         }
     }
 
-    GalleryItem getThumbnailPhotoBySuggestion(@NonNull String suggestionId) {
+    GalleryItem[] getThumbnailPhotosBySuggestion(@NonNull String suggestionId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        int numThumbnails = 4;
+        GalleryItem[] thumbnails = new GalleryItem[numThumbnails];
         try (final Cursor cursor = db.query(GalleryTable.TABLE_NAME,
                 new String [] {
                     GalleryTable.COLUMN_GALLERY_ITEM_URI,
@@ -298,9 +300,9 @@ public class GalleryDb {
                     GalleryTable.COLUMN_LONGITUDE,
                     GalleryTable.COLUMN_SUGGESTION_ID
                 }, GalleryTable.COLUMN_SUGGESTION_ID + "=? ",
-                new String[] {suggestionId}, null, null, null, "1")) {
-            if (cursor.moveToNext()) {
-                return new GalleryItem(
+                new String[] {suggestionId}, null, null, null, String.valueOf(numThumbnails))) {
+            for (int i = 0; cursor.moveToNext() && i < numThumbnails; i++) {
+                thumbnails[i] = new GalleryItem(
                     cursor.getLong(0),
                     cursor.getInt(1),
                     cursor.getLong(2),
@@ -310,7 +312,7 @@ public class GalleryDb {
                     cursor.getString(6));
             }
         }
-        return null;
+        return thumbnails;
     }
 
     List<Long> getSelectedGalleryItemIds(@NonNull String suggestionId) {

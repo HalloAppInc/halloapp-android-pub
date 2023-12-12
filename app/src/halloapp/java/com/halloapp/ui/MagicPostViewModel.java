@@ -46,10 +46,11 @@ import java.util.Map;
 @RequiresApi(api = 24)
 public class MagicPostViewModel extends AndroidViewModel {
 
-    private static final int MIN_GALLERY_ITEMS_FOR_SUGGESTION = 1;
+    private static final int MIN_GALLERY_ITEMS_FOR_SUGGESTION = 3;
     private static final int GALLERY_SIZE = 100;
     private static final int MAX_DISTANCE_IN_METERS = 120;
     private static final long CUTOFF_TIME_IN_SECONDS = (System.currentTimeMillis() - (2 * DateUtils.WEEK_IN_MILLIS)) / 1000;
+    private static final int NUM_THUMBNAILS = 4;
 
     private final ContentResolver contentResolver;
     private final ContentDb contentDb;
@@ -100,8 +101,8 @@ public class MagicPostViewModel extends AndroidViewModel {
                     continue;
                 }
                 // TODO(michelle): thumbnails are recalculated each time (consider saving in db)
-                suggestion.thumbnail = suggestion.thumbnail == null ? contentDb.getThumbnailPhotoBySuggestion(suggestion.id) : suggestion.thumbnail;
-                if (suggestion.thumbnail != null) {
+                suggestion.thumbnails = suggestion.thumbnails == null ? contentDb.getThumbnailPhotosBySuggestion(suggestion.id) : suggestion.thumbnails;
+                if (suggestion.thumbnails[0] != null) {
                     filteredSuggestions.add(suggestion);
                 }
             }
@@ -177,13 +178,18 @@ public class MagicPostViewModel extends AndroidViewModel {
                 suggestion.locationName = location[0];
                 suggestion.locationAddress = location[1];
                 suggestion.timestamp = galleryItem.date;
-                suggestion.thumbnail = galleryItem;
                 updatedSuggestions.computeIfAbsent(suggestion, s -> new ArrayList<>()).add(galleryItem);
             }
         }
 
         for (Map.Entry<Suggestion, List<GalleryItem>> entry : updatedSuggestions.entrySet()) {
-            entry.getKey().size = entry.getValue() == null ? 0 : entry.getValue().size();
+            int size = entry.getValue() == null ? 0 : entry.getValue().size();
+            entry.getKey().size = size;
+            GalleryItem[] thumbnails = new GalleryItem[NUM_THUMBNAILS];
+            for (int i = 0; i < Math.min(NUM_THUMBNAILS, size); i++) {
+                thumbnails[i] = entry.getValue().get(i);
+            }
+            entry.getKey().thumbnails = thumbnails;
         }
         contentDb.addAllGalleryItems(updatedSuggestions);
         contentDb.deleteGalleryItems(screenshots);
@@ -237,12 +243,14 @@ public class MagicPostViewModel extends AndroidViewModel {
             if (type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
                 retriever.setDataSource(AppContext.getInstance().get(), uri);
                 String latLongStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
-                // Format of location: https://developer.android.com/reference/android/media/MediaMetadataRetriever#METADATA_KEY_LOCATION
-                latLongStr = latLongStr.replaceAll("/", "");
-                int longitudeIndex = latLongStr.lastIndexOf("+");
-                longitudeIndex = longitudeIndex > 0 ? longitudeIndex : latLongStr.lastIndexOf("-");
-                latLong[0] = Location.convert(latLongStr.substring(0, longitudeIndex));
-                latLong[1] = Location.convert(latLongStr.substring(longitudeIndex));
+                if (latLongStr != null) {
+                    // Format of location: https://developer.android.com/reference/android/media/MediaMetadataRetriever#METADATA_KEY_LOCATION
+                    latLongStr = latLongStr.replaceAll("/", "");
+                    int longitudeIndex = latLongStr.lastIndexOf("+");
+                    longitudeIndex = longitudeIndex > 0 ? longitudeIndex : latLongStr.lastIndexOf("-");
+                    latLong[0] = Location.convert(latLongStr.substring(0, longitudeIndex));
+                    latLong[1] = Location.convert(latLongStr.substring(longitudeIndex));
+                }
             } else if (type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
                 ExifInterface exif = new ExifInterface(contentResolver.openInputStream(uri));
                 // Format of location: https://developer.android.com/reference/androidx/exifinterface/media/ExifInterface#getLatLong()

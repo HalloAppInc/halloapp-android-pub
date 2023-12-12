@@ -10,15 +10,62 @@
     android:layout_marginHorizontal="2dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
+        android:id="@+id/thumbnail_top_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:adjustViewBounds="true"
-        android:background="@null"
-        app:shapeAppearance="@style/RoundedAppearanceAlbumThumbnail"
+        android:cropToPadding="true"
+        android:scaleType="centerCrop"
+        app:shapeAppearance="@style/RoundedAppearanceThumbnailTop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/barrier"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/thumbnail_top_right" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/thumbnail_top_right"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:paddingLeft="1dp"
+        android:cropToPadding="true"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/barrier"
+        app:layout_constraintStart_toEndOf="@id/thumbnail_top_left"
+        app:layout_constraintEnd_toStartOf="@id/suggestion_caption" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        app:barrierDirection="top"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:constraint_referenced_ids="thumbnail_bottom_left,thumbnail_bottom_right" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/thumbnail_bottom_left"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:adjustViewBounds="true"
+        android:paddingTop="1dp"
+        android:cropToPadding="true"
+        android:scaleType="centerCrop"
+        app:shapeAppearance="@style/RoundedAppearanceThumbnailBottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/thumbnail_bottom_right"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/thumbnail_bottom_right"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:paddingTop="1dp"
+        android:paddingLeft="1dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toEndOf="@id/thumbnail_bottom_left"
+        app:layout_constraintEnd_toStartOf="@id/suggestion_caption"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/time"
@@ -32,13 +79,15 @@
         tools:text="7:50 pm" />
 
     <LinearLayout
+        android:id="@+id/suggestion_caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@id/thumbnail"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="10dp" >
+        android:layout_marginStart="100dp"
+        android:paddingStart="10dp">
 
         <TextView
             android:id="@+id/title"
