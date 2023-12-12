@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Suggestion {
 
-    private final double MAX_DISTANCE_IN_METERS = 120;
+    private final double MAX_DISTANCE_IN_METERS = 100;
 
     public String id;
     public int size;

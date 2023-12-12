@@ -48,7 +48,7 @@ public class MagicPostViewModel extends AndroidViewModel {
 
     private static final int MIN_GALLERY_ITEMS_FOR_SUGGESTION = 3;
     private static final int GALLERY_SIZE = 100;
-    private static final int MAX_DISTANCE_IN_METERS = 120;
+    private static final int MAX_DISTANCE_IN_METERS = 100;
     private static final long CUTOFF_TIME_IN_SECONDS = (System.currentTimeMillis() - (2 * DateUtils.WEEK_IN_MILLIS)) / 1000;
     private static final int NUM_THUMBNAILS = 4;
 
