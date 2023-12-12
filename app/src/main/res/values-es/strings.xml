@@ -48,13 +48,9 @@ El servidor de telefonía móvil podría aplicar cargos."</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está en HalloApp."</string>
     <string name="new_chat_name_placeholder">"¡%s está usando HalloApp!"</string>
-
-    <!-- Fuzzy -->
     <string name="posts_empty">"Tus publicaciones aparecerán aquí"</string>
     <string name="posts_exchange_numbers">"Para conectarte debes intercambiar números de teléfono"</string>
-
-    <!-- Fuzzy -->
-    <string name="home_page_empty">"Las publicaciones de tus contactos aparecerán aquí"</string>
+    <string name="home_page_empty">"Las publicaciones de tus amigos aparecerán aquí"</string>
     <string name="chats_page_empty">"Tus contactos y mensajes aparecerán aquí"</string>
     <string name="chats_search_empty">"No se encontraron chats con '%s'"</string>
     <string name="groups_page_empty">"Tus grupos aparecerán aquí"</string>
@@ -71,22 +67,16 @@ El servidor de telefonía móvil podría aplicar cargos."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Para tomar fotos y grabar videos necesitamos permiso para tener acceso a la cámara y grabar audio en tu dispositivo.
 
 Abre la pantalla de Configuración de la aplicación para modificar los permisos de la aplicación."</string>
-
-    <!-- Fuzzy -->
     <string name="contacts_permission_rationale">"Para conectarte con tu familia y tus amigos necesitamos permiso para tener acceso a los contactos en tu dispositivo."</string>
+    <string name="contacts_permission_rationale_denied">"Para conectarte mejor con tus amigos y familiares necesitamos permiso para acceder a los contactos de tu dispositivo.
 
-    <!-- Fuzzy -->
-    <string name="contacts_permission_rationale_denied">"Para conectarte con tu familia y tus amigos necesitamos permiso para tener acceso a los contactos en tu dispositivo.
-
-Abre la pantalla de Configuración para modificar los permisos de la aplicación."</string>
+Ir a configuración para modificar sus permisos."</string>
     <string name="storage_permission_rationale">"Para escoger archivos multimedia necesitamos permiso para acceder a la memoria de tu dispositivo."</string>
     <string name="storage_permission_rationale_denied">"Para escoger archivos multimedia necesitamos permiso para acceder a la memoria de tu dispositivo.
 
 Para modificar los permisos de la aplicación, abre la pantalla de Configuración."</string>
     <string name="retry">"Inténtalo de nuevo"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Para poder conectarte con tu familia y amigos necesitamos permiso para acceder a tus contactos y sincronizar los números de teléfono en tu libreta de direcciones."</string>
+    <string name="contact_rationale_upload">"Para poder conectarte con tu familia y amigos necesitamos permiso para acceder a tus contactos y sincronizar los números de teléfono en tu libreta de contactos."</string>
     <string name="failed_to_initialize">"No se pudo iniciar"</string>
     <string name="type_a_comment_hint">"Agrega un comentario"</string>
     <string name="comments">"Comentarios"</string>
@@ -112,26 +102,18 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="send_logs">"Compartir comentarios y registro diario"</string>
     <string name="terms_of_service">"Términos de servicio"</string>
     <string name="privacy_policy">"Política de privacidad"</string>
-
-    <!-- Fuzzy -->
-    <string name="settings_block_list">"Contactos bloqueados"</string>
+    <string name="settings_block_list">"Amigos bloqueados"</string>
     <string name="settings_feed_privacy">"Publicaciones"</string>
     <string name="settings_privacy">"Privacidad"</string>
-
-    <!-- Fuzzy -->
     <plurals name="contact_selection_subtitle">
-        <item quantity="one">"%d contacto seleccionado"</item>
-        <item quantity="other">"%d contactos seleccionados"</item>
+        <item quantity="one">"%d amigo seleccionado"</item>
+        <item quantity="other">"%d amigos seleccionados"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"Puedes seleccionar hasta %d contacto"</item>
-        <item quantity="other">"Puedes seleccionar hasta %d contactos"</item>
+        <item quantity="one">"Puedes seleccionar hasta %d amigo"</item>
+        <item quantity="other">"Puedes seleccionar hasta %d amigos"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="no_contacts_selected_subtitle">"No hay contactos seleccionados"</string>
+    <string name="no_contacts_selected_subtitle">"No hay amigos seleccionados"</string>
     <string name="help">"Ayuda"</string>
     <string name="about">"Acerca de HalloApp"</string>
     <string name="notify_posts">"Publicaciones"</string>
@@ -242,9 +224,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="day_of_week_at_time">"El %1$s a las %2$s"</string>
     <string name="unknown_contact">"Contacto desconocido"</string>
     <string name="select_contact">"Nuevo mensaje"</string>
-
-    <!-- Fuzzy -->
-    <string name="search_contacts">"Buscar contactos"</string>
+    <string name="search_contacts">"Buscar amigos"</string>
     <string name="search">"Buscar"</string>
     <string name="contact_search_empty">"No se encontró nada para '%s'"</string>
     <string name="action_save">"Guardar"</string>
@@ -274,15 +254,9 @@ versión: %2$s
     <string name="picker_title_block_user">"Bloquear usuario"</string>
     <string name="cancel">"Cancelar"</string>
     <string name="group_subtitle">"toca para ver la información del grupo"</string>
-
-    <!-- Fuzzy -->
-    <string name="empty_block_list">"No tienes contactos bloqueados"</string>
-
-    <!-- Fuzzy -->
-    <string name="block_notification">"Bloqueaste a este contacto. Toca para desbloquearlo"</string>
-
-    <!-- Fuzzy -->
-    <string name="unblock_notification">"Desbloqueaste a este contacto"</string>
+    <string name="empty_block_list">"No tienes amigos bloqueados"</string>
+    <string name="block_notification">"Bloqueaste a este amigo(a). Toca para desbloquearlo(a)"</string>
+    <string name="unblock_notification">"Desbloqueaste a este amigo(a)"</string>
     <string name="system_message_group_created">"Este grupo fue creado por %s"</string>
     <string name="system_message_group_created_by_you">"Este grupo fue creado por ti"</string>
     <string name="system_message_members_added">"%1$s agregó a %2$s"</string>
@@ -329,13 +303,9 @@ versión: %2$s
     <string name="contact_picker_feed_except_title">"Ocultar las publicaciones de…"</string>
     <string name="contact_picker_feed_only_title">"Compartir publicaciones con…"</string>
     <string name="setting_feed_privacy_title">"Quién puede ver mis publicaciones"</string>
-
-    <!-- Fuzzy -->
-    <string name="setting_feed_all">"Mis contactos"</string>
+    <string name="setting_feed_all">"Mis amigos"</string>
     <string name="setting_feed_only">"Solo compartir con…"</string>
-
-    <!-- Fuzzy -->
-    <string name="setting_feed_except">"Mis contactos excepto…"</string>
+    <string name="setting_feed_except">"Mis amigos excepto…"</string>
     <string name="feed_privacy_fail_to_load">"Error al cargar configuración de privacidad"</string>
     <string name="feed_privacy_update_success">"La configuración fue actualizada con éxito"</string>
     <string name="feed_privacy_update_failure">"No se pudo actualizar esa configuración"</string>
@@ -404,11 +374,9 @@ versión: %2$s
         <item quantity="one">"%d es un contacto en HalloApp"</item>
         <item quantity="other">"%d son contactos en HalloApp"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="settings_block_list_summary">
-        <item quantity="one">"%d contacto"</item>
-        <item quantity="other">"%d contactos"</item>
+        <item quantity="one">"%d amigo(a)"</item>
+        <item quantity="other">"%d amigos(as)"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"Ninguno"</string>
     <string name="settings_feed_contacts_summary">"Mi libreta de teléfonos"</string>
@@ -420,9 +388,7 @@ versión: %2$s
         <item quantity="one">"%d contacto seleccionado"</item>
         <item quantity="other">"%d contactos seleccionados"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="settings_feed_selected_empty">"No hay contactos seleccionados"</string>
+    <string name="settings_feed_selected_empty">"No hay amigos seleccionados"</string>
     <string name="settings_version_footer">"HalloApp Versión %s"</string>
     <string name="connectivity_info_airplane_mode">"Modo avión activado"</string>
     <string name="connectivity_info_not_connected">"No hay red"</string>
@@ -865,8 +831,7 @@ Abre la pantalla de Configuración para modificar los permisos de la aplicación
     <string name="groups_in_common">"Grupos en común"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <!-- Fuzzy -->
-    <string name="slide_to_cancel">"Desliza para cancelar"</string>
+    <string name="slide_to_cancel">"Desliza y cancela"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Responder"</string>
@@ -1292,20 +1257,16 @@ Abre la pantalla de Configuración de la app para modificar los permisos."</stri
     <string name="edit_favorites_action">"Editar favoritos"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <!-- Fuzzy -->
-    <string name="favorites_nux_call_to_action">"Ahora puedes crear una lista de tus contactos favoritos y compartir tus publicaciones de HalloApp solo con ellos"</string>
+    <string name="favorites_nux_call_to_action">"Ahora puedes crear una lista de tus amigos favoritos y compartir tus publicaciones de HalloApp solo con ellos"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"Tus contactos que se unan a HalloApp podrán ver tus publicaciones vigentes"</string>
+    <string name="my_contacts_disclaimer">"Tus amigos que se unan a HalloApp podrán ver tus publicaciones vigentes."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_title">"Mis contactos"</string>
+    <string name="my_contacts_title">"Mis amigos"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <!-- Fuzzy -->
-    <string name="my_ha_contacts">"Mis contactos de HalloApp"</string>
+    <string name="my_ha_contacts">"Mis amigos de HalloApp"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
     <string name="setting_feed_privacy_groups_section_title">"Compartir solo con un grupo"</string>
@@ -1393,8 +1354,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Tu publicación se compartió con tus Favoritos y desaparecerá después de 30 días."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos. Los momentos desaparecen después de 24 horas."</string>
+    <string name="seen_by_post_expiration_moments">"Tu Momento fue compartido con tus amigos. Los Momentos desaparecen pasadas 24 horas."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Nuevo momento de %s"</string>
@@ -1418,8 +1378,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Momento caducado"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Para ver los momentos por 24 horas, comparte los tuyos"</string>
+    <string name="share_moment_subtitle">"Los momentos duran 24 horas"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Desconectando…"</string>
@@ -1683,8 +1642,7 @@ privada"</string>
     <string name="home_onboarding_nux_post_visibility_header">"¿Quién puede ver mis publicaciones?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <!-- Fuzzy -->
-    <string name="home_onboarding_nux_post_visibility_text">"Ve quién ya está en HalloApp e invite a amigos y familiares"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Tus amigos en HalloApp pueden ver tus publicaciones. Añade amigos de tu red y gestiona las solicitudes de amistad."</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
     <string name="see_network_action">"Ver mi red"</string>
@@ -1699,15 +1657,13 @@ privada"</string>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
-    <!-- Fuzzy -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"Este contacto podrá ver tus publicaciones compartidas con todos los contactos de HalloApp"</item>
-        <item quantity="other">"Estos contactos podrá ver tus publicaciones compartidas con todos los contactos de HalloApp"</item>
+        <item quantity="one">"Este amigo(a) podrá ver tus publicaciones compartidas con todos tus amigos de HalloApp"</item>
+        <item quantity="other">"Este amigos(as) podrá ver tus publicaciones compartidas con todos tus amigos de HalloApp"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <!-- Fuzzy -->
-    <string name="no_connections_on_hallo_explanation">"Los contactos de tu teléfono que se registren en HalloApp aparecerán aquí automáticamente."</string>
+    <string name="no_connections_on_hallo_explanation">"Tus amigos de HalloApp aparecerán aquí automáticamente."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
     <string name="first_time_post_content">"¡Hola! Estoy usando HalloApp"</string>
@@ -1788,8 +1744,7 @@ privada"</string>
     <string name="compose_share_recents_header">"Recientemente contactado(a)"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <!-- Fuzzy -->
-    <string name="compose_share_search_contacts">"Buscar contactos"</string>
+    <string name="compose_share_search_contacts">"Buscar amigos"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
@@ -1807,11 +1762,9 @@ privada"</string>
     <string name="send_to">"Enviar a…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <!-- Fuzzy -->
     <string name="home_contact_permissions_banner">"Para conectarte con sus amigos y familiares y ver sus publicaciones, permite que HalloApp acceda a tus contactos"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <!-- Fuzzy -->
     <string name="new_post_contact_permissions_banner">"Para compartir publicaciones con tus amigos y familiares, permite que HalloApp acceda a tus contactos"</string>
 
     <!-- title when asking for permissions for groups -->
@@ -1866,8 +1819,7 @@ privada"</string>
     <string name="moment_sharing_with">"Compartido con"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <!-- Fuzzy -->
-    <string name="all_contacts_count">"Todos los contactos (%d)"</string>
+    <string name="all_contacts_count">"Todos los amigos (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
     <string name="compact_share_my_contacts">"Mis contactos (%d)"</string>
@@ -2010,8 +1962,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="selfie_countdown_header">"∞ selfie en vivo"</string>
 
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
-    <string name="selfie_post_header">"ahora mejor que luego"</string>
+    <string name="selfie_post_header">"es ahora o después"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
@@ -2777,7 +2728,7 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
-    <string name="phone_description">"ⓘ para recuperar y ayudar a verificar tu cuenta. sólo tú puedes ver tu número de teléfono."</string>
+    <string name="phone_description">"ⓘ para recuperar y ayudar a verificar tu cuenta. Sólo tú puedes ver tu número de teléfono."</string>
 
     <!-- Message menu option to copy the selected message -->
     <string name="copy">"Copiar"</string>
@@ -2805,7 +2756,6 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
     <string name="see_outgoing_requests">"Ver solicitudes enviadas"</string>
 
     <!-- Tab to show suggested and current friend requests -->
-    <!-- Fuzzy -->
     <string name="requests">"Solicitudes (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
@@ -2959,40 +2909,46 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
     <string name="notification_friendship_model_body">"Ahora puedes buscar personas en HalloApp y añadirlas como amigos"</string>
 
     <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
-    <string name="title_magic_post">"Magic posts"</string>
+    <string name="title_magic_post">"Magic Posts"</string>
 
     <!-- Name for notification channel for magic posts -->
-    <string name="magic_post_notifications_channel_name">"Magic post notifications"</string>
+    <string name="magic_post_notifications_channel_name">"Notificaciones de Magic Posts"</string>
 
     <!-- Title of the introduction for the magic posts tab -->
-    <string name="try_magic_posts">"Try magic posts"</string>
+    <string name="try_magic_posts">"Prueba Magic Posts"</string>
 
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+    <string name="try_magic_post_explanation">"Cuando haces nuevas fotos, buscamos las mejores y las organizamos en un borrador para que lo tengas listo si te apetece publicarlo."</string>
 
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
-    <string name="notification_post_highlight_suggestion">"New highlight"</string>
+    <string name="notification_post_highlight_suggestion">"Novedad destacada"</string>
 
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
-    <string name="notification_post_highlight_suggestion_body">"%d photos taken"</string>
+    <string name="notification_post_highlight_suggestion_body">"%d fotos tomadas"</string>
 
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
-    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d photos taken at %2$s"</string>
+    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d fotos tomadas en %2$s"</string>
 
     <!-- Title describing new post suggestions to create -->
-    <string name="new_post_suggestions">"New post suggestions"</string>
+    <string name="new_post_suggestions">"Sugerencias de nuevas publicaciones"</string>
 
     <!-- Text stating there are no new post suggestions -->
-    <string name="no_post_suggestions">"No post suggestions"</string>
+    <string name="no_post_suggestions">"No hay sugerencias"</string>
 
     <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
-    <string name="suggestion_text_template">"%1$d photos taken on %2$s"</string>
+    <string name="suggestion_text_template">"%1$d fotos tomadas el %2$s"</string>
 
     <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
-    <string name="suggestion_text_with_location_template">"%1$d photos taken at %2$s"</string>
+    <string name="suggestion_text_with_location_template">"%1$d fotos tomadas en %2$s"</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
-    <string name="selecting_best_photos">"Selecting best photos…"</string>
+    <string name="selecting_best_photos">"Seleccionando las mejores fotos…"</string>
+
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">"Cancelar solicitud"</string>
+
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">"Confirmar"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Toca para agregar a %s a tu libreta de contactos&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Esta publicación solo se comparte con los contactos que agregaste a Favoritos. Puedes editar tu lista de Favoritos en cualquier momento."</string>
     <string name="contact_favorites_explanation_others">"Esta publicación solo se comparte con un público limitado. Puedes cambiar tu audiencia en la configuración de privacidad en cualquier momento."</string>

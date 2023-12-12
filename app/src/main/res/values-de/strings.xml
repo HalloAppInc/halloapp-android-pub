@@ -2756,28 +2756,29 @@ Bleibe dran!"</string>
     <string name="ping_followed_you">"%s folgt dir"</string>
 
     <!-- phone number label on profile update screen -->
-    <string name="profile_phone">"Phone &#128274;"</string>
+    <string name="profile_phone">"Handy"</string>
 
     <!-- hint inviting users to add their phone number on profile update screen -->
-    <string name="phone_hint">"add phone number"</string>
+    <string name="phone_hint">"Nummer hinzufügen"</string>
 
     <!-- phone number label on profile add phone screen -->
-    <string name="phone">"phone"</string>
+    <string name="phone">"Handy"</string>
 
     <!-- prompt for entering the phone verification code -->
-    <string name="verify_phone_code_prompt">"enter the code we sent"</string>
+    <string name="verify_phone_code_prompt">"den gesendeten Code eingeben"</string>
 
     <!-- hint for the phone verification code -->
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
-    <string name="phone_description">"ⓘ to recover and to help verify your acount. only you can see your phone number."</string>
+    <!-- Fuzzy -->
+    <string name="phone_description">"ⓘ zur Wiederherstellung u. Verifizierung deines Accounts. Nur du kannst deine Handynummer sehen."</string>
 
     <!-- Message menu option to copy the selected message -->
     <string name="copy">"Kopieren"</string>
 
     <!-- text show above name and username entry field -->
-    <string name="name_username_entry_title">"Enter your name and select a username"</string>
+    <string name="name_username_entry_title">"Namen eingeben und Benutzernamen wählen"</string>
 
     <!-- text hint for username entry field -->
     <string name="username_hint">"Benutzername"</string>
@@ -2790,55 +2791,55 @@ Bleibe dran!"</string>
     <string name="friendship_model_description">"Du kannst nun auf HalloApp Personen über ihren Namen oder @Benutzernamen suchen. Deine HalloApp-Kontakte werden jetzt deine Freunde. Du kannst bestehende Kontakte jederzeit aus Freunde entfernen."</string>
 
     <!-- Button text to dismiss new friendship model popup -->
-    <string name="remind_later">"Remind later"</string>
+    <string name="remind_later">"Später erinnern"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="friends">"Freunde"</string>
 
     <!-- Message displayed to show all outgoing sent friend requests -->
-    <string name="see_outgoing_requests">"See sent requests"</string>
+    <string name="see_outgoing_requests">"Gesendete Anfragen ansehen"</string>
 
     <!-- Tab to show suggested and current friend requests -->
-    <string name="requests">"Requests (%d)"</string>
+    <string name="requests">"Anfragen (%d)"</string>
 
     <!-- Button text to confirm an incoming pending friend request -->
-    <string name="confirm_friend">"Confirm"</string>
+    <string name="confirm_friend">"Bestätigen"</string>
 
     <!-- Button text to send a friend request to someone -->
     <string name="add_friend">"Als Freund hinzufügen"</string>
 
     <!-- Section title showing current pending friend requests -->
-    <string name="friend_requests">"Friend requests"</string>
+    <string name="friend_requests">"Freundschaftsanfragen"</string>
 
     <!-- Section title of people to invite to join Halloapp -->
-    <string name="invite_friends_on_halloapp_title">"Invite friends on Halloapp"</string>
+    <string name="invite_friends_on_halloapp_title">"Freunde zu HalloApp einladen"</string>
 
     <!-- Section title for friend suggestions from your contact list -->
-    <string name="from_contacts_list">"From your contact list"</string>
+    <string name="from_contacts_list">"Aus deinen Kontakten"</string>
 
     <!-- Section title for friend suggestions -->
-    <string name="friend_suggestions">"Friend suggestions"</string>
+    <string name="friend_suggestions">"Freundesvorschläge"</string>
 
     <!-- Section title showing your current friends -->
-    <string name="my_friends_on_halloapp">"My friends on HalloApp"</string>
+    <string name="my_friends_on_halloapp">"Meine Freunde auf HalloApp"</string>
 
     <!-- Search box hint text for HalloApp user search -->
-    <string name="search_halloapp_users">"Search HalloApp users"</string>
+    <string name="search_halloapp_users">"HalloApp-User suchen"</string>
 
     <!-- Section title showing HalloApp friends after searching -->
     <string name="halloapp_friends">"Meine HalloApp-Freunde"</string>
 
     <!-- Section title showing HalloApp users after searching -->
-    <string name="halloapp_users">"HalloApp users"</string>
+    <string name="halloapp_users">"HalloApp-User"</string>
 
     <!-- Message displayed to show all pending friend requests -->
-    <string name="see_all_requests">"See all requests"</string>
+    <string name="see_all_requests">"Alle Anfragen anzeigen"</string>
 
     <!-- Shown when user chooses to remove a friend; %s is replaced with the name of the friend to be removed -->
-    <string name="remove_friend_confirmation">"Remove %s from your friends?"</string>
+    <string name="remove_friend_confirmation">"%s aus Freunden entfernen?"</string>
 
     <!-- Explains the consequences of removing a friend where %s is the name of the person -->
-    <string name="remove_friend_confirmation_consequences">"%s and you will no longer be able to see each other's posts."</string>
+    <string name="remove_friend_confirmation_consequences">"%s und du könnt eure Beiträge nicht mehr gegenseitig sehen."</string>
 
     <!-- Menu item to add someone to your favorites list -->
     <string name="add_to_favorites">"Zu Favoriten hinzufügen"</string>
@@ -2847,31 +2848,31 @@ Bleibe dran!"</string>
     <string name="remove_friend">"Freund löschen"</string>
 
     <!-- Message under %s's profile if you sent them a friend request where %s is the name of the person -->
-    <string name="outgoing_sent_friend_request">"You have sent %s a friend request"</string>
+    <string name="outgoing_sent_friend_request">"Du hast %s eine Freundschaftsanfrage geschickt"</string>
 
     <!-- Message under %s's profile if they sent you a friend request where %s is the name of the person -->
-    <string name="incoming_sent_friend_request">"%s has sent you a friend request"</string>
+    <string name="incoming_sent_friend_request">"%s hat dir eine Freundschaftsanfrage geschickt"</string>
 
     <!-- Button to reject a friend request -->
     <string name="ignore">"Ignorieren"</string>
 
     <!-- Title showing all requests a user received -->
-    <string name="all_requests">"All requests"</string>
+    <string name="all_requests">"Alle Anfragen"</string>
 
     <!-- Section title showing current requests received -->
-    <string name="requests_received">"Requests received"</string>
+    <string name="requests_received">"Erhaltene Anfragen"</string>
 
     <!-- Section title showing current requests sent -->
-    <string name="requests_sent">"Requests sent"</string>
+    <string name="requests_sent">"Gesendete Anfragen"</string>
 
     <!-- Warning message shown when we were unable to remove %s as a friend and to try later where %s is the name of the person -->
-    <string name="removing_friend_failed_check_internet">"Couldn't remove %s as a friend. Check your internet and try again."</string>
+    <string name="removing_friend_failed_check_internet">"%s konnte nicht entfernt werden. Überprüfe deine Internetverbindung und versuche es erneut."</string>
 
     <!-- Confirmation message that %s was removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_successful">"Removed %s"</string>
+    <string name="removing_friend_successful">"%s entfernt"</string>
 
     <!-- Message shown when %s is in the process of being removed as a friend where %s is the name of the person -->
-    <string name="removing_friend_in_progress">"Removing %s…"</string>
+    <string name="removing_friend_in_progress">"%s wird entfernt…"</string>
 
     <!-- Error message when we are unable to send a friend request and to try again later -->
     <string name="error_send_friend_request">"Freundschaftsanfrage kann nicht gesendet werden, bitte später erneut versuchen"</string>
@@ -2896,8 +2897,8 @@ Bleibe dran!"</string>
 
     <!-- Text telling a user how many contacts they have on HalloApp and to add them as friends. %d is replaced with the number -->
     <plurals name="friend_connections_on_hallo">
-        <item quantity="one">"%d person from your contacts is on HalloApp. Add them as a friend?"</item>
-        <item quantity="other">"%d person from your contacts is on HalloApp. Add them as a friend?"</item>
+        <item quantity="one">"In deinen Kontakten ist %d Person auf HalloApp. Zu Freunden hinzufügen?"</item>
+        <item quantity="other">"In deinen Kontakten sind %d Personen auf HalloApp. Zu Freunden hinzufügen?"</item>
     </plurals>
 
     <!-- Text telling a user that after these contacts are friends, they can see your posts -->
@@ -2905,87 +2906,93 @@ Bleibe dran!"</string>
 
     <!-- Info message showing how many friend requests are being sent, %d is replaced with the number -->
     <plurals name="sent_friend_requests">
-        <item quantity="one">"Sending a friend request to %d person"</item>
-        <item quantity="other">"Sending a friend request to %d person"</item>
+        <item quantity="one">"Freundschaftsanfrage an %d Person gesendet"</item>
+        <item quantity="other">"Freundschaftsanfragen an %d Personen gesendet"</item>
     </plurals>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for their posts -->
-    <string name="friend_favorites_explanation">"This post is only shared with the friends you added to Favorites. You can edit your Favorites list at any time."</string>
+    <string name="friend_favorites_explanation">"Dieser Beitrag wird nur mit Freunden auf deiner Favoritenliste geteilt. Du kannst deine Favoritenliste jederzeit bearbeiten."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts -->
     <string name="friend_favorites_explanation_others">"Dieser Beitrag wird nur mit einer bestimmten Zielgruppe geteilt, die du in den Privatsphäre-Einstellungen jederzeit anpassen kannst."</string>
 
     <!-- Introduction to what favorites means for friends. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="friend_favorites_explanation_others_with_name">"%s shared this post with friends on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+    <string name="friend_favorites_explanation_others_with_name">"%s hat diesen Beitrag mit Freunden auf ihrer/seiner Favoritenliste geteilt. Du kannst deine Favoritenliste jederzeit einrichten und bearbeiten."</string>
 
     <!-- Message alerting the user that the person messaging them is not a friend -->
-    <string name="not_friend_alert">"This person is not a friend"</string>
+    <string name="not_friend_alert">"Diese Person ist kein Freund"</string>
 
     <!-- Button text telling users to add the user as a friend -->
-    <string name="add_as_friend">"Add as a friend"</string>
+    <string name="add_as_friend">"Als Freund hinzufügen"</string>
 
     <!-- Message when a friend request was successfully sent -->
-    <string name="send_friend_request_successful">"Successfully sent friend request"</string>
+    <string name="send_friend_request_successful">"Freundschaftsanfrage gesendet"</string>
 
     <!-- Label for icon that indicates all the user's friends with their total number in parentheses -->
-    <string name="compact_share_my_friends">"My friends (%d)"</string>
+    <string name="compact_share_my_friends">"Meine Freunde (%d)"</string>
 
     <!-- Title of section for recent friends -->
-    <string name="recent_friends">"Recent friends"</string>
+    <string name="recent_friends">"Jüngste Freunde"</string>
 
     <!-- Text shown in activity center telling users when they received a new friend request. %s is the person who sent the request -->
-    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; sent you a friend request! &lt;b&gt;&lt;a href=\"view-friends\"&gt;View&lt;/a&gt;&lt;/b&gt;"</string>
+    <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; hat dir eine Freundschaftsanfrage geschickt! &lt;b&gt;&lt;a href=\"view-friends\"&gt;View&lt;/a&gt;&lt;/b&gt;"</string>
 
     <!-- Text shown in activity center telling users when they have a new friend. %s is the name of the friend -->
-    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; is now your friend"</string>
+    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; "</string>
 
     <!-- Tab to show suggested and current friend requests when there are no current requests -->
-    <string name="requests_zero">"Requests"</string>
+    <string name="requests_zero">"Anfragen"</string>
 
     <!-- Error message when we are unable to reject a friend suggestion and to try again later -->
     <string name="error_reject_friend_suggestion">"Freundschaftsvorschlag kann nicht abgelehnt werden, bitte später erneut versuchen"</string>
 
     <!-- Title of the new friendship model notification -->
-    <string name="notification_friendship_model_title">"New friendship model"</string>
+    <string name="notification_friendship_model_title">"Neues Freundschaftsmodell"</string>
 
     <!-- Body of the new friendship model notification -->
-    <string name="notification_friendship_model_body">"Now you can search for people on HalloApp and add them as friends"</string>
+    <string name="notification_friendship_model_body">"Du kannst jetzt nach Personen auf HalloApp suchen und sie als Freunde hinzufügen"</string>
 
     <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
-    <string name="title_magic_post">"Magic posts"</string>
+    <string name="title_magic_post">"Magic Posts"</string>
 
     <!-- Name for notification channel for magic posts -->
-    <string name="magic_post_notifications_channel_name">"Magic post notifications"</string>
+    <string name="magic_post_notifications_channel_name">"Magic post-Mitteilungen"</string>
 
     <!-- Title of the introduction for the magic posts tab -->
-    <string name="try_magic_posts">"Try magic posts"</string>
+    <string name="try_magic_posts">"Magic-Posts ausprobieren"</string>
 
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+    <string name="try_magic_post_explanation">"Wenn du neue Fotos aufnimmst, stellen wir dir die besten Aufnahmen in einem Entwurf zusammen, den du, wenn du Lust hast, ganz einfach teilen kannst."</string>
 
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
-    <string name="notification_post_highlight_suggestion">"New highlight"</string>
+    <string name="notification_post_highlight_suggestion">"Neues Highlight"</string>
 
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
-    <string name="notification_post_highlight_suggestion_body">"%d photos taken"</string>
+    <string name="notification_post_highlight_suggestion_body">"%d aufgenommene Fotos"</string>
 
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
-    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d photos taken at %2$s"</string>
+    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d Fotos aufgenommen in %2$s"</string>
 
     <!-- Title describing new post suggestions to create -->
-    <string name="new_post_suggestions">"New post suggestions"</string>
+    <string name="new_post_suggestions">"Vorschläge für neuen Beitrag"</string>
 
     <!-- Text stating there are no new post suggestions -->
-    <string name="no_post_suggestions">"No post suggestions"</string>
+    <string name="no_post_suggestions">"keine Beitragsvorschläge"</string>
 
     <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
-    <string name="suggestion_text_template">"%1$d photos taken on %2$s"</string>
+    <string name="suggestion_text_template">"%1$d Fotos aufgenommen am %2$s"</string>
 
     <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
-    <string name="suggestion_text_with_location_template">"%1$d photos taken at %2$s"</string>
+    <string name="suggestion_text_with_location_template">"%1$d Fotos aufgenommen in %2$s"</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
-    <string name="selecting_best_photos">"Selecting best photos…"</string>
+    <string name="selecting_best_photos">"Fotos werden ausgewählt…"</string>
+
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">"Anfrage löschen"</string>
+
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">"Bestätigen"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tippen, um %s zu deinen Kontakten hinzuzufügen&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Dieser Beitrag wird nur mit den Kontakten geteilt, die du zu deinen Favoriten hinzugefügt hast. Du kannst deine Favoritenliste jederzeit bearbeiten."</string>
     <string name="contact_favorites_explanation_others">"Dieser Beitrag wird nur mit einer bestimmten Zielgruppe geteilt, die du in den Privatsphäre-Einstellungen jederzeit anpassen kannst."</string>

@@ -2709,6 +2709,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
+    <!-- Fuzzy -->
     <string name="phone_description">"ⓘ para recuperar e ajudar a verificar sua conta. só você pode ver o seu número de telefone."</string>
 
     <!-- Message menu option to copy the selected message -->
@@ -2890,40 +2891,46 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="notification_friendship_model_body">"Agora você pode procurar pessoas no HalloApp e adicioná-las como amigos"</string>
 
     <!-- navigation bar option to open 'magic posts' which are post suggestions based on recent photos/videos taken -->
-    <string name="title_magic_post">"Magic posts"</string>
+    <string name="title_magic_post">"Postagens Mágicas"</string>
 
     <!-- Name for notification channel for magic posts -->
-    <string name="magic_post_notifications_channel_name">"Magic post notifications"</string>
+    <string name="magic_post_notifications_channel_name">"Notificações de postagem mágica"</string>
 
     <!-- Title of the introduction for the magic posts tab -->
-    <string name="try_magic_posts">"Try magic posts"</string>
+    <string name="try_magic_posts">"Experimente postagens mágicas"</string>
 
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+    <string name="try_magic_post_explanation">"Quando você tira novas fotos, nós encontramos as melhores fotos e as organizamos em um rascunho de postagem, para que esteja pronto para você se desejar postar."</string>
 
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
-    <string name="notification_post_highlight_suggestion">"New highlight"</string>
+    <string name="notification_post_highlight_suggestion">"Novo destaque"</string>
 
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken -->
-    <string name="notification_post_highlight_suggestion_body">"%d photos taken"</string>
+    <string name="notification_post_highlight_suggestion_body">"%d fotos tiradas"</string>
 
     <!-- Body of the notification for a new post suggestion where %d is the number of photos taken at %s, a given location -->
-    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d photos taken at %2$s"</string>
+    <string name="notification_post_highlight_suggestion_with_location_body">"%1$d fotos tiradas em %2$s"</string>
 
     <!-- Title describing new post suggestions to create -->
-    <string name="new_post_suggestions">"New post suggestions"</string>
+    <string name="new_post_suggestions">"Sugestões de novas postagens"</string>
 
     <!-- Text stating there are no new post suggestions -->
-    <string name="no_post_suggestions">"No post suggestions"</string>
+    <string name="no_post_suggestions">"Nenhuma sugestão de postagem"</string>
 
     <!-- Text format to describe the number of photos, %d, taken for a new post on %s, a specific day -->
-    <string name="suggestion_text_template">"%1$d photos taken on %2$s"</string>
+    <string name="suggestion_text_template">"%1$d fotos tiradas em %2$s"</string>
 
     <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
-    <string name="suggestion_text_with_location_template">"%1$d photos taken at %2$s"</string>
+    <string name="suggestion_text_with_location_template">"%1$d fotos tiradas em %2$s"</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
-    <string name="selecting_best_photos">"Selecting best photos…"</string>
+    <string name="selecting_best_photos">"Selecionando as melhores fotos…"</string>
+
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">"Cancelar Pedido"</string>
+
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">"Confirmar"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Toque para adicionar %s ao seu catálogo de contatos&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Esta postagem é partilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar sua lista de favoritos nas configurações de privacidade a qualquer momento."</string>
     <string name="contact_favorites_explanation_others">"Esta postagem é partilhada apenas com um público limitado. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>

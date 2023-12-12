@@ -2937,7 +2937,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
-    <string name="phone_description">"ⓘ to recover and to help verify your acount. only you can see your phone number."</string>
+    <string name="phone_description">"ⓘ to recover and to help verify your account. only you can see your phone number."</string>
 
     <!-- Message menu option to copy the selected message -->
     <string name="copy">"Copy"</string>
@@ -3131,7 +3131,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="try_magic_posts">"Try magic posts"</string>
 
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+    <string name="try_magic_post_explanation">"When you take new photos, we find the best shots and organize them into a post draft, so it's ready for you if you feel like posting."</string>
 
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
     <string name="notification_post_highlight_suggestion">"New highlight"</string>
@@ -3156,6 +3156,12 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
     <string name="selecting_best_photos">"Selecting best photos…"</string>
+
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">"Cancel request"</string>
+
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">"Confirm"</string>
     <string name="add_to_contacts_notice">"Чтобы посмотреть посты от %s , добавь номер этого пользователя в свою адресную книгу. Нажми, чтобы добавить."</string>
     <string name="contact_favorites_explanation">"Этот пост доступен только тем контактам, которых вы добавили в Избранное. Вы можете настроить свою аудиторию в настройках конфиденциальности в любое время."</string>
     <string name="contact_favorites_explanation_others">"Этот пост доступен только для ограниченных контактах. Вы можете изменить настройки конфиденциальности в любое время."</string>

@@ -2914,7 +2914,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="try_magic_posts">"Probeer magische posts"</string>
 
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">"Wanneer je nieuwe foto's neemt, maken we een concept-post van je beste shots, zodat je die direct kunt delen."</string>
+    <string name="try_magic_post_explanation">"Wanneer je nieuwe foto's neemt, maken we een concept-post van je beste shots, zodat je die kunt plaatsen als je dat wilt."</string>
 
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
     <string name="notification_post_highlight_suggestion">"Nieuw hoogtepunt"</string>
@@ -2939,6 +2939,12 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
     <string name="selecting_best_photos">"De beste foto's worden geselecteerd…"</string>
+
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">"Verzoek annuleren"</string>
+
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">"Bevestigen"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
     <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>

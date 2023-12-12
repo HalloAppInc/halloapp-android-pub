@@ -2655,6 +2655,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
+    <!-- Fuzzy -->
     <string name="phone_description">"ⓘ untuk memulihkan dan membantu verifikasi akun Anda. Hanya Anda yang bisa melihat nomor teleponnya."</string>
 
     <!-- Message menu option to copy the selected message -->
@@ -2843,7 +2844,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="try_magic_posts">"Try magic posts"</string>
 
     <!-- Body explaining what magic posts are and how they are generated -->
-    <string name="try_magic_post_explanation">"When you take new photos, HalloApp curates the finest shots and arranges them into a post draft, ready for sharing."</string>
+    <string name="try_magic_post_explanation">"When you take new photos, we find the best shots and organize them into a post draft, so it's ready for you if you feel like posting."</string>
 
     <!-- Title of notification saying there is a new highlight (post) suggestion -->
     <string name="notification_post_highlight_suggestion">"New highlight"</string>
@@ -2868,6 +2869,12 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
     <string name="selecting_best_photos">"Selecting best photos…"</string>
+
+    <!-- Message under profile to cancel a sent friend request -->
+    <string name="cancel_request">"Cancel request"</string>
+
+    <!-- Message under profile to confirm a friend request -->
+    <string name="confirm">"Confirm"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Ketuk untuk menambahkan %s ke buku alamat Anda&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Postingan ini hanya dibagikan kepada kontak yang Anda tambahkan ke Favorit. Anda dapat mengedit daftar Favorit Anda kapan pun."</string>
     <string name="contact_favorites_explanation_others">"Postingan ini hanya dibagikan kepada kalangan terbatas. Anda dapat mengatur daftar kalangan di setelan privasi kapan pun."</string>
