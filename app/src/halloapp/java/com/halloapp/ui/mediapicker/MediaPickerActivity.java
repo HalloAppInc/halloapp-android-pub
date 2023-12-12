@@ -243,6 +243,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             adapter.setPagedList(mediaItems);
             progressView.setVisibility(View.GONE);
             emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
+            suggestionProgressView.setVisibility(mediaItems.isEmpty() ? View.GONE : View.VISIBLE);
         });
         viewModel.getSelected().observe(this, selected -> {
             suggestionProgressView.setVisibility(View.GONE);
