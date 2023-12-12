@@ -35,10 +35,10 @@ public class GalleryDb {
             galleryItemValues.put(GalleryTable.COLUMN_TIME_TAKEN, date);
             galleryItemValues.put(GalleryTable.COLUMN_DURATION, duration);
             db.insertWithOnConflict(GalleryTable.TABLE_NAME, null, galleryItemValues, SQLiteDatabase.CONFLICT_IGNORE);
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
     }
 
     void addGalleryItem(@NonNull GalleryItem galleryItem, @Nullable String suggestionId) {
@@ -55,10 +55,10 @@ public class GalleryDb {
             galleryItemValues.put(GalleryTable.COLUMN_LONGITUDE, galleryItem.longitude);
             galleryItemValues.put(GalleryTable.COLUMN_SUGGESTION_ID, suggestionId);
             db.insertWithOnConflict(GalleryTable.TABLE_NAME, null, galleryItemValues, SQLiteDatabase.CONFLICT_REPLACE);
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
     }
 
     void addAllGalleryItems(@NonNull List<GalleryItem> galleryItems, @NonNull String suggestionId) {
@@ -77,10 +77,58 @@ public class GalleryDb {
                 galleryItemValues.put(GalleryTable.COLUMN_SUGGESTION_ID, suggestionId);
                 db.insertWithOnConflict(GalleryTable.TABLE_NAME, null, galleryItemValues, SQLiteDatabase.CONFLICT_REPLACE);
             }
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
+    }
+
+    void deleteGalleryItem(long uriId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(GalleryTable.TABLE_NAME, GalleryTable.COLUMN_GALLERY_ITEM_URI + "=?", new String[] {Long.toString(uriId)});
+    }
+
+    void deleteGalleryItemFromSuggestion(long uriId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        String suggestionId = null;
+        int suggestionSize = 0;
+        db.beginTransaction();
+        try (final Cursor cursor = db.rawQuery(
+                "SELECT " +
+                        SuggestionsTable.TABLE_NAME + "." + SuggestionsTable.COLUMN_SUGGESTION_ID + ", " +
+                        SuggestionsTable.TABLE_NAME + "." + SuggestionsTable.COLUMN_SIZE +
+                        " FROM " + SuggestionsTable.TABLE_NAME +
+                        " LEFT JOIN " + GalleryTable.TABLE_NAME + " ON " +
+                        SuggestionsTable.TABLE_NAME + "." + SuggestionsTable.COLUMN_SUGGESTION_ID + "=" + GalleryTable.TABLE_NAME + "." + GalleryTable.COLUMN_SUGGESTION_ID +
+                        " WHERE " + GalleryTable.TABLE_NAME + "." + GalleryTable.COLUMN_GALLERY_ITEM_URI + "=?", new String[] {Long.toString(uriId)})) {
+            if (cursor.moveToNext()) {
+                suggestionId = cursor.getString(0);
+                suggestionSize = cursor.getInt(1);
+            }
+        }
+        try {
+            if (suggestionId != null) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(SuggestionsTable.COLUMN_SIZE, suggestionSize - 1);
+                db.updateWithOnConflict(SuggestionsTable.TABLE_NAME, contentValues, SuggestionsTable.COLUMN_SUGGESTION_ID + "=?", new String[] {suggestionId}, SQLiteDatabase.CONFLICT_ABORT);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    void deleteGalleryItems(@NonNull List<GalleryItem> galleryItems) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (GalleryItem galleryItem : galleryItems) {
+                db.delete(GalleryTable.TABLE_NAME, GalleryTable.COLUMN_GALLERY_ITEM_URI + "=?", new String[] {Long.toString(galleryItem.id)});
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     ArrayList<GalleryItem> getPendingGalleryItems(long cutoffTime) {
@@ -117,10 +165,10 @@ public class GalleryDb {
         db.beginTransaction();
         try {
             db.delete(GalleryTable.TABLE_NAME, null, null);
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
     }
     
     void addAllSuggestions(@NonNull ArrayList<Suggestion> suggestions) {
@@ -140,10 +188,10 @@ public class GalleryDb {
                 suggestionValues.put(SuggestionsTable.COLUMN_IS_SCORED, suggestion.isScored);
                 db.insertWithOnConflict(SuggestionsTable.TABLE_NAME, null, suggestionValues, SQLiteDatabase.CONFLICT_REPLACE);
             }
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
     }
 
     void markSuggestedGalleryItems(@NonNull List<Long> suggestedGalleryItems, @NonNull String suggestionId) {
@@ -162,10 +210,10 @@ public class GalleryDb {
             db.updateWithOnConflict(SuggestionsTable.TABLE_NAME, suggestionValues,
                     SuggestionsTable.COLUMN_SUGGESTION_ID + "=? ",
                     new String[] {suggestionId}, SQLiteDatabase.CONFLICT_ABORT);
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
     }
 
     Suggestion getSuggestion(@NonNull String suggestionId) {
@@ -232,10 +280,10 @@ public class GalleryDb {
         db.beginTransaction();
         try {
             db.delete(SuggestionsTable.TABLE_NAME, null, null);
-        } finally {
             db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        db.endTransaction();
     }
 
     GalleryItem getThumbnailPhotoBySuggestion(@NonNull String suggestionId) {

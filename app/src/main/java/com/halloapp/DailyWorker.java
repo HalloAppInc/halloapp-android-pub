@@ -13,15 +13,20 @@ import androidx.work.WorkerParameters;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.emoji.EmojiManager;
-import com.halloapp.props.ServerProps;
+import com.halloapp.ui.mediapicker.GalleryDataSource;
+import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.util.logs.Log;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DailyWorker extends Worker {
 
     private static final String DAILY_WORKER_ID = "daily-worker";
+    private static final long CUTOFF_TIME_IN_SECONDS = (System.currentTimeMillis() - (2 * DateUtils.WEEK_IN_MILLIS)) / 1000;
+    private static final int GALLERY_SIZE = 100;
 
     static void schedule(@NonNull Context context) {
         Calendar currentDate = Calendar.getInstance();
@@ -56,8 +61,26 @@ public class DailyWorker extends Worker {
         ContentDb.getInstance().cleanup();
         FileStore.getInstance().cleanup();
         EncryptedKeyStore.getInstance().checkIdentityKeyChanges();
+        resetGalleryItems();
         schedule(getApplicationContext());
         EmojiManager.getInstance().checkUpdate();
         return Result.success();
+    }
+
+    private void resetGalleryItems() {
+        ContentDb contentDb = ContentDb.getInstance();
+        contentDb.deleteAllGalleryItems();
+        GalleryDataSource source = new GalleryDataSource(getApplicationContext().getContentResolver(), true, CUTOFF_TIME_IN_SECONDS);
+        List<GalleryItem> allGalleryItems = source.load(null, false, GALLERY_SIZE);
+        for (GalleryItem galleryItem : allGalleryItems) {
+            contentDb.addGalleryItemUri(galleryItem.id, galleryItem.type, galleryItem.date, galleryItem.duration);
+        }
+        ArrayList<Suggestion> existingSuggestions = contentDb.getAllSuggestions();
+        for (Suggestion suggestion : existingSuggestions) {
+            if (suggestion.size != 0) {
+                suggestion.size = 0;
+            }
+        }
+        contentDb.addAllSuggestions(existingSuggestions);
     }
 }

@@ -22,6 +22,7 @@ import com.halloapp.ui.mediapicker.GalleryDataSource;
 import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.util.logs.Log;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,16 +86,24 @@ public class GalleryWorker extends Worker {
                     ContentDb.getInstance().addGalleryItem(galleryItem, null);
                     pendingGalleryItems.add(galleryItem);
                     processPendingGalleryItems(pendingGalleryItems);
+                } catch (FileNotFoundException | IllegalStateException e) {
+                    Log.i("GalleryWorker.doWork missing file - removing item", e);
+                    deleteGalleryItem(uriId);
                 } catch (IOException e) {
-                    Log.e("GalleryWorker.doWork IOException", e);
-                    return Result.failure();
+                    Log.w("GalleryWorker.doWork IOException - removing item", e);
+                    deleteGalleryItem(uriId);
                 } catch (SecurityException e) {
-                    Log.e("GalleryWorker.doWork SecurityException", e);
-                    return Result.failure();
+                    Log.w("GalleryWorker.doWork SecurityException - removing item", e);
+                    deleteGalleryItem(uriId);
                 }
             } else if (uri.toString().startsWith(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString())) {
-                GalleryItem galleryItem = new GalleryItem(uriId, MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO, System.currentTimeMillis() / 1000, getDuration(uri));
-                ContentDb.getInstance().addGalleryItem(galleryItem, null);
+                long duration = getDuration(uri);
+                if (duration > 0) {
+                    GalleryItem galleryItem = new GalleryItem(uriId, MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO, System.currentTimeMillis() / 1000, getDuration(uri));
+                    ContentDb.getInstance().addGalleryItem(galleryItem, null);
+                } else {
+                    deleteGalleryItem(uriId);
+                }
             }
         }
         schedule(getApplicationContext());
@@ -112,8 +121,8 @@ public class GalleryWorker extends Worker {
             }
             return Long.parseLong(durationString);
         } catch (RuntimeException e) {
-            Log.e("GalleryWorker.getDuration retriever failed, e");
-            return 0;
+            Log.w("GalleryWorker.getDuration retriever failed", e);
+            return -1;
         } finally  {
             try {
                 retriever.release();
@@ -121,6 +130,11 @@ public class GalleryWorker extends Worker {
                 Log.e("GalleryWorker.getDuration retriever release failed", e);
             }
         }
+    }
+
+    private void deleteGalleryItem(long uriId) {
+        ContentDb.getInstance().deleteGalleryItemFromSuggestion(uriId);
+        ContentDb.getInstance().deleteGalleryItem(uriId);
     }
 
     private void resetGalleryItems() {

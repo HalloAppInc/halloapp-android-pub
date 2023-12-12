@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +76,9 @@ public class MagicPostFragment extends HalloFragment implements MainNavFragment,
         layoutManager = new LinearLayoutManager(requireContext());
         navView = requireActivity().findViewById(R.id.nav_view);
 
-        viewModel = new ViewModelProvider(this, new MagicPostViewModel.Factory(requireActivity().getApplication(), ContentDb.getInstance(), BgWorkers.getInstance())).get(MagicPostViewModel.class);
+        Point point = new Point();
+        requireActivity().getWindowManager().getDefaultDisplay().getRealSize(point);
+        viewModel = new ViewModelProvider(this, new MagicPostViewModel.Factory(requireActivity().getApplication(), ContentDb.getInstance(), BgWorkers.getInstance(), point)).get(MagicPostViewModel.class);
 
         suggestionsListView = root.findViewById(R.id.suggestions_list);
         emptyView = root.findViewById(R.id.empty);

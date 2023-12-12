@@ -2147,6 +2147,13 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public void deleteGalleryItems(@NonNull List<GalleryItem> galleryItems) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.deleteGalleryItems(galleryItems);
+        });
+    }
+
+    @WorkerThread
     public void markSuggestedGalleryItems(@NonNull List<Long> suggestedGalleryItems, @NonNull String suggestionId) {
         databaseWriteExecutor.execute(() -> {
             galleryDb.markSuggestedGalleryItems(suggestedGalleryItems, suggestionId);
@@ -2189,6 +2196,20 @@ public class ContentDb {
     @WorkerThread
     public ArrayList<Suggestion> getAllSuggestions() {
         return galleryDb.getAllSuggestions();
+    }
+
+    @WorkerThread
+    public void deleteGalleryItemFromSuggestion(long uriId) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.deleteGalleryItemFromSuggestion(uriId);
+        });
+    }
+
+    @WorkerThread
+    public void deleteGalleryItem(long uriId) {
+        databaseWriteExecutor.execute(() -> {
+            galleryDb.deleteGalleryItem(uriId);
+        });
     }
 
     @WorkerThread

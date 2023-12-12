@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -54,15 +55,17 @@ public class MagicPostViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final Preferences preferences = Preferences.getInstance();
     private final BgWorkers bgWorkers;
+    private final Point displaySize;
     private final MutableLiveData<ArrayList<Suggestion>> suggestions;
     private final MutableLiveData<Boolean> showedMagicPostNux = new MutableLiveData<>();
 
-    public MagicPostViewModel(@NonNull Application application, @NonNull ContentDb contentDb, @NonNull BgWorkers bgWorkers) {
+    public MagicPostViewModel(@NonNull Application application, @NonNull ContentDb contentDb, @NonNull BgWorkers bgWorkers, @NonNull Point displaySize) {
         super(application);
         this.contentResolver = getApplication().getContentResolver();
         this.suggestions = new MutableLiveData<>();
         this.contentDb = contentDb;
         this.bgWorkers = bgWorkers;
+        this.displaySize = displaySize;
         getSuggestions();
         bgWorkers.execute(() -> showedMagicPostNux.postValue(preferences.getPrefShowedMagicPostNux()));
     }
@@ -122,8 +125,16 @@ public class MagicPostViewModel extends AndroidViewModel {
     @WorkerThread
     private ArrayList<Suggestion> clusterGalleryItems(@NonNull List<GalleryItem> galleryItems, @NonNull ArrayList<Suggestion> existingSuggestions) {
         LinkedHashMap<Suggestion, List<GalleryItem>> updatedSuggestions = new LinkedHashMap<>();
+        List<GalleryItem> screenshots = new ArrayList<>();
+
         for (GalleryItem galleryItem : galleryItems) {
             Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
+
+            if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE && isScreenshot(uri)) {
+                screenshots.add(galleryItem);
+                continue;
+            }
+
             double[] latLong = getExifCoordinates(uri, galleryItem.type);
             galleryItem.latitude = latLong[0];
             galleryItem.longitude = latLong[1];
@@ -175,6 +186,7 @@ public class MagicPostViewModel extends AndroidViewModel {
             entry.getKey().size = entry.getValue() == null ? 0 : entry.getValue().size();
         }
         contentDb.addAllGalleryItems(updatedSuggestions);
+        contentDb.deleteGalleryItems(screenshots);
 
         ArrayList<Suggestion> allSuggestions= new ArrayList<>(updatedSuggestions.keySet());
         allSuggestions.addAll(existingSuggestions);
@@ -252,6 +264,18 @@ public class MagicPostViewModel extends AndroidViewModel {
         return latLong == null ? new double[] {0,0} : latLong;
     }
 
+    private boolean isScreenshot(@NonNull Uri uri) {
+        try {
+            ExifInterface exif = new ExifInterface(contentResolver.openInputStream(uri));
+            int width = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
+            int height = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1);
+            return (displaySize.x == width && displaySize.y == height) || (displaySize.x == height && displaySize.y == width);
+        } catch (IOException e) {
+            Log.e("MagicPostViewModel/isScreenshot IOException", e);
+        }
+        return false;
+    }
+
     public void invalidate() {
         getSuggestions();
     }
@@ -261,11 +285,13 @@ public class MagicPostViewModel extends AndroidViewModel {
         private final Application application;
         private final ContentDb contentDb;
         private final BgWorkers bgWorkers;
+        private final Point displaySize;
 
-        public Factory(@NonNull Application application, @NonNull ContentDb contentDb, @NonNull BgWorkers bgWorkers) {
+        public Factory(@NonNull Application application, @NonNull ContentDb contentDb, @NonNull BgWorkers bgWorkers, @NonNull Point displaySize) {
             this.application = application;
             this.contentDb = contentDb;
             this.bgWorkers = bgWorkers;
+            this.displaySize = displaySize;
         }
 
         @NonNull
@@ -273,7 +299,7 @@ public class MagicPostViewModel extends AndroidViewModel {
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(MagicPostViewModel.class)) {
                 //noinspection unchecked
-                return (T) new MagicPostViewModel(application, contentDb, bgWorkers);
+                return (T) new MagicPostViewModel(application, contentDb, bgWorkers, displaySize);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
