@@ -110,6 +110,7 @@ public class GalleryDb {
             if (suggestionId != null) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(SuggestionsTable.COLUMN_SIZE, suggestionSize - 1);
+                contentValues.put(SuggestionsTable.COLUMN_IS_SCORED, false);
                 db.updateWithOnConflict(SuggestionsTable.TABLE_NAME, contentValues, SuggestionsTable.COLUMN_SUGGESTION_ID + "=?", new String[] {suggestionId}, SQLiteDatabase.CONFLICT_ABORT);
             }
             db.setTransactionSuccessful();
