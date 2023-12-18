@@ -9,8 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.logs.Log;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -135,6 +137,12 @@ public class ViewDataLoader<V extends View, R, K> {
                 if (result == null) {
                     try {
                         result = loaders.get(i).call();
+                    } catch (FileNotFoundException e) {
+                        Log.w("ViewDataLoader: file not found exception key=" + key, e);
+                        if (key instanceof Long) {
+                            ContentDb.getInstance().deleteGalleryItemFromSuggestion((Long) key);
+                            ContentDb.getInstance().deleteGalleryItem((Long) key);
+                        }
                     } catch (Exception e) {
                         Log.e("ViewDataLoader: exception key=" + key, e);
                     }
