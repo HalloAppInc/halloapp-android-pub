@@ -265,7 +265,7 @@ public  final class ContentMissing extends
    */
   private void setContentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contentId_ = value;
   }
@@ -366,7 +366,7 @@ public  final class ContentMissing extends
    */
   private void setSenderClientVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderClientVersion_ = value;
   }

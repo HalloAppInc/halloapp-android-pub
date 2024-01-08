@@ -206,7 +206,7 @@ public  final class PushToken extends
    */
   private void setToken(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     token_ = value;
   }

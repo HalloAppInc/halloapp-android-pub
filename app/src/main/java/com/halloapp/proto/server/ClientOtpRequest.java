@@ -171,7 +171,7 @@ public  final class ClientOtpRequest extends
    */
   private void setPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     phone_ = value;
   }
@@ -218,7 +218,7 @@ public  final class ClientOtpRequest extends
    */
   private void setContent(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     content_ = value;
   }

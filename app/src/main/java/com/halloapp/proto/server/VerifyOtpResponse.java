@@ -472,7 +472,7 @@ public  final class VerifyOtpResponse extends
    */
   private void setPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     phone_ = value;
   }
@@ -545,7 +545,7 @@ public  final class VerifyOtpResponse extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -676,7 +676,7 @@ public  final class VerifyOtpResponse extends
    */
   private void setGroupInviteResult(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     groupInviteResult_ = value;
   }
@@ -723,7 +723,7 @@ public  final class VerifyOtpResponse extends
    */
   private void setUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     username_ = value;
   }

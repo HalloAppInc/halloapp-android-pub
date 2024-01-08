@@ -367,7 +367,7 @@ public  final class GroupMember extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -414,7 +414,7 @@ public  final class GroupMember extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -461,7 +461,7 @@ public  final class GroupMember extends
    */
   private void setResult(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     result_ = value;
   }
@@ -508,7 +508,7 @@ public  final class GroupMember extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }
@@ -553,7 +553,7 @@ public  final class GroupMember extends
    * @param value The identityKey to set.
    */
   private void setIdentityKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     identityKey_ = value;
   }

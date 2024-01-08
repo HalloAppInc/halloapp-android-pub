@@ -47,7 +47,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -140,7 +140,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setType(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     type_ = value;
   }
@@ -187,7 +187,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setAddress(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     address_ = value;
   }
@@ -234,7 +234,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setNeighborhood(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     neighborhood_ = value;
   }
@@ -281,7 +281,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setPostcode(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     postcode_ = value;
   }
@@ -328,7 +328,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setDistrict(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     district_ = value;
   }
@@ -375,7 +375,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setRegion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     region_ = value;
   }
@@ -422,7 +422,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setCountry(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     country_ = value;
   }
@@ -469,7 +469,7 @@ public  final class ReverseGeocodeLocation extends
    */
   private void setPlace(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     place_ = value;
   }

@@ -277,7 +277,7 @@ public  final class AuthResult extends
    */
   private void setResultString(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     resultString_ = value;
   }
@@ -324,7 +324,7 @@ public  final class AuthResult extends
    */
   private void setReasonString(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reasonString_ = value;
   }
@@ -361,7 +361,7 @@ public  final class AuthResult extends
    * @param value The propsHash to set.
    */
   private void setPropsHash(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     propsHash_ = value;
   }

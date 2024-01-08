@@ -41,7 +41,7 @@ public  final class Invite extends
    */
   private void setPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     phone_ = value;
   }
@@ -88,7 +88,7 @@ public  final class Invite extends
    */
   private void setResult(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     result_ = value;
   }
@@ -135,7 +135,7 @@ public  final class Invite extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }

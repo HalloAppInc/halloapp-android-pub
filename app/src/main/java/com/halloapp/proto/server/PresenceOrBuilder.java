@@ -36,6 +36,8 @@ public interface PresenceOrBuilder extends
    * </pre>
    *
    * <code>int64 uid = 3 [deprecated = true];</code>
+   * @deprecated server.Presence.uid is deprecated.
+   *     See server.proto;l=1276
    * @return The uid.
    */
   @java.lang.Deprecated long getUid();

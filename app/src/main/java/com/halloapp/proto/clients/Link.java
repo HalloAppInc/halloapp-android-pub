@@ -42,7 +42,7 @@ public  final class Link extends
    */
   private void setUrl(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     url_ = value;
   }
@@ -89,7 +89,7 @@ public  final class Link extends
    */
   private void setTitle(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     title_ = value;
   }
@@ -136,7 +136,7 @@ public  final class Link extends
    */
   private void setDescription(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     description_ = value;
   }

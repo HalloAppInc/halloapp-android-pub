@@ -39,7 +39,7 @@ public  final class PostIdContext extends
    */
   private void setFeedPostId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     feedPostId_ = value;
   }

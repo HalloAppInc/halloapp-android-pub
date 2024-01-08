@@ -42,7 +42,7 @@ public  final class GroupFeedItems extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -89,7 +89,7 @@ public  final class GroupFeedItems extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -136,7 +136,7 @@ public  final class GroupFeedItems extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }

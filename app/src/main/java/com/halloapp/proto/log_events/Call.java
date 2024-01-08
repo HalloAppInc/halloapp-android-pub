@@ -335,7 +335,7 @@ public  final class Call extends
    */
   private void setCallId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     callId_ = value;
   }
@@ -618,7 +618,7 @@ public  final class Call extends
    */
   private void setEndCallReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     endCallReason_ = value;
   }
@@ -837,7 +837,7 @@ public  final class Call extends
    */
   private void setWebrtcStats(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     webrtcStats_ = value;
   }

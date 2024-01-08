@@ -9,16 +9,31 @@ public interface EncryptedPayloadOrBuilder extends
 
   /**
    * <code>bytes sender_state_encrypted_payload = 1;</code>
+   * @return Whether the senderStateEncryptedPayload field is set.
+   */
+  boolean hasSenderStateEncryptedPayload();
+  /**
+   * <code>bytes sender_state_encrypted_payload = 1;</code>
    * @return The senderStateEncryptedPayload.
    */
   com.google.protobuf.ByteString getSenderStateEncryptedPayload();
 
   /**
    * <code>bytes one_to_one_encrypted_payload = 2;</code>
+   * @return Whether the oneToOneEncryptedPayload field is set.
+   */
+  boolean hasOneToOneEncryptedPayload();
+  /**
+   * <code>bytes one_to_one_encrypted_payload = 2;</code>
    * @return The oneToOneEncryptedPayload.
    */
   com.google.protobuf.ByteString getOneToOneEncryptedPayload();
 
+  /**
+   * <code>bytes comment_key_encrypted_payload = 3;</code>
+   * @return Whether the commentKeyEncryptedPayload field is set.
+   */
+  boolean hasCommentKeyEncryptedPayload();
   /**
    * <code>bytes comment_key_encrypted_payload = 3;</code>
    * @return The commentKeyEncryptedPayload.

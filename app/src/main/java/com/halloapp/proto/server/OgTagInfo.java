@@ -45,7 +45,7 @@ public  final class OgTagInfo extends
    */
   private void setTitle(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     title_ = value;
   }
@@ -92,7 +92,7 @@ public  final class OgTagInfo extends
    */
   private void setDescription(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     description_ = value;
   }
@@ -139,7 +139,7 @@ public  final class OgTagInfo extends
    */
   private void setThumbnailUrl(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     thumbnailUrl_ = value;
   }

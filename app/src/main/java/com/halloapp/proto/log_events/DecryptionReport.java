@@ -271,7 +271,7 @@ public  final class DecryptionReport extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }
@@ -318,7 +318,7 @@ public  final class DecryptionReport extends
    */
   private void setMsgId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     msgId_ = value;
   }
@@ -377,7 +377,7 @@ public  final class DecryptionReport extends
    */
   private void setOriginalVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     originalVersion_ = value;
   }
@@ -474,7 +474,7 @@ public  final class DecryptionReport extends
    */
   private void setSenderVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderVersion_ = value;
   }

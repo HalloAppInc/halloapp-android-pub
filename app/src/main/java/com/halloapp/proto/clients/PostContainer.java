@@ -276,7 +276,7 @@ public  final class PostContainer extends
    * @param value The commentKey to set.
    */
   private void setCommentKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     commentKey_ = value;
   }

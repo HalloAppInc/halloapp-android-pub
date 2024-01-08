@@ -146,7 +146,7 @@ public  final class Presence extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -218,6 +218,8 @@ public  final class Presence extends
    * </pre>
    *
    * <code>int64 uid = 3 [deprecated = true];</code>
+   * @deprecated server.Presence.uid is deprecated.
+   *     See server.proto;l=1276
    * @return The uid.
    */
   @java.lang.Override
@@ -230,6 +232,8 @@ public  final class Presence extends
    * </pre>
    *
    * <code>int64 uid = 3 [deprecated = true];</code>
+   * @deprecated server.Presence.uid is deprecated.
+   *     See server.proto;l=1276
    * @param value The uid to set.
    */
   private void setUid(long value) {
@@ -242,6 +246,8 @@ public  final class Presence extends
    * </pre>
    *
    * <code>int64 uid = 3 [deprecated = true];</code>
+   * @deprecated server.Presence.uid is deprecated.
+   *     See server.proto;l=1276
    */
   private void clearUid() {
     
@@ -522,6 +528,8 @@ public  final class Presence extends
      * </pre>
      *
      * <code>int64 uid = 3 [deprecated = true];</code>
+     * @deprecated server.Presence.uid is deprecated.
+     *     See server.proto;l=1276
      * @return The uid.
      */
     @java.lang.Override
@@ -534,6 +542,8 @@ public  final class Presence extends
      * </pre>
      *
      * <code>int64 uid = 3 [deprecated = true];</code>
+     * @deprecated server.Presence.uid is deprecated.
+     *     See server.proto;l=1276
      * @param value The uid to set.
      * @return This builder for chaining.
      */
@@ -548,6 +558,8 @@ public  final class Presence extends
      * </pre>
      *
      * <code>int64 uid = 3 [deprecated = true];</code>
+     * @deprecated server.Presence.uid is deprecated.
+     *     See server.proto;l=1276
      * @return This builder for chaining.
      */
     @java.lang.Deprecated public Builder clearUid() {

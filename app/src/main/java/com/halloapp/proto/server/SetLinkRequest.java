@@ -13,6 +13,95 @@ public  final class SetLinkRequest extends
     SetLinkRequestOrBuilder {
   private SetLinkRequest() {
   }
+  /**
+   * Protobuf enum {@code server.SetLinkRequest.Action}
+   */
+  public enum Action
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>SET = 0;</code>
+     */
+    SET(0),
+    /**
+     * <code>REMOVE = 1;</code>
+     */
+    REMOVE(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>SET = 0;</code>
+     */
+    public static final int SET_VALUE = 0;
+    /**
+     * <code>REMOVE = 1;</code>
+     */
+    public static final int REMOVE_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Action valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Action forNumber(int value) {
+      switch (value) {
+        case 0: return SET;
+        case 1: return REMOVE;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Action>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Action> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Action>() {
+            @java.lang.Override
+            public Action findValueByNumber(int number) {
+              return Action.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ActionVerifier.INSTANCE;
+    }
+
+    private static final class ActionVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ActionVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Action.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Action(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.SetLinkRequest.Action)
+  }
+
   public static final int LINK_FIELD_NUMBER = 1;
   private com.halloapp.proto.server.Link link_;
   /**
@@ -57,6 +146,48 @@ public  final class SetLinkRequest extends
    */
   private void clearLink() {  link_ = null;
     
+  }
+
+  public static final int ACTION_FIELD_NUMBER = 2;
+  private int action_;
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   * @return The enum numeric value on the wire for action.
+   */
+  @java.lang.Override
+  public int getActionValue() {
+    return action_;
+  }
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   * @return The action.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SetLinkRequest.Action getAction() {
+    com.halloapp.proto.server.SetLinkRequest.Action result = com.halloapp.proto.server.SetLinkRequest.Action.forNumber(action_);
+    return result == null ? com.halloapp.proto.server.SetLinkRequest.Action.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   * @param value The enum numeric value on the wire for action to set.
+   */
+  private void setActionValue(int value) {
+      action_ = value;
+  }
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   * @param value The action to set.
+   */
+  private void setAction(com.halloapp.proto.server.SetLinkRequest.Action value) {
+    action_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   */
+  private void clearAction() {
+    
+    action_ = 0;
   }
 
   public static com.halloapp.proto.server.SetLinkRequest parseFrom(
@@ -201,6 +332,52 @@ public  final class SetLinkRequest extends
       return this;
     }
 
+    /**
+     * <code>.server.SetLinkRequest.Action action = 2;</code>
+     * @return The enum numeric value on the wire for action.
+     */
+    @java.lang.Override
+    public int getActionValue() {
+      return instance.getActionValue();
+    }
+    /**
+     * <code>.server.SetLinkRequest.Action action = 2;</code>
+     * @param value The action to set.
+     * @return This builder for chaining.
+     */
+    public Builder setActionValue(int value) {
+      copyOnWrite();
+      instance.setActionValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkRequest.Action action = 2;</code>
+     * @return The action.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SetLinkRequest.Action getAction() {
+      return instance.getAction();
+    }
+    /**
+     * <code>.server.SetLinkRequest.Action action = 2;</code>
+     * @param value The enum numeric value on the wire for action to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAction(com.halloapp.proto.server.SetLinkRequest.Action value) {
+      copyOnWrite();
+      instance.setAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkRequest.Action action = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearAction() {
+      copyOnWrite();
+      instance.clearAction();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.SetLinkRequest)
   }
   @java.lang.Override
@@ -218,9 +395,10 @@ public  final class SetLinkRequest extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "link_",
+            "action_",
           };
           java.lang.String info =
-              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t";
+              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0002\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -30,7 +30,7 @@ public  final class Props extends
    * @param value The hash to set.
    */
   private void setHash(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     hash_ = value;
   }

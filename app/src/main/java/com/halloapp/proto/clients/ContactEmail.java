@@ -40,7 +40,7 @@ public  final class ContactEmail extends
    */
   private void setLabel(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     label_ = value;
   }
@@ -87,7 +87,7 @@ public  final class ContactEmail extends
    */
   private void setAddress(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     address_ = value;
   }

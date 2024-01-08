@@ -77,7 +77,7 @@ public  final class ServerScore extends
    */
   private void setExplanation(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     explanation_ = value;
   }

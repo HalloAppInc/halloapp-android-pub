@@ -138,7 +138,7 @@ public  final class GroupChatStanza extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -185,7 +185,7 @@ public  final class GroupChatStanza extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -232,7 +232,7 @@ public  final class GroupChatStanza extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -279,7 +279,7 @@ public  final class GroupChatStanza extends
    */
   private void setSenderPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderPhone_ = value;
   }
@@ -326,7 +326,7 @@ public  final class GroupChatStanza extends
    */
   private void setSenderName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderName_ = value;
   }
@@ -389,7 +389,7 @@ public  final class GroupChatStanza extends
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     payload_ = value;
   }
@@ -416,7 +416,7 @@ public  final class GroupChatStanza extends
    * @param value The encPayload to set.
    */
   private void setEncPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     encPayload_ = value;
   }
@@ -583,7 +583,7 @@ public  final class GroupChatStanza extends
    * @param value The audienceHash to set.
    */
   private void setAudienceHash(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     audienceHash_ = value;
   }
@@ -720,7 +720,7 @@ public  final class GroupChatStanza extends
    */
   private void setSenderLogInfo(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderLogInfo_ = value;
   }
@@ -775,7 +775,7 @@ public  final class GroupChatStanza extends
    */
   private void setSenderClientVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderClientVersion_ = value;
   }

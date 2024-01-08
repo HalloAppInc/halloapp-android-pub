@@ -39,7 +39,7 @@ public  final class HashcashRequest extends
    */
   private void setCountryCode(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     countryCode_ = value;
   }

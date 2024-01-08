@@ -270,7 +270,7 @@ public  final class MomentNotification extends
    */
   private void setPrompt(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     prompt_ = value;
   }
@@ -345,7 +345,7 @@ public  final class MomentNotification extends
    * @param value The promptImage to set.
    */
   private void setPromptImage(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     promptImage_ = value;
   }
@@ -394,7 +394,7 @@ public  final class MomentNotification extends
    */
   private void setDate(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     date_ = value;
   }

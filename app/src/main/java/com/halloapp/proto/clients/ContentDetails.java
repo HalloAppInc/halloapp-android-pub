@@ -172,7 +172,7 @@ public  final class ContentDetails extends
    * @param value The contentHash to set.
    */
   private void setContentHash(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contentHash_ = value;
   }

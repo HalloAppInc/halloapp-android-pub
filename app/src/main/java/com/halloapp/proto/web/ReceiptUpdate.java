@@ -40,7 +40,7 @@ public  final class ReceiptUpdate extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -87,7 +87,7 @@ public  final class ReceiptUpdate extends
    */
   private void setContentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contentId_ = value;
   }

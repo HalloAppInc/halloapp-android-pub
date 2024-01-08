@@ -40,7 +40,7 @@ public  final class DeliveryReceipt extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -87,7 +87,7 @@ public  final class DeliveryReceipt extends
    */
   private void setThreadId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     threadId_ = value;
   }

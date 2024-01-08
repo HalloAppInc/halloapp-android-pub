@@ -228,7 +228,7 @@ public  final class GroupFeedItem extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -275,7 +275,7 @@ public  final class GroupFeedItem extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -322,7 +322,7 @@ public  final class GroupFeedItem extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -663,7 +663,7 @@ public  final class GroupFeedItem extends
    * @param value The audienceHash to set.
    */
   private void setAudienceHash(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     audienceHash_ = value;
   }
@@ -776,7 +776,7 @@ public  final class GroupFeedItem extends
    */
   private void setSenderLogInfo(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderLogInfo_ = value;
   }
@@ -843,7 +843,7 @@ public  final class GroupFeedItem extends
    */
   private void setSenderClientVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderClientVersion_ = value;
   }

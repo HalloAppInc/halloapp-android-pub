@@ -57,7 +57,7 @@ public  final class ExternalSharePostContainer extends
    * @param value The blob to set.
    */
   private void setBlob(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     blob_ = value;
   }
@@ -140,7 +140,7 @@ public  final class ExternalSharePostContainer extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -187,7 +187,7 @@ public  final class ExternalSharePostContainer extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }

@@ -40,7 +40,7 @@ public  final class Prop extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -87,7 +87,7 @@ public  final class Prop extends
    */
   private void setValue(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     value_ = value;
   }

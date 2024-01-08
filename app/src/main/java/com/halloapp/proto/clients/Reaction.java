@@ -39,7 +39,7 @@ public  final class Reaction extends
    */
   private void setEmoji(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     emoji_ = value;
   }

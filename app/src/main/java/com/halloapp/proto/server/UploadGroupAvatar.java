@@ -41,7 +41,7 @@ public  final class UploadGroupAvatar extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -86,7 +86,7 @@ public  final class UploadGroupAvatar extends
    * @param value The data to set.
    */
   private void setData(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     data_ = value;
   }
@@ -125,7 +125,7 @@ public  final class UploadGroupAvatar extends
    * @param value The fullData to set.
    */
   private void setFullData(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     fullData_ = value;
   }

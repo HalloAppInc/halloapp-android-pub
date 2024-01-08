@@ -41,7 +41,7 @@ public  final class FeedRequest extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -142,7 +142,7 @@ public  final class FeedRequest extends
    */
   private void setCursor(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     cursor_ = value;
   }
@@ -235,7 +235,7 @@ public  final class FeedRequest extends
    */
   private void setContentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contentId_ = value;
   }

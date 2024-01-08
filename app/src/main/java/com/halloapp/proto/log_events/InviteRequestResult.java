@@ -190,7 +190,7 @@ public  final class InviteRequestResult extends
    */
   private void setInvitedPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     invitedPhone_ = value;
   }
@@ -237,7 +237,7 @@ public  final class InviteRequestResult extends
    */
   private void setLangId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     langId_ = value;
   }
@@ -284,7 +284,7 @@ public  final class InviteRequestResult extends
    */
   private void setInviteStringId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     inviteStringId_ = value;
   }

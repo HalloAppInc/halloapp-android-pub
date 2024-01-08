@@ -292,7 +292,7 @@ public  final class GroupFeedRerequest extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -351,7 +351,7 @@ public  final class GroupFeedRerequest extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }

@@ -154,7 +154,7 @@ public  final class AiImageRequest extends
    */
   private void setText(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     text_ = value;
   }
@@ -269,7 +269,7 @@ public  final class AiImageRequest extends
    */
   private void setNegativePrompt(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     negativePrompt_ = value;
   }

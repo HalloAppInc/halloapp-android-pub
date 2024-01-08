@@ -43,7 +43,7 @@ public  final class GroupChat extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -90,7 +90,7 @@ public  final class GroupChat extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -137,7 +137,7 @@ public  final class GroupChat extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -210,7 +210,7 @@ public  final class GroupChat extends
    */
   private void setSenderName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderName_ = value;
   }
@@ -273,7 +273,7 @@ public  final class GroupChat extends
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     payload_ = value;
   }

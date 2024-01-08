@@ -149,7 +149,7 @@ public  final class Rerequest extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -186,7 +186,7 @@ public  final class Rerequest extends
    * @param value The identityKey to set.
    */
   private void setIdentityKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     identityKey_ = value;
   }
@@ -265,7 +265,7 @@ public  final class Rerequest extends
    * @param value The sessionSetupEphemeralKey to set.
    */
   private void setSessionSetupEphemeralKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     sessionSetupEphemeralKey_ = value;
   }
@@ -292,7 +292,7 @@ public  final class Rerequest extends
    * @param value The messageEphemeralKey to set.
    */
   private void setMessageEphemeralKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     messageEphemeralKey_ = value;
   }

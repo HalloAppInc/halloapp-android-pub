@@ -41,7 +41,7 @@ public  final class IncomingCallPush extends
    */
   private void setCallId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     callId_ = value;
   }

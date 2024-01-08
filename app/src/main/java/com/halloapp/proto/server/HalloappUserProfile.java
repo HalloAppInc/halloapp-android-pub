@@ -15,6 +15,9 @@ public  final class HalloappUserProfile extends
     username_ = "";
     name_ = "";
     avatarId_ = "";
+    links_ = emptyProtobufList();
+    mutualFriendUids_ = emptyLongList();
+    mutualGids_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
   }
   public static final int UID_FIELD_NUMBER = 1;
   private long uid_;
@@ -67,7 +70,7 @@ public  final class HalloappUserProfile extends
    */
   private void setUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     username_ = value;
   }
@@ -114,7 +117,7 @@ public  final class HalloappUserProfile extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -161,7 +164,7 @@ public  final class HalloappUserProfile extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -249,6 +252,264 @@ public  final class HalloappUserProfile extends
   private void clearBlocked() {
     
     blocked_ = false;
+  }
+
+  public static final int LINKS_FIELD_NUMBER = 7;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Link> links_;
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.Link> getLinksList() {
+    return links_;
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.LinkOrBuilder> 
+      getLinksOrBuilderList() {
+    return links_;
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  @java.lang.Override
+  public int getLinksCount() {
+    return links_.size();
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Link getLinks(int index) {
+    return links_.get(index);
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  public com.halloapp.proto.server.LinkOrBuilder getLinksOrBuilder(
+      int index) {
+    return links_.get(index);
+  }
+  private void ensureLinksIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Link> tmp = links_;
+    if (!tmp.isModifiable()) {
+      links_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  private void setLinks(
+      int index, com.halloapp.proto.server.Link value) {
+    value.getClass();
+  ensureLinksIsMutable();
+    links_.set(index, value);
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  private void addLinks(com.halloapp.proto.server.Link value) {
+    value.getClass();
+  ensureLinksIsMutable();
+    links_.add(value);
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  private void addLinks(
+      int index, com.halloapp.proto.server.Link value) {
+    value.getClass();
+  ensureLinksIsMutable();
+    links_.add(index, value);
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  private void addAllLinks(
+      java.lang.Iterable<? extends com.halloapp.proto.server.Link> values) {
+    ensureLinksIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, links_);
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  private void clearLinks() {
+    links_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  private void removeLinks(int index) {
+    ensureLinksIsMutable();
+    links_.remove(index);
+  }
+
+  public static final int MUTUAL_FRIEND_UIDS_FIELD_NUMBER = 8;
+  private com.google.protobuf.Internal.LongList mutualFriendUids_;
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @return A list containing the mutualFriendUids.
+   */
+  @java.lang.Override
+  public java.util.List<java.lang.Long>
+      getMutualFriendUidsList() {
+    return mutualFriendUids_;
+  }
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @return The count of mutualFriendUids.
+   */
+  @java.lang.Override
+  public int getMutualFriendUidsCount() {
+    return mutualFriendUids_.size();
+  }
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @param index The index of the element to return.
+   * @return The mutualFriendUids at the given index.
+   */
+  @java.lang.Override
+  public long getMutualFriendUids(int index) {
+    return mutualFriendUids_.getLong(index);
+  }
+  private int mutualFriendUidsMemoizedSerializedSize = -1;
+  private void ensureMutualFriendUidsIsMutable() {
+    com.google.protobuf.Internal.LongList tmp = mutualFriendUids_;
+    if (!tmp.isModifiable()) {
+      mutualFriendUids_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @param index The index to set the value at.
+   * @param value The mutualFriendUids to set.
+   */
+  private void setMutualFriendUids(
+      int index, long value) {
+    ensureMutualFriendUidsIsMutable();
+    mutualFriendUids_.setLong(index, value);
+  }
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @param value The mutualFriendUids to add.
+   */
+  private void addMutualFriendUids(long value) {
+    ensureMutualFriendUidsIsMutable();
+    mutualFriendUids_.addLong(value);
+  }
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @param values The mutualFriendUids to add.
+   */
+  private void addAllMutualFriendUids(
+      java.lang.Iterable<? extends java.lang.Long> values) {
+    ensureMutualFriendUidsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, mutualFriendUids_);
+  }
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   */
+  private void clearMutualFriendUids() {
+    mutualFriendUids_ = emptyLongList();
+  }
+
+  public static final int MUTUAL_GIDS_FIELD_NUMBER = 9;
+  private com.google.protobuf.Internal.ProtobufList<java.lang.String> mutualGids_;
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @return A list containing the mutualGids.
+   */
+  @java.lang.Override
+  public java.util.List<java.lang.String> getMutualGidsList() {
+    return mutualGids_;
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @return The count of mutualGids.
+   */
+  @java.lang.Override
+  public int getMutualGidsCount() {
+    return mutualGids_.size();
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param index The index of the element to return.
+   * @return The mutualGids at the given index.
+   */
+  @java.lang.Override
+  public java.lang.String getMutualGids(int index) {
+    return mutualGids_.get(index);
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param index The index of the value to return.
+   * @return The bytes of the mutualGids at the given index.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getMutualGidsBytes(int index) {
+    return com.google.protobuf.ByteString.copyFromUtf8(
+        mutualGids_.get(index));
+  }
+  private void ensureMutualGidsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<java.lang.String> tmp =
+        mutualGids_;  if (!tmp.isModifiable()) {
+      mutualGids_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param index The index to set the value at.
+   * @param value The mutualGids to set.
+   */
+  private void setMutualGids(
+      int index, java.lang.String value) {
+    java.lang.Class<?> valueClass = value.getClass();
+  ensureMutualGidsIsMutable();
+    mutualGids_.set(index, value);
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param value The mutualGids to add.
+   */
+  private void addMutualGids(
+      java.lang.String value) {
+    java.lang.Class<?> valueClass = value.getClass();
+  ensureMutualGidsIsMutable();
+    mutualGids_.add(value);
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param values The mutualGids to add.
+   */
+  private void addAllMutualGids(
+      java.lang.Iterable<java.lang.String> values) {
+    ensureMutualGidsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, mutualGids_);
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   */
+  private void clearMutualGids() {
+    mutualGids_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
+  }
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param value The bytes of the mutualGids to add.
+   */
+  private void addMutualGidsBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    ensureMutualGidsIsMutable();
+    mutualGids_.add(value.toStringUtf8());
   }
 
   public static com.halloapp.proto.server.HalloappUserProfile parseFrom(
@@ -595,6 +856,269 @@ public  final class HalloappUserProfile extends
       return this;
     }
 
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.Link> getLinksList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getLinksList());
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    @java.lang.Override
+    public int getLinksCount() {
+      return instance.getLinksCount();
+    }/**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Link getLinks(int index) {
+      return instance.getLinks(index);
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder setLinks(
+        int index, com.halloapp.proto.server.Link value) {
+      copyOnWrite();
+      instance.setLinks(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder setLinks(
+        int index, com.halloapp.proto.server.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.setLinks(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder addLinks(com.halloapp.proto.server.Link value) {
+      copyOnWrite();
+      instance.addLinks(value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder addLinks(
+        int index, com.halloapp.proto.server.Link value) {
+      copyOnWrite();
+      instance.addLinks(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder addLinks(
+        com.halloapp.proto.server.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.addLinks(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder addLinks(
+        int index, com.halloapp.proto.server.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.addLinks(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder addAllLinks(
+        java.lang.Iterable<? extends com.halloapp.proto.server.Link> values) {
+      copyOnWrite();
+      instance.addAllLinks(values);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder clearLinks() {
+      copyOnWrite();
+      instance.clearLinks();
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 7;</code>
+     */
+    public Builder removeLinks(int index) {
+      copyOnWrite();
+      instance.removeLinks(index);
+      return this;
+    }
+
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @return A list containing the mutualFriendUids.
+     */
+    @java.lang.Override
+    public java.util.List<java.lang.Long>
+        getMutualFriendUidsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getMutualFriendUidsList());
+    }
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @return The count of mutualFriendUids.
+     */
+    @java.lang.Override
+    public int getMutualFriendUidsCount() {
+      return instance.getMutualFriendUidsCount();
+    }
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @param index The index of the element to return.
+     * @return The mutualFriendUids at the given index.
+     */
+    @java.lang.Override
+    public long getMutualFriendUids(int index) {
+      return instance.getMutualFriendUids(index);
+    }
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @param value The mutualFriendUids to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMutualFriendUids(
+        int index, long value) {
+      copyOnWrite();
+      instance.setMutualFriendUids(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @param value The mutualFriendUids to add.
+     * @return This builder for chaining.
+     */
+    public Builder addMutualFriendUids(long value) {
+      copyOnWrite();
+      instance.addMutualFriendUids(value);
+      return this;
+    }
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @param values The mutualFriendUids to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllMutualFriendUids(
+        java.lang.Iterable<? extends java.lang.Long> values) {
+      copyOnWrite();
+      instance.addAllMutualFriendUids(values);
+      return this;
+    }
+    /**
+     * <code>repeated int64 mutual_friend_uids = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMutualFriendUids() {
+      copyOnWrite();
+      instance.clearMutualFriendUids();
+      return this;
+    }
+
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @return A list containing the mutualGids.
+     */
+    @java.lang.Override
+    public java.util.List<java.lang.String>
+        getMutualGidsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getMutualGidsList());
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @return The count of mutualGids.
+     */
+    @java.lang.Override
+    public int getMutualGidsCount() {
+      return instance.getMutualGidsCount();
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @param index The index of the element to return.
+     * @return The mutualGids at the given index.
+     */
+    @java.lang.Override
+    public java.lang.String getMutualGids(int index) {
+      return instance.getMutualGids(index);
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the mutualGids at the given index.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMutualGidsBytes(int index) {
+      return instance.getMutualGidsBytes(index);
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @param index The index to set the value at.
+     * @param value The mutualGids to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMutualGids(
+        int index, java.lang.String value) {
+      copyOnWrite();
+      instance.setMutualGids(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @param value The mutualGids to add.
+     * @return This builder for chaining.
+     */
+    public Builder addMutualGids(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.addMutualGids(value);
+      return this;
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @param values The mutualGids to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllMutualGids(
+        java.lang.Iterable<java.lang.String> values) {
+      copyOnWrite();
+      instance.addAllMutualGids(values);
+      return this;
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMutualGids() {
+      copyOnWrite();
+      instance.clearMutualGids();
+      return this;
+    }
+    /**
+     * <code>repeated string mutual_gids = 9;</code>
+     * @param value The bytes of the mutualGids to add.
+     * @return This builder for chaining.
+     */
+    public Builder addMutualGidsBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.addMutualGidsBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.HalloappUserProfile)
   }
   @java.lang.Override
@@ -617,10 +1141,14 @@ public  final class HalloappUserProfile extends
             "avatarId_",
             "status_",
             "blocked_",
+            "links_",
+            com.halloapp.proto.server.Link.class,
+            "mutualFriendUids_",
+            "mutualGids_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\f\u0006\u0007";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0003\u0000\u0001\u0002\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\u0007\u0007\u001b\b%\t\u021a";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

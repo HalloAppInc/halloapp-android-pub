@@ -150,7 +150,7 @@ public  final class GroupDisplayInfo extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -197,7 +197,7 @@ public  final class GroupDisplayInfo extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -244,7 +244,7 @@ public  final class GroupDisplayInfo extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -291,7 +291,7 @@ public  final class GroupDisplayInfo extends
    */
   private void setDescription(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     description_ = value;
   }
@@ -338,7 +338,7 @@ public  final class GroupDisplayInfo extends
    */
   private void setBackground(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     background_ = value;
   }

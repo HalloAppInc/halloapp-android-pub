@@ -55,7 +55,7 @@ public  final class CertMessage extends
    * @param value The serverKey to set.
    */
   private void setServerKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     serverKey_ = value;
   }

@@ -205,7 +205,7 @@ public  final class EventData extends
    */
   private void setVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     version_ = value;
   }
@@ -310,7 +310,7 @@ public  final class EventData extends
    */
   private void setCc(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     cc_ = value;
   }

@@ -41,7 +41,7 @@ public  final class Count extends
    */
   private void setNamespace(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     namespace_ = value;
   }
@@ -88,7 +88,7 @@ public  final class Count extends
    */
   private void setMetric(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     metric_ = value;
   }

@@ -226,7 +226,7 @@ public  final class GetAlbums extends
    */
   private void setAlbumIds(
       int index, java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureAlbumIdsIsMutable();
     albumIds_.set(index, value);
   }
@@ -240,7 +240,7 @@ public  final class GetAlbums extends
    */
   private void addAlbumIds(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureAlbumIdsIsMutable();
     albumIds_.add(value);
   }

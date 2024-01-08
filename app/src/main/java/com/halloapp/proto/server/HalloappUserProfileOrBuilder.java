@@ -65,4 +65,60 @@ public interface HalloappUserProfileOrBuilder extends
    * @return The blocked.
    */
   boolean getBlocked();
+
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  java.util.List<com.halloapp.proto.server.Link> 
+      getLinksList();
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  com.halloapp.proto.server.Link getLinks(int index);
+  /**
+   * <code>repeated .server.Link links = 7;</code>
+   */
+  int getLinksCount();
+
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @return A list containing the mutualFriendUids.
+   */
+  java.util.List<java.lang.Long> getMutualFriendUidsList();
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @return The count of mutualFriendUids.
+   */
+  int getMutualFriendUidsCount();
+  /**
+   * <code>repeated int64 mutual_friend_uids = 8;</code>
+   * @param index The index of the element to return.
+   * @return The mutualFriendUids at the given index.
+   */
+  long getMutualFriendUids(int index);
+
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @return A list containing the mutualGids.
+   */
+  java.util.List<java.lang.String>
+      getMutualGidsList();
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @return The count of mutualGids.
+   */
+  int getMutualGidsCount();
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param index The index of the element to return.
+   * @return The mutualGids at the given index.
+   */
+  java.lang.String getMutualGids(int index);
+  /**
+   * <code>repeated string mutual_gids = 9;</code>
+   * @param index The index of the element to return.
+   * @return The mutualGids at the given index.
+   */
+  com.google.protobuf.ByteString
+      getMutualGidsBytes(int index);
 }

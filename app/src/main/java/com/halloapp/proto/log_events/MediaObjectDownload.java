@@ -543,7 +543,7 @@ public  final class MediaObjectDownload extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -908,7 +908,7 @@ public  final class MediaObjectDownload extends
    */
   private void setCdnPop(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     cdnPop_ = value;
   }
@@ -975,7 +975,7 @@ public  final class MediaObjectDownload extends
    */
   private void setCdnId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     cdnId_ = value;
   }

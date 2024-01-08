@@ -61,6 +61,14 @@ public  final class EncryptedPayload extends
   public static final int SENDER_STATE_ENCRYPTED_PAYLOAD_FIELD_NUMBER = 1;
   /**
    * <code>bytes sender_state_encrypted_payload = 1;</code>
+   * @return Whether the senderStateEncryptedPayload field is set.
+   */
+  @java.lang.Override
+  public boolean hasSenderStateEncryptedPayload() {
+    return payloadCase_ == 1;
+  }
+  /**
+   * <code>bytes sender_state_encrypted_payload = 1;</code>
    * @return The senderStateEncryptedPayload.
    */
   @java.lang.Override
@@ -75,7 +83,7 @@ public  final class EncryptedPayload extends
    * @param value The senderStateEncryptedPayload to set.
    */
   private void setSenderStateEncryptedPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   payloadCase_ = 1;
     payload_ = value;
   }
@@ -92,6 +100,14 @@ public  final class EncryptedPayload extends
   public static final int ONE_TO_ONE_ENCRYPTED_PAYLOAD_FIELD_NUMBER = 2;
   /**
    * <code>bytes one_to_one_encrypted_payload = 2;</code>
+   * @return Whether the oneToOneEncryptedPayload field is set.
+   */
+  @java.lang.Override
+  public boolean hasOneToOneEncryptedPayload() {
+    return payloadCase_ == 2;
+  }
+  /**
+   * <code>bytes one_to_one_encrypted_payload = 2;</code>
    * @return The oneToOneEncryptedPayload.
    */
   @java.lang.Override
@@ -106,7 +122,7 @@ public  final class EncryptedPayload extends
    * @param value The oneToOneEncryptedPayload to set.
    */
   private void setOneToOneEncryptedPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   payloadCase_ = 2;
     payload_ = value;
   }
@@ -123,6 +139,14 @@ public  final class EncryptedPayload extends
   public static final int COMMENT_KEY_ENCRYPTED_PAYLOAD_FIELD_NUMBER = 3;
   /**
    * <code>bytes comment_key_encrypted_payload = 3;</code>
+   * @return Whether the commentKeyEncryptedPayload field is set.
+   */
+  @java.lang.Override
+  public boolean hasCommentKeyEncryptedPayload() {
+    return payloadCase_ == 3;
+  }
+  /**
+   * <code>bytes comment_key_encrypted_payload = 3;</code>
    * @return The commentKeyEncryptedPayload.
    */
   @java.lang.Override
@@ -137,7 +161,7 @@ public  final class EncryptedPayload extends
    * @param value The commentKeyEncryptedPayload to set.
    */
   private void setCommentKeyEncryptedPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   payloadCase_ = 3;
     payload_ = value;
   }
@@ -260,6 +284,14 @@ public  final class EncryptedPayload extends
 
     /**
      * <code>bytes sender_state_encrypted_payload = 1;</code>
+     * @return Whether the senderStateEncryptedPayload field is set.
+     */
+    @java.lang.Override
+    public boolean hasSenderStateEncryptedPayload() {
+      return instance.hasSenderStateEncryptedPayload();
+    }
+    /**
+     * <code>bytes sender_state_encrypted_payload = 1;</code>
      * @return The senderStateEncryptedPayload.
      */
     @java.lang.Override
@@ -288,6 +320,14 @@ public  final class EncryptedPayload extends
 
     /**
      * <code>bytes one_to_one_encrypted_payload = 2;</code>
+     * @return Whether the oneToOneEncryptedPayload field is set.
+     */
+    @java.lang.Override
+    public boolean hasOneToOneEncryptedPayload() {
+      return instance.hasOneToOneEncryptedPayload();
+    }
+    /**
+     * <code>bytes one_to_one_encrypted_payload = 2;</code>
      * @return The oneToOneEncryptedPayload.
      */
     @java.lang.Override
@@ -314,6 +354,14 @@ public  final class EncryptedPayload extends
       return this;
     }
 
+    /**
+     * <code>bytes comment_key_encrypted_payload = 3;</code>
+     * @return Whether the commentKeyEncryptedPayload field is set.
+     */
+    @java.lang.Override
+    public boolean hasCommentKeyEncryptedPayload() {
+      return instance.hasCommentKeyEncryptedPayload();
+    }
     /**
      * <code>bytes comment_key_encrypted_payload = 3;</code>
      * @return The commentKeyEncryptedPayload.

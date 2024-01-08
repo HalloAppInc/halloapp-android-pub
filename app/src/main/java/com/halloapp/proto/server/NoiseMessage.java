@@ -309,7 +309,7 @@ public  final class NoiseMessage extends
    * @param value The content to set.
    */
   private void setContent(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     content_ = value;
   }

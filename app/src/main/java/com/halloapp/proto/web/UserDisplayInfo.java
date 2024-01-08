@@ -66,7 +66,7 @@ public  final class UserDisplayInfo extends
    */
   private void setContactName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contactName_ = value;
   }
@@ -113,7 +113,7 @@ public  final class UserDisplayInfo extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }

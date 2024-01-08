@@ -39,7 +39,7 @@ public  final class ErrorStanza extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }

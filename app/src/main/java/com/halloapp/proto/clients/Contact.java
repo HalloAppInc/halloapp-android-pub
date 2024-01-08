@@ -43,7 +43,7 @@ public  final class Contact extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -80,7 +80,7 @@ public  final class Contact extends
    * @param value The photo to set.
    */
   private void setPhoto(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     photo_ = value;
   }

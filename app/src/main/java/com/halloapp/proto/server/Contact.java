@@ -173,7 +173,7 @@ public  final class Contact extends
    */
   private void setRaw(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     raw_ = value;
   }
@@ -220,7 +220,7 @@ public  final class Contact extends
    */
   private void setNormalized(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     normalized_ = value;
   }
@@ -293,7 +293,7 @@ public  final class Contact extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -340,7 +340,7 @@ public  final class Contact extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }

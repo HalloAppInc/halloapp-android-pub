@@ -17,4 +17,15 @@ public interface SetLinkRequestOrBuilder extends
    * @return The link.
    */
   com.halloapp.proto.server.Link getLink();
+
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   * @return The enum numeric value on the wire for action.
+   */
+  int getActionValue();
+  /**
+   * <code>.server.SetLinkRequest.Action action = 2;</code>
+   * @return The action.
+   */
+  com.halloapp.proto.server.SetLinkRequest.Action getAction();
 }

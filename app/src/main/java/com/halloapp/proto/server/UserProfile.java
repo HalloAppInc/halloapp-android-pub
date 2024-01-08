@@ -71,7 +71,7 @@ public  final class UserProfile extends
    */
   private void setUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     username_ = value;
   }
@@ -118,7 +118,7 @@ public  final class UserProfile extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -165,7 +165,7 @@ public  final class UserProfile extends
    */
   private void setAvatarId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     avatarId_ = value;
   }
@@ -362,7 +362,7 @@ public  final class UserProfile extends
    */
   private void setBio(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     bio_ = value;
   }
@@ -784,7 +784,7 @@ public  final class UserProfile extends
    */
   private void setGeoTags(
       int index, java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureGeoTagsIsMutable();
     geoTags_.set(index, value);
   }
@@ -794,7 +794,7 @@ public  final class UserProfile extends
    */
   private void addGeoTags(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureGeoTagsIsMutable();
     geoTags_.add(value);
   }

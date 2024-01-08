@@ -259,7 +259,7 @@ public  final class ChatState extends
    */
   private void setThreadId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     threadId_ = value;
   }

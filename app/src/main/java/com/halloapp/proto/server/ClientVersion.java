@@ -39,7 +39,7 @@ public  final class ClientVersion extends
    */
   private void setVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     version_ = value;
   }

@@ -216,7 +216,7 @@ public  final class ContactList extends
    */
   private void setSyncId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     syncId_ = value;
   }

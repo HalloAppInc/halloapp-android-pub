@@ -80,7 +80,7 @@ public  final class WebStanza extends
    * @param value The staticKey to set.
    */
   private void setStaticKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     staticKey_ = value;
   }
@@ -97,6 +97,18 @@ public  final class WebStanza extends
   }
 
   public static final int CONTENT_FIELD_NUMBER = 2;
+  /**
+   * <pre>
+   * Noise encrypted content
+   * </pre>
+   *
+   * <code>bytes content = 2;</code>
+   * @return Whether the content field is set.
+   */
+  @java.lang.Override
+  public boolean hasContent() {
+    return payloadCase_ == 2;
+  }
   /**
    * <pre>
    * Noise encrypted content
@@ -121,7 +133,7 @@ public  final class WebStanza extends
    * @param value The content to set.
    */
   private void setContent(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   payloadCase_ = 2;
     payload_ = value;
   }
@@ -336,6 +348,18 @@ public  final class WebStanza extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Noise encrypted content
+     * </pre>
+     *
+     * <code>bytes content = 2;</code>
+     * @return Whether the content field is set.
+     */
+    @java.lang.Override
+    public boolean hasContent() {
+      return instance.hasContent();
+    }
     /**
      * <pre>
      * Noise encrypted content

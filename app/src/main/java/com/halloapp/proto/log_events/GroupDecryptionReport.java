@@ -415,7 +415,7 @@ public  final class GroupDecryptionReport extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }
@@ -462,7 +462,7 @@ public  final class GroupDecryptionReport extends
    */
   private void setContentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contentId_ = value;
   }
@@ -509,7 +509,7 @@ public  final class GroupDecryptionReport extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -610,7 +610,7 @@ public  final class GroupDecryptionReport extends
    */
   private void setOriginalVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     originalVersion_ = value;
   }
@@ -759,7 +759,7 @@ public  final class GroupDecryptionReport extends
    */
   private void setSenderVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderVersion_ = value;
   }

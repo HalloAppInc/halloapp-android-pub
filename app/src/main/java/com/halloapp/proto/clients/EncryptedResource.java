@@ -31,7 +31,7 @@ public  final class EncryptedResource extends
    * @param value The encryptionKey to set.
    */
   private void setEncryptionKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     encryptionKey_ = value;
   }
@@ -58,7 +58,7 @@ public  final class EncryptedResource extends
    * @param value The ciphertextHash to set.
    */
   private void setCiphertextHash(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     ciphertextHash_ = value;
   }
@@ -95,7 +95,7 @@ public  final class EncryptedResource extends
    */
   private void setDownloadUrl(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     downloadUrl_ = value;
   }

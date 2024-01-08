@@ -45,7 +45,7 @@ public  final class GroupFeedHistory extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -92,7 +92,7 @@ public  final class GroupFeedHistory extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -129,7 +129,7 @@ public  final class GroupFeedHistory extends
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     payload_ = value;
   }
@@ -164,7 +164,7 @@ public  final class GroupFeedHistory extends
    * @param value The encPayload to set.
    */
   private void setEncPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     encPayload_ = value;
   }
@@ -195,7 +195,7 @@ public  final class GroupFeedHistory extends
    * @param value The publicKey to set.
    */
   private void setPublicKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publicKey_ = value;
   }
@@ -270,7 +270,7 @@ public  final class GroupFeedHistory extends
    */
   private void setSenderLogInfo(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderLogInfo_ = value;
   }
@@ -337,7 +337,7 @@ public  final class GroupFeedHistory extends
    */
   private void setSenderClientVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderClientVersion_ = value;
   }

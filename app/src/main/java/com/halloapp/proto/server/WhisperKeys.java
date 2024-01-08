@@ -225,7 +225,7 @@ public  final class WhisperKeys extends
    * @param value The identityKey to set.
    */
   private void setIdentityKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     identityKey_ = value;
   }
@@ -252,7 +252,7 @@ public  final class WhisperKeys extends
    * @param value The signedKey to set.
    */
   private void setSignedKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     signedKey_ = value;
   }
@@ -332,7 +332,7 @@ public  final class WhisperKeys extends
    */
   private void setOneTimeKeys(
       int index, com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureOneTimeKeysIsMutable();
     oneTimeKeys_.set(index, value);
   }
@@ -341,7 +341,7 @@ public  final class WhisperKeys extends
    * @param value The oneTimeKeys to add.
    */
   private void addOneTimeKeys(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureOneTimeKeysIsMutable();
     oneTimeKeys_.add(value);
   }

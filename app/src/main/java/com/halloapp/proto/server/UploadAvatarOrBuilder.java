@@ -9,11 +9,15 @@ public interface UploadAvatarOrBuilder extends
 
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    * @return The id.
    */
   @java.lang.Deprecated java.lang.String getId();
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    * @return The bytes for id.
    */
   @java.lang.Deprecated com.google.protobuf.ByteString

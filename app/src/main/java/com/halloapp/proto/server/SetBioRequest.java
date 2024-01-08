@@ -39,7 +39,7 @@ public  final class SetBioRequest extends
    */
   private void setText(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     text_ = value;
   }

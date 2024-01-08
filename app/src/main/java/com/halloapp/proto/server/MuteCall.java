@@ -128,7 +128,7 @@ public  final class MuteCall extends
    */
   private void setCallId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     callId_ = value;
   }

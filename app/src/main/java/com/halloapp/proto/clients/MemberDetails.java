@@ -55,7 +55,7 @@ public  final class MemberDetails extends
    * @param value The publicIdentityKey to set.
    */
   private void setPublicIdentityKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publicIdentityKey_ = value;
   }

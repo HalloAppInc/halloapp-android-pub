@@ -133,7 +133,7 @@ public  final class FeedResponse extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -504,7 +504,7 @@ public  final class FeedResponse extends
    */
   private void setNextCursor(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     nextCursor_ = value;
   }

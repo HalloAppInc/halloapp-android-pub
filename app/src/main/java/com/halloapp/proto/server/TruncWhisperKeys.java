@@ -63,7 +63,7 @@ public  final class TruncWhisperKeys extends
    * @param value The truncPublicIdentityKey to set.
    */
   private void setTruncPublicIdentityKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     truncPublicIdentityKey_ = value;
   }

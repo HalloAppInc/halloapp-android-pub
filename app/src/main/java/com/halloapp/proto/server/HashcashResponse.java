@@ -39,7 +39,7 @@ public  final class HashcashResponse extends
    */
   private void setHashcashChallenge(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     hashcashChallenge_ = value;
   }

@@ -40,7 +40,7 @@ public  final class AiImage extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -77,7 +77,7 @@ public  final class AiImage extends
    * @param value The image to set.
    */
   private void setImage(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     image_ = value;
   }

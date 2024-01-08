@@ -133,7 +133,7 @@ public  final class OtpRequest extends
    */
   private void setPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     phone_ = value;
   }
@@ -222,7 +222,7 @@ public  final class OtpRequest extends
    */
   private void setLangId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     langId_ = value;
   }
@@ -269,7 +269,7 @@ public  final class OtpRequest extends
    */
   private void setGroupInviteToken(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     groupInviteToken_ = value;
   }
@@ -316,7 +316,7 @@ public  final class OtpRequest extends
    */
   private void setUserAgent(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     userAgent_ = value;
   }
@@ -363,7 +363,7 @@ public  final class OtpRequest extends
    */
   private void setHashcashSolution(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     hashcashSolution_ = value;
   }
@@ -436,7 +436,7 @@ public  final class OtpRequest extends
    */
   private void setCampaignId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     campaignId_ = value;
   }

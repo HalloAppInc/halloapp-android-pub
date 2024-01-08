@@ -65,7 +65,7 @@ public  final class UserProfileRequest extends
    */
   private void setUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     username_ = value;
   }

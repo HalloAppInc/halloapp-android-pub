@@ -66,7 +66,7 @@ public  final class AuthRequest extends
    */
   private void setPwd(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     pwd_ = value;
   }
@@ -205,7 +205,7 @@ public  final class AuthRequest extends
    */
   private void setResource(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     resource_ = value;
   }

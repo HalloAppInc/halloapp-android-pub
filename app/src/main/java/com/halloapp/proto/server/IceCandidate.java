@@ -45,7 +45,7 @@ public  final class IceCandidate extends
    */
   private void setCallId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     callId_ = value;
   }
@@ -92,7 +92,7 @@ public  final class IceCandidate extends
    */
   private void setSdpMediaId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     sdpMediaId_ = value;
   }
@@ -165,7 +165,7 @@ public  final class IceCandidate extends
    */
   private void setSdp(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     sdp_ = value;
   }

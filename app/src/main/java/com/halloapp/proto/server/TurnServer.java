@@ -41,7 +41,7 @@ public  final class TurnServer extends
    */
   private void setHost(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     host_ = value;
   }
@@ -114,7 +114,7 @@ public  final class TurnServer extends
    */
   private void setUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     username_ = value;
   }
@@ -161,7 +161,7 @@ public  final class TurnServer extends
    */
   private void setPassword(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     password_ = value;
   }

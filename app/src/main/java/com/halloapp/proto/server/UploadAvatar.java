@@ -20,6 +20,8 @@ public  final class UploadAvatar extends
   private java.lang.String id_;
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    * @return The id.
    */
   @java.lang.Override
@@ -28,6 +30,8 @@ public  final class UploadAvatar extends
   }
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    * @return The bytes for id.
    */
   @java.lang.Override
@@ -37,16 +41,20 @@ public  final class UploadAvatar extends
   }
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    * @param value The id to set.
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    */
   private void clearId() {
     
@@ -54,6 +62,8 @@ public  final class UploadAvatar extends
   }
   /**
    * <code>string id = 1 [deprecated = true];</code>
+   * @deprecated server.UploadAvatar.id is deprecated.
+   *     See server.proto;l=14
    * @param value The bytes for id to set.
    */
   private void setIdBytes(
@@ -86,7 +96,7 @@ public  final class UploadAvatar extends
    * @param value The data to set.
    */
   private void setData(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     data_ = value;
   }
@@ -125,7 +135,7 @@ public  final class UploadAvatar extends
    * @param value The fullData to set.
    */
   private void setFullData(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     fullData_ = value;
   }
@@ -238,6 +248,8 @@ public  final class UploadAvatar extends
 
     /**
      * <code>string id = 1 [deprecated = true];</code>
+     * @deprecated server.UploadAvatar.id is deprecated.
+     *     See server.proto;l=14
      * @return The id.
      */
     @java.lang.Override
@@ -246,6 +258,8 @@ public  final class UploadAvatar extends
     }
     /**
      * <code>string id = 1 [deprecated = true];</code>
+     * @deprecated server.UploadAvatar.id is deprecated.
+     *     See server.proto;l=14
      * @return The bytes for id.
      */
     @java.lang.Override
@@ -255,6 +269,8 @@ public  final class UploadAvatar extends
     }
     /**
      * <code>string id = 1 [deprecated = true];</code>
+     * @deprecated server.UploadAvatar.id is deprecated.
+     *     See server.proto;l=14
      * @param value The id to set.
      * @return This builder for chaining.
      */
@@ -266,6 +282,8 @@ public  final class UploadAvatar extends
     }
     /**
      * <code>string id = 1 [deprecated = true];</code>
+     * @deprecated server.UploadAvatar.id is deprecated.
+     *     See server.proto;l=14
      * @return This builder for chaining.
      */
     @java.lang.Deprecated public Builder clearId() {
@@ -275,6 +293,8 @@ public  final class UploadAvatar extends
     }
     /**
      * <code>string id = 1 [deprecated = true];</code>
+     * @deprecated server.UploadAvatar.id is deprecated.
+     *     See server.proto;l=14
      * @param value The bytes for id to set.
      * @return This builder for chaining.
      */

@@ -50,7 +50,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     phone_ = value;
   }
@@ -97,7 +97,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setCode(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     code_ = value;
   }
@@ -144,7 +144,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }
@@ -181,7 +181,7 @@ public  final class VerifyOtpRequest extends
    * @param value The staticKey to set.
    */
   private void setStaticKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     staticKey_ = value;
   }
@@ -208,7 +208,7 @@ public  final class VerifyOtpRequest extends
    * @param value The signedPhrase to set.
    */
   private void setSignedPhrase(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     signedPhrase_ = value;
   }
@@ -235,7 +235,7 @@ public  final class VerifyOtpRequest extends
    * @param value The identityKey to set.
    */
   private void setIdentityKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     identityKey_ = value;
   }
@@ -262,7 +262,7 @@ public  final class VerifyOtpRequest extends
    * @param value The signedKey to set.
    */
   private void setSignedKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     signedKey_ = value;
   }
@@ -316,7 +316,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setOneTimeKeys(
       int index, com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureOneTimeKeysIsMutable();
     oneTimeKeys_.set(index, value);
   }
@@ -325,7 +325,7 @@ public  final class VerifyOtpRequest extends
    * @param value The oneTimeKeys to add.
    */
   private void addOneTimeKeys(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureOneTimeKeysIsMutable();
     oneTimeKeys_.add(value);
   }
@@ -371,7 +371,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setGroupInviteToken(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     groupInviteToken_ = value;
   }
@@ -484,7 +484,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setUserAgent(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     userAgent_ = value;
   }
@@ -531,7 +531,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setCampaignId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     campaignId_ = value;
   }
@@ -578,7 +578,7 @@ public  final class VerifyOtpRequest extends
    */
   private void setHashcashSolution(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     hashcashSolution_ = value;
   }

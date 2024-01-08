@@ -39,7 +39,7 @@ public  final class StunServer extends
    */
   private void setHost(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     host_ = value;
   }

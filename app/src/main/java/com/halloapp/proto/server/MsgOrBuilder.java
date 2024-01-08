@@ -158,6 +158,8 @@ public interface MsgOrBuilder extends
    * </pre>
    *
    * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
+   * @deprecated server.Msg.group_chat is deprecated.
+   *     See server.proto;l=1216
    * @return Whether the groupChat field is set.
    */
   @java.lang.Deprecated boolean hasGroupChat();
@@ -167,6 +169,8 @@ public interface MsgOrBuilder extends
    * </pre>
    *
    * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
+   * @deprecated server.Msg.group_chat is deprecated.
+   *     See server.proto;l=1216
    * @return The groupChat.
    */
   @java.lang.Deprecated com.halloapp.proto.server.GroupChat getGroupChat();

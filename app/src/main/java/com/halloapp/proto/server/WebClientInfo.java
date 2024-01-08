@@ -326,7 +326,7 @@ public  final class WebClientInfo extends
    * @param value The staticKey to set.
    */
   private void setStaticKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     staticKey_ = value;
   }

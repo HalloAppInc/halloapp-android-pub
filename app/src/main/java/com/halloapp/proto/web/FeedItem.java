@@ -182,7 +182,7 @@ public  final class FeedItem extends
    */
   private void setGroupId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     groupId_ = value;
   }

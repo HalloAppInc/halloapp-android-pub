@@ -225,7 +225,7 @@ public  final class GeoTagRequest extends
    */
   private void setGeoTag(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     geoTag_ = value;
   }

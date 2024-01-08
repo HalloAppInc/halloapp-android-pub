@@ -209,7 +209,7 @@ public  final class UploadMedia extends
    */
   private void setDownloadUrl(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     downloadUrl_ = value;
   }

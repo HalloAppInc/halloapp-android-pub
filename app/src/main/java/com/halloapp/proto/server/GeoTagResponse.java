@@ -328,7 +328,7 @@ public  final class GeoTagResponse extends
    */
   private void setGeoTags(
       int index, java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureGeoTagsIsMutable();
     geoTags_.set(index, value);
   }
@@ -338,7 +338,7 @@ public  final class GeoTagResponse extends
    */
   private void addGeoTags(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureGeoTagsIsMutable();
     geoTags_.add(value);
   }

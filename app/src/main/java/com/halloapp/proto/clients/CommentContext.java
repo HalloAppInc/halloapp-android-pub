@@ -40,7 +40,7 @@ public  final class CommentContext extends
    */
   private void setFeedPostId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     feedPostId_ = value;
   }
@@ -87,7 +87,7 @@ public  final class CommentContext extends
    */
   private void setParentCommentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     parentCommentId_ = value;
   }

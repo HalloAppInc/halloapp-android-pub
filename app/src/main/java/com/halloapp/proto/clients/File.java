@@ -85,7 +85,7 @@ public  final class File extends
    */
   private void setFilename(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     filename_ = value;
   }

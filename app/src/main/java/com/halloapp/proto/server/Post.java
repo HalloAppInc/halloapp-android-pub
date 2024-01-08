@@ -151,7 +151,7 @@ public  final class Post extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -214,7 +214,7 @@ public  final class Post extends
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     payload_ = value;
   }
@@ -323,7 +323,7 @@ public  final class Post extends
    */
   private void setPublisherName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publisherName_ = value;
   }
@@ -368,7 +368,7 @@ public  final class Post extends
    * @param value The encPayload to set.
    */
   private void setEncPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     encPayload_ = value;
   }
@@ -497,7 +497,7 @@ public  final class Post extends
    */
   private void setPsaTag(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     psaTag_ = value;
   }
@@ -715,7 +715,7 @@ public  final class Post extends
    */
   private void setPublisherUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publisherUsername_ = value;
   }

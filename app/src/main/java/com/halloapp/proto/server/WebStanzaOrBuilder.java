@@ -23,6 +23,15 @@ public interface WebStanzaOrBuilder extends
    * </pre>
    *
    * <code>bytes content = 2;</code>
+   * @return Whether the content field is set.
+   */
+  boolean hasContent();
+  /**
+   * <pre>
+   * Noise encrypted content
+   * </pre>
+   *
+   * <code>bytes content = 2;</code>
    * @return The content.
    */
   com.google.protobuf.ByteString getContent();

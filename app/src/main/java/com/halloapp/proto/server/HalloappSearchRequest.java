@@ -39,7 +39,7 @@ public  final class HalloappSearchRequest extends
    */
   private void setUsernameString(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     usernameString_ = value;
   }

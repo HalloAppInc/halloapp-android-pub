@@ -44,7 +44,7 @@ public  final class MediaItem extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -117,7 +117,7 @@ public  final class MediaItem extends
    */
   private void setPublisherName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publisherName_ = value;
   }
@@ -164,7 +164,7 @@ public  final class MediaItem extends
    */
   private void setPublisherUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publisherUsername_ = value;
   }
@@ -211,7 +211,7 @@ public  final class MediaItem extends
    */
   private void setAlbumId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     albumId_ = value;
   }
@@ -248,7 +248,7 @@ public  final class MediaItem extends
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     payload_ = value;
   }
@@ -349,7 +349,7 @@ public  final class MediaItem extends
    */
   private void setParentMediaId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     parentMediaId_ = value;
   }

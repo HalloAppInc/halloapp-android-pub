@@ -30,7 +30,7 @@ public  final class SenderStateWithKeyInfo extends
    * @param value The publicKey to set.
    */
   private void setPublicKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publicKey_ = value;
   }
@@ -83,7 +83,7 @@ public  final class SenderStateWithKeyInfo extends
    * @param value The encSenderState to set.
    */
   private void setEncSenderState(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     encSenderState_ = value;
   }

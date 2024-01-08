@@ -66,7 +66,7 @@ public  final class Mention extends
    */
   private void setUserId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     userId_ = value;
   }
@@ -113,7 +113,7 @@ public  final class Mention extends
    */
   private void setName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     name_ = value;
   }

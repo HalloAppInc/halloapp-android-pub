@@ -41,7 +41,7 @@ public  final class ChatContext extends
    */
   private void setFeedPostId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     feedPostId_ = value;
   }
@@ -114,7 +114,7 @@ public  final class ChatContext extends
    */
   private void setChatReplyMessageId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     chatReplyMessageId_ = value;
   }
@@ -187,7 +187,7 @@ public  final class ChatContext extends
    */
   private void setChatReplyMessageSenderId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     chatReplyMessageSenderId_ = value;
   }

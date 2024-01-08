@@ -43,7 +43,7 @@ public  final class ConnectionInfo extends
    */
   private void setVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     version_ = value;
   }

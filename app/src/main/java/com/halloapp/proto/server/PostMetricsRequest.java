@@ -39,7 +39,7 @@ public  final class PostMetricsRequest extends
    */
   private void setPostId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     postId_ = value;
   }

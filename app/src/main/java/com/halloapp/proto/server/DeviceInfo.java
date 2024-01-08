@@ -52,7 +52,7 @@ public  final class DeviceInfo extends
    */
   private void setDevice(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     device_ = value;
   }
@@ -119,7 +119,7 @@ public  final class DeviceInfo extends
    */
   private void setOsVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     osVersion_ = value;
   }

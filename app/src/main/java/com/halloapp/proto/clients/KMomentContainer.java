@@ -274,7 +274,7 @@ public  final class KMomentContainer extends
    */
   private void setLocation(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     location_ = value;
   }

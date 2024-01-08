@@ -171,7 +171,7 @@ public  final class FriendListResponse extends
    */
   private void setCursor(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     cursor_ = value;
   }

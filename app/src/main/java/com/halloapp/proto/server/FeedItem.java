@@ -661,7 +661,7 @@ public  final class FeedItem extends
    */
   private void setSenderClientVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderClientVersion_ = value;
   }

@@ -28,6 +28,10 @@ public  final class Link extends
      */
     TIKTOK(1),
     /**
+     * <pre>
+     * deprecated: using this on HalloApp results in BAD_TYPE error
+     * </pre>
+     *
      * <code>SNAPCHAT = 2;</code>
      */
     SNAPCHAT(2),
@@ -35,6 +39,14 @@ public  final class Link extends
      * <code>INSTAGRAM = 3;</code>
      */
     INSTAGRAM(3),
+    /**
+     * <code>X = 4;</code>
+     */
+    X(4),
+    /**
+     * <code>YOUTUBE = 5;</code>
+     */
+    YOUTUBE(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -47,6 +59,10 @@ public  final class Link extends
      */
     public static final int TIKTOK_VALUE = 1;
     /**
+     * <pre>
+     * deprecated: using this on HalloApp results in BAD_TYPE error
+     * </pre>
+     *
      * <code>SNAPCHAT = 2;</code>
      */
     public static final int SNAPCHAT_VALUE = 2;
@@ -54,6 +70,14 @@ public  final class Link extends
      * <code>INSTAGRAM = 3;</code>
      */
     public static final int INSTAGRAM_VALUE = 3;
+    /**
+     * <code>X = 4;</code>
+     */
+    public static final int X_VALUE = 4;
+    /**
+     * <code>YOUTUBE = 5;</code>
+     */
+    public static final int YOUTUBE_VALUE = 5;
 
 
     @java.lang.Override
@@ -81,6 +105,8 @@ public  final class Link extends
         case 1: return TIKTOK;
         case 2: return SNAPCHAT;
         case 3: return INSTAGRAM;
+        case 4: return X;
+        case 5: return YOUTUBE;
         default: return null;
       }
     }
@@ -188,7 +214,7 @@ public  final class Link extends
    */
   private void setText(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     text_ = value;
   }

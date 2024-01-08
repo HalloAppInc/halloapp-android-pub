@@ -55,7 +55,7 @@ public  final class OneTimePreKey extends
    * @param value The publicKey to set.
    */
   private void setPublicKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publicKey_ = value;
   }

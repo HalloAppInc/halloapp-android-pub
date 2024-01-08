@@ -200,7 +200,7 @@ public  final class GroupInviteLink extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -247,7 +247,7 @@ public  final class GroupInviteLink extends
    */
   private void setLink(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     link_ = value;
   }
@@ -294,7 +294,7 @@ public  final class GroupInviteLink extends
    */
   private void setResult(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     result_ = value;
   }
@@ -341,7 +341,7 @@ public  final class GroupInviteLink extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }

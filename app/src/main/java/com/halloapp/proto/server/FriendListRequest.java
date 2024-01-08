@@ -254,7 +254,7 @@ public  final class FriendListRequest extends
    */
   private void setCursor(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     cursor_ = value;
   }

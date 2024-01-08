@@ -85,7 +85,7 @@ public  final class PushRegister extends
    */
   private void setLangId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     langId_ = value;
   }

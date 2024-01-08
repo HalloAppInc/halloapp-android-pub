@@ -66,7 +66,7 @@ public  final class Address extends
    */
   private void setFormattedAddressLines(
       int index, java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureFormattedAddressLinesIsMutable();
     formattedAddressLines_.set(index, value);
   }
@@ -76,7 +76,7 @@ public  final class Address extends
    */
   private void addFormattedAddressLines(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensureFormattedAddressLinesIsMutable();
     formattedAddressLines_.add(value);
   }

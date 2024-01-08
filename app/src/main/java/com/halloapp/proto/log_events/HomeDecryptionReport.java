@@ -485,7 +485,7 @@ public  final class HomeDecryptionReport extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }
@@ -532,7 +532,7 @@ public  final class HomeDecryptionReport extends
    */
   private void setContentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     contentId_ = value;
   }
@@ -675,7 +675,7 @@ public  final class HomeDecryptionReport extends
    */
   private void setOriginalVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     originalVersion_ = value;
   }
@@ -824,7 +824,7 @@ public  final class HomeDecryptionReport extends
    */
   private void setSenderVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     senderVersion_ = value;
   }

@@ -305,7 +305,7 @@ public  final class CandidatePairStats extends
    */
   private void setLocalIP(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     localIP_ = value;
   }
@@ -394,7 +394,7 @@ public  final class CandidatePairStats extends
    */
   private void setRemoteIP(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     remoteIP_ = value;
   }

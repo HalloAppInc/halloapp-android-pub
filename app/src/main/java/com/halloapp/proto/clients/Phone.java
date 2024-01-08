@@ -81,7 +81,7 @@ public  final class Phone extends
    */
   private void setNumber(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     number_ = value;
   }

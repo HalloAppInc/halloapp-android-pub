@@ -41,7 +41,7 @@ public  final class MediaUrl extends
    */
   private void setGet(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     get_ = value;
   }
@@ -88,7 +88,7 @@ public  final class MediaUrl extends
    */
   private void setPut(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     put_ = value;
   }
@@ -135,7 +135,7 @@ public  final class MediaUrl extends
    */
   private void setPatch(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     patch_ = value;
   }

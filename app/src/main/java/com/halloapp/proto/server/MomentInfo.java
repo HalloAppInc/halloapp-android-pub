@@ -419,7 +419,7 @@ public  final class MomentInfo extends
    */
   private void setDate(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     date_ = value;
   }

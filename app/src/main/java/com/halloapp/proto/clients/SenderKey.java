@@ -30,7 +30,7 @@ public  final class SenderKey extends
    * @param value The chainKey to set.
    */
   private void setChainKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     chainKey_ = value;
   }
@@ -57,7 +57,7 @@ public  final class SenderKey extends
    * @param value The publicSignatureKey to set.
    */
   private void setPublicSignatureKey(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publicSignatureKey_ = value;
   }

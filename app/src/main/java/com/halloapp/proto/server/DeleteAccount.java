@@ -121,7 +121,7 @@ public  final class DeleteAccount extends
    */
   private void setPhone(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     phone_ = value;
   }
@@ -210,7 +210,7 @@ public  final class DeleteAccount extends
    */
   private void setFeedback(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     feedback_ = value;
   }
@@ -257,7 +257,7 @@ public  final class DeleteAccount extends
    */
   private void setUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     username_ = value;
   }

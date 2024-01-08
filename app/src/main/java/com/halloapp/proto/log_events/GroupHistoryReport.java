@@ -129,7 +129,7 @@ public  final class GroupHistoryReport extends
    */
   private void setGid(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     gid_ = value;
   }
@@ -228,7 +228,7 @@ public  final class GroupHistoryReport extends
    */
   private void setOriginalVersion(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     originalVersion_ = value;
   }

@@ -214,7 +214,7 @@ public  final class ExportData extends
    */
   private void setDataUrl(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     dataUrl_ = value;
   }

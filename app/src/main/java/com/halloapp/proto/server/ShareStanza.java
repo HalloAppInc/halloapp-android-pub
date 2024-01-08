@@ -94,7 +94,7 @@ public  final class ShareStanza extends
    */
   private void setPostIds(
       int index, java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensurePostIdsIsMutable();
     postIds_.set(index, value);
   }
@@ -104,7 +104,7 @@ public  final class ShareStanza extends
    */
   private void addPostIds(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   ensurePostIdsIsMutable();
     postIds_.add(value);
   }
@@ -160,7 +160,7 @@ public  final class ShareStanza extends
    */
   private void setResult(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     result_ = value;
   }
@@ -207,7 +207,7 @@ public  final class ShareStanza extends
    */
   private void setReason(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     reason_ = value;
   }

@@ -143,7 +143,7 @@ public  final class Comment extends
    */
   private void setId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     id_ = value;
   }
@@ -190,7 +190,7 @@ public  final class Comment extends
    */
   private void setPostId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     postId_ = value;
   }
@@ -237,7 +237,7 @@ public  final class Comment extends
    */
   private void setParentCommentId(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     parentCommentId_ = value;
   }
@@ -310,7 +310,7 @@ public  final class Comment extends
    */
   private void setPublisherName(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publisherName_ = value;
   }
@@ -347,7 +347,7 @@ public  final class Comment extends
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     payload_ = value;
   }
@@ -408,7 +408,7 @@ public  final class Comment extends
    * @param value The encPayload to set.
    */
   private void setEncPayload(com.google.protobuf.ByteString value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     encPayload_ = value;
   }
@@ -537,7 +537,7 @@ public  final class Comment extends
    */
   private void setPublisherUsername(
       java.lang.String value) {
-    value.getClass();
+    java.lang.Class<?> valueClass = value.getClass();
   
     publisherUsername_ = value;
   }
