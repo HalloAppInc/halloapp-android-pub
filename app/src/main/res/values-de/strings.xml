@@ -2771,7 +2771,6 @@ Bleibe dran!"</string>
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
-    <!-- Fuzzy -->
     <string name="phone_description">"ⓘ zur Wiederherstellung u. Verifizierung deines Accounts. Nur du kannst deine Handynummer sehen."</string>
 
     <!-- Message menu option to copy the selected message -->

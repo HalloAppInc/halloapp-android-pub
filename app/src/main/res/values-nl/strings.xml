@@ -2890,7 +2890,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="incoming_friend_request_notification">"&lt;b&gt;%s&lt;/b&gt; heeft je een vriendschapsverzoek gestuurd! &lt;b&gt;&lt;a href=\"view-friends\"&gt;Bekijken&lt;/a&gt;&lt;/b&gt;"</string>
 
     <!-- Text shown in activity center telling users when they have a new friend. %s is the name of the friend -->
-    <string name="friend_notification">"&lt;b&gt;%s&lt;/b&gt; is nu je vriend"</string>
+    <string name="friend_notification">"Je bent nu vrienden met &lt;b&gt;%s&lt;/b&gt;"</string>
 
     <!-- Tab to show suggested and current friend requests when there are no current requests -->
     <string name="requests_zero">"Verzoeken"</string>
@@ -2935,7 +2935,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="suggestion_text_template">"%1$d foto's gemaakt op %2$s"</string>
 
     <!-- Text format to describe the number of photos, %d, taken at a specific location, %s, for a new post -->
-    <string name="suggestion_text_with_location_template">"%1$d d foto's gemaakt in de buurt van %2$s"</string>
+    <string name="suggestion_text_with_location_template">"%1$d foto's gemaakt in de buurt van %2$s"</string>
 
     <!-- Text shown in progress dialog as photos are being selecting for a magic post -->
     <string name="selecting_best_photos">"De beste foto's worden geselecteerd…"</string>
