@@ -1,7 +1,8 @@
 package com.halloapp.util;
 
 
-import java.text.DateFormat;
+import android.text.format.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,7 +40,8 @@ public class TimeUtils {
             return "";
         }
         Date date = new Date(time);
-        DateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        String skeleton = DateFormat.getBestDateTimePattern(Locale.getDefault(), "MMM dd");
+        SimpleDateFormat sdf = new SimpleDateFormat(skeleton, Locale.getDefault());
         return sdf.format(date);
     }
 }
