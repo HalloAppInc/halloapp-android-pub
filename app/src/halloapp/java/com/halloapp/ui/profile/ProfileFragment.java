@@ -1,7 +1,6 @@
 package com.halloapp.ui.profile;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -45,6 +44,7 @@ import com.halloapp.ui.chat.chat.ChatActivity;
 import com.halloapp.ui.chat.chat.KeyVerificationActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
@@ -75,11 +75,14 @@ public class ProfileFragment extends PostsFragment {
     private TextView nameView;
     private TextView usernameView;
     private TextView requestsTextView;
+    private TextView linksTextView;
     private Button friendsButtonView;
     private Button friendsDismissButtonView;
     private View messageView;
     private View voiceCallView;
     private View videoCallView;
+    private View linksView;
+    private View linksContainerView;
     private View unblockView;
     private View friendsContainer;
     private View contactActionsContainer;
@@ -190,6 +193,16 @@ public class ProfileFragment extends PostsFragment {
         messageView = headerView.findViewById(R.id.message);
         voiceCallView = headerView.findViewById(R.id.call);
         videoCallView = headerView.findViewById(R.id.video_call);
+        linksView = headerView.findViewById(R.id.links);
+        linksContainerView = headerView.findViewById(R.id.links_container);
+        linksTextView = headerView.findViewById(R.id.link_text);
+        RecyclerView linksListView = headerView.findViewById(R.id.links_list);
+
+        LinearLayoutManager linksLayoutManager = new LinearLayoutManager(getContext());
+        LinksAdapter linksAdapter = new LinksAdapter();
+        linksListView.setAdapter(linksAdapter);
+        linksListView.setLayoutManager(linksLayoutManager);
+
         unblockView = headerView.findViewById(R.id.unblock);
         contactActionsContainer = headerView.findViewById(R.id.actions_container);
         unblockView.setOnClickListener(v -> {
@@ -210,6 +223,13 @@ public class ProfileFragment extends PostsFragment {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
             viewModel.getProfileInfo().observe(getViewLifecycleOwner(), profile -> {
+                linksView.setVisibility(profile.links.isEmpty() ? View.GONE : View.VISIBLE);
+                linksView.setOnClickListener(v -> {
+                    DialogFragmentUtils.showDialogFragmentOnce(LinksBottomSheetDialogFragment.newInstance(profile.links), getParentFragmentManager());
+                });
+                linksTextView.setText(getString(R.string.friend_profile_links, profile.name));
+                linksAdapter.setItems(profile.links);
+
                 nameView.setText(profile.name);
                 if (!TextUtils.isEmpty(profile.username)) {
                     usernameView.setText("@" + profile.username);
@@ -227,6 +247,7 @@ public class ProfileFragment extends PostsFragment {
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
                     friendsDismissButtonView.setVisibility(View.GONE);
+                    linksContainerView.setVisibility(View.GONE);
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.OUTGOING_PENDING) {
                     requestsTextView.setVisibility(View.VISIBLE);
                     requestsTextView.setText(getString(R.string.outgoing_sent_friend_request, profile.name));
@@ -234,6 +255,7 @@ public class ProfileFragment extends PostsFragment {
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
                     friendsDismissButtonView.setVisibility(View.GONE);
+                    linksContainerView.setVisibility(profile.links.isEmpty() ? View.GONE : View.VISIBLE);
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.INCOMING_PENDING) {
                     requestsTextView.setVisibility(View.VISIBLE);
                     requestsTextView.setText(getString(R.string.incoming_sent_friend_request, profile.name));
@@ -242,12 +264,14 @@ public class ProfileFragment extends PostsFragment {
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
                     friendsDismissButtonView.setVisibility(View.VISIBLE);
                     friendsDismissButtonView.setOnClickListener(view -> rejectFriendRequest());
+                    linksContainerView.setVisibility(profile.links.isEmpty() ? View.GONE : View.VISIBLE);
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.NONE_STATUS) {
                     requestsTextView.setVisibility(View.GONE);
                     friendsButtonView.setText(R.string.add_friend);
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
                     friendsDismissButtonView.setVisibility(View.GONE);
+                    linksContainerView.setVisibility(profile.links.isEmpty() ? View.GONE : View.VISIBLE);
                 }
             });
         }

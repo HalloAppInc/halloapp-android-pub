@@ -2129,4 +2129,18 @@
     <string name="cancel_request">Cancel request</string>
     <!-- Message under profile to confirm a friend request -->
     <string name="confirm">Confirm</string>
+    <!-- label for X (formerly Twitter) handle on profile -->
+    <string name="x_twitter">X</string>
+    <!-- label for youtube handle on profile -->
+    <string name="youtube">Youtube</string>
+    <!-- label for user defined link on profile -->
+    <string name="link">Link</string>
+    <!-- button to add social media links to their profile -->
+    <string name="add_my_social_media">Add my social media</string>
+    <!-- button to add more social media links to their profile -->
+    <string name="add_more">Add more</string>
+    <!-- button on a user's profile to display their social media links -->
+    <string name="links">Links</string>
+    <!-- text describing a user's social media links, where %s is the name of the user -->
+    <string name="friend_profile_links">%s\'s links:</string>
 </resources>

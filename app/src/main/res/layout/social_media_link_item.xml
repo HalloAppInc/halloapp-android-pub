@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/instagram"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/username"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_marginTop="20dp">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="5dp"
+        app:tint="@color/favorites_dialog_blue"
+        android:src="@drawable/ic_instagram" />
+
+    <TextView
+        android:id="@+id/link"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/primary_text"
+        android:gravity="center_vertical"
+        android:textSize="15sp"
+        tools:text="https://tiktok.com/nand1ni" />
+
+</LinearLayout>

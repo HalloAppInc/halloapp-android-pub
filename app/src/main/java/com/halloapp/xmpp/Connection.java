@@ -39,6 +39,7 @@ import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Link;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
@@ -47,6 +48,7 @@ import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.PublicFeedUpdate;
 import com.halloapp.proto.server.ReportUserContent;
 import com.halloapp.proto.server.Rerequest;
+import com.halloapp.proto.server.SetLinkRequest;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
@@ -383,5 +385,7 @@ public abstract class Connection {
     public abstract Observable<FriendshipResponseIq> rejectFriendSuggestion(@NonNull UserId userId);
 
     public abstract Observable<ReverseGeocodeResponseIq> getGeocodeLocation(double latitude, double longitude);
+
+    public abstract Observable<SetLinkResponseIq> sendLink(@NonNull String text, @NonNull Link.Type type, @NonNull SetLinkRequest.Action action);
 
 }

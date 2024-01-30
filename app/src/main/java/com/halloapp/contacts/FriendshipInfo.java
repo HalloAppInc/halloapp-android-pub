@@ -1,13 +1,17 @@
 package com.halloapp.contacts;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.FriendListRequest;
 import com.halloapp.proto.server.FriendshipStatus;
+import com.halloapp.proto.server.Link;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class FriendshipInfo {
@@ -39,6 +43,14 @@ public class FriendshipInfo {
         throw new IllegalArgumentException("Unexpected friendship status " + friendshipStatus);
     }
 
+    public static ArrayList<SocialLink> fromProtoLinks(@NonNull List<Link> links) {
+        ArrayList<SocialLink> socialLinks = new ArrayList<>();
+        for (Link link: links) {
+            socialLinks.add(new SocialLink(link.getText(), SocialLink.fromProtoType(link.getType())));
+        }
+        return socialLinks;
+    }
+
     public static @Type int fromFriendListAction(FriendListRequest.Action action) {
         switch (action) {
             case GET_FRIENDS:
@@ -60,6 +72,7 @@ public class FriendshipInfo {
     public final int friendshipStatus;
     public boolean seen;
     public final long timestamp;
+    public ArrayList<SocialLink> links = new ArrayList<>();
 
     public FriendshipInfo(UserId userId, String username, String name, String avatarId, @Type int friendshipStatus, long timestamp) {
         this.userId = userId;

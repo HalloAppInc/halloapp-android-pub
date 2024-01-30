@@ -348,6 +348,7 @@ public class ProfileViewModel extends ViewModel {
                     response.profile.getAvatarId(),
                     FriendshipInfo.fromProtoType(response.profile.getStatus(), response.profile.getBlocked()),
                     System.currentTimeMillis());
+            friendshipProfileInfo.links = FriendshipInfo.fromProtoLinks(response.profile.getLinksList());
             profile.postValue(friendshipProfileInfo);
         }).onError(err -> {
             Log.e("Failed to get profile info", err);

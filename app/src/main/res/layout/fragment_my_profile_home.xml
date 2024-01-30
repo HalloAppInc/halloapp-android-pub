@@ -64,6 +64,139 @@
                     app:layout_constraintTop_toBottomOf="@id/name"
                     tools:text="\@username"/>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/username">
+
+                    <Button
+                        android:id="@+id/social_media_empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_entry_friendship_bg"
+                        android:minHeight="0dp"
+                        android:stateListAnimator="@null"
+                        android:text="@string/add_my_social_media"
+                        android:textAllCaps="false"
+                        android:textColor="@color/favorites_dialog_blue"
+                        app:backgroundTint="@color/black_10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/social_media"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone">
+
+                        <ImageButton
+                            android:id="@+id/instagram"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_circle"
+                            android:padding="12dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_instagram"
+                            android:visibility="gone"
+                            app:backgroundTint="@color/black_10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/x_twitter"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/favorites_dialog_blue" />
+
+                        <ImageButton
+                            android:id="@+id/x_twitter"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_circle"
+                            android:padding="12dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_twitter_x"
+                            app:backgroundTint="@color/black_10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/tiktok"
+                            app:layout_constraintStart_toEndOf="@id/instagram"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/favorites_dialog_blue" />
+
+                        <ImageButton
+                            android:id="@+id/tiktok"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_circle"
+                            android:padding="12dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_tiktok"
+                            app:backgroundTint="@color/black_10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/youtube"
+                            app:layout_constraintStart_toEndOf="@id/x_twitter"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/favorites_dialog_blue" />
+
+                        <ImageButton
+                            android:id="@+id/youtube"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_circle"
+                            android:padding="12dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_youtube"
+                            app:backgroundTint="@color/black_10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/user_link"
+                            app:layout_constraintStart_toEndOf="@id/tiktok"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/favorites_dialog_blue" />
+
+                        <ImageButton
+                            android:id="@+id/user_link"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_circle"
+                            android:padding="10dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_link"
+                            app:backgroundTint="@color/black_10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/social_media_add"
+                            app:layout_constraintStart_toEndOf="@id/youtube"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/favorites_dialog_blue" />
+
+                        <ImageButton
+                            android:id="@+id/social_media_add"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/bg_circle"
+                            android:padding="12dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_attach_plus"
+                            app:backgroundTint="@color/black_10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/user_link"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/favorites_dialog_blue" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </LinearLayout>
 
             <View

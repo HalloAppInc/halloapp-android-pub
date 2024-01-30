@@ -1,5 +1,6 @@
 package com.halloapp.ui.settings;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,7 +26,10 @@ import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.Preferences;
+import com.halloapp.contacts.SocialLink;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Link;
+import com.halloapp.proto.server.SetLinkRequest;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
@@ -39,7 +43,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SettingsProfileViewModel extends AndroidViewModel {
 
@@ -51,11 +58,14 @@ public class SettingsProfileViewModel extends AndroidViewModel {
     private final MutableLiveData<Bitmap> tempAvatarLiveData;
     private final MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> usernameChangedLiveData = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> linksChangedLiveData = new MutableLiveData<>(false);
     private final MediatorLiveData<Boolean> canSave;
     private final MutableLiveData<Boolean> hasAvatarSet = new MutableLiveData<>();
 
     private String tempName;
     private String tempUsername;
+    private final MutableLiveData<List<SocialLink>> tempLinksLiveData = new MutableLiveData<>();
+    private ArrayList<SocialLink> serverLinks = new ArrayList<>();
 
     private String avatarFile;
     private String largeAvatarFile;
@@ -78,11 +88,48 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         canSave.addSource(nameChangedLiveData, nameChanged -> setCanSave());
         canSave.addSource(usernameChangedLiveData, usernameChanged -> setCanSave());
         canSave.addSource(tempAvatarLiveData, bitmap -> setCanSave());
+        canSave.addSource(linksChangedLiveData, linksChanged -> setCanSave());
         bgWorkers.execute(() -> {
             hasAvatarSet.postValue(AvatarLoader.getInstance().hasAvatar());
+            computeLinks();
         });
 
     }
+
+    public void computeLinks() {
+        Connection.getInstance().getHalloappProfileInfo(new UserId(me.getUser()), me.getUsername()).onResponse(response -> {
+            if (response != null && response.success) {
+                ArrayList<SocialLink> socialLinks = new ArrayList<>();
+                serverLinks = new ArrayList<>();
+                for (Link link: response.profile.getLinksList()) {
+                    socialLinks.add(new SocialLink(link.getText(), SocialLink.fromProtoType(link.getType())));
+                    serverLinks.add(new SocialLink(link.getText(), SocialLink.fromProtoType(link.getType())));
+                }
+                tempLinksLiveData.postValue(socialLinks);
+            }
+        }).onError(err -> {
+            Log.e("Failed to get social media links", err);
+        });
+    }
+
+    public void addLink(@NonNull SocialLink link) {
+        List<SocialLink> links = tempLinksLiveData.getValue() == null ? new ArrayList<>() : tempLinksLiveData.getValue();
+        links.add(link);
+        tempLinksLiveData.postValue(links);
+    }
+
+    public void removeLink(@NonNull SocialLink link) {
+        List<SocialLink> links = tempLinksLiveData.getValue() == null ? new ArrayList<>() : tempLinksLiveData.getValue();
+        links.remove(link);
+        tempLinksLiveData.postValue(links);
+    }
+
+    public void setTempLinks(@NonNull SocialLink item, @NonNull String link) {
+        item.text = link;
+        int size = tempLinksLiveData.getValue() != null ? tempLinksLiveData.getValue().size() : 0;
+        linksChangedLiveData.setValue(serverLinks.size() != size || !serverLinks.contains(item));
+    }
+
     public void removeAvatar() {
         avatarDeleted = true;
         tempAvatarLiveData.setValue(null);
@@ -95,6 +142,10 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getHasAvatarSet() {
         return hasAvatarSet;
+    }
+
+    public LiveData<List<SocialLink>> getLinks() {
+        return tempLinksLiveData;
     }
 
     public void saveProfile() {
@@ -118,6 +169,26 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         if (avatarDeleted) {
             builder.putBoolean(UpdateProfileWorker.WORKER_PARAM_AVATAR_REMOVAL, true);
         }
+        if (linksChangedLiveData.getValue() != null && linksChangedLiveData.getValue()) {
+            Set<String> toRemove = new HashSet<>();
+            Set<String> toAdd = new HashSet<>();
+            List<SocialLink> updatedLinks = tempLinksLiveData.getValue() != null ? tempLinksLiveData.getValue() : new ArrayList<>();
+
+            for (SocialLink link : serverLinks) {
+                if (!updatedLinks.contains(link)) {
+                    toRemove.add(link.text);
+                }
+            }
+
+            for (SocialLink link : updatedLinks) {
+                if (!serverLinks.contains(link) && !link.getPrefix().equals(link.text)) {
+                    toAdd.add(link.text);
+                }
+            }
+            builder.putStringArray(UpdateProfileWorker.WORKER_PARAM_ADD_LINKS, toAdd.toArray(new String[0]));
+            builder.putStringArray(UpdateProfileWorker.WORKER_PARAM_REMOVE_LINKS, toRemove.toArray(new String[0]));
+        }
+
         final Data data = builder.build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(UpdateProfileWorker.class).setInputData(data).build();
         workManager.enqueueUniqueWork(UpdateProfileWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
@@ -127,7 +198,8 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         boolean nameChanged = nameChangedLiveData.getValue() != null ? nameChangedLiveData.getValue() : false;
         boolean usernameChanged = usernameChangedLiveData.getValue() != null ? usernameChangedLiveData.getValue() : false;
         boolean avatarChanged = tempAvatarLiveData.getValue() != null;
-        canSave.setValue(nameChanged || usernameChanged || avatarChanged || avatarDeleted);
+        boolean linksChanged = linksChangedLiveData.getValue() != null ? linksChangedLiveData.getValue() : false;
+        canSave.setValue(nameChanged || usernameChanged || avatarChanged || avatarDeleted || linksChanged);
     }
 
     public LiveData<String> getName() {
@@ -168,7 +240,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
     public void setTempUsername(String tempUsername) {
         this.tempUsername = tempUsername;
-        usernameChangedLiveData.setValue(!tempUsername.equals(me.username.getValue()));
+        usernameChangedLiveData.postValue(!tempUsername.equals(me.username.getValue()));
     }
 
 
@@ -183,6 +255,8 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_NAME = "name";
         private static final String WORKER_PARAM_USERNAME = "username";
         private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
+        private static final String WORKER_PARAM_ADD_LINKS = "add_links";
+        private static final String WORKER_PARAM_REMOVE_LINKS = "remove_links";
 
         private final AvatarLoader avatarLoader;
 
@@ -198,6 +272,8 @@ public class SettingsProfileViewModel extends AndroidViewModel {
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
             final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
             final boolean avatarDeleted = getInputData().getBoolean(WORKER_PARAM_AVATAR_REMOVAL,false);
+            final String[] toAddLinks = getInputData().getStringArray(WORKER_PARAM_ADD_LINKS);
+            final String[] toRemoveLinks = getInputData().getStringArray(WORKER_PARAM_REMOVE_LINKS);
             int avatarWidth = getInputData().getInt(WORKER_PARAM_AVATAR_WIDTH, -1);
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
             try {
@@ -266,10 +342,34 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     avatarLoader.removeMyAvatar();
                     Connection.getInstance().removeAvatar();
                 }
+                if (toAddLinks != null) {
+                    for (String link : toAddLinks) {
+                        Connection.getInstance().sendLink(link, getLinkType(link), SetLinkRequest.Action.SET).await();
+                    }
+                }
+                if (toRemoveLinks != null) {
+                    for (String link : toRemoveLinks) {
+                        Connection.getInstance().sendLink(link, getLinkType(link), SetLinkRequest.Action.REMOVE).await();
+                    }
+                }
                 return Result.success();
             } catch (InterruptedException | ObservableErrorException e) {
                 Log.e("UpdateProfileWorker", e);
                 return Result.failure();
+            }
+        }
+
+        private Link.Type getLinkType(@NonNull String text) {
+            if (text.startsWith("instagram.com/")) {
+                return Link.Type.INSTAGRAM;
+            } else if (text.startsWith("tiktok.com/")) {
+                return Link.Type.TIKTOK;
+            } else if (text.startsWith("x.com/")) {
+                return Link.Type.X;
+            } else if (text.startsWith("youtube.com/")) {
+                return Link.Type.YOUTUBE;
+            } else {
+                return Link.Type.USER_DEFINED;
             }
         }
     }

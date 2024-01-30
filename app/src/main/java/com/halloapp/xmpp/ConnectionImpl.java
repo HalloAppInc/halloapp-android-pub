@@ -115,6 +115,7 @@ import com.halloapp.proto.server.ScreenshotReceipt;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
+import com.halloapp.proto.server.SetLinkRequest;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.proto.server.UsernameRequest;
 import com.halloapp.proto.server.WebStanza;
@@ -2006,6 +2007,14 @@ public class ConnectionImpl extends Connection {
         return sendIqRequestAsync(new ReverseGeocodeRequestIq(latitude, longitude), true).map(response -> {
             Log.d("connection: response after getting geocode location: " + ProtoPrinter.toString(response));
             return ReverseGeocodeResponseIq.fromProto(response.getReverseGeocodeResult());
+        });
+    }
+
+    @Override
+    public Observable<SetLinkResponseIq> sendLink(@NonNull String text, @NonNull Link.Type type, @NonNull SetLinkRequest.Action action) {
+        return sendIqRequestAsync(new SetLinkRequestIq(text, type, action)).map(response -> {
+            Log.d("connection: response after set link request " + ProtoPrinter.toString(response));
+            return SetLinkResponseIq.fromProto(response.getSetLinkResult());
         });
     }
 
