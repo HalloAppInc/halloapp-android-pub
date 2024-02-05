@@ -146,6 +146,9 @@ public class Preferences {
     private static final String PREF_LAST_MAGIC_POST_NOTIFICATION_TIME_IN_MILLIS = "last_magic_post_notification_time_in_millis";
     private static final String PREF_KEY_SHOWED_MAGIC_POSTS_NUX = "showed_magic_posts_nux";
 
+    private static final String PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_TIME = "social_media_notification_time";
+    private static final String PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_SEEN = "social_media_notification_seen";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -287,6 +290,9 @@ public class Preferences {
 
     private final LongPreference prefLastMagicPostNotificationTimeInMillis = createPref(false, PREF_LAST_MAGIC_POST_NOTIFICATION_TIME_IN_MILLIS, System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
     private final BooleanPreference prefShowedMagicPostNux = createPref(false, PREF_KEY_SHOWED_MAGIC_POSTS_NUX, false);
+
+    private final LongPreference prefSocialMediaNotificationTime = createPref(false, PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_TIME, 0L);
+    private final BooleanPreference prefSocialMediaNotificationSeen = createPref(false, PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_SEEN, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1284,5 +1290,25 @@ public class Preferences {
     @WorkerThread
     public void setPrefShowedMagicPostNux(boolean showed) {
         prefShowedMagicPostNux.set(showed);
+    }
+
+    @WorkerThread
+    public long getSocialMediaNotificationTime() {
+        return prefSocialMediaNotificationTime.get();
+    }
+
+    @WorkerThread
+    public void setSocialMediaNotificationTime(long time) {
+        prefSocialMediaNotificationTime.set(time);
+    }
+
+    @WorkerThread
+    public boolean getSocialMediaNotificationSeen() {
+        return prefSocialMediaNotificationSeen.get();
+    }
+
+    @WorkerThread
+    public void setSocialMediaNotificationSeen() {
+        prefSocialMediaNotificationSeen.set(true);
     }
 }

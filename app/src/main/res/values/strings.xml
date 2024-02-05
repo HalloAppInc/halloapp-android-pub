@@ -2143,4 +2143,10 @@
     <string name="links">Links</string>
     <!-- text describing a user's social media links, where %s is the name of the user -->
     <string name="friend_profile_links">%s\'s links:</string>
+    <!-- text shown in the activity center telling users about adding social media links to their profile -->
+    <string name="social_media_notification">To tell people more about yourself, enhance your profile with links to your social media accounts. &lt;a href="learn-more">Learn more&lt;/a></string>
+    <!-- title explaining the new ability to add your own social media links -->
+    <string name="social_media_nux_title">Enhance your profile with your social media links</string>
+    <!-- text explaining how to add your social media handles to your profile -->
+    <string name="social_media_nux_description">To add your social media handles, go to your Profile, tap on the “Add my social media” button, then tap “Add more” and chose which accounts you want to add.</string>
 </resources>

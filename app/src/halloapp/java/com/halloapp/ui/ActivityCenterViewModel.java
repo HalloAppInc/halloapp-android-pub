@@ -223,6 +223,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         bgWorkers.execute(() -> {
             preferences.setWelcomeInviteNotificationSeen(true);
             preferences.setFavoritesNotificationSeen();
+            preferences.setSocialMediaNotificationSeen();
 
             final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(-1));
             final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, -1);
@@ -313,6 +314,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     public void markFavoritesNotificationSeen() {
         bgWorkers.execute(() -> {
             preferences.setFavoritesNotificationSeen();
+            socialHistory.invalidate();
+        });
+    }
+
+    public void markSocialMediaNotificationSeen() {
+        bgWorkers.execute(() -> {
+            preferences.setSocialMediaNotificationSeen();
             socialHistory.invalidate();
         });
     }
@@ -491,6 +499,17 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             socialActionEvents.add(event);
         }
 
+        long socialMediaNuxTime = preferences.getSocialMediaNotificationTime();
+        if (socialMediaNuxTime == 0) {
+            socialMediaNuxTime = System.currentTimeMillis();
+            preferences.setSocialMediaNotificationTime(socialMediaNuxTime);
+        }
+        if (socialMediaNuxTime != 0) {
+            SocialActionEvent event = SocialActionEvent.forSocialMediaNux(socialMediaNuxTime);
+            event.seen = preferences.getSocialMediaNotificationSeen();
+            socialActionEvents.add(event);
+        }
+
         long lastSeenActivityTime = preferences.getLastSeenActivityTime();
         int unseenCount = 0;
         int newItemCount = 0;
@@ -536,7 +555,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public static class SocialActionEvent {
 
-        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT, Action.TYPE_POST_REACTION, Action.TYPE_FRIEND_EVENT})
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT, Action.TYPE_POST_REACTION, Action.TYPE_FRIEND_EVENT, Action.TYPE_SOCIAL_MEDIA_NUX})
         public @interface Action {
             int TYPE_COMMENT = 0;
             int TYPE_MENTION_IN_POST = 1;
@@ -546,6 +565,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             int TYPE_GROUP_EVENT = 5;
             int TYPE_POST_REACTION = 6;
             int TYPE_FRIEND_EVENT = 7;
+            int TYPE_SOCIAL_MEDIA_NUX = 8;
         }
 
         public final UserId postSenderUserId;
@@ -596,6 +616,12 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
         public static SocialActionEvent forFavoritesNux(long timestamp) {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_FAVORITES_NUX, UserId.ME, null);
+            activity.timestamp = timestamp;
+            return activity;
+        }
+
+        public static SocialActionEvent forSocialMediaNux(long timestamp) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_SOCIAL_MEDIA_NUX, UserId.ME, null);
             activity.timestamp = timestamp;
             return activity;
         }

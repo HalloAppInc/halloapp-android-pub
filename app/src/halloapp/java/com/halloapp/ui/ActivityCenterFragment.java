@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.PorterDuff;
@@ -8,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
@@ -42,6 +44,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -266,7 +269,8 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME
                         || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX
                         || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_GROUP_EVENT
-                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FRIEND_EVENT) {
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FRIEND_EVENT
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_SOCIAL_MEDIA_NUX) {
                     thumbnailView.setVisibility(View.GONE);
                     postThumbnailLoader.cancel(thumbnailView);
                 } else {
@@ -391,12 +395,18 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                         text = Html.fromHtml(infoView.getContext().getString(R.string.incoming_friend_request_notification, contact.getDisplayName()));
                     }
                     infoView.setText(text);
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_SOCIAL_MEDIA_NUX) {
+                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.social_media_notification));
+                    text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterFragment.this::onSocialMediaNotificationClicked);
+                    infoView.setText(text);
+                    infoView.setMaxLines(4);
                 }
 
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     avatarLoader.cancel(avatarView);
                     avatarView.setImageResource(R.drawable.favorites_icon_large);
-                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_SOCIAL_MEDIA_NUX) {
                     avatarLoader.cancel(avatarView);
                     avatarView.setImageResource(R.drawable.ic_app_icon_round);
                 } else {
@@ -413,6 +423,9 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                         return;
                     } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FRIEND_EVENT) {
                         startActivity(ViewProfileActivity.viewProfile(requireContext(), socialEvent.postSenderUserId));
+                        return;
+                    } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_SOCIAL_MEDIA_NUX) {
+                        onSocialMediaNotificationClicked();
                         return;
                     }
                     if (clickListener != null) {
@@ -445,8 +458,42 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
         viewModel.markFavoritesNotificationSeen();
     }
 
+    private void onSocialMediaNotificationClicked() {
+        SocialMediaPopupWindow socialMediaPopupWindow = new SocialMediaPopupWindow(requireContext());
+        socialMediaPopupWindow.show(getView());
+        viewModel.markSocialMediaNotificationSeen();
+    }
+
     @Override
     public void resetScrollPosition() {
         layoutManager.scrollToPosition(0);
     }
+
+    class SocialMediaPopupWindow extends PopupWindow {
+
+        public SocialMediaPopupWindow(@NonNull Context context) {
+            super(context);
+
+            setBackgroundDrawable(null);
+            setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+            setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+
+            View root = LayoutInflater.from(context).inflate(R.layout.social_media_popup_window, null, false);
+            setContentView(root);
+
+            View add = root.findViewById(R.id.add_button);
+            add.setOnClickListener(view -> {
+                startActivity(new Intent(context, SettingsProfile.class));
+                dismiss();
+            });
+
+            setOutsideTouchable(true);
+            setFocusable(true);
+        }
+
+        public void show(@NonNull View anchor) {
+            showAtLocation(anchor, Gravity.CENTER, 0, 0);
+        }
+    }
+
 }
