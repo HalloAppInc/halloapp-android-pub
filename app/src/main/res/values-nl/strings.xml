@@ -2945,6 +2945,36 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Message under profile to confirm a friend request -->
     <string name="confirm">"Bevestigen"</string>
+
+    <!-- label for X (formerly Twitter) handle on profile -->
+    <string name="x_twitter">"X"</string>
+
+    <!-- label for youtube handle on profile -->
+    <string name="youtube">"YouTube"</string>
+
+    <!-- label for user defined link on profile -->
+    <string name="link">"Link"</string>
+
+    <!-- button to add social media links to their profile -->
+    <string name="add_my_social_media">"Mijn sociale media toevoegen"</string>
+
+    <!-- button to add more social media links to their profile -->
+    <string name="add_more">"Meer toevoegen"</string>
+
+    <!-- button on a user's profile to display their social media links -->
+    <string name="links">"Links"</string>
+
+    <!-- text describing a user's social media links, where %s is the name of the user -->
+    <string name="friend_profile_links">"Links van %s"</string>
+
+    <!-- text shown in the activity center telling users about adding social media links to their profile -->
+    <string name="social_media_notification">"Om mensen wat meer over je te laten weten komen, kun je je profiel uitbreiden met links naar je sociale media accounts.  &lt;a href=\"learn-more\"&gt;Meer lezen&lt;/a&gt;"</string>
+
+    <!-- title explaining the new ability to add your own social media links -->
+    <string name="social_media_nux_title">"Breid je profiel uit met links naar je sociale media"</string>
+
+    <!-- text explaining how to add your social media handles to your profile -->
+    <string name="social_media_nux_description">"Om je sociale media toe te voegen, ga naar je Profiel, tik op de knop “Mijn sociale media toevoegen”, tik op “Meer toevoegen” en kies welke accounts je wilt toevoegen."</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
     <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>

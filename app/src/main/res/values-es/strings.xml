@@ -2949,6 +2949,38 @@ Abre la configuración de la aplicación para modificar los permisos."</string>
 
     <!-- Message under profile to confirm a friend request -->
     <string name="confirm">"Confirmar"</string>
+
+    <!-- label for X (formerly Twitter) handle on profile -->
+    <string name="x_twitter">"X"</string>
+
+    <!-- label for youtube handle on profile -->
+    <!-- Fuzzy -->
+    <string name="youtube">"YouTube"</string>
+
+    <!-- label for user defined link on profile -->
+    <string name="link">"Enlace"</string>
+
+    <!-- button to add social media links to their profile -->
+    <string name="add_my_social_media">"Agregar mis redes sociales"</string>
+
+    <!-- button to add more social media links to their profile -->
+    <string name="add_more">"Agregar más"</string>
+
+    <!-- button on a user's profile to display their social media links -->
+    <string name="links">"Enlaces"</string>
+
+    <!-- text describing a user's social media links, where %s is the name of the user -->
+    <!-- Fuzzy -->
+    <string name="friend_profile_links">"Enlaces de %s:"</string>
+
+    <!-- text shown in the activity center telling users about adding social media links to their profile -->
+    <string name="social_media_notification">"Para que la gente sepa más de ti, mejora tu perfil con enlaces a tus cuentas en las redes sociales. &lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;"</string>
+
+    <!-- title explaining the new ability to add your own social media links -->
+    <string name="social_media_nux_title">"Mejora tu perfil con enlaces a tus redes sociales"</string>
+
+    <!-- text explaining how to add your social media handles to your profile -->
+    <string name="social_media_nux_description">"Para añadir los datos de tus redes sociales, ve a tu perfil, pulsa el botón \"Agregar mis redes sociales\", luego pulsa \"Agregar más\" y elige qué cuentas quieres agregar."</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Toca para agregar a %s a tu libreta de contactos&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Esta publicación solo se comparte con los contactos que agregaste a Favoritos. Puedes editar tu lista de Favoritos en cualquier momento."</string>
     <string name="contact_favorites_explanation_others">"Esta publicación solo se comparte con un público limitado. Puedes cambiar tu audiencia en la configuración de privacidad en cualquier momento."</string>
