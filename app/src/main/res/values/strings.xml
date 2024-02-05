@@ -2132,7 +2132,7 @@
     <!-- label for X (formerly Twitter) handle on profile -->
     <string name="x_twitter">X</string>
     <!-- label for youtube handle on profile -->
-    <string name="youtube">Youtube</string>
+    <string name="youtube">YouTube</string>
     <!-- label for user defined link on profile -->
     <string name="link">Link</string>
     <!-- button to add social media links to their profile -->
