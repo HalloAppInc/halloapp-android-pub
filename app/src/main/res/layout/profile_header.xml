@@ -104,13 +104,59 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/mutuals_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/friends_container"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            app:shapeAppearance="@style/CircularImageView"
+            android:id="@+id/mutual_1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/avatar_person"
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            app:shapeAppearance="@style/CircularImageView"
+            android:id="@+id/mutual_2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="-5dp"
+            android:src="@drawable/avatar_person"
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            app:shapeAppearance="@style/CircularImageView"
+            android:id="@+id/mutual_3"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="-5dp"
+            android:src="@drawable/avatar_person"
+            />
+
+        <TextView
+            android:id="@+id/mutuals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            tools:text="5 friends and 1 group in common" />
+
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/actions_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/friends_container"
+        app:layout_constraintTop_toBottomOf="@id/mutuals_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:color="@color/black">

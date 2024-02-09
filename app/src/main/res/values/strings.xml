@@ -2149,4 +2149,24 @@
     <string name="social_media_nux_title">Enhance your profile with your social media links</string>
     <!-- text explaining how to add your social media handles to your profile -->
     <string name="social_media_nux_description">To add your social media handles, go to your Profile, tap on the “Add my social media” button, then tap “Add more” and chose which accounts you want to add.</string>
+    <!-- Text shown when the user has friends in common with a person -->
+    <plurals name="mutual_friends">
+        <item quantity="one">%d friend</item>
+        <item quantity="other">%d friends</item>
+    </plurals>
+    <!-- Text shown when the user has groups in common with a person-->
+    <plurals name="mutual_groups">
+        <item quantity="one">%d group</item>
+        <item quantity="other">%d groups</item>
+    </plurals>
+    <!-- Text shown when the user has exclusively either mutual friends or mutual groups where %s is a description of the number of friends/groups shared -->
+    <string name="mutual_friends_or_groups">%s in common</string>
+    <!-- Text shown when the user has both mutual friends and mutual groups where %1$s is a description of the number of friends shared and %2$s is a description of groups shared -->
+    <string name="mutual_friends_and_groups">%1$s and %2$s in common</string>
+    <!-- Title of section listing mutual friends where %d is the number of mutual friends -->
+    <string name="num_friends_in_common">Friends in common (%d)</string>
+    <!-- Title of section listing mutual groups where %d is the number of mutual groups -->
+    <string name="num_groups_in_common">Groups in common (%d)</string>
+    <!-- Text describing the number %d of members in a group -->
+    <string name="group_members">%d group members</string>
 </resources>

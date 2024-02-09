@@ -39,6 +39,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -349,6 +350,8 @@ public class ProfileViewModel extends ViewModel {
                     FriendshipInfo.fromProtoType(response.profile.getStatus(), response.profile.getBlocked()),
                     System.currentTimeMillis());
             friendshipProfileInfo.links = FriendshipInfo.fromProtoLinks(response.profile.getLinksList());
+            friendshipProfileInfo.mutualGroups = new ArrayList<>(response.profile.getMutualGidsList());
+            friendshipProfileInfo.mutualFriends = FriendshipInfo.fromProtoMutualFriends(response.profile.getMutualFriendUidsList());
             profile.postValue(friendshipProfileInfo);
         }).onError(err -> {
             Log.e("Failed to get profile info", err);

@@ -51,6 +51,17 @@ public class FriendshipInfo {
         return socialLinks;
     }
 
+    public static ArrayList<String> fromProtoMutualFriends(@NonNull List<Long> friendUids) {
+        ArrayList<String> mutualFriends = new ArrayList<>();
+        for (Long uid: friendUids) {
+            if (uid == null) {
+                continue;
+            }
+            mutualFriends.add(Long.toString(uid));
+        }
+        return mutualFriends;
+    }
+
     public static @Type int fromFriendListAction(FriendListRequest.Action action) {
         switch (action) {
             case GET_FRIENDS:
@@ -73,6 +84,8 @@ public class FriendshipInfo {
     public boolean seen;
     public final long timestamp;
     public ArrayList<SocialLink> links = new ArrayList<>();
+    public ArrayList<String> mutualGroups = new ArrayList<>();
+    public ArrayList<String> mutualFriends = new ArrayList<>();
 
     public FriendshipInfo(UserId userId, String username, String name, String avatarId, @Type int friendshipStatus, long timestamp) {
         this.userId = userId;

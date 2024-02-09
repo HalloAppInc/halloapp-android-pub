@@ -33,6 +33,7 @@ import com.halloapp.calling.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.FriendshipInfo;
 import com.halloapp.content.Message;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.proto.server.CallType;
@@ -53,6 +54,8 @@ import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 
+import java.util.ArrayList;
+
 public class ProfileFragment extends PostsFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
@@ -72,6 +75,7 @@ public class ProfileFragment extends PostsFragment {
     private final CallManager callManager = CallManager.getInstance();
 
     private ImageView avatarView;
+    private ImageView mutualAvatar1, mutualAvatar2, mutualAvatar3;
     private TextView nameView;
     private TextView usernameView;
     private TextView requestsTextView;
@@ -190,6 +194,11 @@ public class ProfileFragment extends PostsFragment {
         requestsTextView = headerView.findViewById(R.id.friends_text);
         friendsButtonView = headerView.findViewById(R.id.friends_button);
         friendsDismissButtonView = headerView.findViewById(R.id.friends_dismiss_button);
+        View mutualsContainer = headerView.findViewById(R.id.mutuals_container);
+        TextView mutualsView = headerView.findViewById(R.id.mutuals);
+        mutualAvatar1 = headerView.findViewById(R.id.mutual_1);
+        mutualAvatar2 = headerView.findViewById(R.id.mutual_2);
+        mutualAvatar3 = headerView.findViewById(R.id.mutual_3);
         messageView = headerView.findViewById(R.id.message);
         voiceCallView = headerView.findViewById(R.id.call);
         videoCallView = headerView.findViewById(R.id.video_call);
@@ -249,8 +258,7 @@ public class ProfileFragment extends PostsFragment {
                     friendsDismissButtonView.setVisibility(View.GONE);
                     linksContainerView.setVisibility(View.GONE);
                 } else if (profile.friendshipStatus == FriendshipInfo.Type.OUTGOING_PENDING) {
-                    requestsTextView.setVisibility(View.VISIBLE);
-                    requestsTextView.setText(getString(R.string.outgoing_sent_friend_request, profile.name));
+                    requestsTextView.setVisibility(View.GONE);
                     friendsButtonView.setText(R.string.cancel_request);
                     friendsButtonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue));
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_10)));
@@ -272,6 +280,47 @@ public class ProfileFragment extends PostsFragment {
                     friendsButtonView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorites_dialog_blue)));
                     friendsDismissButtonView.setVisibility(View.GONE);
                     linksContainerView.setVisibility(profile.links.isEmpty() ? View.GONE : View.VISIBLE);
+                }
+
+                if (profile.mutualGroups.isEmpty() && profile.mutualFriends.isEmpty()) {
+                    mutualsContainer.setVisibility(View.GONE);
+                } else {
+                    mutualsContainer.setVisibility(View.VISIBLE);
+                    int numFriends = profile.mutualFriends.size();
+                    int numGroups = profile.mutualGroups.size();
+                    String friendsStr = getResources().getQuantityString(R.plurals.mutual_friends, numFriends, numFriends);
+                    String groupsStr = getResources().getQuantityString(R.plurals.mutual_groups, numGroups, numGroups);
+
+                    if (numGroups == 0) {
+                        mutualsView.setText(getResources().getString(R.string.mutual_friends_or_groups, friendsStr));
+                    } else if (numFriends == 0) {
+                        mutualsView.setText(getResources().getString(R.string.mutual_friends_or_groups, groupsStr));
+                    } else {
+                        mutualsView.setText(getResources().getString(R.string.mutual_friends_and_groups, friendsStr, groupsStr));
+                    }
+
+                    ArrayList<String> mutuals = new ArrayList<>(profile.mutualFriends);
+                    mutuals.addAll(profile.mutualGroups);
+
+                    int size = mutuals.size();
+                    mutualAvatar1.setVisibility(size > 0 ? View.VISIBLE : View.GONE);
+                    mutualAvatar2.setVisibility(size > 1 ? View.VISIBLE : View.GONE);
+                    mutualAvatar3.setVisibility(size > 2 ? View.VISIBLE : View.GONE);
+                    if (size > 0 && ChatId.fromNullable(mutuals.get(0)) != null) {
+                        avatarLoader.cancel(mutualAvatar1);
+                        avatarLoader.load(mutualAvatar1, ChatId.fromNullable(mutuals.get(0)), false);
+                    }
+                    if (size > 1 && ChatId.fromNullable(mutuals.get(1)) != null) {
+                        avatarLoader.cancel(mutualAvatar2);
+                        avatarLoader.load(mutualAvatar2, ChatId.fromNullable(mutuals.get(1)), false);
+                    }
+                    if (size > 2 && ChatId.fromNullable(mutuals.get(2)) != null) {
+                        avatarLoader.cancel(mutualAvatar3);
+                        avatarLoader.load(mutualAvatar3, ChatId.fromNullable(mutuals.get(2)), false);
+                    }
+                    mutualsContainer.setOnClickListener(v -> {
+                        startActivity(ViewMutualsActivity.open(requireContext(), profile.name, profile.mutualFriends, profile.mutualGroups));
+                    });
                 }
             });
         }
