@@ -126,6 +126,7 @@ public class Notifications {
     private static final int DAILY_MOMENT_NOTIFICATION_ID = 12;
     private static final int FRIENDSHIP_MODEL_NOTIFICATION_ID = 13;
     private static final int MAGIC_POST_NOTIFICATION_ID = 14;
+    private static final int MAGIC_POST_PSA_NOTIFICATION_ID = 15;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
@@ -1509,6 +1510,27 @@ public class Notifications {
     public void clearMagicPostNotification() {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.cancel(MAGIC_POST_NOTIFICATION_ID);
+    }
+
+    public void showMagicPostPsaNotification() {
+        String title = context.getString(R.string.magic_post_psa);
+        Intent contentIntent = new Intent(context, MainActivity.class);
+        contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MAGIC_POSTS);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(false));
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setContentTitle(title)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(MAGIC_POST_PSA_NOTIFICATION_ID, builder.build());
     }
 
     static public class DeleteNotificationReceiver extends BroadcastReceiver {

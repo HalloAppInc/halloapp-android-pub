@@ -123,6 +123,7 @@ public class App extends Application {
         DailyWorker.schedule(this);
         ScheduledContactSyncWorker.schedule(this);
         UnfinishedRegistrationWorker.schedule(this);
+        MagicPostPsaWorker.schedule(this);
         if (Build.VERSION.SDK_INT >= 24 && ServerProps.getInstance().getMagicPostsEnabled()) {
             GalleryWorker.schedule(getApplicationContext());
         }

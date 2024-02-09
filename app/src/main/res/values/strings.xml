@@ -2169,4 +2169,5 @@
     <string name="num_groups_in_common">Groups in common (%d)</string>
     <!-- Text describing the number %d of members in a group -->
     <string name="group_members">%d group members</string>
+    <string name="magic_post_psa">New Feature! Try ✨ Magic Posts ✨</string>
 </resources>
