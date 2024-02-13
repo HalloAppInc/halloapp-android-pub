@@ -2975,6 +2975,34 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- text explaining how to add your social media handles to your profile -->
     <string name="social_media_nux_description">"Om je sociale media toe te voegen, ga naar je Profiel, tik op de knop “Mijn sociale media toevoegen”, tik op “Meer toevoegen” en kies welke accounts je wilt toevoegen."</string>
+
+    <!-- Text shown when the user has friends in common with a person -->
+    <plurals name="mutual_friends">
+        <item quantity="one">"%d gemeenschappelijke vriend"</item>
+        <item quantity="other">"%d gemeenschappelijke vrienden"</item>
+    </plurals>
+
+    <!-- Text shown when the user has groups in common with a person -->
+    <plurals name="mutual_groups">
+        <item quantity="one">"%d gemeenschappelijke groep"</item>
+        <item quantity="other">"%d gemeenschappelijke groepen"</item>
+    </plurals>
+
+    <!-- Text shown when the user has exclusively either mutual friends or mutual groups where %s is a description of the number of friends/groups shared -->
+    <string name="mutual_friends_or_groups">"%s"</string>
+
+    <!-- Text shown when the user has both mutual friends and mutual groups where %1$s is a description of the number of friends shared and %2$s is a description of groups shared -->
+    <string name="mutual_friends_and_groups">"%1$s en %2$s"</string>
+
+    <!-- Title of section listing mutual friends where %d is the number of mutual friends -->
+    <string name="num_friends_in_common">"Gemeenschappelijke vrienden (%d)"</string>
+
+    <!-- Title of section listing mutual groups where %d is the number of mutual groups -->
+    <string name="num_groups_in_common">"Gemeenschappelijke groepen (%d)"</string>
+
+    <!-- Text describing the number %d of members in a group -->
+    <string name="group_members">"%d groepsdeelnemers"</string>
+    <string name="magic_post_psa">"Nieuw functie! Probeer ✨ Magische Posts ✨"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
     <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>

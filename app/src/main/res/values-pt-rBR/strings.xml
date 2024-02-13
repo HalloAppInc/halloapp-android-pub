@@ -2958,13 +2958,41 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="friend_profile_links">"Links de %s:"</string>
 
     <!-- text shown in the activity center telling users about adding social media links to their profile -->
-    <string name="social_media_notification">"To tell people more about yourself, enhance your profile with links to your social media accounts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="social_media_notification">"Para contar mais sobre você às pessoas, aprimore seu perfil com links para suas contas de rede social. &lt;a href=\"learn-more\"&gt;Saiba mais&lt;/a&gt;"</string>
 
     <!-- title explaining the new ability to add your own social media links -->
-    <string name="social_media_nux_title">"Enhance your profile with your social media links"</string>
+    <string name="social_media_nux_title">"Aprimore seu perfil com links de suas redes sociais"</string>
 
     <!-- text explaining how to add your social media handles to your profile -->
     <string name="social_media_nux_description">"To add your social media handles, go to your Profile, tap on the “Add my social media” button, then tap “Add more” and chose which accounts you want to add."</string>
+
+    <!-- Text shown when the user has friends in common with a person -->
+    <plurals name="mutual_friends">
+        <item quantity="one">"%d friend"</item>
+        <item quantity="other">"%d friend"</item>
+    </plurals>
+
+    <!-- Text shown when the user has groups in common with a person -->
+    <plurals name="mutual_groups">
+        <item quantity="one">"%d group"</item>
+        <item quantity="other">"%d group"</item>
+    </plurals>
+
+    <!-- Text shown when the user has exclusively either mutual friends or mutual groups where %s is a description of the number of friends/groups shared -->
+    <string name="mutual_friends_or_groups">"%s in common"</string>
+
+    <!-- Text shown when the user has both mutual friends and mutual groups where %1$s is a description of the number of friends shared and %2$s is a description of groups shared -->
+    <string name="mutual_friends_and_groups">"%1$s and %2$s in common"</string>
+
+    <!-- Title of section listing mutual friends where %d is the number of mutual friends -->
+    <string name="num_friends_in_common">"Friends in common (%d)"</string>
+
+    <!-- Title of section listing mutual groups where %d is the number of mutual groups -->
+    <string name="num_groups_in_common">"Groups in common (%d)"</string>
+
+    <!-- Text describing the number %d of members in a group -->
+    <string name="group_members">"%d group members"</string>
+    <string name="magic_post_psa">"New Feature! Try ✨ Magic Posts ✨"</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Toque para adicionar %s ao seu catálogo de contatos&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Esta postagem é compartilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar sua lista de favoritos nas configurações de privacidade a qualquer momento."</string>
     <string name="contact_favorites_explanation_others">"Esta postagem é compartilhada apenas com um público limitado. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>
