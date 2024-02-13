@@ -36,7 +36,7 @@ sentry {
     }
 }
 
-ext.patchVersion = 9 // at most 3 digits
+ext.patchVersion = 10 // at most 3 digits
 ext.releaseVersion = 14 // used as minorVersion, at most 2 digits
 ext.majorVersion = 1
 
