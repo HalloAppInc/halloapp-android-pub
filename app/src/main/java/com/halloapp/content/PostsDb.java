@@ -2287,6 +2287,8 @@ class PostsDb {
                             cursor.getInt(14),
                             cursor.getInt(15),
                             cursor.getLong(16));
+                    // When saving posts to the archive, the value of transferred was never added. We assume its state to allow it to be saved to the gallery.
+                    media.transferred = Media.TRANSFERRED_YES;
                     media.encFile = fileStore.getTmpFile(cursor.getString(10));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
