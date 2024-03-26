@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -122,6 +123,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private HACustomFab haFabView;
 
     private FriendshipModelPopupWindow friendshipModelPopupWindow;
+    private ShutdownNoticeModalPopupWindow shutdownNoticeModalPopupWindow;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -303,6 +305,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 }
                 friendshipModelPopupWindow = new FriendshipModelPopupWindow(MainActivity.this, checkResult.name);
                 findViewById(R.id.container).post(() -> friendshipModelPopupWindow.show(findViewById(R.id.container)));
+            } else if (checkResult.lastShutdownMsgTime < System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS) {
+                Log.i("MainActivity.onStart: showing shutdown message at " + System.currentTimeMillis());
+                if (shutdownNoticeModalPopupWindow != null) {
+                    shutdownNoticeModalPopupWindow.dismiss();
+                }
+                shutdownNoticeModalPopupWindow = new ShutdownNoticeModalPopupWindow(MainActivity.this);
+                findViewById(R.id.container).post(() -> shutdownNoticeModalPopupWindow.show(findViewById(R.id.container)));
             }
             progress.setVisibility(View.GONE);
         });
@@ -643,6 +652,34 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             continueButton.setOnClickListener(view -> {
                 final Intent intent = SetupProfileActivity.pickUsername(getBaseContext(), name);
                 startActivity(intent);
+                dismiss();
+            });
+
+            setOutsideTouchable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            showAtLocation(anchor, Gravity.CENTER, 0, 0);
+        }
+    }
+
+    static class ShutdownNoticeModalPopupWindow extends PopupWindow {
+
+        public ShutdownNoticeModalPopupWindow(@NonNull Context context) {
+            super(context);
+
+            setBackgroundDrawable(null);
+            setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+            setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+
+            View root = LayoutInflater.from(context).inflate(R.layout.shutdown_notice_modal, null, false);
+            setContentView(root);
+
+            View continueButton = root.findViewById(R.id.continue_button);
+            continueButton.setOnClickListener(view -> {
+                BgWorkers.getInstance().execute(() -> {
+                    Preferences.getInstance().setPrefLastShutdownNotificationTimeInMillis(System.currentTimeMillis());
+                });
                 dismiss();
             });
 

@@ -150,6 +150,8 @@ public class Preferences {
     private static final String PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_SEEN = "social_media_notification_seen";
     private static final String PREF_KEY_MAGIC_POST_PSA_NOTIFICATION_NUM = "magic_post_psa_notification_num";
 
+    private static final String PREF_KEY_LAST_SHUTDOWN_TIME_IN_MILLIS = "last_shutdown_time_in_millis";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -295,6 +297,8 @@ public class Preferences {
     private final LongPreference prefSocialMediaNotificationTime = createPref(false, PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefSocialMediaNotificationSeen = createPref(false, PREF_KEY_SOCIAL_MEDIA_NOTIFICATION_SEEN, false);
     private final IntPreference prefMagicPostPsaNotificationNum = createPref(false, PREF_KEY_MAGIC_POST_PSA_NOTIFICATION_NUM, 0);
+
+    private final LongPreference prefLastShutdownNotificationTimeInMillis = createPref(false, PREF_KEY_LAST_SHUTDOWN_TIME_IN_MILLIS, 0L);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1323,5 +1327,15 @@ public class Preferences {
     public void incrementPrefMagicPostPsaNotificationNum() {
         int num = prefMagicPostPsaNotificationNum.get();
         prefMagicPostPsaNotificationNum.set(num + 1);
+    }
+
+    @WorkerThread
+    public long getPrefLastShutdownNotificationTimeInMillis() {
+        return prefLastShutdownNotificationTimeInMillis.get();
+    }
+
+    @WorkerThread
+    public void setPrefLastShutdownNotificationTimeInMillis(long time) {
+        prefLastShutdownNotificationTimeInMillis.set(time);
     }
 }

@@ -2170,6 +2170,6 @@
     <!-- Text describing the number %d of members in a group -->
     <string name="group_members">%d group members</string>
     <string name="magic_post_psa">New Feature! Try ✨ Magic Posts ✨</string>
-    <string name="shutdown_notice_title">This is Goodbye, For Now</string>
+    <string name="shutdown_notice_title">This is Goodbye,\nFor Now</string>
     <string name="shutdown_notice_body">All things come to an end, even the good ones. It\'s been our absolute privilege to provide HalloApp service to you guys.\n\nUnfortunately, not all things can last forever. So we\'ll have to stop the support of HalloApp after April 15th.\n\nIf you would like, you can download the media from your posts under Profile > My Posts.\n\nWishing you all the best, HalloApp Team.</string>
 </resources>
