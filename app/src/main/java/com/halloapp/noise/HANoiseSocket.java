@@ -151,7 +151,7 @@ public class HANoiseSocket extends Socket {
 
         if (fallback) {
             me.setServerStaticKey(getServerStaticKey());
-            // TODO: clarkc remove after we figure out fallback issue
+            // TODO: remove after we figure out fallback issue
             Log.e("NoiseSocket/xx_fallback triggered. Old: " + Base64.encodeToString(remoteStaticKey.getKeyMaterial(), Base64.NO_WRAP) + " New: " + Base64.encodeToString(getServerStaticKey(), Base64.NO_WRAP));
         }
     }
