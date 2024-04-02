@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="40dp"
-    android:background="@color/white">
+    android:background="@color/window_background">
 
     <ImageView
         android:id="@+id/contact_image"
@@ -26,7 +26,7 @@
         android:text="@string/shutdown_notice_title"
         android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/primary_text"
         android:gravity="center"/>
 
     <TextView
@@ -36,6 +36,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="10dp"
         android:text="@string/shutdown_notice_body"
+        android:textColor="@color/primary_text"
         android:gravity="center"
         />
 
