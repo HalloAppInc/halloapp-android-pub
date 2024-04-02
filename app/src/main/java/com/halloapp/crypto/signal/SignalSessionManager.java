@@ -197,7 +197,7 @@ public class SignalSessionManager {
         }
 
         if (missingOutboundKeyId || !encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-            // TODO(jack): Reconsider once encryption is fully deployed
+            // TODO: Reconsider once encryption is fully deployed
             long now = System.currentTimeMillis();
             if (now - encryptedKeyStore.getLastDownloadAttempt(peerUserId) < MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS) {
                 Log.i("EncryptedSessionManager.setUpSession: last download attempt too recent for " + peerUserId);

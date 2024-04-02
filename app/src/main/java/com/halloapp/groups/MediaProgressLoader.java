@@ -43,7 +43,7 @@ public class MediaProgressLoader {
     }
 
     private void processCallback(@NonNull ContentItem contentItem, @NonNull MediaProgressCallback callback) {
-        // TODO(jack): Support incoming content as well
+        // TODO: Support incoming content as well
         if (!contentItem.isOutgoing()) {
             return;
         }

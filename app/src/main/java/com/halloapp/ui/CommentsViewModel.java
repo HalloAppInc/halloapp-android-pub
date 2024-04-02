@@ -467,7 +467,7 @@ class CommentsViewModel extends AndroidViewModel {
                                 MediaUtils.transcodeImage(mediaItem.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, !supportsWideColor);
                             } catch (IOException e) {
                                 Log.e("failed to transcode image", e);
-                                return; // TODO(jack): Error messages for user for these 3 cases
+                                return; // TODO: Error messages for user for these 3 cases
                             }
                             break;
                         }

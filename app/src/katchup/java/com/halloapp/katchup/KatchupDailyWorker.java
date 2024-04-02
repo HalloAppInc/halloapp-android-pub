@@ -59,7 +59,7 @@ public class KatchupDailyWorker extends Worker {
     @Override
     public @NonNull Result doWork() {
         Log.i("KatchupDailyWorker.doWork");
-        // TODO(jack): Clean up ContentDb as well
+        // TODO: Clean up ContentDb as well
 //        ContentDb.getInstance().cleanup();
         ContentDb.getInstance().deleteOldSeenReceipts();
         FileStore.getInstance().cleanup();

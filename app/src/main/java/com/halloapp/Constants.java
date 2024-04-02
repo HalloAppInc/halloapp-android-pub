@@ -141,6 +141,6 @@ public class Constants {
 
     public static final int CALL_VIDEO_HEIGHT = 720;
     public static final int CALL_VIDEO_WIDTH = 1280;
-    // TODO(nikola): The PIP_ASPECT_RATIO should be based on the resolution from the actual camera. Right now it is based on what we request from the camera.
+    // TODO: The PIP_ASPECT_RATIO should be based on the resolution from the actual camera. Right now it is based on what we request from the camera.
     public static final Rational PIP_ASPECT_RATIO = new Rational(CALL_VIDEO_HEIGHT, CALL_VIDEO_WIDTH);
 }

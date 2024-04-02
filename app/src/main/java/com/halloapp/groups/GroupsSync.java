@@ -147,7 +147,7 @@ public class GroupsSync {
                 }
             }
             Log.d("GroupsSync.perfromGroupSync ignoring " + (groupFeeds.size() - existingGroups.size()) + " deleted groups");
-            // TODO(jack): mark deleted chats so users cannot send messages to them
+            // TODO: mark deleted chats so users cannot send messages to them
 
             Map<UserId, String> nameMap = new HashMap<>();
             for (GroupInfo groupInfo : groupInfos) {
@@ -209,7 +209,7 @@ public class GroupsSync {
 
         List<MemberInfo> deletedMembers = new ArrayList<>(memberMap.values());
 
-        // TODO(jack): handle admin change (member updates)
+        // TODO: handle admin change (member updates)
 
         Log.d("GroupsSync.syncGroup adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupId);
         contentDb.addRemoveGroupMembers(groupId, null, null, addedMembers, deletedMembers, null);

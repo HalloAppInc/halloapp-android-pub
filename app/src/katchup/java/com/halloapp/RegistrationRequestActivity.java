@@ -135,7 +135,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         privacyNoteView = findViewById(R.id.privacy_link);
         privacyNoteView.setOnClickListener(view -> {
-            // TODO(vasil): link to a more specific faq or explanation portion of the site
+            // TODO: link to a more specific faq or explanation portion of the site
             final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.KATCHUP_PRIVACY_NOTICE_LINK));
             startActivity(intent);
         });

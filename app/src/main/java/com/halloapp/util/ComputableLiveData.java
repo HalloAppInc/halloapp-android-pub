@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 /*
-* TODO (ds): implement ComputableLiveData here unless google changes its mind and makes androidx.lifecycle.ComputableLiveData "public"
+* TODO : implement ComputableLiveData here unless google changes its mind and makes androidx.lifecycle.ComputableLiveData "public"
 * */
 @SuppressLint("RestrictedApi")
 public abstract class ComputableLiveData<T> extends androidx.lifecycle.ComputableLiveData<T> {

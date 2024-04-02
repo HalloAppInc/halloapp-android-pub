@@ -8,7 +8,7 @@ public class ChatsTable implements BaseColumns {
 
     public static final String TABLE_NAME = "chats";
 
-    public static final String TRIGGER_DELETE = "on_chat_delete"; // TODO(clarkc) remove this trigger fully
+    public static final String TRIGGER_DELETE = "on_chat_delete"; // TODO remove this trigger fully
 
     public static final String COLUMN_CHAT_ID = "chat_id";
     public static final String COLUMN_TIMESTAMP = "timestamp";
@@ -19,7 +19,7 @@ public class ChatsTable implements BaseColumns {
     // specific to group chats
     public static final String COLUMN_IS_GROUP = "is_group";
     public static final String COLUMN_IS_ACTIVE = "is_active";
-    public static final String COLUMN_CHAT_NAME = "chat_name"; // TODO(jack): rename to group_name?
+    public static final String COLUMN_CHAT_NAME = "chat_name"; // TODO: rename to group_name?
     public static final String COLUMN_GROUP_DESCRIPTION = "group_description";
     public static final String COLUMN_GROUP_AVATAR_ID = "group_avatar_id";
     public static final String COLUMN_THEME = "theme";

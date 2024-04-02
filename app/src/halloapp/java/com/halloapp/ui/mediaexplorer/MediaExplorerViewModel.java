@@ -254,7 +254,7 @@ public class MediaExplorerViewModel extends AndroidViewModel {
             return "MediaExplorerViewModel.MediaModel {uri:" + uri + " type:" + type + " rowId:" + rowId + " url:" + url + " transferred:" + transferred + " blobVersion:" + blobVersion + " chunkSize:" + chunkSize + " blobSize:" + blobSize + "}";
         }
 
-        // TODO(Vasil): Remove the following method and the logic that depends on it once we have partial stream file copy code.
+        // TODO: Remove the following method and the logic that depends on it once we have partial stream file copy code.
         public boolean canBeSavedToGallery() {
             return transferred == Media.TRANSFERRED_YES;
         }

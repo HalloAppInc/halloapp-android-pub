@@ -44,7 +44,7 @@ public class Suggestion {
         this.isScored = isScored;
     }
 
-    // TODO(michelle): photos taken around midnight will not be clustered together
+    // TODO: photos taken around midnight will not be clustered together
     public boolean isWithinRange(@Nullable List<GalleryItem> existingItems, @NonNull GalleryItem galleryItem) {
         if (existingItems == null || !TimeUtils.isSameDay(this.timestamp, galleryItem.date)) {
             return false;

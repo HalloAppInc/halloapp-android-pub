@@ -325,21 +325,21 @@ public class Preferences {
     }
 
     private final String[] deletedPrefs = new String[] {
-            PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID, // TODO(jack): Remove after August 30
-            PREF_KEY_NEXT_PRESENCE_ID, // TODO(jack): Remove after August 30
-            PREF_KEY_SHOWED_FEED_NUX, // TODO(clark): Remove after October 1
+            PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID, // TODO: Remove after August 30
+            PREF_KEY_NEXT_PRESENCE_ID, // TODO: Remove after August 30
+            PREF_KEY_SHOWED_FEED_NUX, // TODO: Remove after October 1
             PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX,
             PREF_KEY_SHOWED_MESSAGES_NUX,
             PREF_KEY_SHOWED_PROFILE_NUX,
             PREF_KEY_SHOWED_MAKE_POST_NUX,
-            PREF_KEY_SHOWED_WELCOME_NUX, // TODO(clark): Remove after October 30
-            PREF_KEY_VIDEO_BITRATE, // TODO(vasil): Remove after July 31
-            PREF_KEY_KRISP_NOISE_SUPPRESSION_OLD,  // TODO(vipin): Remove after Dec 31, 2022
-            PREF_KEY_H265_RES, // TODO(jack): Remove after Sept 29
-            PREF_KEY_KRISP_NOISE_SUPPRESSION,  // TODO(vipin): Remove after Dec 31, 2022
-            PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED,  // TODO(vipin): Remove after Dec 31, 2022
-            PREF_KEY_SHOWED_MOMENTS_NUX, // TODO(jack): Remove after December 31
-            PREF_KEY_SHOWED_FAVORITES_NUX, // TODO(jack): Remove after December 31
+            PREF_KEY_SHOWED_WELCOME_NUX, // TODO: Remove after October 30
+            PREF_KEY_VIDEO_BITRATE, // TODO: Remove after July 31
+            PREF_KEY_KRISP_NOISE_SUPPRESSION_OLD,  // TODO: Remove after Dec 31, 2022
+            PREF_KEY_H265_RES, // TODO: Remove after Sept 29
+            PREF_KEY_KRISP_NOISE_SUPPRESSION,  // TODO: Remove after Dec 31, 2022
+            PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED,  // TODO: Remove after Dec 31, 2022
+            PREF_KEY_SHOWED_MOMENTS_NUX, // TODO: Remove after December 31
+            PREF_KEY_SHOWED_FAVORITES_NUX, // TODO: Remove after December 31
     };
 
     private abstract class Preference<T> {
@@ -364,7 +364,7 @@ public class Preferences {
             return getPreferences().edit().remove(this.prefKey).commit();
         }
 
-        public abstract void migrate(); // TODO(jack): Remove once migration complete
+        public abstract void migrate(); // TODO: Remove once migration complete
     }
 
     private class BooleanPreference extends Preference<Boolean> {

@@ -108,7 +108,7 @@ public class GroupChatInfoViewModel extends BaseGroupInfoViewModel {
 
         @Override
         public void onChatDeleted(@NonNull ChatId chatId) {
-            // TODO(jack): handle chat deletion
+            // TODO: handle chat deletion
         }
 
         private void invalidateChat() {

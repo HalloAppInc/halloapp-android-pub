@@ -676,7 +676,7 @@ public class MainConnectionObserver extends Connection.Observer {
                                 .setId(historyId)
                                 .setEncPayload(ByteString.copyFrom(encPayload));
                         if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
-                            builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
+                            builder.setPayload(ByteString.copyFrom(payload)); // TODO: Remove once plaintext sending is off
                         }
                         connection.sendRerequestedHistoryResend(builder, senderUserId);
                     } catch (CryptoException e) {
@@ -1253,7 +1253,7 @@ public class MainConnectionObserver extends Connection.Observer {
         } else if (ContentMissing.ContentType.GROUP_FEED_COMMENT.equals(contentType) || ContentMissing.ContentType.HOME_FEED_COMMENT.equals(contentType)) {
             contentDb.setCommentMissing(contentId);
         } else if (ContentMissing.ContentType.HISTORY_RESEND.equals(contentType) || ContentMissing.ContentType.GROUP_HISTORY.equals(contentType)) {
-            // TODO(jack): set history resend objects as missing for stats
+            // TODO: set history resend objects as missing for stats
         } else if (ContentMissing.ContentType.GROUP_CHAT.equals(contentType)) {
             Message message = contentDb.getMessage(null, peerUserId, contentId);
             if (message != null) {
@@ -1352,7 +1352,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
                     errorMessage = e.getMessage();
                     Log.sendErrorReport("Group history decryption failed: " + errorMessage);
-                    // TODO(jack): Stats
+                    // TODO: Stats
 //                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
                     String historyResendId = historyResend.getId();
@@ -1375,7 +1375,7 @@ public class MainConnectionObserver extends Connection.Observer {
             connection.sendAck(ackId);
         });
 
-        // TODO(jack): handle history resend rerequests
+        // TODO: handle history resend rerequests
     }
 
     private String toUserIdList(@NonNull List<MemberInfo> members) {

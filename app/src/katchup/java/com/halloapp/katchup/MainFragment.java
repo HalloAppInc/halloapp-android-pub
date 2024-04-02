@@ -140,7 +140,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
     public static final String COMPOSER_VIEW_TRANSITION_NAME = "composer-view-transition-name";
 
-    // TODO(vasil): tune distance and time interval if needed
+    // TODO: tune distance and time interval if needed
     private static final float DISTANCE_THRESHOLD_METERS = 50;
     private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
 
@@ -493,7 +493,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             updateEmptyState();
         });
 
-        // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
+        // TODO: Determine why onCreateView is receiving a null container, which causes the layout params to not be set
         myPostHeader = followingListAdapter.addHeader(R.layout.header_my_post);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         myPostHeader.setLayoutParams(lp);
@@ -518,7 +518,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
-            // TODO(jack): Extract a class for displaying avatars like this to avoid this duplication
+            // TODO: Extract a class for displaying avatars like this to avoid this duplication
             View avatarClip1 = root.findViewById(R.id.suggested_avatar_clip_1);
             avatarClip1.setVisibility(users.size() > 0 ? View.VISIBLE : View.GONE);
             if (users.size() > 0) {
@@ -1075,7 +1075,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             public void onCaptureSuccess(File file, int type) {
                 mainHandler.post(() -> {
                     viewModel.onVideoReaction(file, recordingCanceled).observe(MainFragment.this.getViewLifecycleOwner(), sent -> {
-                        // TODO(vasil): Add jellybean with the reaction and fade it out
+                        // TODO: Add jellybean with the reaction and fade it out
                     });
                 });
             }
@@ -1349,7 +1349,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         private final ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
         private final KatchupPostsDataSource.Factory dataSourceFactory;
-        // TODO(michelle): Move publicFeed to PublicContentCache
+        // TODO: Move publicFeed to PublicContentCache
         final MutableLiveData<List<Post>> publicFeed = new MutableLiveData<>();
         final MutableLiveData<Tab> selectedTab = new MutableLiveData<>(Tab.Following);
         final ComputableLiveData<List<PingItem>> pingItems;

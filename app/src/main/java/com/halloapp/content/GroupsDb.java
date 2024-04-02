@@ -285,7 +285,7 @@ public class GroupsDb {
             }
             if (!groupExists) {
                 long addedTimestamp = meAdded ? System.currentTimeMillis() : 0L;
-                // TODO: (clark) decide how we want to handle if the group doesnt exist
+                // TODO:  decide how we want to handle if the group doesnt exist
                 //addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>(), null), addedTimestamp);
                 GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
             }

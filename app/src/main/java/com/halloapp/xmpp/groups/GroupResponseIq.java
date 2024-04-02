@@ -32,7 +32,7 @@ public class GroupResponseIq extends HalloIq {
         groupType = groupStanza.getGroupType();
         groupId = new GroupId(groupStanza.getGid());
         name = groupStanza.getName();
-        description = null; // TODO(jack): fetch this once supported
+        description = null; // TODO: fetch this once supported
         avatar = groupStanza.getAvatarId();
         action = groupStanza.getAction().name();
         result = null;

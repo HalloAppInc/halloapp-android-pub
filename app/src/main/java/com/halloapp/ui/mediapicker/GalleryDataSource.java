@@ -128,7 +128,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
                 try {
                     Bitmap bitmap;
                     if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
-                        // TODO(michelle): investigate the region getThumbnail returns (should be centered)
+                        // TODO: investigate the region getThumbnail returns (should be centered)
                         bitmap = Build.VERSION.SDK_INT < 29
                                 ? MediaStore.Images.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Images.Thumbnails.MINI_KIND, null)
                                 : contentResolver.loadThumbnail(ContentUris.withAppendedId(MediaStore.Images.Media.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id), new Size(PHOTO_SIZE, PHOTO_SIZE), null);
@@ -170,7 +170,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
             Task<List<Face>> task = detector.process(image);
             Tasks.await(task);
             List<Face> faces = task.isSuccessful() ? task.getResult() : null;
-            // TODO(michelle): explore other heuristics involving face detection (size, num, etc.)
+            // TODO: explore other heuristics involving face detection (size, num, etc.)
             if (faces != null && !faces.isEmpty()) {
                 score += ASSET_FACE_FACTOR;
             }

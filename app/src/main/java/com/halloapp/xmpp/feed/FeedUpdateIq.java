@@ -115,7 +115,7 @@ public class FeedUpdateIq extends HalloIq {
                         .setNotificationTimestamp(katchupPost.notificationTimestamp / 1000)
                         .setTimeTaken(katchupPost.timeTaken)
                         .setContentType(katchupPost.contentType);
-                // TODO(jack): Remove conditional after August 2023
+                // TODO: Remove conditional after August 2023
                 if (katchupPost.notificationDate != null) {
                     momentInfo.setDate(katchupPost.notificationDate);
                 }

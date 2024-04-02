@@ -46,7 +46,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, FollowingFragment.NextScreenHandler, MainFragment.SlidableActivity {
 
-    // TODO(jack): Remove need for these being duplicated here from halloapp's MainActivity
+    // TODO: Remove need for these being duplicated here from halloapp's MainActivity
     public static final String EXTRA_STACK_TOP_MOMENT_ID = "stack_top_moment";
     public static final String EXTRA_POST_ID = "target_post";
     public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
@@ -136,7 +136,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 finish();
                 return;
             } else if (TextUtils.isEmpty(checkResult.username)) {
-                // TODO(vasil): need this so existing installations can simply set up their username on upgrade. Can remove later.
+                // TODO: need this so existing installations can simply set up their username on upgrade. Can remove later.
                 Log.i("MainActivity.onCreate.registrationStatus: username not setup");
                 startActivity(SetupUsernameProfileActivity.open(getBaseContext(), checkResult.name));
                 overridePendingTransition(0, 0);

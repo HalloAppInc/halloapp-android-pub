@@ -625,7 +625,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     infoView.setTypeface(infoView.getTypeface(), Typeface.ITALIC);
                 } else {
                     infoView.setTypeface(Typeface.create(infoView.getTypeface(), Typeface.NORMAL));
-                    // TODO: (clarkc) maybe consolidate loading into a single pass
+                    // TODO: maybe consolidate loading into a single pass
                     if (chat.lastMessageRowId >= 0) {
                         viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {
                             @Override

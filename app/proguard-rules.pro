@@ -25,15 +25,15 @@
 # Crashlytics needs these for deobfuscating crash reports better
 -keepattributes SourceFile,LineNumberTable
 
-# https://issuetracker.google.com/issues/154315507 TODO(jack): Remove if fixed by Google
+# https://issuetracker.google.com/issues/154315507 TODO: Remove if fixed by Google
 -keep class com.google.crypto.tink.proto.** { *; }
 
-# https://github.com/protocolbuffers/protobuf/issues/6463 TODO(jack): Remove if fixed by Google
+# https://github.com/protocolbuffers/protobuf/issues/6463 TODO: Remove if fixed by Google
 -keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite {
   <fields>;
 }
 
-# https://github.com/terl/lazysodium-android/issues/32 TODO(jack): Remove if fixed by lazysodium
+# https://github.com/terl/lazysodium-android/issues/32 TODO: Remove if fixed by lazysodium
 -dontwarn java.awt.*
 -keep class com.sun.jna.* { *; }
 -keepclassmembers class * extends com.sun.jna.* { public *; }

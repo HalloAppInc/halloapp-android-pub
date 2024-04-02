@@ -441,7 +441,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + ReactionsTable.INDEX_REACTION_KEY);
-        db.execSQL("CREATE UNIQUE INDEX " + ReactionsTable.INDEX_REACTION_KEY + " ON " + ReactionsTable.TABLE_NAME + "("  //TODO: @Jack perf
+        db.execSQL("CREATE UNIQUE INDEX " + ReactionsTable.INDEX_REACTION_KEY + " ON " + ReactionsTable.TABLE_NAME + "("  //TODO: perf
                 + ReactionsTable.COLUMN_SENDER_USER_ID + ", "
                 + ReactionsTable.COLUMN_CONTENT_ID
                 + ");");

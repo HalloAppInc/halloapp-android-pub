@@ -14,7 +14,6 @@ import java.util.List;
 public class UserSearchResponseIq extends HalloIq {
 
     public boolean success;
-    // TODO(jack): Use Justin's data class for user profiles
     public List<BasicUserProfile> profiles;
 
     public UserSearchResponseIq(@NonNull SearchResponse searchResponse) {

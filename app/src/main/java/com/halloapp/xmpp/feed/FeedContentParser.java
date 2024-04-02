@@ -87,7 +87,7 @@ public class FeedContentParser {
                 try {
                     color = Color.parseColor(sticker.getColor());
                 } catch (IllegalArgumentException e) {
-                    color = 0x9BDA91; // TODO(jack): Deal with this class in main depending on Colors.java from katchup (Colors.getDefaultStickerColor())
+                    color = 0x9BDA91; // TODO: Deal with this class in main depending on Colors.java from katchup (Colors.getDefaultStickerColor())
                 }
                 final Comment comment = new KatchupStickerComment(0,
                         context.getFeedPostId(),

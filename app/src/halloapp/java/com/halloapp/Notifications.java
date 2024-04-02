@@ -1302,7 +1302,7 @@ public class Notifications {
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CALLS_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setLargeIcon(avatar)
-                    // TODO(nikola): improve the notification based on designs
+                    // TODO: improve the notification based on designs
                     .setContentTitle(context.getString(callType == CallType.AUDIO? R.string.incoming_voice_call_notification_title : R.string.incoming_video_call_notification_title))
                     .setContentText(name)
                     .setOngoing(true)
@@ -1318,7 +1318,7 @@ public class Notifications {
                     .addPerson(person)
                     .setFullScreenIntent(callPendingIntent, true);
 
-            // TODO(nikola): https://developer.android.com/training/notify-user/build-notification#metadata
+            // TODO: https://developer.android.com/training/notify-user/build-notification#metadata
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             Notification notification = builder.build();
@@ -1352,7 +1352,7 @@ public class Notifications {
 
         Notification notification = new NotificationCompat.Builder(context, ONGOING_CALL_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(name)
-                // TODO(nikola): Update this for video calls
+                // TODO: Update this for video calls
                 .setContentText(context.getResources().getString(R.string.ongoing_voice_call))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentIntent(pendingIntent)

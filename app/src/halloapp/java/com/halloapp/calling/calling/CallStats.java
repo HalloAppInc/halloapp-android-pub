@@ -156,7 +156,7 @@ public class CallStats {
 
     public static Map<String, RTCStats> collectStats(RTCStatsReport report) {
         Map<String, RTCStats> result = new HashMap<>();
-        // TODO(nikola): try to only send the codec that was used and the candidate-pair that was selected.
+        // TODO: try to only send the codec that was used and the candidate-pair that was selected.
         // Otherwise there are too many codecs and candidate-pairs.
         Set<String> unwantedTypes = new HashSet<>(Arrays.asList("codec", "certificate", "media-source", "candidate-pair", "local-candidate", "remote-candidate"));
         for (Map.Entry<String, RTCStats> e : report.getStatsMap().entrySet()) {

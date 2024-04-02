@@ -27,7 +27,7 @@ public class KatchupStickerComment extends Comment {
             this.color = Color.parseColor(text.substring(0, 7));
             this.stickerText = text.substring(7);
         } else {
-            this.color = 0x9BDA91; // TODO(jack): Deal with this class in main depending on Colors.java from katchup (Colors.getDefaultStickerColor())
+            this.color = 0x9BDA91; // TODO: Deal with this class in main depending on Colors.java from katchup (Colors.getDefaultStickerColor())
             this.stickerText = text;
         }
     }

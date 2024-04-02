@@ -249,7 +249,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     inCallView.setVisibility(View.VISIBLE);
                     callTimerView.setVisibility(View.VISIBLE);
                     titleTextView.setVisibility(View.GONE);
-                    // TODO(clark): Make the state of the UI more explicit in the CallActivity
+                    // TODO: Make the state of the UI more explicit in the CallActivity
                     if (callViewModel.getCallType() == CallType.VIDEO) {
                         videoCallControlsController.onCallStart();
                         if (videoCapturer == null) {
@@ -589,10 +589,10 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void endCall() {
         if (isInitiator) {
-            // TODO(nikola): we should stats send to the server for this case of not granting permissions
+            // TODO: we should stats send to the server for this case of not granting permissions
             finishAndRemoveTask();
         } else {
-            // TODO(nikola): we might want to send new special reason for no permissions
+            // TODO: we might want to send new special reason for no permissions
             callManager.endCall(EndCall.Reason.REJECT, true);
         }
     }

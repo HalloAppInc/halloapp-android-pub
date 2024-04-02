@@ -749,7 +749,7 @@ public class ContactsDb {
         return getSuggestedContactsForInvite(true);
     }
 
-    // TODO(vasil): add support for name prefix search
+    // TODO: add support for name prefix search
     @WorkerThread
     public List<Contact> getSuggestedContactsForInvite(boolean shouldHavePotentialFriends) {
         final List<Contact> contacts = new ArrayList<>();

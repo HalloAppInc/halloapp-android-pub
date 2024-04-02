@@ -45,12 +45,12 @@ import java.util.Set;
  * to store keys that are generated in ways that Tink does not support, so we need to
  * handle storing these ourselves.
  *
- * TODO(jack): Signed pre key key rotation
+ * TODO: Signed pre key key rotation
  */
 public class EncryptedKeyStore {
 
     private static final String ENC_PREF_FILE_NAME = "halloapp_keys";
-    private static final String PT_PREF_FILE_NAME = "pt_halloapp_keys"; // TODO(jack): delete file
+    private static final String PT_PREF_FILE_NAME = "pt_halloapp_keys"; // TODO: delete file
 
     private static final String PREF_KEY_PT_MIGRATED = "pt_migrated";
 
@@ -116,7 +116,7 @@ public class EncryptedKeyStore {
 
     private static EncryptedKeyStore instance;
 
-    // TODO(jack): Try moving away from SharedPreferences to avoid Strings in memory with key material
+    // TODO: Try moving away from SharedPreferences to avoid Strings in memory with key material
     private SharedPreferences sharedPreferences;
 
     private final AppContext appContext;
@@ -1221,7 +1221,7 @@ public class EncryptedKeyStore {
 
 
 
-        // TODO(jack): Clear out old keys after some threshold
+        // TODO: Clear out old keys after some threshold
         public Editor storeSkippedHomeFeedKey(boolean favorites, UserId peerUserId, HomeFeedPostMessageKey messageKey) {
             Log.i("Storing skipped home feed key " + messageKey + " for user " + peerUserId);
             String messageKeySetPrefKey = getHomeFeedKeySetPrefKey(favorites, peerUserId);
@@ -1248,7 +1248,7 @@ public class EncryptedKeyStore {
             return this;
         }
 
-        // TODO(jack): Clear out old keys after some threshold
+        // TODO: Clear out old keys after some threshold
         public Editor storeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) {
             Log.i("Storing skipped group feed key " + messageKey + " for " + groupId + " member " + peerUserId);
             String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
@@ -1275,7 +1275,7 @@ public class EncryptedKeyStore {
             return this;
         }
 
-        // TODO(jack): Clear out old keys after some threshold
+        // TODO: Clear out old keys after some threshold
         public Editor storeSkippedMessageKey(UserId peerUserId, SignalMessageKey signalMessageKey) {
             Log.i("Storing skipped message key " + signalMessageKey + " for user " + peerUserId);
             String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);

@@ -288,7 +288,7 @@ public class Media {
         return blobVersion == BLOB_VERSION_CHUNKED && type == MEDIA_TYPE_VIDEO && transferred == TRANSFERRED_PARTIAL_CHUNKED;
     }
 
-    // TODO(Vasil): Remove the following method and the logic that depends on it once we have partial stream file copy code.
+    // TODO: Remove the following method and the logic that depends on it once we have partial stream file copy code.
     public boolean canBeSavedToGallery() {
         return transferred == TRANSFERRED_YES && type != MEDIA_TYPE_AUDIO;
     }

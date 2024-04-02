@@ -107,7 +107,7 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
 
         @Override
         public void onChatDeleted(@NonNull ChatId chatId) {
-            // TODO(jack): handle chat deletion
+            // TODO: handle chat deletion
         }
 
         private void invalidateChat() {
@@ -243,7 +243,7 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
                 String id = RandomId.create();
 
                 contentDb.setHistoryResendPayload(groupId, id, payload);
-                // TODO(jack): Clean up stale payloads in daily worker after some time period
+                // TODO: Clean up stale payloads in daily worker after some time period
 
                 GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                 byte[] chainKey = EncryptedKeyStore.getInstance().getMyGroupChainKey(groupId);
@@ -296,7 +296,7 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
                         .setId(id)
                         .setEncPayload(ByteString.copyFrom(encPayload));
                 if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
-                    builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
+                    builder.setPayload(ByteString.copyFrom(payload)); // TODO: Remove once plaintext sending is off
                 }
                 if (groupSetupInfo.senderStateBundles != null) {
                     builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);

@@ -96,7 +96,7 @@ public class HaTelecomConnection extends Connection {
     public void onReject() {
         Log.i("HaTelecomConnection.onReject()");
         super.onReject();
-        //TODO(nikola): clearing the notification should be moved in endCallAndStop
+        //TODO: clearing the notification should be moved in endCallAndStop
         Notifications.getInstance(AppContext.getInstance().get()).clearIncomingCallNotification();
         callManager.endCall(EndCall.Reason.REJECT);
     }
@@ -105,7 +105,7 @@ public class HaTelecomConnection extends Connection {
     public void onReject(int rejectReason) {
         Log.i("HaTelecomConnection.onReject(rejectReason: " + rejectReason + ")");
         super.onReject(rejectReason);
-        // TODO(nikola): use the right reject reason
+        // TODO: use the right reject reason
         callManager.endCall(EndCall.Reason.REJECT);
     }
 

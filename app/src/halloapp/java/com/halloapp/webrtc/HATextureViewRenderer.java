@@ -212,12 +212,12 @@ public class HATextureViewRenderer extends TextureView
             if (width != surfaceWidth || height != surfaceHeight) {
                 surfaceWidth = width;
                 surfaceHeight = height;
-                //TODO: (clark) figure out if this is needed
+                //TODO: figure out if this is needed
                 //getHolder().setFixedSize(width, height);
             }
         } else {
             surfaceWidth = surfaceHeight = 0;
-            //TODO: (clark) figure out if this is needed
+            //TODO: figure out if this is needed
             //getHolder().setSizeFromLayout();
         }
     }

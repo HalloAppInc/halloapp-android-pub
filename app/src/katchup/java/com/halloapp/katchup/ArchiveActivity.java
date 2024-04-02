@@ -464,7 +464,7 @@ public class ArchiveActivity extends HalloActivity {
             bgWorkers.execute(() -> {
                 final List<KatchupPost> postList = new ArrayList<>();
                 if (userId.isMe()) {
-                    // TODO(vasil): Add paging data support with PagedList and PagedListAdapter to handle large number of posts.
+                    // TODO: Add paging data support with PagedList and PagedListAdapter to handle large number of posts.
                     final List<Post> myArchivePosts = contentDb.getMyArchivePosts();
                     for (Post post : myArchivePosts) {
                         if (post instanceof KatchupPost) {

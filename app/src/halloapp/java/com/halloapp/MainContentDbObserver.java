@@ -337,7 +337,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onDbCreated() {
-        // TODO (ds): restore from backup
+        // TODO : restore from backup
     }
 
     @Override

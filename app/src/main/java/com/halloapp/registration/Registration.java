@@ -439,7 +439,7 @@ public class Registration {
         SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
                 .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
                 .setSignature(ByteString.copyFrom(signature))
-                // TODO(jack): ID
+                // TODO: ID
                 .build();
         List<ByteString> oneTimePreKeys = new ArrayList<>();
         for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {

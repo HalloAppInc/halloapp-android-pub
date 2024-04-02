@@ -2838,7 +2838,7 @@ class PostsDb {
         return null;
     }
 
-    // TODO(jack): Switch to this style for loading media everywhere and move to MediaDb (Terlici team adding)
+    // TODO: Switch to this style for loading media everywhere and move to MediaDb (Terlici team adding)
     @WorkerThread
     private void fillMedia(@NonNull Comment comment) {
         comment.media.clear();
@@ -4045,8 +4045,8 @@ class PostsDb {
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " posts deleted");
 
-        // TODO: (clark) clean orphaned comments missed by trigger (in case of bugs)
-        // TODO: (clark) clean orphaned seen receipts missed by trigger (in case of bugs)
+        // TODO:  clean orphaned comments missed by trigger (in case of bugs)
+        // TODO:  clean orphaned seen receipts missed by trigger (in case of bugs)
         final int deletedCommentsCount = deleteOrphanedComments(db);
         Log.i("ContentDb.cleanup: " + deletedCommentsCount + " comments deleted");
 

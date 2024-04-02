@@ -306,7 +306,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO(jack): Remove once we've fixed the null ChatId crash
+        // TODO: Remove once we've fixed the null ChatId crash
         Log.d("ChatActivity digest: " + ApkHasher.getInstance().get());
         Bundle extras = getIntent().getExtras();
         if (extras != null) {

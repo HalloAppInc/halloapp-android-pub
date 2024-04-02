@@ -102,7 +102,7 @@ public class CryptoUtils {
         return ret;
     }
 
-    // TODO(jack): Rename this
+    // TODO: Rename this
     public static byte[] verifyDetached(byte[] message, PrivateEdECKey key) {
         byte[] ret = new byte[Sign.ED25519_BYTES];
         sign.cryptoSignDetached(ret, message, message.length, key.getKeyMaterial());

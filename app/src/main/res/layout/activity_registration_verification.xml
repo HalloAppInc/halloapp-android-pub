@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- TODO(vasil): turn this visible and bind it in halloapp RegistrationVerificationActivity. -->
+    <!-- TODO: turn this visible and bind it in halloapp RegistrationVerificationActivity. -->
     <com.halloapp.widget.NetworkIndicatorView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

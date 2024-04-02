@@ -1321,7 +1321,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"حافظه و داده‌ها"</string>
 
-    <!-- TODO(jack): remove singular ones after transitioning to plurals
+    <!-- TODO: remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="today_at_time_plurals">
         <item quantity="one">"امروز ساعت %s"</item>

@@ -191,7 +191,7 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
                 }
             }
 
-            // TODO(vasil): implement reply notification
+            // TODO: implement reply notification
         });
     }
 
@@ -297,7 +297,7 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onDbCreated() {
-        // TODO (ds): restore from backup
+        // TODO : restore from backup
     }
 
     @Override

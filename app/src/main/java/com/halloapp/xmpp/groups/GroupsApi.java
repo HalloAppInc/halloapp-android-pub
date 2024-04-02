@@ -376,7 +376,7 @@ public class GroupsApi {
             contentDb.setHistoryResendPayload(groupId, id, groupFeedItemsPayload);
 
             for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
-                // TODO(jack): Verify that identity key matches one provided
+                // TODO: Verify that identity key matches one provided
                 UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
                 sendGroupHistoryResend(groupId, peerUserId, id, groupFeedItemsPayload);
             }

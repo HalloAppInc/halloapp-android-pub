@@ -76,7 +76,7 @@
             tools:text="\@devpihtov"
             />
 
-        <!-- TODO(vasil): figure out how to efficiently fetch mutuals -->
+        <!-- TODO: figure out how to efficiently fetch mutuals -->
         <TextView
             android:id="@+id/mutuals"
             android:layout_width="wrap_content"

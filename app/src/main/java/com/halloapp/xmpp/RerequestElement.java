@@ -44,7 +44,7 @@ public class RerequestElement {
             Log.w("Failed to get ephemeral key bytes for rerequest", e);
         }
 
-        // TODO(jack): signed pre-key id!
+        // TODO: signed pre-key id!
         Integer otpkId = encryptedKeyStore.getPeerOneTimePreKeyId(originalSender);
         
         Rerequest.Builder builder =  Rerequest.newBuilder();

@@ -61,20 +61,20 @@ public class HaTelecomConnectionService extends ConnectionService {
     public void onCreateIncomingConnectionFailed(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
         Log.i("HaTelecomConnectionService onCreateIncomingConnectionFailed request:" + request);
         Log.sendErrorReport("Telecom Incoming Call failed");
-        // TODO(nikola): Move string to strings
+        // TODO: Move string to strings
         String text = "HalloApp call failed";
         Toast.makeText(AppContext.getInstance().get(), text, Toast.LENGTH_SHORT).show();
-        // TODO(nikola): We should tell the other side the call has failed.
+        // TODO: We should tell the other side the call has failed.
     }
 
     @Override
     public void onCreateOutgoingConnectionFailed(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
         Log.e("HaTelecomConnectionService.onCreateOutgoingConnectionFailed request:" + request);
         Log.sendErrorReport("Telecom Outgoing Call failed");
-        // TODO(nikola): Move string to strings
+        // TODO: Move string to strings
         String text = "HalloApp call failed";
         Toast.makeText(AppContext.getInstance().get(), text, Toast.LENGTH_SHORT).show();
-        // TODO(nikola): We should tell the other side the call has failed.
+        // TODO: We should tell the other side the call has failed.
     }
 
     @Override

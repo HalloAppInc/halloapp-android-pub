@@ -107,7 +107,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         final List<Reaction> reactions = contentDb.getPendingReactions();
         Log.i("TransferPendingItemsTask: " + reactions.size() + " reactions");
         for (Reaction reaction : reactions) {
-            // TODO(jack): Differentiate reaction parent item types
+            // TODO: Differentiate reaction parent item types
             if (ServerProps.getInstance().getChatReactionsEnabled()) {
                 Message message = contentDb.getMessage(reaction.contentId);
                 if (message != null) {

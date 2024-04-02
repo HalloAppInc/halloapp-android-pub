@@ -84,7 +84,7 @@ public class Analytics {
         initUserProperties(context);
     }
 
-    // TODO(josh): this is public so we can update these after registration
+    // TODO: this is public so we can update these after registration
     // we should instead update props directly from a katchup version of the Prop class
     public void initUserProperties(Context context) {
         setUserProperty("clientVersion", Constants.USER_AGENT);

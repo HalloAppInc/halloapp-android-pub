@@ -23,7 +23,7 @@ public class VideoUtils {
         for (String deviceName : deviceNames) {
             if (camera2Enumerator.isFrontFacing(deviceName) == frontFacing) {
                 Log.d("VideoUtils: Creating front facing camera capturer.");
-                // TODO(nikola): read more about the eventHandler for createCapturer
+                // TODO: read more about the eventHandler for createCapturer
                 VideoCapturer videoCapturer = camera2Enumerator.createCapturer(deviceName, null);
 
                 if (videoCapturer != null) {

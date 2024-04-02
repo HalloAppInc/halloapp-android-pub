@@ -328,7 +328,7 @@ public class WebClientNoiseSocket {
             lastMomentTimestamp = moment.timestamp;
         }
         responseBuilder.setNextCursor(String.valueOf(lastMomentTimestamp));
-        // TODO(jack): uncomment the line below once the web client supports feedType.MOMENTS (moments currently only show up with no type set)
+        // TODO: uncomment the line below once the web client supports feedType.MOMENTS (moments currently only show up with no type set)
 //        responseBuilder.setType(FeedType.MOMENTS);
         responseBuilder.setError(FeedResponse.Error.NONE);
         return responseBuilder;

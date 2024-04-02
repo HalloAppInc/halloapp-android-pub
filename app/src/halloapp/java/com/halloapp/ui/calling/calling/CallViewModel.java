@@ -149,7 +149,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         return state.getValue() != null && state.getValue() == CallManager.State.IDLE;
     }
 
-    // TODO(nikola): It is not great that that we have to pass all this video specific arguments for voice calls..
+    // TODO: It is not great that that we have to pass all this video specific arguments for voice calls..
     public void onStartCall(@NonNull CallType callType, HAVideoCapturer videoCapturer) {
         if (callManager.startCall(peerUid, callType, videoCapturer)) {
             state.postValue(CallManager.State.CALLING);
@@ -227,10 +227,10 @@ public class CallViewModel extends ViewModel implements CallObserver {
         endCall();
     }
 
-    // TODO(nikola): It is not great that that we have to pass all this video specific arguments for voice calls..
+    // TODO: It is not great that that we have to pass all this video specific arguments for voice calls..
     public void onAcceptCall(HAVideoCapturer videoCapturer) {
         Log.i("CallViewModel.onAcceptCall");
-        // TODO(nikola): we should include the call id here.
+        // TODO: we should include the call id here.
         if (callManager.acceptCall(videoCapturer)) {
             state.postValue(CallManager.State.IN_CALL_CONNECTING);
         }

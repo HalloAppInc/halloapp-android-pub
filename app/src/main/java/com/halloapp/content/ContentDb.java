@@ -814,7 +814,7 @@ public class ContentDb {
 
     @WorkerThread
     public @Nullable Post getLastGroupPost(@NonNull GroupId groupId) {
-        // TODO(jack): Issue #1350, update SQL queries to limit based on content item count instead of row count
+        // TODO: Issue #1350, update SQL queries to limit based on content item count instead of row count
         int maxPostItems = ServerProps.getInstance().getMaxPostMediaItems() + 1;
         List<Post> posts = getPosts(null, maxPostItems + 1, true, null, groupId, false);
         if (posts.isEmpty()) {

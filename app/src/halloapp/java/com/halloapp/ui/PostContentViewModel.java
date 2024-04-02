@@ -167,7 +167,7 @@ public class PostContentViewModel extends AndroidViewModel {
 
                         PostContainerBlob postContainerBlob = PostContainerBlob.parseFrom(decrypted);
                         String id = postContainerBlob.getPostId();
-                        Post post = ContentDb.getInstance().getPost(id); // TODO(jack): specify poster id to prevent interception
+                        Post post = ContentDb.getInstance().getPost(id); // TODO: specify poster id to prevent interception
                         if (post != null) {
                             Log.d("PostContentViewModel found post in db with id " + id);
                             canInteract.postValue(Me.getInstance().isRegistered());

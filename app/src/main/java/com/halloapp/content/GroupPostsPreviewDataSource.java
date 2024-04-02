@@ -70,7 +70,7 @@ public class GroupPostsPreviewDataSource extends ItemKeyedDataSource<Long, Post>
         return item.updateTime;
     }
 
-    public void reloadAt(long timestamp) { // TODO(jack): Find a better way to scroll to an area not paged in; keyTimestamp feels hacky
+    public void reloadAt(long timestamp) { // TODO: Find a better way to scroll to an area not paged in; keyTimestamp feels hacky
         // next call to getKey on this data source will be used by framework to find load point of next data source after current one is invalidated;
         // this ensures that next call to getKey returns timestamp regardless of what actual post item is
         Log.d("GroupPostsPreviewDataSource.reloadAt timestamp=" + timestamp);

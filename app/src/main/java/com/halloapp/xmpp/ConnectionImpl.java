@@ -408,7 +408,6 @@ public class ConnectionImpl extends Connection {
      *
      * Eventually we will migrate these away and this method can be removed
      *
-     * TODO (clarkc)
      * @param msg
      * @param ackHandler
      */
@@ -2182,7 +2181,7 @@ public class ConnectionImpl extends Connection {
         synchronized void init() {
             shutdown();
             readerRunnable = new ReaderRunnable();
-            readerThread = ThreadUtils.go(readerRunnable, "Packet Reader"); // TODO(jack): Connection counter
+            readerThread = ThreadUtils.go(readerRunnable, "Packet Reader"); // TODO: Connection counter
         }
 
         synchronized void shutdown() {
@@ -2320,7 +2319,6 @@ public class ConnectionImpl extends Connection {
         private void handleMsg(Msg msg) {
             boolean handled = false;
             if (msg.getType() == Msg.Type.ERROR) {
-                // TODO(jack): Remove this portion if Josh and Chris agree this should be reported inside AiImage, not at the top level
                 if (msg.hasAiImage()) {
                     AiImage aiImage = msg.getAiImage();
                     connectionObservers.notifyAiImageReceived(aiImage.getId(), null, msg.getId());
@@ -2635,7 +2633,7 @@ public class ConnectionImpl extends Connection {
                     LogUploaderWorker.uploadLogs(AppContext.getInstance().get(), msg.getId());
                     handled = true;
                 } else if (msg.hasIncomingCall()) {
-                    // TODO(nikola): Discuss this with the android team. I would rather do this
+                    // TODO: Discuss this with the android team. I would rather do this
                     // } else if (msg.getType() == Msg.Type.CALL) {
                     //      connectionObservers.notifyCallMsg(msg);
                     Log.i("connection: got incoming call message " + ProtoPrinter.toString(msg));
@@ -2690,7 +2688,7 @@ public class ConnectionImpl extends Connection {
                     bgWorkers.execute(() -> {
                         GroupFeedHistory groupFeedHistory = msg.getGroupFeedHistory();
                         String historyId = groupFeedHistory.getId();
-                        ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO(jack): Verify plaintext matches if present
+                        ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO: Verify plaintext matches if present
                         if (encrypted != null && encrypted.size() > 0) {
                             GroupId groupId = new GroupId(groupFeedHistory.getGid());
                             UserId peerUserId = new UserId(Long.toString(msg.getFromUid()));
@@ -2725,7 +2723,7 @@ public class ConnectionImpl extends Connection {
                                 SignalSessionManager.getInstance().tearDownSession(peerUserId);
                                 errorMessage = e.getMessage();
                                 Log.sendErrorReport("Group history decryption failed: " + errorMessage);
-                                // TODO(jack): Stats
+                                // TODO: Stats
 //                                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
                                 Log.i("Rerequesting group history " + historyId);
@@ -3340,7 +3338,7 @@ public class ConnectionImpl extends Connection {
 
             boolean senderStateIssue = false;
             for (GroupFeedItem item : items) {
-                // TODO(jack): Skip items from server based on server prop for rollout progress
+                // TODO: Skip items from server based on server prop for rollout progress
 //                if (item.getAction().equals(GroupFeedItem.Action.SHARE)) {
 //                    Log.d("Skipping item from server: " + ProtoPrinter.toString(item));
 //                    continue;
@@ -3660,7 +3658,7 @@ public class ConnectionImpl extends Connection {
                 if (pendingMessages.containsKey(id)) {
                     Log.e("connection: duplicate outgoing msg id " + id);
                     if (permitDuplicate) {
-                        // TODO (clarkc): disallow duplicates when we no longer leverage content id as msg id in some cases
+                        // TODO : disallow duplicates when we no longer leverage content id as msg id in some cases
                         PendingMsg existing = pendingMessages.remove(id);
                         if (existing != null) {
                             existing.timeoutTask.cancel();

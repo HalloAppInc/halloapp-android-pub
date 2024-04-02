@@ -157,7 +157,7 @@ class MessagesDb {
                     if (message.replyMessageId != null) {
                         replyItem = replyMessage;
                         mediaIndex = message.replyMessageMediaIndex;
-                        replyValues.put(RepliesTable.COLUMN_POST_ID, ""); // TODO(jack)
+                        replyValues.put(RepliesTable.COLUMN_POST_ID, ""); // TODO
                         replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_ID, message.replyMessageId);
                         replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX, message.replyMessageMediaIndex);
                         replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
@@ -678,7 +678,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
+    void setOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO : use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageDelivered: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         if (chatId instanceof GroupId) {
@@ -778,7 +778,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
+    void setOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO : use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessagePlayed: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_PLAYED);

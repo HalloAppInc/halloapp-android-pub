@@ -81,7 +81,7 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
 
     @Override
     public void setPercentTransferred(int percent) {
-        // TODO(jack)
+        // TODO
     }
 
     @Override

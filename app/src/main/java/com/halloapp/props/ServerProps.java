@@ -164,7 +164,7 @@ public class ServerProps {
         }
 
         preferences.edit()
-                .remove("moment_external_share") // TODO(clark): Remove after March 1
+                .remove("moment_external_share") // TODO: Remove after March 1
                 .apply();
 
         loadProps();

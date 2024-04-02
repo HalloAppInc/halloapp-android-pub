@@ -100,7 +100,7 @@ public class MagicPostViewModel extends AndroidViewModel {
                 if (suggestion.size < MIN_GALLERY_ITEMS_FOR_SUGGESTION) {
                     continue;
                 }
-                // TODO(michelle): thumbnails are recalculated each time (consider saving in db)
+                // TODO: thumbnails are recalculated each time (consider saving in db)
                 suggestion.thumbnails = suggestion.thumbnails == null ? contentDb.getThumbnailPhotosBySuggestion(suggestion.id) : suggestion.thumbnails;
                 if (suggestion.thumbnails[0] != null) {
                     filteredSuggestions.add(suggestion);

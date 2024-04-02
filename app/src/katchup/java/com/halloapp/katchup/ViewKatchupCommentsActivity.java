@@ -1539,7 +1539,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
 
         public void bind(Reaction reaction) {
-            // TODO(vasil): No batch request for BasicUserProfile/UserProfile exists, and RelationshipList might not contain data for the relevant users.
+            // TODO: No batch request for BasicUserProfile/UserProfile exists, and RelationshipList might not contain data for the relevant users.
             //  Create a specialized loader to efficiently fetch BasicUserProfile to display the mutuals count.
             this.reaction = reaction;
             if (reaction.senderUserId.isMe()) {

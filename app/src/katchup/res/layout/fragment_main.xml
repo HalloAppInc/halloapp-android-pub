@@ -624,7 +624,7 @@
             android:layout_height="match_parent"
             android:background="@color/black"/>
 
-        <!-- TODO(vasil): Add ContentPlayerView that fades here-->
+        <!-- TODO: Add ContentPlayerView that fades here-->
 
     </com.halloapp.katchup.JellybeanClipView>
 
