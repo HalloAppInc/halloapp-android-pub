@@ -2709,8 +2709,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="code_hint">"000000"</string>
 
     <!-- label explaining the use of phone number in the app -->
-    <!-- Fuzzy -->
-    <string name="phone_description">"ⓘ para recuperar e ajudar a verificar sua conta. só você pode ver o seu número de telefone."</string>
+    <string name="phone_description">"ⓘ para recuperar e ajudar a verificar a sua conta. só o utilizador pode ver o seu número de telefone."</string>
 
     <!-- Message menu option to copy the selected message -->
     <string name="copy">"Copiar"</string>
@@ -2936,8 +2935,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="x_twitter">"X"</string>
 
     <!-- label for youtube handle on profile -->
-    <!-- Fuzzy -->
-    <string name="youtube">"Youtube"</string>
+    <string name="youtube">"YouTube"</string>
 
     <!-- label for user defined link on profile -->
     <string name="link">"Link"</string>
@@ -2990,6 +2988,15 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- Text describing the number %d of members in a group -->
     <string name="group_members">"%d membros do grupo"</string>
     <string name="magic_post_psa">"Novo recurso! Experimente ✨ Postagens Mágicas ✨"</string>
+    <string name="shutdown_notice_title">"Isto é o Adeus,
+Por agora"</string>
+    <string name="shutdown_notice_body">"Todas as coisas chegam ao fim, mesmo as boas. Foi para nós um privilégio absoluto prestar-vos um serviço HalloApp.
+
+Infelizmente, nem todas as coisas podem durar para sempre. Por isso, vamos ter de parar o suporte da HalloApp depois de 15 de abril.
+
+Se quiserem, podem descarregar os suportes das vossas mensagens em Perfil &gt; Minhas mensagens.
+
+Desejamos-vos tudo de bom, equipa HalloApp."</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Toque para adicionar %s ao seu catálogo de contatos&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Esta postagem é partilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar sua lista de favoritos nas configurações de privacidade a qualquer momento."</string>
     <string name="contact_favorites_explanation_others">"Esta postagem é partilhada apenas com um público limitado. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>

@@ -2929,8 +2929,17 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="num_groups_in_common">"Groups in common (%d)"</string>
 
     <!-- Text describing the number %d of members in a group -->
-    <string name="group_members">"%d group members"</string>
-    <string name="magic_post_psa">"New Feature! Try ✨ Magic Posts ✨"</string>
+    <string name="group_members">"%d anggota grup"</string>
+    <string name="magic_post_psa">"Fitur Baru! Coba ✨ Magic Posts ✨"</string>
+    <string name="shutdown_notice_title">"Selamat Tinggal,
+untuk Kali Ini"</string>
+    <string name="shutdown_notice_body">"Semua ada akhirnya, bahkan hal-hal baik. Bisa menyediakan layanan HalloApp kepada Anda semua merupakan kehormatan bagi kami.
+
+Sayangnya, tidak semua hal bersifat abadi. Kami harus menghentikan dukungan HalloApp setelah 15 April 2024.
+
+Jika ingin, Anda bisa mengunduh media dari postingan di bawah Profil &gt; Postingan Saya.
+
+Harapan terbaik untuk Anda, Tim HalloApp."</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Ketuk untuk menambahkan %s ke buku alamat Anda&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Postingan ini hanya dibagikan kepada kontak yang Anda tambahkan ke Favorit. Anda dapat mengedit daftar Favorit Anda kapan pun."</string>
     <string name="contact_favorites_explanation_others">"Postingan ini hanya dibagikan kepada kalangan terbatas. Anda dapat mengatur daftar kalangan di setelan privasi kapan pun."</string>

@@ -3051,6 +3051,15 @@ Bleibe dran!"</string>
     <!-- Text describing the number %d of members in a group -->
     <string name="group_members">"%d group members"</string>
     <string name="magic_post_psa">"New Feature! Try ✨ Magic Posts ✨"</string>
+    <string name="shutdown_notice_title">"This is Goodbye,
+For Now"</string>
+    <string name="shutdown_notice_body">"All things come to an end, even the good ones. It's been our absolute privilege to provide HalloApp service to you guys.
+
+Unfortunately, not all things can last forever. So we'll have to stop the support of HalloApp after April 15th.
+
+If you would like, you can download the media from your posts under Profile &gt; My Posts.
+
+Wishing you all the best, HalloApp Team."</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tippen, um %s zu deinen Kontakten hinzuzufügen&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Dieser Beitrag wird nur mit den Kontakten geteilt, die du zu deinen Favoriten hinzugefügt hast. Du kannst deine Favoritenliste jederzeit bearbeiten."</string>
     <string name="contact_favorites_explanation_others">"Dieser Beitrag wird nur mit einer bestimmten Zielgruppe geteilt, die du in den Privatsphäre-Einstellungen jederzeit anpassen kannst."</string>

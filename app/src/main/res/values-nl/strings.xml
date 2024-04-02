@@ -3003,6 +3003,15 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Text describing the number %d of members in a group -->
     <string name="group_members">"%d groepsdeelnemers"</string>
     <string name="magic_post_psa">"Nieuw functie! Probeer ✨ Magische Posts ✨"</string>
+    <string name="shutdown_notice_title">"Dit is vaarwel,
+voor nu"</string>
+    <string name="shutdown_notice_body">"Aan alles komt een eind, zelfs aan de goede dingen. Het was een groot voorrecht om HalloApp aan jullie te mogen aanbieden.
+
+Helaas kan niet alles voor altijd blijven bestaan. Na 15 april 2024 zullen we de ondersteuning van HalloApp moeten stopzetten. 
+
+Als je wilt, kun je de media van je posts downloaden onder Profiel &gt; Mijn posts.  
+
+Het gaat jullie goed, HalloApp-team."</string>
     <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
     <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
     <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
