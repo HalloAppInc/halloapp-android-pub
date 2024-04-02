@@ -23,3 +23,7 @@
 /kotlin
 /tools/tokens
 strings.xlsx
+/app/src/halloapp/google-services.json
+/app/src/katchup/google-services.json
+/app/src/halloapp/agconnect-services.json
+sentry.properties
