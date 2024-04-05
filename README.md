@@ -1,6 +1,6 @@
 # halloapp-android
 
-[Feature tracker](https://docs.google.com/spreadsheets/d/143pxndDicAbJZB9FogsEQCjB4t1DOHdTCQ4YIc7qOdg/edit?usp=sharing)
+Android version of HalloApp and Katchup. Make sure to insert respective `google-services.json` files in the project you are compiling (e.g. `app/src/halloapp/google-services.json` and `app/src/katchup/google-services.json`). HalloApp also uses [Sentry](sentry.io) which can either be removed or connected to your own project (make sure to put `sentry.properties` in the root of this project).
 
 ## Build flavors
 
